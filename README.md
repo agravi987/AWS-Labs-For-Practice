@@ -42,7 +42,7 @@ So roll up those sleeves, grab your keyboard, and let's go build some cloud! ☁
 
 <div align="center">
 
-### 👉 [Learn_AWS-Amazon-Web-Services](https://github.com/your-username/Learn_AWS-Amazon-Web-Services) 👈
+### 👉 [Learn_AWS-Amazon-Web-Services](https://github.com/agravi987/Learn_AWS-Amazon-Web-Services) 👈
 
 </div>
 
@@ -54,7 +54,7 @@ Each lab corresponds to a topic in the theory repo and walks you through **real,
 
 | Repository | Purpose |
 |---|---|
-| [Learn_AWS-Amazon-Web-Services](https://github.com/your-username/Learn_AWS-Amazon-Web-Services) | 📖 Theory, concepts, notes & diagrams |
+| [Learn_AWS-Amazon-Web-Services](https://github.com/agravi987/Learn_AWS-Amazon-Web-Services) | 📖 Theory, concepts, notes & diagrams |
 | **This Repo (AWS-Hands-On-Labs)** | 🔧 Hands-on labs, exercises & practice |
 
 **The ideal workflow:**
