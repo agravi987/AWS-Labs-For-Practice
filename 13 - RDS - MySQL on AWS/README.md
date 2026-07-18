@@ -1,0 +1,482 @@
+# Lab 13 — RDS: MySQL on AWS — Databases Without the Drama
+
+![Difficulty](https://img.shields.io/badge/Difficulty-Medium-yellow)
+![Time](https://img.shields.io/badge/Time-~35_min-blue)
+![Cost](https://img.shields.io/badge/Cost-<%243-green)
+![Service](https://img.shields.io/badge/Service-RDS-purple)
+
+> "Ravi, installing MySQL on your laptop is like building a shelf from IKEA instructions — possible, but painful. Amazon RDS gives you a fully managed MySQL database in the cloud. No patching, no backing up at 3 AM, no drama. Just pure database joy!" — Rithu
+
+---
+
+## 🎯 Objective
+
+In this lab, you will:
+
+- Create a **DB Subnet Group** to control where your database lives
+- Set up a **Security Group** for database access
+- Launch a **MySQL RDS instance** on the Free Tier
+- **Connect** to your database from an EC2 instance
+- Create tables, insert data, and run queries
+- Understand why managed databases are worth every penny
+
+---
+
+## 🧠 Prerequisites
+
+Before you start, make sure you have:
+
+- ✅ Completed **Lab 12** (Route 53)
+- ✅ An AWS account with RDS access
+- ✅ At least one **running EC2 instance** with MySQL client (or be ready to install one)
+- ✅ Your key pair ready for SSH
+- ✅ A strong password ready (you'll need it for the database!)
+
+---
+
+## 💰 Cost Warning
+
+| Resource | Cost |
+|----------|------|
+| RDS db.t2.micro | ~$0.017/hour (~$12/month) |
+| Storage (20 GB GP2) | ~$2.30/month |
+| **Estimated total for this lab** | **< $3** (if cleaned up within an hour!) |
+
+> ⚠️ **CRITICAL — Rithu says:** RDS instances keep running and keep charging even after you close your browser! Unlike EC2 where you can stop an instance and stop paying, RDS **charges you even when stopped** (for the storage). You MUST **delete** the RDS instance after this lab. I cannot stress this enough! 💸
+
+> 💡 **Rithu's Tip:** The Free Tier gives you 750 hours/month of db.t2.micro for 12 months. But storage and backups are NOT Free Tier eligible. Delete after the lab to avoid surprises!
+
+---
+
+## 🏗️ Architecture
+
+```
+    ┌──────────────────┐        ┌──────────────────────┐
+    │   Your Computer   │        │   Amazon RDS MySQL    │
+    │   (or EC2 instance)│──────▶│   ravi-mysql-db       │
+    │                    │ :3306 │   db.t2.micro         │
+    │  mysql -h ravi...  │       │   20 GB GP2           │
+    └──────────────────┘        │   Database: ravilabs   │
+                                └──────────────────────┘
+                                            │
+                                  ┌─────────┴─────────┐
+                                  │  DB Subnet Group    │
+                                  │  us-east-1a + 1b    │
+                                  └───────────────────┘
+```
+
+---
+
+## 🛠️ Step-by-Step Instructions
+
+### Step 1: Create a DB Subnet Group
+
+A DB Subnet Group tells RDS which subnets (and therefore which Availability Zones) it can place your database in.
+
+1. Go to the **RDS Console** → left sidebar → **Subnet groups**
+2. Click **Create DB subnet group**
+3. Fill in:
+
+| Field | Value |
+|-------|-------|
+| DB subnet group name | `ravi-db-subnet-group` |
+| Description | "Subnet group for Ravi's RDS lab" |
+| VPC | **Default VPC** |
+
+4. Under **Add subnets:**
+   - Select **us-east-1a** and **us-east-1b** (click both!)
+   - These should show the default subnets for your VPC
+
+5. Click **Create**
+
+> 💡 **Rithu's Tip:** Just like with ASG, we're putting our database in 2 AZs for high availability. If one AZ has issues, RDS can failover to the other. Even for a lab, it's good practice! 🏗️
+
+📸 **[Screenshot: DB Subnet Group creation page showing 2 AZs selected]**
+
+---
+
+### Step 2: Create a Security Group for RDS
+
+Your database needs its own security group. We'll allow MySQL access from anywhere (for lab purposes only!).
+
+1. Go to **EC2 Console** → **Security Groups** → **Create security group**
+2. Configure:
+
+| Field | Value |
+|-------|-------|
+| Security group name | `rds-sg` |
+| Description | "Security group for RDS MySQL lab" |
+| VPC | Default VPC |
+
+3. **Inbound rules:**
+
+| Type | Port | Source |
+|------|------|--------|
+| MySQL/Aurora | 3306 | Anywhere (`0.0.0.0/0`) |
+
+4. **Outbound rules:** Keep default (All traffic)
+
+5. Click **Create security group**
+
+> ⚠️ **Production Reality Check:** In the real world, you would NEVER open MySQL to the entire internet! You'd restrict it to specific security groups or IP ranges. But for learning, `0.0.0.0/0` lets us connect from our local machine without VPC peering headaches.
+
+📸 **[Screenshot: Security group with MySQL port 3306 open]**
+
+---
+
+### Step 3: Create the RDS Instance
+
+This is the main event — let's launch a MySQL database!
+
+1. Go to **RDS Console** → **Databases** (left sidebar)
+2. Click **Create database**
+
+**Choose a database creation method:**
+- Select **Standard create** (not Easy create — we want control!)
+
+**Engine options:**
+- Select **MySQL**
+- Version: **MySQL 8.0.x** (latest available)
+- Template: **Free tier** ✅
+
+**Settings:**
+
+| Field | Value |
+|-------|-------|
+| DB instance identifier | `ravi-mysql-db` |
+| Master username | `admin` |
+| Master password | **Use a strong password! Write it down!** |
+
+> 💡 **Rithu's Tip:** Pick a password you'll remember but that's not "password123". I recommend something like `Ravi#MySQL2024!` — mix of uppercase, lowercase, numbers, and symbols. WRITE IT DOWN somewhere safe!
+
+**Instance configuration:**
+
+| Field | Value |
+|-------|-------|
+| DB instance class | **db.t2.micro** (Free Tier) |
+| Storage type | **General Purpose SSD (gp2)** |
+| Allocated storage | **20 GB** |
+| Storage autoscaling | ❌ Uncheck this (keep costs predictable) |
+
+**Connectivity:**
+
+| Field | Value |
+|-------|-------|
+| VPC | Default VPC |
+| DB subnet group | `ravi-db-subnet-group` |
+| Publicly accessible | **Yes** ⚠️ |
+| Security group | `rds-sg` |
+| Availability zone | Don't specify (let RDS choose) |
+
+> ⚠️ **Production Reality Check:** "Publicly accessible: Yes" means your database can be reached from the internet (protected by the security group). In production, this should almost ALWAYS be "No" — you'd connect through a VPN or from within the VPC. But for this lab, we need public access.
+
+**Database options:**
+
+| Field | Value |
+|-------|-------|
+| Initial database name | `ravilabs` |
+| DB parameter group | default |
+| Backup | **Disable** (for lab — explain below) |
+| Enable automated backups | ❌ |
+
+> 💡 **Rithu's Tip:** In production, automated backups are essential! They let you restore to any point in time. But for a lab, we don't need them, and they cost extra storage.
+
+**Monitoring & Maintenance:**
+- Leave all defaults
+- Click **Create database**
+
+4. Wait for the database to be created — this takes **5-10 minutes** ⏱️
+
+> 💡 **Rithu's Tip:** Go grab a coffee while you wait! ☕ RDS is setting up MySQL, configuring networking, setting up the security group, and more. This is the "managed" part of a managed database — AWS does all the boring stuff for you.
+
+📸 **[Screenshot: RDS console showing the database with "Creating" status]**
+
+---
+
+### Step 4: Wait for DB to Be Available
+
+1. In the **RDS Console** → **Databases** → click `ravi-mysql-db`
+2. Watch the **Status** column:
+   - 🔄 Creating → ⏳ Backing up → ✅ **Available**
+3. Once it says **Available**, you're ready to connect!
+
+4. Copy the **Endpoint** from the database details:
+   - It looks like: `ravi-mysql-db.xxxxxxxxxxxx.us-east-1.rds.amazonaws.com`
+   - Note the **Port**: `3306`
+
+📸 **[Screenshot: RDS database showing "Available" status and the endpoint]**
+
+---
+
+### Step 5: Connect to Your RDS Database
+
+You have two options for connecting:
+
+**Option A: Connect from Your Local Computer (if you have MySQL installed)**
+
+```bash
+mysql -h ravi-mysql-db.xxxxxxxxxxxx.us-east-1.rds.amazonaws.com -u admin -p
+```
+
+Enter your password when prompted.
+
+**Option B: Connect from an EC2 Instance (recommended)**
+
+1. SSH into an EC2 instance (or launch a new t2.micro Amazon Linux 2023):
+
+```bash
+ssh -i "first-key-pair.pem" ec2-user@<EC2_PUBLIC_IP>
+```
+
+2. Install the MySQL client:
+
+```bash
+sudo yum install -y mysql
+```
+
+3. Connect to RDS:
+
+```bash
+mysql -h ravi-mysql-db.xxxxxxxxxxxx.us-east-1.rds.amazonaws.com -u admin -p
+```
+
+4. Enter your password when prompted
+
+5. You should see the MySQL prompt:
+
+```
+mysql>
+```
+
+> 💡 **Rithu's Tip:** If you get "Access denied", double-check your password. If you get "Can't connect", check that the security group allows port 3306 from your IP or the EC2 instance's private IP.
+
+📸 **[Screenshot: Terminal showing successful MySQL connection]**
+
+---
+
+### Step 6: Create Tables and Insert Data
+
+Now let's do some real database work! Run these commands in your MySQL prompt:
+
+```sql
+-- Create a database (if not created automatically)
+CREATE DATABASE IF NOT EXISTS ravilabs;
+
+-- Switch to our database
+USE ravilabs;
+
+-- Create a students table
+CREATE TABLE students (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100),
+  topic VARCHAR(100),
+  score INT
+);
+
+-- Insert some data
+INSERT INTO students (name, topic, score) VALUES
+  ('Ravi', 'EC2', 95),
+  ('Ravi', 'S3', 90),
+  ('Ravi', 'VPC', 88);
+
+-- Verify the data was inserted
+SELECT * FROM students;
+```
+
+You should see:
+
+```
++----+------+-------+-------+
+| id | name | topic | score |
++----+------+-------+-------+
+|  1 | Ravi | EC2   |    95 |
+|  2 | Ravi | S3    |    90 |
+|  3 | Ravi | VPC   |    88 |
++----+------+-------+-------+
+3 rows in set (0.01 sec)
+```
+
+🎉 **Your first cloud database records!**
+
+📸 **[Screenshot: MySQL terminal showing the SELECT query results]**
+
+Let's do a few more operations:
+
+```sql
+-- Count how many records we have
+SELECT COUNT(*) AS total_records FROM students;
+
+-- Find Ravi's highest score
+SELECT name, topic, MAX(score) AS highest_score FROM students GROUP BY name;
+
+-- Update a score
+UPDATE students SET score = 98 WHERE topic = 'EC2' AND name = 'Ravi';
+
+-- Verify the update
+SELECT * FROM students WHERE name = 'Ravi';
+```
+
+Exit MySQL:
+
+```sql
+EXIT;
+```
+
+---
+
+### Step 7: View RDS Metrics in CloudWatch
+
+RDS automatically sends metrics to CloudWatch. Let's check them out!
+
+1. Go to **RDS Console** → **Databases** → click `ravi-mysql-db`
+2. Scroll down to **Monitoring** tab
+3. You'll see graphs for:
+   - CPU Utilization
+   - Database connections
+   - Free storage space
+   - Read/write IOPS
+4. Click **View all CloudWatch metrics** for more detail
+
+📸 **[Screenshot: RDS monitoring tab showing CPU and connection metrics]**
+
+> 💡 **Rithu's Tip:** In production, you'd set up CloudWatch alarms on these metrics — like alerting when CPU goes above 80% or free storage drops below 1 GB. We'll cover that in Lab 15!
+
+---
+
+### Step 8: Verify Your Work
+
+Let's confirm everything worked:
+
+- [ ] DB Subnet Group `ravi-db-subnet-group` exists with 2 AZs
+- [ ] Security group `rds-sg` allows MySQL (3306)
+- [ ] RDS instance `ravi-mysql-db` shows **Available** status
+- [ ] Successfully connected to MySQL from EC2 or local machine
+- [ ] Created database `ravilabs`
+- [ ] Created table `students` with 3 rows of data
+- [ ] SELECT query returned the expected results
+- [ ] RDS metrics visible in CloudWatch
+
+📸 **[Screenshot: RDS database details page showing all configurations]**
+
+---
+
+## ✅ Validation Checklist
+
+- [ ] DB Subnet Group spans 2 Availability Zones
+- [ ] Security group allows MySQL (3306) inbound
+- [ ] RDS instance is running and shows "Available"
+- [ ] Endpoint and port noted down
+- [ ] Successfully connected using `mysql` client
+- [ ] Database `ravilabs` created with `students` table
+- [ ] Data inserted and queryable
+- [ ] CloudWatch metrics visible for the RDS instance
+
+---
+
+## 🧹 Cleanup (IMPORTANT!)
+
+> ⚠️ **CRITICAL: RDS keeps charging even when stopped! DELETE the instance!**
+
+| Step | Action | How |
+|:-----|:-------|:----|
+| 1 | Delete RDS instance | RDS → Databases → `ravi-mysql-db` → Actions → Delete (uncheck final snapshot) |
+| 2 | Delete DB Subnet Group | RDS → Subnet groups → `ravi-db-subnet-group` → Delete |
+| 3 | Delete Security Group | EC2 → Security Groups → `rds-sg` → Actions → Delete |
+| 4 | Terminate EC2 (if launched) | EC2 → Instances → select instance → Instance state → Terminate |
+
+### Detailed Steps:
+
+1. **Delete the RDS Instance:**
+   - Go to **RDS Console** → **Databases**
+   - Select `ravi-mysql-db`
+   - Click **Actions** → **Delete**
+   - ⚠️ **UNCHECK** "Create final snapshot" (we don't need it for a lab)
+   - ⚠️ **UNCHECK** "Acknowledge..." confirmation
+   - Type `delete me` in the confirmation box
+   - Click **Delete**
+
+   > ⏱️ Deletion takes 5-10 minutes
+
+2. **Delete the DB Subnet Group:**
+   - Go to **RDS** → **Subnet groups**
+   - Select `ravi-db-subnet-group`
+   - Click **Delete**
+
+3. **Delete the Security Group:**
+   - Go to **EC2** → **Security Groups**
+   - Find `rds-sg`
+   - Click **Actions** → **Delete security group**
+   - Confirm
+
+4. **Terminate any EC2 instance you launched for this lab:**
+   - Go to **EC2** → **Instances**
+   - Select any instance you launched for this lab (e.g., for MySQL client access)
+   - Click **Instance state** → **Terminate instance**
+   - Confirm termination
+   - ⚠️ If you used an existing instance from a previous lab, skip this step
+
+📸 **[Screenshot: RDS console with instance deleted and subnet group removed]**
+
+> 💡 **Rithu's Tip:** After deletion, your RDS charges stop immediately. Storage is released and you stop paying. Always double-check that the database is gone! You can verify by going to RDS → Databases and confirming the list is empty (or doesn't contain your lab DB). Also verify EC2 instances are terminated so you don't pay for compute you're not using!
+
+---
+
+## 🎓 What You Learned
+
+| Concept | What You Now Know |
+|---------|-------------------|
+| **DB Subnet Groups** | How to control which AZs your database lives in |
+| **RDS Security Groups** | How to control network access to your database |
+| **RDS Instance Creation** | How to launch a managed MySQL database with proper configuration |
+| **Publicly Accessible** | What it means and when to use it (lab only!) |
+| **MySQL Client** | How to connect to a remote database from EC2 or local machine |
+| **CRUD Operations** | Create, Read, Update, Delete in a cloud database |
+| **CloudWatch Integration** | How RDS metrics are automatically tracked |
+
+---
+
+## 🔗 What's Next?
+
+You've mastered relational databases in the cloud. Now let's explore the NoSQL world:
+
+➡️ **Lab 14 — DynamoDB: CRUD Operations** — Learn about AWS's serverless NoSQL database that scales automatically and has a generous Free Tier!
+
+---
+
+## ❓ Troubleshooting
+
+### "Can't connect to MySQL server" error
+
+- Verify the RDS instance status is **Available** (not "Backing up" or "Creating")
+- Check that `rds-sg` security group allows inbound on port 3306
+- If connecting from your local machine, your home IP must be in the security group (or use `0.0.0.0/0`)
+- Make sure you're using the full endpoint (not just the identifier)
+- Check that "Publicly accessible" is set to **Yes**
+
+### "Access denied for user 'admin'" error
+
+- Double-check your master password (it's case-sensitive!)
+- If you forgot the password, you can modify the RDS instance and set a new master password
+- Make sure you're connecting as `admin`, not `root` or `mysql`
+
+### RDS instance is stuck in "Creating" for more than 15 minutes
+
+- This is unusual — check the **Events** tab for error messages
+- You may have hit a limit (check Service Quotas → RDS)
+- Try deleting and recreating with a different identifier
+- Make sure your default VPC has subnets in at least 2 AZs
+
+### "Publicly accessible" option is greyed out
+
+- This happens when the subnet group only has private subnets
+- Make sure your DB Subnet Group includes subnets that are in the default VPC (which should have public subnets)
+
+### Storage is filling up quickly
+
+- RDS doesn't auto-delete data — you need to manage storage manually
+- For this lab, 20 GB should be more than enough
+- In production, enable storage autoscaling with a maximum limit
+
+---
+
+> 🎉 **Incredible work, Ravi!** You just set up a production-grade MySQL database in the cloud. RDS handles all the boring stuff — patching, backups, monitoring — so you can focus on building awesome applications. Next, we'll explore the wild world of NoSQL with DynamoDB! 🚀
