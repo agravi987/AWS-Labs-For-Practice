@@ -15,6 +15,19 @@
 
 ---
 
+<details>
+<summary><b>🎭 Ravi & Rithu's Coffee Break Chat</b></summary>
+
+**Ravi:** "API Gateway + Lambda = serverless API?"
+
+**Rithu:** "Exactly! No servers to manage, auto-scales infinitely, and costs almost nothing."
+
+**Ravi:** "This sounds too good to be true."
+
+**Rithu:** "Wait till you see the cold start latency. Everything has a trade-off."
+
+</details>
+
 ## 🎯 Objective
 
 In this lab, you'll create a **REST API** using **Amazon API Gateway** that invokes a **Lambda function** for every HTTP request. You'll build a simple student management API with GET and POST endpoints — the foundation of modern serverless web applications.
@@ -55,6 +68,8 @@ Lambda Free Tier (always free):
 
 ⚠️ **IMPORTANT:** After the lab, delete the API Gateway (API, stage, deployment), the Lambda function, and the IAM role. An exposed API endpoint can be exploited, and forgotten APIs can incur charges.
 
+> **Ravi's Mistake of the Day:** I deployed an API Gateway + Lambda combo and forgot to enable CORS. My browser console was a wall of red CORS errors. Frontend debugging 101: check CORS first.
+
 ---
 
 ## 🏗️ Architecture
@@ -93,6 +108,8 @@ Lambda Free Tier (always free):
 5. Lambda processes the request and returns a JSON response
 6. API Gateway forwards the response back to the client
 ```
+
+> **Did You Know?** API Gateway supports WebSocket APIs too, not just REST. You can build real-time chat apps, live dashboards, and multiplayer games with serverless WebSockets.
 
 ---
 
@@ -464,6 +481,10 @@ Repeat the same for the `/students` resource.
 | 8 | GET /students returns student list | ☐ |
 | 9 | POST /students returns `{"message": "Student created!"}` with 201 | ☐ |
 | 10 | Unknown paths return 404 | ☐ |
+
+---
+
+> **Achievement Unlocked:** API Builder! REST APIs with Lambda.
 
 ---
 

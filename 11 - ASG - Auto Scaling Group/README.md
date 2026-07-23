@@ -1,4 +1,4 @@
-<div align="center">
+﻿<div align="center">
 
 <img src="https://img.shields.io/badge/Lab%2011-Auto%20Scaling%20Group-F39C12?style=for-the-badge&labelColor=232F3E" />
 

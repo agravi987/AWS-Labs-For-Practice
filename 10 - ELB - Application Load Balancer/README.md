@@ -1,4 +1,4 @@
-<div align="center">
+﻿<div align="center">
 
 <img src="https://img.shields.io/badge/Lab%2010-Application%20Load%20Balancer-E74C3C?style=for-the-badge&labelColor=232F3E" />
 

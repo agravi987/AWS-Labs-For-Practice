@@ -21,6 +21,21 @@
 
 ---
 
+<details>
+<summary><b>🎭 Ravi & Rithu's Coffee Break Chat</b></summary>
+
+**Ravi:** "What happens if I accidentally delete an EBS volume?"
+
+**Rithu:** "It's gone. Like, really gone. Like 'should-have-backed-up' gone."
+
+**Ravi:** "Even if I'm nice to it?"
+
+**Rithu:** "AWS doesn't respond to please and thank you. That's what snapshots are for."
+
+</details>
+
+---
+
 ## 🎯 Objective
 
 Create and attach an Elastic Block Store (EBS) volume to an EC2 instance, format and mount it, write data to it, take a snapshot of an existing volume, and restore data from that snapshot onto a new volume. This is how backups really work in the cloud.
@@ -38,6 +53,8 @@ Create and attach an Elastic Block Store (EBS) volume to an EC2 instance, format
 - **Snapshots** cost ~$0.05 per GB-month in standard tier — negligible for this lab, but DELETE them afterward
 
 > *Ravi learned the hard way that EBS snapshots survive instance termination. Donation: $2 worth of orphaned snapshots over a month. Be like Ravi-but-wiser: clean up.*
+
+> **Ravi's Mistake of the Day:** I created a 500 GB EBS snapshot and forgot about it. Three months later: $75 in surprise charges. Snapshots survive instance termination. ALWAYS delete them.
 
 ## 🏗️ Architecture
 
@@ -58,6 +75,8 @@ Create and attach an Elastic Block Store (EBS) volume to an EC2 instance, format
                     Snapshot
                     (restore target)
 ```
+
+> **Did You Know?** EBS snapshots are incremental. The first snapshot copies all data, but subsequent snapshots only copy what changed. So taking daily snapshots of a 1TB volume doesn't cost you 30TB of storage.
 
 ## 🛠️ Step-by-Step Instructions
 
@@ -362,6 +381,14 @@ You'll see the full Linux directory structure — it's your original 8 GB root a
 - [ ] `cat /mnt/data/test.txt` → `EBS Lab by Ravi`
 - [ ] Snapshot listed in EBS Snapshots with `completed` status
 - [ ] Restored volume mountable and browsable
+
+> **POV:** You see the EBS snapshot is still "pending" and keep clicking refresh like it's a tracking page.
+
+<div align="center">
+
+> **Achievement Unlocked:** Backup Hero! Your data has a safety net.
+
+</div>
 
 ## 🧹 Cleanup (IMPORTANT!)
 

@@ -17,6 +17,19 @@
 
 ---
 
+<details>
+<summary><b>🎭 Ravi & Rithu's Coffee Break Chat</b></summary>
+
+**Ravi:** "We're actually building a FULL application?"
+
+**Rithu:** "The whole enchilada! VPC, EC2, RDS, S3, ALB, Auto Scaling, CloudWatch, CloudTrail."
+
+**Ravi:** "That's... everything we've learned."
+
+**Rithu:** "That's the point. You've leveled up. Now show me what you've got!"
+
+</details>
+
 ## 🎯 Objective
 
 By the end of this capstone lab, you will:
@@ -61,6 +74,8 @@ This lab uses **multiple AWS services**. Estimated costs:
 
 > <img src="https://img.shields.io/badge/Warning-STOP!-E74C3C?style=flat-square" /> **CRITICAL WARNING**: This lab creates MANY resources across multiple services. **You MUST follow the cleanup instructions at the end** or you WILL incur ongoing charges. The NAT Gateway is particularly expensive (~$0.045/hr = ~$32/month if left running). **CLEAN UP EVERYTHING!**
 
+> **Ravi's Mistake of the Day:** In the capstone, I launched everything and cleaned up in the wrong order. Tried to delete the VPC before the NAT Gateway. AWS said "nah" and I spent 45 minutes untangling dependencies. Follow. The. Cleanup. Order.
+
 ---
 
 ## 🏗️ Architecture
@@ -101,10 +116,12 @@ This lab uses **multiple AWS services**. Estimated costs:
                               └──────┬──────┘
                                      │
                               ┌──────▼──────┐
-                              │  RDS MySQL   │
-                              │  (Multi-AZ)  │
-                              └─────────────┘
+                               │  RDS MySQL   │
+                               │  (Multi-AZ)  │
+                               └─────────────┘
 ```
+
+> **Did You Know?** The capstone architecture you're building mirrors what companies like Netflix, Airbnb, and Spotify use at scale. The difference? They run millions of instances. You're running 2. But the architecture is the same!
 
 ---
 
@@ -772,6 +789,14 @@ Before cleaning up, confirm ALL of these:
 
 ---
 
+> **POV:** You look at your AWS bill after the capstone and realize you actually stayed under $5. Clean-up skills: unlocked.
+
+---
+
+> **Achievement Unlocked:** AWS Builder! Full stack complete! You are LEGENDARY!
+
+---
+
 ## 🧹 Cleanup (IMPORTANT!)
 
 Follow this EXACT order to avoid dependency issues and ensure everything is deleted!
@@ -935,6 +960,11 @@ In this capstone lab, you brought together EVERY skill from Labs 01-24:
 - Defense-in-depth security with chained Security Groups
 - Centralized monitoring and audit logging
 
+| | Approach |
+|---|---|
+| **Noob Tip** | Click through the console to create everything manually |
+| **Pro Tip** | Use CloudFormation/IaC. Reproducible, documented, and version-controlled.
+
 ---
 
 <div align="center">
@@ -1053,6 +1083,10 @@ In this capstone lab, you brought together EVERY skill from Labs 01-24:
 - **Fix**: You must EMPTY the bucket first (delete all objects), then delete the bucket itself. S3 buckets cannot be deleted if they contain any objects.
 
 </details>
+
+---
+
+> **Rithu's Real Talk:** If you've made it to Lab 25, you're ahead of 90% of people who "want to learn AWS." You didn't just watch tutorials - you BUILT things. That's what makes you different. Keep building.
 
 ---
 

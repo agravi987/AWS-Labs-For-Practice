@@ -15,6 +15,19 @@
 
 ---
 
+<details>
+<summary><b>🎭 Ravi & Rithu's Coffee Break Chat</b></summary>
+
+**Ravi:** "Do I really need backups?"
+
+**Rithu:** "Ask yourself: how would you feel if everything disappeared right now?"
+
+**Ravi:** "...terrible."
+
+**Rithu:** "Then yes. You need backups. Always."
+
+</details>
+
 ## 🎯 Objective
 
 By the end of this lab, you will:
@@ -53,6 +66,8 @@ Estimated total lab cost: **< $2** if cleaned up within 1 hour.
 
 > ⚠️ **CRITICAL**: AWS Backup charges for stored backups! If you leave backups lying around, they WILL cost money. Delete all backup plans, vaults, and backups before leaving!
 
+> **Ravi's Mistake of the Day:** I set up AWS Backup but forgot to include RDS in the plan. A developer dropped a table in production and we had no backup. Include ALL critical resources in your backup plan.
+
 ---
 
 ## 🏗️ Architecture
@@ -76,6 +91,8 @@ Estimated total lab cost: **< $2** if cleaned up within 1 hour.
 │  └──────────────┘    └──────────────────────────┘   │
 └─────────────────────────────────────────────────────┘
 ```
+
+> **Did You Know?** AWS Backup supports EC2, EBS, RDS, DynamoDB, EFS, FSx, and Storage Gateway. One dashboard to protect them all.
 
 ---
 
@@ -353,6 +370,10 @@ Before moving on, confirm all of these:
 - [ ] At least one backup job shows Completed
 - [ ] On-demand backup completed
 - [ ] Restored EBS volume exists in EC2
+
+---
+
+> **Achievement Unlocked:** Backup Commander! Multi-service backup ready.
 
 ---
 

@@ -15,6 +15,19 @@
 
 ---
 
+<details>
+<summary><b>🎭 Ravi & Rithu's Coffee Break Chat</b></summary>
+
+**Ravi:** "SNS and SQS sound like a law firm."
+
+**Rithu:** "SNS is like a megaphone - screams to everyone. SQS is like a mailbox - messages wait until someone picks them up."
+
+**Ravi:** "So SNS is loud, SQS is patient?"
+
+**Rithu:** "That's... actually poetic. I'll allow it."
+
+</details>
+
 ## 🎯 Objective
 
 In this lab, you will explore two of AWS's core messaging services: **Simple Notification Service (SNS)** and **Simple Queue Service (SQS)**. You'll create topics, subscriptions, and queues — and connect them together to build a real **fan-out messaging pattern**.
@@ -49,6 +62,8 @@ In this lab, you will explore two of AWS's core messaging services: **Simple Not
 
 ⚠️ **IMPORTANT:** Delete all resources (topic, subscriptions, queue) after the lab to avoid any unexpected charges. A forgotten SQS queue receiving test messages can add up over months!
 
+> **Ravi's Mistake of the Day:** I published a message to an SNS topic with 10,000 subscribers and tested it 50 times. SNS charges $0.50 per 100,000 notifications. My "quick test" cost more than my lunch.
+
 ---
 
 ## 🏗️ Architecture
@@ -68,9 +83,11 @@ In this lab, you will explore two of AWS's core messaging services: **Simple Not
      │              │ │   -queue     │ │  HTTP, etc.) │
      └─────────────┘ └──────────────┘ └──────────────┘
 
-         This is the FAN-OUT pattern:
-         One message → multiple subscribers
+          This is the FAN-OUT pattern:
+          One message → multiple subscribers
 ```
+
+> **Did You Know?** SQS can hold an unlimited number of messages for up to 14 days. Messages wait in the queue until a consumer processes them. It's like a to-do list that never forgets.
 
 ---
 
@@ -350,6 +367,10 @@ Let's confirm everything is working:
 | 6 | Fan-out message appeared in both email AND SQS | ☐ |
 | 7 | Direct message sent to SQS and received via polling | ☐ |
 | 8 | CLI send/receive/delete worked (Step 8) | ☐ |
+
+---
+
+> **Achievement Unlocked:** Message Master! SNS and SQS operational.
 
 ---
 

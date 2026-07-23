@@ -19,6 +19,21 @@
 
 ---
 
+<details>
+<summary><b>🎭 Ravi & Rithu's Coffee Break Chat</b></summary>
+
+**Ravi:** "Versioning is like Ctrl+Z for S3?"
+
+**Rithu:** "Yes! Except each version costs a tiny bit of storage. So it's Ctrl+Z with a bill."
+
+**Ravi:** "Everything in AWS has a bill."
+
+**Rithu:** "Welcome to the cloud, where even your undos cost money."
+
+</details>
+
+---
+
 ## 🎯 Objective
 
 In this lab, you'll learn how S3 Versioning protects your data from accidental deletion and overwrites, and how Lifecycle Policies automatically move your objects between storage classes to save money. You'll upload files, create versions, delete and restore objects, and set up a lifecycle policy that automates storage management.
@@ -36,6 +51,8 @@ In this lab, you'll learn how S3 Versioning protects your data from accidental d
 ## 💰 Cost Warning
 
 > ⚠️ **This lab costs less than $1.** You're using S3 Standard storage with a tiny test file. However, always remember: S3 charges per GB per month. A lifecycle policy that moves data to Glacier is cheap, but leaving tons of data in Standard-IA when you don't need it adds up. **Always clean up after yourself!**
+
+> **Ravi's Mistake of the Day:** I turned on versioning but never set up lifecycle policies. After 6 months, I had 10,000 versions of the same file and my S3 bill was... not happy.
 
 ---
 
@@ -59,6 +76,8 @@ In this lab, you'll learn how S3 Versioning protects your data from accidental d
 │  └─────────────────────────────────────┘        │
 └─────────────────────────────────────────────────┘
 ```
+
+> **Did You Know?** S3 Standard storage has 99.999999999% durability (11 nines). That means if you store 10 million objects, you might lose ONE object every 10,000 years. Probably fine.
 
 ---
 
@@ -298,6 +317,12 @@ Let's make sure everything is set up correctly:
 | 6 | Previous version restored successfully | ☐ |
 | 7 | Lifecycle rule created with correct transitions | ☐ |
 | 8 | Lifecycle rule applies to all objects in bucket | ☐ |
+
+<div align="center">
+
+> **Achievement Unlocked:** Time Traveler! Versioning means never losing data.
+
+</div>
 
 ---
 

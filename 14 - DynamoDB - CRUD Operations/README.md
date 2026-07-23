@@ -1,4 +1,4 @@
-<div align="center">
+﻿<div align="center">
 
 <img src="https://img.shields.io/badge/Lab%2014-DynamoDB%20CRUD-2ECC71?style=for-the-badge&labelColor=232F3E" />
 
@@ -512,3 +512,4 @@ You've covered compute, networking, DNS, and databases. Now let's learn how to m
 > 🎉 **Fantastic work, Ravi!** You've conquered both relational (RDS) and non-relational (DynamoDB) databases. You now have a solid understanding of when to use each. DynamoDB's simplicity and power make it a favorite for serverless applications. Next up, let's learn how to keep an eye on everything with CloudWatch! 🚀
 
 </div>
+

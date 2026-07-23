@@ -15,6 +15,19 @@
 
 ---
 
+<details>
+<summary><b>🎭 Ravi & Rithu's Coffee Break Chat</b></summary>
+
+**Ravi:** "CloudFormation is Infrastructure as Code?"
+
+**Rithu:** "Yep! Instead of clicking around the console, you write YAML/JSON and AWS builds it."
+
+**Ravi:** "Like LEGO instructions but for cloud infrastructure?"
+
+**Rithu:** "Perfect analogy! Except the LEGO pieces cost money and some are invisible."
+
+</details>
+
 ## 🎯 Objective
 
 By the end of this lab, you will:
@@ -49,6 +62,8 @@ Estimated total lab cost: **< $1** if cleaned up within 1 hour.
 
 > ⚠️ **IMPORTANT**: Delete your stack before leaving! CloudFormation stacks don't auto-delete. Leaving a t2.micro running for 24 hours costs ~$0.28. Always clean up!
 
+> **Ravi's Mistake of the Day:** I deleted a CloudFormation stack and it tried to delete the S3 bucket with it. The bucket wasn't empty, so the stack got stuck in DELETE_FAILED state for an hour. Empty buckets before deleting stacks.
+
 ---
 
 ## 🏗️ Architecture
@@ -72,6 +87,8 @@ Estimated total lab cost: **< $1** if cleaned up within 1 hour.
 │  └──────────────┘    └──────────────────┘   │
 └─────────────────────────────────────────────┘
 ```
+
+> **Did You Know?** CloudFormation supports Drift Detection. It can tell you if someone manually changed resources that were supposed to be managed by your template. Big Brother for infrastructure.
 
 ---
 
@@ -395,6 +412,10 @@ Before moving on, confirm all of these:
 - [ ] WebsiteURL loads a page saying "Updated by CloudFormation!"
 - [ ] EC2 console shows `CloudFormation-WebServer` instance running
 - [ ] If you did the CLI bonus: stack `ravi-ec2-stack-cli` also exists and is complete
+
+---
+
+> **Achievement Unlocked:** IaC Pioneer! CloudFormation unlocked.
 
 ---
 

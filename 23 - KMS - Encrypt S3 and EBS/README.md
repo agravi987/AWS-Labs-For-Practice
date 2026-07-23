@@ -15,6 +15,19 @@
 
 ---
 
+<details>
+<summary><b>🎭 Ravi & Rithu's Coffee Break Chat</b></summary>
+
+**Ravi:** "Encryption sounds hard..."
+
+**Rithu:** "With KMS, it's literally a checkbox. AWS handles the key management."
+
+**Ravi:** "What if someone steals my encryption key?"
+
+**Rithu:** "That's the beauty - they CAN'T steal it. KMS keeps it locked up tighter than Fort Knox."
+
+</details>
+
 ## 🎯 Objective
 
 By the end of this lab, you will:
@@ -52,6 +65,8 @@ Estimated total lab cost: **< $1** if cleaned up within 1 hour (the $1 key charg
 
 > ⚠️ **IMPORTANT**: KMS keys cannot be immediately deleted — there's a mandatory 7-day waiting period (pending deletion). Schedule deletion during cleanup to avoid the $1/month charge!
 
+> **Ravi's Mistake of the Day:** I created a KMS key and then used it to encrypt an S3 bucket. When I deleted the key, the bucket's data became permanently unreadable. KMS keys are not delete-and-forget.
+
 ---
 
 ## 🏗️ Architecture
@@ -80,6 +95,8 @@ Estimated total lab cost: **< $1** if cleaned up within 1 hour (the $1 key charg
 │  └──────┘  └────────┘                              │
 └─────────────────────────────────────────────────────┘
 ```
+
+> **Did You Know?** AWS KMS uses hardware security modules (HSMs) that are certified under FIPS 140-2 Level 2. Your encryption keys are stored in military-grade hardware.
 
 ---
 
@@ -389,6 +406,10 @@ Before moving on, confirm all of these:
 - [ ] Encrypted volume is attached to EC2 and data is readable
 - [ ] Default EBS encryption is enabled with `ravi-lab-key`
 - [ ] CloudTrail shows KMS API calls
+
+---
+
+> **Achievement Unlocked:** Encryption Expert! KMS secured your data.
 
 ---
 

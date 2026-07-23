@@ -15,6 +15,19 @@
 
 ---
 
+<details>
+<summary><b>🎭 Ravi & Rithu's Coffee Break Chat</b></summary>
+
+**Ravi:** "What's the difference between containers and VMs?"
+
+**Rithu:** "VMs are like apartments - each has its own kitchen, bathroom, everything. Containers are like dorm rooms - shared building, separate beds."
+
+**Ravi:** "So containers are cheaper?"
+
+**Rithu:** "Cheaper, lighter, faster. Just don't let one container eat all the shared resources or everyone suffers."
+
+</details>
+
 ## 🎯 Objective
 
 In this lab, you'll deploy a **containerized NGINX web server** on **Amazon ECS (Elastic Container Service)** using **AWS Fargate** — the serverless compute engine for containers. You'll create a cluster, a task definition, and a service that runs multiple copies of your container.
@@ -59,6 +72,8 @@ Fargate pricing:
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > Fargate is like renting a car by the minute — super flexible and you only pay for what you use. But if you forget to return the car (delete the resources), the meter keeps running! 🚗💰
 
+> **Ravi's Mistake of the Day:** I ran a Fargate task with 2 GB memory when 512 MB would've been fine. Fargate charges for provisioned resources, not used resources. Over-provisioning = over-paying.
+
 ---
 
 ## 🏗️ Architecture
@@ -94,6 +109,8 @@ Fargate pricing:
 │   Load Balancer routes traffic across tasks        │
 └──────────────────────────────────────────────────┘
 ```
+
+> **Did You Know?** Fargate is serverless containers. You don't manage any servers, patch any OS, or handle any cluster scaling. Just define your container and AWS runs it. Magic.
 
 ---
 
@@ -387,6 +404,10 @@ Every Fargate task automatically sends logs to CloudWatch.
 | 7 | Service scaled to 4 tasks | ☐ |
 | 8 | All 4 tasks running after scaling | ☐ |
 | 9 | CloudWatch Logs show NGINX output | ☐ |
+
+---
+
+> **Achievement Unlocked:** Container Captain! Fargate deployed!
 
 ---
 

@@ -15,6 +15,19 @@
 
 ---
 
+<details>
+<summary><b>🎭 Ravi & Rithu's Coffee Break Chat</b></summary>
+
+**Ravi:** "Lambda runs code without a server?"
+
+**Rithu:** "Correct! It's like ordering takeout - you get the food without owning a kitchen."
+
+**Ravi:** "What if my code crashes?"
+
+**Rithu:** "Lambda just retries. No servers were harmed in the making of your bug."
+
+</details>
+
 ## 🎯 Objective
 
 In this lab, you'll write a **Python Lambda function** that automatically runs every time a file is uploaded to an S3 bucket. This is one of the most common serverless patterns in AWS — event-driven processing at scale!
@@ -54,6 +67,8 @@ S3 Free Tier (12 months):
 
 ⚠️ **IMPORTANT:** Delete the Lambda function, S3 bucket, and IAM role after the lab. While Lambda itself is free within limits, abandoned resources can accumulate unexpected charges over time.
 
+> **Ravi's Mistake of the Day:** I wrote a Lambda function that made an HTTP call to an external API, but forgot to handle timeouts. The function ran for 15 minutes (max timeout), burning memory the whole time.
+
 ---
 
 ## 🏗️ Architecture
@@ -78,6 +93,8 @@ S3 Free Tier (12 months):
 │                                   └───────────┘ │
 └─────────────────────────────────────────────────┘
 ```
+
+> **Did You Know?** Lambda functions can run code in response to over 200 AWS service events. S3 uploads, DynamoDB changes, API calls, IoT sensor data - Lambda reacts to all of them.
 
 ---
 
@@ -347,6 +364,10 @@ def lambda_handler(event, context):
 | 6 | CloudWatch Logs show file metadata (bucket, key, size, content type) | ☐ |
 | 7 | IAM role `lambda-s3-role` has S3 permissions | ☐ |
 | 8 | (Optional) Processed file copied to destination bucket | ☐ |
+
+---
+
+> **Achievement Unlocked:** Serverless Wizard! Lambda + S3 magic!
 
 ---
 

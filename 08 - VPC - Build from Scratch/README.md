@@ -486,3 +486,4 @@ Now that you have a working VPC with a public subnet, let's add a private subnet
 *The foundation of AWS networking is now in your hands!*
 
 </div>
+

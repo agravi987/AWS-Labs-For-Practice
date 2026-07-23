@@ -1,4 +1,4 @@
-<div align="center">
+﻿<div align="center">
 
 <img src="https://img.shields.io/badge/Lab%2009-NAT%20Gateway%20%26%20VPC%20Endpoints-1ABC9C?style=for-the-badge&labelColor=232F3E" />
 
