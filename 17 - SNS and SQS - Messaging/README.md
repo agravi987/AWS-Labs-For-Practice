@@ -1,9 +1,15 @@
+<div align="center">
+
+<img src="https://img.shields.io/badge/Lab%2017-SNS%20%26%20SQS%20Messaging-E74C3C?style=for-the-badge&labelColor=232F3E" />
+
 # Lab 17 — SNS and SQS: Messaging
 
-![Difficulty](https://img.shields.io/badge/Difficulty-Easy-brightgreen)
-![Time](https://img.shields.io/badge/Time-~25min-blue)
-![Cost](https://img.shields.io/badge/Cost-<_%241-yellow)
-![Service](https://img.shields.io/badge/Service-SNS%20%2F%20SQS-pink)
+<img src="https://img.shields.io/badge/Difficulty-Easy-brightgreen?style=flat-square" />
+<img src="https://img.shields.io/badge/Time-~25min-blue?style=flat-square" />
+<img src="https://img.shields.io/badge/Cost-<_%241-yellow?style=flat-square" />
+<img src="https://img.shields.io/badge/Service-SNS%20%2F%20SQS-pink?style=flat-square" />
+
+</div>
 
 > "SNS is like a megaphone — one message, everyone hears it. SQS is like a mailbox — messages wait until you're ready." — Rithu
 
@@ -29,7 +35,8 @@ In this lab, you will explore two of AWS's core messaging services: **Simple Not
 - [ ] A working email address you can check in real-time
 - [ ] AWS CLI configured (for Step 8)
 
-> 💡 **Rithu's Tip:** If you don't have AWS CLI configured yet, that's okay — Steps 1 through 7 use the console only. Step 8 is CLI-only and is optional.
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> If you don't have AWS CLI configured yet, that's okay — Steps 1 through 7 use the console only. Step 8 is CLI-only and is optional.
 
 ---
 
@@ -69,7 +76,7 @@ In this lab, you will explore two of AWS's core messaging services: **Simple Not
 
 ## 🛠️ Step-by-Step Instructions
 
-### Step 1: Create SNS Topic
+> <img src="https://img.shields.io/badge/Step%201-Create%20SNS%20Topic-2ECC71?style=for-the-badge" />
 
 1. Sign in to the **AWS Management Console**.
 2. In the search bar at the top, type **SNS** and click on **Simple Notification Service**.
@@ -86,11 +93,12 @@ In this lab, you will explore two of AWS's core messaging services: **Simple Not
 
 You should see a success message: "Topic ravi-notifications created successfully."
 
-> 💡 **Rithu's Tip:** SNS Standard topics support at-least-once delivery and are best for most use cases. FIFO topics guarantee order but cost more. For labs and learning, Standard is perfect!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> SNS Standard topics support at-least-once delivery and are best for most use cases. FIFO topics guarantee order but cost more. For labs and learning, Standard is perfect!
 
 ---
 
-### Step 2: Create SNS Subscription
+> <img src="https://img.shields.io/badge/Step%202-Create%20SNS%20Subscription-3498DB?style=for-the-badge" />
 
 1. You should be on the `ravi-notifications` topic page after creation. If not, go to **SNS → Topics → ravi-notifications**.
 2. Click the **Create subscription** button.
@@ -116,11 +124,12 @@ You should see a success message: "Topic ravi-notifications created successfully
 
 > 📸 [Screenshot: The confirmed subscription showing status "Confirmed" in the SNS console]
 
-> 💡 **Rithu's Tip:** SNS uses a "confirm the owner" pattern — this prevents people from subscribing random email addresses to topics. Think of it like a double opt-in for newsletters, but for AWS!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> SNS uses a "confirm the owner" pattern — this prevents people from subscribing random email addresses to topics. Think of it like a double opt-in for newsletters, but for AWS!
 
 ---
 
-### Step 3: Publish Test Message
+> <img src="https://img.shields.io/badge/Step%203-Publish%20Test%20Message-E67E22?style=for-the-badge" />
 
 1. Go to **SNS → Topics → ravi-notifications**.
 2. Click the **Publish message** button.
@@ -138,13 +147,14 @@ You should see a success message: "Topic ravi-notifications created successfully
 
 8. **Check your email inbox** — you should receive the notification within seconds!
 
-> 🎉 If you received the email,恭喜! (That means "congratulations" in Chinese!) Your SNS topic and subscription are working!
+> 🎉 If you received the email, 恭喜! (That means "congratulations" in Chinese!) Your SNS topic and subscription are working!
 
-> 💡 **Rithu's Tip:** In the real world, SNS is used for everything from alerting on-call engineers when a server goes down, to sending SMS notifications to customers, to triggering Lambda functions. It's a Swiss Army knife of notifications!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> In the real world, SNS is used for everything from alerting on-call engineers when a server goes down, to sending SMS notifications to customers, to triggering Lambda functions. It's a Swiss Army knife of notifications!
 
 ---
 
-### Step 4: Create SQS Queue
+> <img src="https://img.shields.io/badge/Step%204-Create%20SQS%20Queue-27AE60?style=for-the-badge" />
 
 1. In the AWS search bar, type **SQS** and click on **Simple Queue Service**.
 2. Click the orange **Create queue** button.
@@ -159,11 +169,12 @@ You should see a success message: "Topic ravi-notifications created successfully
 
 > 📸 [Screenshot: The SQS queue creation page showing ravi-message-queue with default settings]
 
-> 💡 **Rithu's Tip:** Think of SQS like a To-Do list that persists. Messages sit in the queue until someone (or something) picks them up and processes them. Even if the consumer crashes, the message stays there and can be retried. Reliable!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> Think of SQS like a To-Do list that persists. Messages sit in the queue until someone (or something) picks them up and processes them. Even if the consumer crashes, the message stays there and can be retried. Reliable!
 
 ---
 
-### Step 5: Connect SNS to SQS (Fan-out Pattern)
+> <img src="https://img.shields.io/badge/Step%205-Connect%20SNS%20to%20SQS%20(Fan-out)-9B59B6?style=for-the-badge" />
 
 This is where the magic happens! We'll make SNS automatically forward messages to SQS.
 
@@ -195,7 +206,8 @@ Fan-out Pattern:
 Each subscriber gets a COPY of the same message!
 ```
 
-> 💡 **Rithu's Tip:** The fan-out pattern is incredibly powerful. Imagine you publish one event — "New user signed up" — and SNS simultaneously:
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> The fan-out pattern is incredibly powerful. Imagine you publish one event — "New user signed up" — and SNS simultaneously:
 > - Sends a welcome email (email subscription)
 > - Adds the user to a processing queue (SQS subscription)
 > - Triggers a Lambda to create their profile (Lambda subscription)
@@ -205,7 +217,7 @@ Each subscriber gets a COPY of the same message!
 
 ---
 
-### Step 6: Test the Integration
+> <img src="https://img.shields.io/badge/Step%206-Test%20the%20Integration-E74C3C?style=for-the-badge" />
 
 1. Go to **SNS → Topics → ravi-notifications**.
 2. Click **Publish message**.
@@ -236,11 +248,12 @@ Each subscriber gets a COPY of the same message!
 
 🎉 **The fan-out pattern is working!** One message published to SNS arrived at BOTH the email subscription AND the SQS queue!
 
-> 💡 **Rithu's Tip:** Notice how the SQS message has extra metadata from SNS? That's how you know the message came through the fan-out pattern vs. being sent directly to SQS. In a real application, you can use this metadata to trace the message origin.
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> Notice how the SQS message has extra metadata from SNS? That's how you know the message came through the fan-out pattern vs. being sent directly to SQS. In a real application, you can use this metadata to trace the message origin.
 
 ---
 
-### Step 7: Send Messages Directly to SQS
+> <img src="https://img.shields.io/badge/Step%207-Send%20Messages%20Directly%20to%20SQS-1ABC9C?style=for-the-badge" />
 
 SQS can also receive messages directly (without SNS).
 
@@ -258,11 +271,12 @@ SQS can also receive messages directly (without SNS).
 
 > 📸 [Screenshot: SQS showing 2 messages — one from SNS, one direct]
 
-> 💡 **Rithu's Tip:** In real applications, direct SQS messages are often used for task queues. For example, when you upload a video to YouTube, a message gets sent to SQS saying "process this video." A fleet of workers then picks up these messages and processes them in parallel.
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> In real applications, direct SQS messages are often used for task queues. For example, when you upload a video to YouTube, a message gets sent to SQS saying "process this video." A fleet of workers then picks up these messages and processes them in parallel.
 
 ---
 
-### Step 8: SQS with AWS CLI
+> <img src="https://img.shields.io/badge/Step%208-SQS%20with%20AWS%20CLI-F39C12?style=for-the-badge" />
 
 Let's also interact with SQS using the command line.
 
@@ -307,11 +321,12 @@ aws sqs delete-message \
 
 > 📸 [Screenshot: Terminal showing all three SQS CLI commands and their output]
 
-> 💡 **Rithu's Tip:** Always delete messages after processing them! If you don't, the message becomes visible again after the visibility timeout (30 seconds by default), and another worker might process it again. This is called "at-least-once delivery" — it means the message might be delivered more than once, so your code should be idempotent (handling the same message twice shouldn't cause problems).
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> Always delete messages after processing them! If you don't, the message becomes visible again after the visibility timeout (30 seconds by default), and another worker might process it again. This is called "at-least-once delivery" — it means the message might be delivered more than once, so your code should be idempotent (handling the same message twice shouldn't cause problems).
 
 ---
 
-### Step 9: Verify Your Work ✅
+> <img src="https://img.shields.io/badge/Step%209-Verify%20Your%20Work-1ABC9C?style=for-the-badge" />
 
 Let's confirm everything is working:
 
@@ -358,7 +373,8 @@ Let's confirm everything is working:
 2. Select `ravi-notifications`.
 3. Click **Delete** → Type `ravi-notifications` to confirm → **Delete**.
 
-> 💡 **Rithu's Tip:** The order matters! You can't delete an SNS topic that has active subscriptions. Always delete subscriptions first, then the topic. It's like cleaning your room — you have to pick up the clothes before you can vacuum the floor. 🧹
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> The order matters! You can't delete an SNS topic that has active subscriptions. Always delete subscriptions first, then the topic. It's like cleaning your room — you have to pick up the clothes before you can vacuum the floor. 🧹
 
 ---
 
@@ -388,24 +404,55 @@ In the next lab, you'll write a Lambda function in Python that automatically pro
 
 ## ❓ Troubleshooting
 
-### "Subscription confirmation" email never arrives
+<details>
+<summary><strong>"Subscription confirmation" email never arrives</strong></summary>
+
 **Cause:** AWS notification emails sometimes go to spam.
 **Fix:** Check your spam/junk folder. If still not there, wait 5 minutes and try creating the subscription again. Make sure the email address is correct.
 
-### SNS-to-SQS subscription shows "Pending" and never confirms
+</details>
+
+<details>
+<summary><strong>SNS-to-SQS subscription shows "Pending" and never confirms</strong></summary>
+
 **Cause:** The SQS queue ARN might be incorrect, or the queue policy doesn't allow SNS.
 **Fix:** Check the queue policy. Go to SQS → ravi-message-queue → Permissions → make sure SNS is allowed. AWS usually auto-configures this, but if it fails, you can add a policy allowing the SNS topic to send messages.
 
-### SQS "Poll for messages" shows nothing
+</details>
+
+<details>
+<summary><strong>SQS "Poll for messages" shows nothing</strong></summary>
+
 **Cause:** The message might have already been received by another poll, or the visibility timeout hasn't expired.
 **Fix:** Wait 30 seconds (the default visibility timeout) and try polling again. Also check that you're polling the correct queue.
 
-### CLI commands fail with "queue does not exist"
+</details>
+
+<details>
+<summary><strong>CLI commands fail with "queue does not exist"</strong></summary>
+
 **Cause:** The queue URL is wrong or the region is different.
 **Fix:** Use `aws sqs get-queue-url --queue-name ravi-message-queue --region us-east-1` to get the correct URL.
 
-### "AccessDenied" on CLI commands
+</details>
+
+<details>
+<summary><strong>"AccessDenied" on CLI commands</strong></summary>
+
 **Cause:** Your IAM user/role doesn't have SQS permissions.
 **Fix:** Attach the `AmazonSQSFullAccess` policy to your IAM user/role (for lab purposes only — in production, use least-privilege policies).
 
-> 💡 **Rithu's Tip:** Messaging services are all about retries and idempotency. If something goes wrong, the message stays in the queue and can be retried. Design your message handlers to handle duplicates gracefully!
+</details>
+
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> Messaging services are all about retries and idempotency. If something goes wrong, the message stays in the queue and can be retried. Design your message handlers to handle duplicates gracefully!
+
+---
+
+<div align="center">
+
+<img src="https://img.shields.io/badge/Lab%2017-Complete!-E74C3C?style=for-the-badge&labelColor=232F3E" />
+
+> 🎉 **Amazing work, Ravi!** You've mastered SNS and SQS — the messaging backbone of AWS. The fan-out pattern is used in countless real-world architectures. You're building serious cloud skills! 🚀
+
+</div>

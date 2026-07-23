@@ -1,6 +1,12 @@
-# 🚀 AWS Hands-On Labs - Prerequisites
+﻿<div align="center">
 
-> **"Hey Ravi, before we start building awesome stuff on AWS, let's make sure your toolbox is ready!"** — Rithu
+# AWS Hands-On Labs
+
+<img src="https://img.shields.io/badge/Prerequisites-Setup%20Guide-2ECC71?style=for-the-badge&labelColor=232F3E" />
+
+**"Hey Ravi, before we start building awesome stuff on AWS, let's make sure your toolbox is ready!"** — Rithu
+
+</div>
 
 ---
 
@@ -20,7 +26,9 @@
 
 ---
 
-## 1. 🌟 Welcome & Why Prerequisites Matter
+## 1. Welcome & Why Prerequisites Matter
+
+<img src="https://img.shields.io/badge/Section%201-Welcome-2ECC71?style=for-the-badge" />
 
 **Rithu:** *"Hey Ravi! Welcome to our AWS Hands-On Labs!"*
 
@@ -35,46 +43,56 @@
 
 *Trust me, spending 30 minutes here will save you hours of headaches later. Ready? Let's do this!"*
 
-> ⚡ **Bottom Line:** These prerequisites are non-negotiable. Every single lab in this repository assumes you've completed every section on this page. If you skip steps, you *will* get stuck later — and nobody wants that!
+> <img src="https://img.shields.io/badge/Warning-Important-E74C3C?style=flat-square" />
+>
+> **Bottom Line:** These prerequisites are non-negotiable. Every single lab in this repository assumes you've completed every section on this page. If you skip steps, you *will* get stuck later — and nobody wants that!
 
 ---
 
-## 2. 🛒 Creating an AWS Account
+## 2. Creating an AWS Account
+
+<img src="https://img.shields.io/badge/Section%202-AWS%20Account-3498DB?style=for-the-badge" />
 
 **Rithu:** *"This is Step Zero, Ravi. No AWS account = no cloud magic."*
 
 ### Step-by-Step Instructions
 
-#### Step 1: Open the AWS Website
+<details>
+<summary><strong>Step 1: Open the AWS Website</strong></summary>
 
 1. Open your web browser (Chrome, Firefox, Edge — any will work).
 2. Type **https://aws.amazon.com** in the address bar and press Enter.
 
 📸 [Screenshot: AWS homepage showing the "Sign In to the Console" and "Create an AWS Account" buttons in the top-right corner]
 
----
+</details>
 
-#### Step 2: Start the Sign-Up Process
+<details>
+<summary><strong>Step 2: Start the Sign-Up Process</strong></summary>
 
 1. In the top-right corner of the AWS homepage, click the orange **"Create an AWS Account"** button.
 
 📸 [Screenshot: AWS homepage with an arrow pointing to the "Create an AWS Account" button]
 
----
+</details>
 
-#### Step 3: Enter Your Email and Account Details
+<details>
+<summary><strong>Step 3: Enter Your Email and Account Details</strong></summary>
 
 1. **Root user email address:** Enter a valid email address (this becomes your root account email — use one you actually check!).
 2. **AWS account name:** Enter a name for your account (e.g., `ravi-lab-account` or whatever you like).
 3. Click **"Continue"**.
 
-> 🧠 **Rithu's Tip:** *"The email you enter here becomes your root user login. Write it down somewhere safe — you'll need it forever."*
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+>
+> *"The email you enter here becomes your root user login. Write it down somewhere safe — you'll need it forever."*
 
 📸 [Screenshot: Sign-up form showing email address and AWS account name fields]
 
----
+</details>
 
-#### Step 4: Choose Your Account Type
+<details>
+<summary><strong>Step 4: Choose Your Account Type</strong></summary>
 
 1. Select **"Personal"** (this is the free tier–eligible option for individuals).
    - *Note: If you're setting this up for a company, you'd choose "Professional" — but for our labs, "Personal" is perfect.*
@@ -82,9 +100,10 @@
 
 📸 [Screenshot: Account type selection with "Personal" radio button selected]
 
----
+</details>
 
-#### Step 5: Enter Your Contact Information
+<details>
+<summary><strong>Step 5: Enter Your Contact Information</strong></summary>
 
 1. Fill in your details:
    - **Full Name**
@@ -96,24 +115,30 @@
 
 📸 [Screenshot: Contact information form with all fields filled in and checkboxes checked]
 
----
+</details>
 
-#### Step 6: Enter Payment Information (Credit/Debit Card)
+<details>
+<summary><strong>Step 6: Enter Payment Information (Credit/Debit Card)</strong></summary>
 
 1. Enter your **credit card** or **debit card** information.
 2. AWS will place a **temporary $1.00 hold** on your card to verify it's valid. This is NOT a charge — it will be released within 3-5 business days.
 
-> ⚠️ **IMPORTANT WARNING — Read This Twice!**
+> <img src="https://img.shields.io/badge/Warning-Important-E74C3C?style=flat-square" />
+>
+> **IMPORTANT WARNING — Read This Twice!**
 >
 > Rithu says: *"Yes, Ravi, you MUST have a credit or debit card. There is no way around this. AWS will not charge you anything on the Free Tier as long as you stay within limits — but they need a card on file. If you don't have one, ask a family member or friend to help. And PLEASE set up billing alerts after this (Section 5)!"*
 
-> 🚨 **Pro Tip:** If you have a credit card with a low limit, use that one. It's an extra layer of protection against accidental overspending.
+> <img src="https://img.shields.io/badge/Tip-Pro%20Tip-FFC300?style=flat-square" />
+>
+> If you have a credit card with a low limit, use that one. It's an extra layer of protection against accidental overspending.
 
 📸 [Screenshot: Payment information form with credit card fields (blurred/sensitive data)]
 
----
+</details>
 
-#### Step 7: Verify Your Identity
+<details>
+<summary><strong>Step 7: Verify Your Identity</strong></summary>
 
 1. AWS will ask you to verify your **phone number**.
 2. Choose **"Text message"** or **"Voice call"**.
@@ -122,9 +147,10 @@
 
 📸 [Screenshot: Phone verification screen with text message option selected]
 
----
+</details>
 
-#### Step 8: Choose a Support Plan
+<details>
+<summary><strong>Step 8: Choose a Support Plan</strong></summary>
 
 1. You'll be presented with four support plan options:
    - **Basic** — **FREE** ✅ (Choose this one for the labs!)
@@ -134,13 +160,16 @@
 
 2. Select **"Basic"** and click **"Complete Sign Up"**.
 
-> 🧠 **Rithu's Tip:** *"Basic is totally fine for learning. You get access to the AWS Support Forums and documentation. If you ever need real help, you can upgrade later — but for these labs, Basic is all you need."*
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+>
+> *"Basic is totally fine for learning. You get access to the AWS Support Forums and documentation. If you ever need real help, you can upgrade later — but for these labs, Basic is all you need."*
 
 📸 [Screenshot: Support plan selection page with "Basic" plan highlighted]
 
----
+</details>
 
-#### Step 9: Confirmation
+<details>
+<summary><strong>Step 9: Confirmation</strong></summary>
 
 1. You should see a confirmation page. AWS may take a few minutes to fully activate your account.
 2. **Check your email** — you'll receive a welcome email from AWS confirming your account is ready.
@@ -151,9 +180,13 @@
 
 📸 [Screenshot: AWS account activation confirmation page]
 
+</details>
+
 ---
 
-## 3. 🔐 Enabling MFA on Root Account
+## 3. Enabling MFA on Root Account
+
+<img src="https://img.shields.io/badge/Section%203-MFA%20Setup-E74C3C?style=for-the-badge" />
 
 **Rithu:** *"This is the SINGLE most important security step, Ravi. I've seen people skip this and regret it. MFA on your root account is like putting a deadbolt on your front door."*
 
@@ -167,11 +200,14 @@
   - **Google Authenticator** (recommended) — [iOS](https://apps.apple.com/app/google-authenticator/id388497605) | [Android](https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2)
   - **Authy** (also great, supports cloud backup) — [iOS](https://apps.apple.com/app/authy/id494168027) | [Android](https://play.google.com/store/apps/details?id=com.authy.authy)
 
-> 🧠 **Rithu's Tip:** *"Install one of these apps on your phone NOW before continuing. I prefer Google Authenticator because it's simple and it's made by Google. Authy is nice too because it backs up your codes to the cloud — so if you lose your phone, you don't lose access to everything."*
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+>
+> *"Install one of these apps on your phone NOW before continuing. I prefer Google Authenticator because it's simple and it's made by Google. Authy is nice too because it backs up your codes to the cloud — so if you lose your phone, you don't lose access to everything."*
 
 ### Step-by-Step Instructions
 
-#### Step 1: Sign In as Root
+<details>
+<summary><strong>Step 1: Sign In as Root</strong></summary>
 
 1. Go to **https://aws.amazon.com**.
 2. Click **"Sign In to the Console"** in the top-right.
@@ -179,13 +215,16 @@
 4. Enter your password.
 5. Click **"Sign In"**.
 
-> ⚠️ **Make sure you select "Root user"** — NOT "IAM user". We're setting up security on the root account first.
+> <img src="https://img.shields.io/badge/Warning-Important-E74C3C?style=flat-square" />
+>
+> **Make sure you select "Root user"** — NOT "IAM user". We're setting up security on the root account first.
 
 📸 [Screenshot: AWS sign-in page with "Root user" selected and email field visible]
 
----
+</details>
 
-#### Step 2: Navigate to IAM Security Credentials
+<details>
+<summary><strong>Step 2: Navigate to IAM Security Credentials</strong></summary>
 
 1. In the AWS Management Console, click the **search bar** at the top and type **"IAM"**.
 2. Click **"IAM"** from the results (it'll say "Identity and Access Management" underneath).
@@ -193,18 +232,20 @@
 
 📸 [Screenshot: IAM dashboard with "Security credentials" tab highlighted in the left sidebar]
 
----
+</details>
 
-#### Step 3: Assign an MFA Device
+<details>
+<summary><strong>Step 3: Assign an MFA Device</strong></summary>
 
 1. On the Security credentials page, scroll down to the **"Multi-factor authentication (MFA)"** section.
 2. Click the **"Assign MFA device"** button.
 
 📸 [Screenshot: MFA section showing the "Assign MFA device" button]
 
----
+</details>
 
-#### Step 4: Configure Your MFA Device
+<details>
+<summary><strong>Step 4: Configure Your MFA Device</strong></summary>
 
 1. **Device name:** Enter a friendly name like `root-mfa` or `ravi-phone`.
 2. **MFA device type:** Select **"Authenticator app"** (this is the recommended option).
@@ -212,9 +253,10 @@
 
 📸 [Screenshot: MFA device configuration page with "Authenticator app" selected]
 
----
+</details>
 
-#### Step 5: Set Up the Authenticator App
+<details>
+<summary><strong>Step 5: Set Up the Authenticator App</strong></summary>
 
 1. You'll see a **QR code** on screen.
 2. **On your phone:**
@@ -224,13 +266,16 @@
    - Point your camera at the QR code on your screen.
    - The app will generate a 6-digit code that refreshes every 30 seconds.
 
-> 🧠 **Rithu's Tip:** *"If you can't scan the QR code, most authenticator apps have a 'Enter a setup key' option where you can manually type in the secret key shown below the QR code."*
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+>
+> *"If you can't scan the QR code, most authenticator apps have a 'Enter a setup key' option where you can manually type in the secret key shown below the QR code."*
 
 📸 [Screenshot: QR code display page with setup key visible (blurred)]
 
----
+</details>
 
-#### Step 6: Enter Verification Codes
+<details>
+<summary><strong>Step 6: Enter Verification Codes</strong></summary>
 
 1. Back on the AWS page, you'll see two input fields:
    - **MFA code 1:** Enter the current 6-digit code from your authenticator app.
@@ -238,13 +283,16 @@
    - **MFA code 2:** Enter the NEW 6-digit code after it refreshes.
 2. Click **"Assign MFA"**.
 
-> ⚠️ **Important:** You must enter two CONSECUTIVE codes from the same device. Wait for the first code to expire and a new one to appear, then enter the new one in the second field.
+> <img src="https://img.shields.io/badge/Warning-Important-E74C3C?style=flat-square" />
+>
+> **Important:** You must enter two CONSECUTIVE codes from the same device. Wait for the first code to expire and a new one to appear, then enter the new one in the second field.
 
 📸 [Screenshot: Two MFA code input fields with codes entered]
 
----
+</details>
 
-#### Step 7: Confirm Success
+<details>
+<summary><strong>Step 7: Confirm Success</strong></summary>
 
 1. You should see a success message confirming MFA has been assigned.
 2. Your root account now requires both your password AND your authenticator app to sign in.
@@ -255,9 +303,13 @@
 
 📸 [Screenshot: Success message confirming MFA assignment]
 
+</details>
+
 ---
 
-## 4. 👤 Creating an IAM Admin User
+## 4. Creating an IAM Admin User
+
+<img src="https://img.shields.io/badge/Section%204-IAM%20User-9B59B6?style=for-the-badge" />
 
 **Rithu:** *"Okay Ravi, this is rule number one of AWS: NEVER use your root account for day-to-day work. Root has unlimited power — and with great power comes great responsibility... and great risk."*
 
@@ -267,18 +319,41 @@
 
 ### Why Not Use Root?
 
-| Root Account | IAM User |
-|---|---|
-| Has **unlimited** access to everything | Has permissions you **explicitly** assign |
-| If compromised, attacker owns your whole AWS | If compromised, damage is limited |
-| No audit trail for who did what | You can track exactly who did what |
-| AWS **recommends** disabling root for daily use | AWS **recommends** using IAM users |
+<table>
+  <thead>
+    <tr>
+      <th>Root Account</th>
+      <th>IAM User</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Has <strong>unlimited</strong> access to everything</td>
+      <td>Has permissions you <strong>explicitly</strong> assign</td>
+    </tr>
+    <tr>
+      <td>If compromised, attacker owns your whole AWS</td>
+      <td>If compromised, damage is limited</td>
+    </tr>
+    <tr>
+      <td>No audit trail for who did what</td>
+      <td>You can track exactly who did what</td>
+    </tr>
+    <tr>
+      <td>AWS <strong>recommends</strong> disabling root for daily use</td>
+      <td>AWS <strong>recommends</strong> using IAM users</td>
+    </tr>
+  </tbody>
+</table>
 
 ### Step-by-Step Instructions
 
-> ⚠️ **Make sure you're signed in as root for these steps.**
+> <img src="https://img.shields.io/badge/Warning-Important-E74C3C?style=flat-square" />
+>
+> **Make sure you're signed in as root for these steps.**
 
-#### Step 1: Navigate to IAM Users
+<details>
+<summary><strong>Step 1: Navigate to IAM Users</strong></summary>
 
 1. In the AWS Console, go to **IAM** (search for "IAM" in the top search bar).
 2. In the left-hand navigation panel, click **"Users"**.
@@ -286,9 +361,10 @@
 
 📸 [Screenshot: IAM Users page with "Create user" button highlighted]
 
----
+</details>
 
-#### Step 2: Set User Details
+<details>
+<summary><strong>Step 2: Set User Details</strong></summary>
 
 1. **User name:** Enter `admin-user`.
 2. Under **"Provide user access to the AWS Management Console"**:
@@ -298,22 +374,26 @@
 
 📸 [Screenshot: User creation form with username "admin-user" entered and console access options selected]
 
----
+</details>
 
-#### Step 3: Set Permissions
+<details>
+<summary><strong>Step 3: Set Permissions</strong></summary>
 
 1. Select **"Attach policies directly"**.
 2. In the search box, type **"AdministratorAccess"**.
 3. Check the box next to **"AdministratorAccess"** policy.
 4. Click **"Next"**.
 
-> 🧠 **Rithu's Tip:** *"AdministratorAccess gives this user almost everything except billing and a few root-only actions. It's perfect for learning. In a real production environment, you'd follow the principle of least privilege — but for labs, admin access is fine."*
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+>
+> *"AdministratorAccess gives this user almost everything except billing and a few root-only actions. It's perfect for learning. In a real production environment, you'd follow the principle of least privilege — but for labs, admin access is fine."*
 
 📸 [Screenshot: Permissions page with "AdministratorAccess" policy checked in the search results]
 
----
+</details>
 
-#### Step 4: Review and Create
+<details>
+<summary><strong>Step 4: Review and Create</strong></summary>
 
 1. Review the details:
    - User name: `admin-user`
@@ -324,9 +404,10 @@
 
 📸 [Screenshot: Review page showing user details before creation]
 
----
+</details>
 
-#### Step 5: Save Your Credentials (CRITICAL!)
+<details>
+<summary><strong>Step 5: Save Your Credentials (CRITICAL!)</strong></summary>
 
 1. You'll see a success page with your user details.
 2. **SAVE THE FOLLOWING INFORMATION IMMEDIATELY** — you may not see the secret access key again!
@@ -339,22 +420,26 @@
    - **Access Key ID**
    - **Secret Access Key**
 
-> ⚠️ **CRITICAL: Click "Download .csv" to save your credentials!** The Secret Access Key is ONLY shown once. If you lose it, you'll have to create a new one. Store this file somewhere safe — like a password manager or encrypted storage. NOT on your desktop in plain text!
+> <img src="https://img.shields.io/badge/Warning-Important-E74C3C?style=flat-square" />
+>
+> **CRITICAL: Click "Download .csv" to save your credentials!** The Secret Access Key is ONLY shown once. If you lose it, you'll have to create a new one. Store this file somewhere safe — like a password manager or encrypted storage. NOT on your desktop in plain text!
 
 📸 [Screenshot: Success page with credential download button and access keys visible (blurred)]
 
----
+</details>
 
-#### Step 6: Sign Out of Root
+<details>
+<summary><strong>Step 6: Sign Out of Root</strong></summary>
 
 1. Click your account name in the top-right corner of the AWS Console.
 2. Click **"Sign Out"**.
 
 📸 [Screenshot: AWS console dropdown with "Sign Out" option highlighted]
 
----
+</details>
 
-#### Step 7: Sign In as IAM User
+<details>
+<summary><strong>Step 7: Sign In as IAM User</strong></summary>
 
 1. Go to **https://aws.amazon.com**.
 2. Click **"Sign In to the Console"**.
@@ -365,13 +450,16 @@
    - Enter the **password** you set.
 4. Click **"Sign in"**.
 
-> 🧠 **Rithu's Tip:** *"Bookmark the IAM user sign-in URL! It looks like: `https://YOUR_ACCOUNT_ID.signin.aws.amazon.com/console` — this makes signing in much easier."*
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+>
+> *"Bookmark the IAM user sign-in URL! It looks like: `https://YOUR_ACCOUNT_ID.signin.aws.amazon.com/console` — this makes signing in much easier."*
 
 📸 [Screenshot: AWS sign-in page with IAM user fields visible and account ID filled in]
 
----
+</details>
 
-#### Step 8: Verify It Works
+<details>
+<summary><strong>Step 8: Verify It Works</strong></summary>
 
 1. Once signed in, click your username in the top-right corner.
 2. You should see **"IAM user: admin-user"** (or similar), NOT "Root user".
@@ -383,9 +471,13 @@
 
 📸 [Screenshot: AWS console showing "IAM user: admin-user" in the top-right corner]
 
+</details>
+
 ---
 
-## 5. 💰 Setting Up Billing Alerts (AWS Budgets)
+## 5. Setting Up Billing Alerts (AWS Budgets)
+
+<img src="https://img.shields.io/badge/Section%205-Budgets%20%26%20Billing-F39C12?style=for-the-badge" />
 
 **Rithu:** *"Ravi, this is the section that will save you from crying at the end of the month. Trust me — I've been there."*
 
@@ -402,7 +494,8 @@
 
 ### Step-by-Step Instructions
 
-#### Step 1: Navigate to AWS Budgets
+<details>
+<summary><strong>Step 1: Navigate to AWS Budgets</strong></summary>
 
 1. Make sure you're signed in as your **IAM admin user**.
 2. In the AWS Console search bar, type **"Budgets"**.
@@ -410,41 +503,49 @@
 
 📸 [Screenshot: AWS Console search results showing "Budgets" highlighted]
 
----
+</details>
 
-#### Step 2: Create a New Budget
+<details>
+<summary><strong>Step 2: Create a New Budget</strong></summary>
 
 1. On the AWS Budgets page, click the orange **"Create budget"** button.
 
 📸 [Screenshot: AWS Budgets dashboard with "Create budget" button highlighted]
 
----
+</details>
 
-#### Step 3: Choose Budget Type
+<details>
+<summary><strong>Step 3: Choose Budget Type</strong></summary>
 
 1. Select **"Cost budget"** (this tracks your actual spending).
 2. Click **"Next"**.
 
-> 🧠 **Rithu's Tip:** *"There are different budget types — cost, usage, and reservation. For our purposes, cost is what we want. It tracks your actual dollar spending."*
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+>
+> *"There are different budget types — cost, usage, and reservation. For our purposes, cost is what we want. It tracks your actual dollar spending."*
 
 📸 [Screenshot: Budget type selection with "Cost budget" selected]
 
----
+</details>
 
-#### Step 4: Set Budget Details
+<details>
+<summary><strong>Step 4: Set Budget Details</strong></summary>
 
 1. **Budget name:** Enter `Monthly Lab Budget`.
 2. **Budget amount:** Enter `1.00` (yes, just one dollar).
 3. **Budget period:** Select **"Monthly"**.
 4. Click **"Next"**.
 
-> 🧠 **Rithu's Tip:** *"$1 is very conservative. You can set this higher if you want — maybe $5 or $10 — but starting at $1 means you'll get alerted super early. The goal is to get notified BEFORE you spend too much."*
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+>
+> *"$1 is very conservative. You can set this higher if you want — maybe $5 or $10 — but starting at $1 means you'll get alerted super early. The goal is to get notified BEFORE you spend too much."*
 
 📸 [Screenshot: Budget details form with $1.00 amount and Monthly period selected]
 
----
+</details>
 
-#### Step 5: Set Alert Threshold
+<details>
+<summary><strong>Step 5: Set Alert Threshold</strong></summary>
 
 1. Under **"Alert conditions"**, set the threshold:
    - **Alert at:** `80` **% of budget**.
@@ -457,9 +558,10 @@
 
 📸 [Screenshot: Alert threshold set to 80% with email notification field filled in]
 
----
+</details>
 
-#### Step 6: Review and Create
+<details>
+<summary><strong>Step 6: Review and Create</strong></summary>
 
 1. Review your budget:
    - Name: Monthly Lab Budget
@@ -469,14 +571,17 @@
 
 📸 [Screenshot: Budget review page showing all configured details]
 
----
+</details>
 
-#### Step 7: Confirm Budget Is Active
+<details>
+<summary><strong>Step 7: Confirm Budget Is Active</strong></summary>
 
 1. You should see your new budget listed on the Budgets dashboard.
 2. The **Status** should show as **"Active"**.
 
-> 💡 **Bonus Tip:** You can also set up **AWS Billing Alerts** in CloudWatch for even more granular notifications, but the Budgets approach is simpler and sufficient for beginners.
+> <img src="https://img.shields.io/badge/Info-Good%20to%20Know-3498DB?style=flat-square" />
+>
+> **Bonus Tip:** You can also set up **AWS Billing Alerts** in CloudWatch for even more granular notifications, but the Budgets approach is simpler and sufficient for beginners.
 
 > 🎉 **Ravi:** *"Done! Now I won't accidentally spend my grocery money on AWS!"*
 >
@@ -484,9 +589,13 @@
 
 📸 [Screenshot: Budgets dashboard showing the "Monthly Lab Budget" with Active status]
 
+</details>
+
 ---
 
-## 6. ⚙️ Installing AWS CLI
+## 6. Installing AWS CLI
+
+<img src="https://img.shields.io/badge/Section%206-AWS%20CLI-1ABC9C?style=for-the-badge" />
 
 **Rithu:** *"The AWS Command Line Interface — or CLI — lets you manage AWS services from your terminal instead of the web console. It's essential for automation and many of our labs."*
 
@@ -528,7 +637,9 @@
    aws-cli/2.x.x Python/3.x.x Windows/10 botocore/2.x.x
    ```
 
-> ⚠️ **If you get `'aws' is not recognized as an internal or external command`:**
+> <img src="https://img.shields.io/badge/Warning-Important-E74C3C?style=flat-square" />
+>
+> **If you get `'aws' is not recognized as an internal or external command`:**
 > Close your current Command Prompt window and open a new one. The installer adds AWS to your PATH, but you need a fresh terminal for it to take effect.
 
 📸 [Screenshot: AWS CLI MSI installer download page]
@@ -591,7 +702,9 @@ Then verify with:
 aws --version
 ```
 
-> 🧠 **Rithu's Tip:** *"If you don't have Homebrew and don't want to install it, just use the PKG installer above — it works perfectly!"*
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+>
+> *"If you don't have Homebrew and don't want to install it, just use the PKG installer above — it works perfectly!"*
 
 ---
 
@@ -651,13 +764,17 @@ sudo snap install aws-cli --classic
 aws --version
 ```
 
-> 🧠 **Rithu's Tip:** *"On Linux, I recommend the bundled installer (Option B) or pip (Option A) for the cleanest install. The snap version sometimes lags behind in updates."*
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+>
+> *"On Linux, I recommend the bundled installer (Option B) or pip (Option A) for the cleanest install. The snap version sometimes lags behind in updates."*
 
 📸 [Screenshot: Terminal showing successful AWS CLI installation output]
 
 ---
 
-## 7. 🔧 Configuring AWS CLI
+## 7. Configuring AWS CLI
+
+<img src="https://img.shields.io/badge/Section%207-CLI%20Config-3498DB?style=for-the-badge" />
 
 **Rithu:** *"Installing the CLI is only half the battle — now we need to tell it WHO you are and WHERE you want to connect."*
 
@@ -669,7 +786,9 @@ aws --version
 
 Before configuring, you need your **Access Key ID** and **Secret Access Key** from the admin user you created in Section 4. If you downloaded the `.csv` file, open it now.
 
-> ⚠️ **Don't have your access keys?** Here's how to create new ones:
+> <img src="https://img.shields.io/badge/Warning-Important-E74C3C?style=flat-square" />
+>
+> **Don't have your access keys?** Here's how to create new ones:
 > 1. Sign in to the AWS Console as your **admin-user**.
 > 2. Click your username in the top-right → **"Security credentials"**.
 > 3. Scroll to **"Access keys"** section.
@@ -685,15 +804,17 @@ Before configuring, you need your **Access Key ID** and **Secret Access Key** fr
 
 ### Step-by-Step Configuration
 
-#### Step 1: Open Your Terminal
+<details>
+<summary><strong>Step 1: Open Your Terminal</strong></summary>
 
 - **Windows:** Open Command Prompt or PowerShell.
 - **macOS:** Open Terminal.
 - **Linux:** Open your terminal emulator.
 
----
+</details>
 
-#### Step 2: Run the Configure Command
+<details>
+<summary><strong>Step 2: Run the Configure Command</strong></summary>
 
 Type the following and press Enter:
 
@@ -703,9 +824,10 @@ aws configure
 
 The CLI will prompt you for four pieces of information:
 
----
+</details>
 
-#### Step 3: Enter Your Credentials
+<details>
+<summary><strong>Step 3: Enter Your Credentials</strong></summary>
 
 **Prompt 1:** `AWS Access Key ID [None]:`
 - Paste your **Access Key ID** (looks like `AKIAIOSFODNN7EXAMPLE`).
@@ -724,9 +846,10 @@ The CLI will prompt you for four pieces of information:
 - Type `json`
 - Press Enter.
 
----
+</details>
 
-#### Step 4: Verify Configuration
+<details>
+<summary><strong>Step 4: Verify Configuration</strong></summary>
 
 Type the following and press Enter:
 
@@ -744,20 +867,30 @@ You should see output like:
 }
 ```
 
-> ✅ **If you see this output, you're all set!** The `Arn` field shows `user/admin-user`, confirming you're connected as your IAM user.
+> <img src="https://img.shields.io/badge/Info-Good%20to%20Know-3498DB?style=flat-square" />
+>
+> **If you see this output, you're all set!** The `Arn` field shows `user/admin-user`, confirming you're connected as your IAM user.
 
-> ❌ **If you get an error:**
+> <img src="https://img.shields.io/badge/Warning-Important-E74C3C?style=flat-square" />
+>
+> **If you get an error:**
 > - `Unable to locate credentials` — Re-run `aws configure` and make sure your keys are correct.
 > - `InvalidClientTokenId` — Your access key is wrong or has been deleted. Create a new one.
 > - `SignatureDoesNotMatch` — Your secret key is wrong. Re-run `aws configure`.
 
-> 🧠 **Rithu's Tip:** *"Where are these credentials stored? On Windows, they're in `C:\Users\YOUR_NAME\.aws\credentials`. On Mac/Linux, they're in `~/.aws/credentials`. You can edit these files directly if needed, but `aws configure` is easier."*
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+>
+> *"Where are these credentials stored? On Windows, they're in `C:\Users\YOUR_NAME\.aws\credentials`. On Mac/Linux, they're in `~/.aws/credentials`. You can edit these files directly if needed, but `aws configure` is easier."*
 
 📸 [Screenshot: Terminal showing "aws sts get-caller-identity" output with user ARN visible]
 
+</details>
+
 ---
 
-## 8. 💻 Installing a Code Editor (VS Code)
+## 8. Installing a Code Editor (VS Code)
+
+<img src="https://img.shields.io/badge/Section%208-VS%20Code-2ECC71?style=for-the-badge" />
 
 **Rithu:** *"We'll be writing some scripts and config files, Ravi. Having a good code editor makes life SO much easier."*
 
@@ -780,13 +913,17 @@ You should see output like:
 4. Click **"Install"** on the **AWS Toolkit** extension.
 5. This gives you AWS Explorer, credential management, and more right inside VS Code.
 
-> 🧠 **Rithu's Tip:** *"This is optional for our labs — we'll mostly use the terminal and AWS Console. But if you plan to write Lambda functions or Infrastructure as Code (IaC) later, VS Code + AWS Toolkit is chef's kiss."*
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+>
+> *"This is optional for our labs — we'll mostly use the terminal and AWS Console. But if you plan to write Lambda functions or Infrastructure as Code (IaC) later, VS Code + AWS Toolkit is chef's kiss."*
 
 📸 [Screenshot: VS Code with the AWS Toolkit extension visible in the Extensions sidebar]
 
 ---
 
-## 9. 🔑 SSH Key Pair Setup
+## 9. SSH Key Pair Setup
+
+<img src="https://img.shields.io/badge/Section%209-SSH%20Keys-E74C3C?style=for-the-badge" />
 
 **Rithu:** *"Ravi, for several labs we'll be connecting to EC2 instances — virtual servers running in the cloud. To do that securely, we need an SSH key pair."*
 
@@ -805,7 +942,9 @@ PuTTY is the most common SSH client on Windows.
 3. Download the **MSI installer** (`putty-64bit-X.XX-installer.msi`).
 4. Run the installer and follow the prompts (defaults are fine).
 
-> 🧠 **Rithu's Tip:** *"This installs both PuTTY (SSH client) and PuTTYgen (key generator). You need both!"*
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+>
+> *"This installs both PuTTY (SSH client) and PuTTYgen (key generator). You need both!"*
 
 ---
 
@@ -832,7 +971,9 @@ PuTTY is the most common SSH client on Windows.
    - Choose a location and filename, e.g., `C:\Users\YOUR_NAME\Documents\aws-lab-key.ppk`
    - Click **"Save"**.
 
-   > 🧠 **Rithu's Tip:** *"The .ppk file is PuTTY's format. Keep this file safe — it's like your house key! Anyone with this file can access your EC2 instances."*
+   > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+   >
+   > *"The .ppk file is PuTTY's format. Keep this file safe — it's like your house key! Anyone with this file can access your EC2 instances."*
 
 2. **Copy the public key:**
    - The public key is displayed at the top of the PuTTYgen window (starts with `ssh-rsa AAAA...`).
@@ -853,7 +994,9 @@ If you already have a `.pem` key file (e.g., downloaded from AWS):
 5. Click **"Open"** — PuTTYgen will import the key.
 6. Click **"Save private key"** → Save as `.ppk`.
 
-> 🧠 **Rithu's Tip:** *"PuTTY uses .ppk format, while AWS and most Linux tools use .pem format. PuTTYgen lets you convert between them. Got it?"*
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+>
+> *"PuTTY uses .ppk format, while AWS and most Linux tools use .pem format. PuTTYgen lets you convert between them. Got it?"*
 
 📸 [Screenshot: PuTTYgen "Load" dialog showing .pem file import]
 
@@ -888,7 +1031,9 @@ This is CRITICAL on Mac/Linux — SSH will refuse to work with incorrect permiss
 chmod 400 ~/.ssh/aws-lab-key
 ```
 
-> ⚠️ **Do not skip this step!** If your private key file is readable by others, SSH will give you errors or warnings.
+> <img src="https://img.shields.io/badge/Warning-Important-E74C3C?style=flat-square" />
+>
+> **Do not skip this step!** If your private key file is readable by others, SSH will give you errors or warnings.
 
 ---
 
@@ -915,17 +1060,44 @@ When creating an EC2 instance in our labs:
 5. **For ssh-keygen keys:** Upload the `.pub` file.
 6. AWS will provide the private key for download (`.pem` format).
 
-> 🧠 **Rithu's Tip:** *"When connecting with PuTTY, you'll need to convert the .pem to .ppk (see Step 4 above). When connecting from Mac/Linux, use the .pem directly. We'll cover the exact connection commands in the labs!"*
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+>
+> *"When connecting with PuTTY, you'll need to convert the .pem to .ppk (see Step 4 above). When connecting from Mac/Linux, use the .pem directly. We'll cover the exact connection commands in the labs!"*
 
 ---
 
 ### Summary of Key Formats
 
-| Platform | Private Key Format | Public Key Format | SSH Client |
-|---|---|---|---|
-| Windows | `.ppk` | `ssh-rsa AAAA...` (text) | PuTTY |
-| Mac/Linux | `.pem` | `.pub` file | Built-in `ssh` command |
-| AWS Console | `.pem` (downloaded) | Imported into EC2 | Any |
+<table>
+  <thead>
+    <tr>
+      <th>Platform</th>
+      <th>Private Key Format</th>
+      <th>Public Key Format</th>
+      <th>SSH Client</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Windows</td>
+      <td><code>.ppk</code></td>
+      <td><code>ssh-rsa AAAA...</code> (text)</td>
+      <td>PuTTY</td>
+    </tr>
+    <tr>
+      <td>Mac/Linux</td>
+      <td><code>.pem</code></td>
+      <td><code>.pub</code> file</td>
+      <td>Built-in <code>ssh</code> command</td>
+    </tr>
+    <tr>
+      <td>AWS Console</td>
+      <td><code>.pem</code> (downloaded)</td>
+      <td>Imported into EC2</td>
+      <td>Any</td>
+    </tr>
+  </tbody>
+</table>
 
 > 🎉 **Ravi:** *"OK so my private key stays on my computer, the public key goes to AWS, and that's how they know it's me?"*
 >
@@ -935,7 +1107,9 @@ When creating an EC2 instance in our labs:
 
 ---
 
-## 10. 📊 Understanding Free Tier Limits
+## 10. Understanding Free Tier Limits
+
+<img src="https://img.shields.io/badge/Section%2010-Free%20Tier-F39C12?style=for-the-badge" />
 
 **Rithu:** *"Okay Ravi, this is where a LOT of beginners get burned — literally, by their credit card statements. AWS has a generous Free Tier, but it has very specific limits. You NEED to know these."*
 
@@ -945,13 +1119,36 @@ When creating an EC2 instance in our labs:
 
 ### The Three Types of Free Tier
 
-| Type | What It Means | Duration |
-|---|---|---|
-| **Always Free** | Free forever, regardless of when you signed up | Indefinite |
-| **12 Months Free** | Free for 12 months after you create your AWS account | 12 months from sign-up |
-| **Free Trials** | One-time free usage for specific services | Varies (1-6 months) |
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>What It Means</th>
+      <th>Duration</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Always Free</strong></td>
+      <td>Free forever, regardless of when you signed up</td>
+      <td>Indefinite</td>
+    </tr>
+    <tr>
+      <td><strong>12 Months Free</strong></td>
+      <td>Free for 12 months after you create your AWS account</td>
+      <td>12 months from sign-up</td>
+    </tr>
+    <tr>
+      <td><strong>Free Trials</strong></td>
+      <td>One-time free usage for specific services</td>
+      <td>Varies (1-6 months)</td>
+    </tr>
+  </tbody>
+</table>
 
-> ⚠️ **Critical:** The **12-month free tier starts from the day you create your account** — not from when you start using a service. If you created your account 6 months ago, you only have 6 months of free tier left for those services!
+> <img src="https://img.shields.io/badge/Warning-Important-E74C3C?style=flat-square" />
+>
+> **Critical:** The **12-month free tier starts from the day you create your account** — not from when you start using a service. If you created your account 6 months ago, you only have 6 months of free tier left for those services!
 
 ---
 
@@ -959,65 +1156,235 @@ When creating an EC2 instance in our labs:
 
 #### Compute
 
-| Service | Free Tier Limit | Duration | Notes |
-|---|---|---|---|
-| **EC2** | 750 hours/month of `t2.micro` or `t3.micro` | 12 months | Linux or Windows, in specific regions only |
-| **Lambda** | 1M requests/month + 400,000 GB-seconds of compute | Always Free | Serverless — no servers to manage |
-| **ECS** | 750 hours/month of `t2.micro` Fargate | 12 months | Container orchestration |
-| **Lightsail** | 750 hours/month of various plans | 3 months | Simplified VPS — great for beginners |
+<table>
+  <thead>
+    <tr>
+      <th>Service</th>
+      <th>Free Tier Limit</th>
+      <th>Duration</th>
+      <th>Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>EC2</strong></td>
+      <td>750 hours/month of <code>t2.micro</code> or <code>t3.micro</code></td>
+      <td>12 months</td>
+      <td>Linux or Windows, in specific regions only</td>
+    </tr>
+    <tr>
+      <td><strong>Lambda</strong></td>
+      <td>1M requests/month + 400,000 GB-seconds of compute</td>
+      <td>Always Free</td>
+      <td>Serverless — no servers to manage</td>
+    </tr>
+    <tr>
+      <td><strong>ECS</strong></td>
+      <td>750 hours/month of <code>t2.micro</code> Fargate</td>
+      <td>12 months</td>
+      <td>Container orchestration</td>
+    </tr>
+    <tr>
+      <td><strong>Lightsail</strong></td>
+      <td>750 hours/month of various plans</td>
+      <td>3 months</td>
+      <td>Simplified VPS — great for beginners</td>
+    </tr>
+  </tbody>
+</table>
 
 ---
 
 #### Storage
 
-| Service | Free Tier Limit | Duration | Notes |
-|---|---|---|---|
-| **S3** | 5 GB Standard storage | Always Free | Object storage — great for backups and static files |
-| **EBS** | 30 GB of gp2/gp3 or Magnetic | 12 months | Block storage for EC2 |
-| **EFS** | 5 GB of Standard storage | 12 months | File storage for EC2 |
+<table>
+  <thead>
+    <tr>
+      <th>Service</th>
+      <th>Free Tier Limit</th>
+      <th>Duration</th>
+      <th>Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>S3</strong></td>
+      <td>5 GB Standard storage</td>
+      <td>Always Free</td>
+      <td>Object storage — great for backups and static files</td>
+    </tr>
+    <tr>
+      <td><strong>EBS</strong></td>
+      <td>30 GB of gp2/gp3 or Magnetic</td>
+      <td>12 months</td>
+      <td>Block storage for EC2</td>
+    </tr>
+    <tr>
+      <td><strong>EFS</strong></td>
+      <td>5 GB of Standard storage</td>
+      <td>12 months</td>
+      <td>File storage for EC2</td>
+    </tr>
+  </tbody>
+</table>
 
 ---
 
 #### Database
 
-| Service | Free Tier Limit | Duration | Notes |
-|---|---|---|---|
-| **RDS** | 750 hours/month of `db.t2.micro` (MySQL, PostgreSQL, MariaDB, Oracle BYOL) | 12 months | 20 GB of storage included |
-| **DynamoDB** | 25 GB storage + 25 WCU + 25 RCU | Always Free | NoSQL database |
-| **ElastiCache** | 750 hours/month of `cache.t2.micro` (Redis or Memcached) | 12 months | In-memory caching |
+<table>
+  <thead>
+    <tr>
+      <th>Service</th>
+      <th>Free Tier Limit</th>
+      <th>Duration</th>
+      <th>Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>RDS</strong></td>
+      <td>750 hours/month of <code>db.t2.micro</code> (MySQL, PostgreSQL, MariaDB, Oracle BYOL)</td>
+      <td>12 months</td>
+      <td>20 GB of storage included</td>
+    </tr>
+    <tr>
+      <td><strong>DynamoDB</strong></td>
+      <td>25 GB storage + 25 WCU + 25 RCU</td>
+      <td>Always Free</td>
+      <td>NoSQL database</td>
+    </tr>
+    <tr>
+      <td><strong>ElastiCache</strong></td>
+      <td>750 hours/month of <code>cache.t2.micro</code> (Redis or Memcached)</td>
+      <td>12 months</td>
+      <td>In-memory caching</td>
+    </tr>
+  </tbody>
+</table>
 
 ---
 
 #### Networking & Content Delivery
 
-| Service | Free Tier Limit | Duration | Notes |
-|---|---|---|---|
-| **VPC** | No additional charges | Always Free | Virtual networking — always free to create |
-| **CloudFront** | 1 TB data transfer out/month | 12 months | Content Delivery Network |
-| **Route 53** | 1 million queries/month | Always Free | DNS service |
-| **Data Transfer** | 100 GB outbound/month | 12 months | Outbound = from AWS to internet |
+<table>
+  <thead>
+    <tr>
+      <th>Service</th>
+      <th>Free Tier Limit</th>
+      <th>Duration</th>
+      <th>Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>VPC</strong></td>
+      <td>No additional charges</td>
+      <td>Always Free</td>
+      <td>Virtual networking — always free to create</td>
+    </tr>
+    <tr>
+      <td><strong>CloudFront</strong></td>
+      <td>1 TB data transfer out/month</td>
+      <td>12 months</td>
+      <td>Content Delivery Network</td>
+    </tr>
+    <tr>
+      <td><strong>Route 53</strong></td>
+      <td>1 million queries/month</td>
+      <td>Always Free</td>
+      <td>DNS service</td>
+    </tr>
+    <tr>
+      <td><strong>Data Transfer</strong></td>
+      <td>100 GB outbound/month</td>
+      <td>12 months</td>
+      <td>Outbound = from AWS to internet</td>
+    </tr>
+  </tbody>
+</table>
 
 ---
 
 #### Developer Tools & Management
 
-| Service | Free Tier Limit | Duration | Notes |
-|---|---|---|---|
-| **CloudWatch** | 10 custom metrics + 10 alarms + 1M API requests | Always Free | Monitoring and alerting |
-| **CloudFormation** | No additional charges | Always Free | Infrastructure as Code — you pay only for resources created |
-| **CodeBuild** | 100 build minutes/month | Always Free | CI/CD builds |
-| **CodeCommit** | 5 users + 5 GB storage | Always Free | Private Git repositories |
-| **CodeDeploy** | 100 deployments/month | Always Free | Automated deployments |
+<table>
+  <thead>
+    <tr>
+      <th>Service</th>
+      <th>Free Tier Limit</th>
+      <th>Duration</th>
+      <th>Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>CloudWatch</strong></td>
+      <td>10 custom metrics + 10 alarms + 1M API requests</td>
+      <td>Always Free</td>
+      <td>Monitoring and alerting</td>
+    </tr>
+    <tr>
+      <td><strong>CloudFormation</strong></td>
+      <td>No additional charges</td>
+      <td>Always Free</td>
+      <td>Infrastructure as Code — you pay only for resources created</td>
+    </tr>
+    <tr>
+      <td><strong>CodeBuild</strong></td>
+      <td>100 build minutes/month</td>
+      <td>Always Free</td>
+      <td>CI/CD builds</td>
+    </tr>
+    <tr>
+      <td><strong>CodeCommit</strong></td>
+      <td>5 users + 5 GB storage</td>
+      <td>Always Free</td>
+      <td>Private Git repositories</td>
+    </tr>
+    <tr>
+      <td><strong>CodeDeploy</strong></td>
+      <td>100 deployments/month</td>
+      <td>Always Free</td>
+      <td>Automated deployments</td>
+    </tr>
+  </tbody>
+</table>
 
 ---
 
 #### AI / ML & Analytics
 
-| Service | Free Tier Limit | Duration | Notes |
-|---|---|---|---|
-| **SageMaker** | 250 hours of `ml.t2.medium` | 2 months | Machine learning platform |
-| **Comprehend** | 50K units of text/month | 12 months | NLP service |
-| **Rekognition** | 5K images/month for 12 months | 12 months | Image analysis |
+<table>
+  <thead>
+    <tr>
+      <th>Service</th>
+      <th>Free Tier Limit</th>
+      <th>Duration</th>
+      <th>Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>SageMaker</strong></td>
+      <td>250 hours of <code>ml.t2.medium</code></td>
+      <td>2 months</td>
+      <td>Machine learning platform</td>
+    </tr>
+    <tr>
+      <td><strong>Comprehend</strong></td>
+      <td>50K units of text/month</td>
+      <td>12 months</td>
+      <td>NLP service</td>
+    </tr>
+    <tr>
+      <td><strong>Rekognition</strong></td>
+      <td>5K images/month for 12 months</td>
+      <td>12 months</td>
+      <td>Image analysis</td>
+    </tr>
+  </tbody>
+</table>
 
 ---
 
@@ -1025,30 +1392,52 @@ When creating an EC2 instance in our labs:
 
 **Rithu:** *"Let me tell you about the mistakes I see beginners make all the time, Ravi:"*
 
-1. **Leaving EC2 instances running 24/7**
-   - 750 hours/month = ~31 days of ONE instance
-   - If you run 2 instances for 15 days = 720 hours (you're fine!)
-   - But running 2 instances for a full month = 1,440 hours (**OVER THE LIMIT!**)
-   - **Always stop/terminate instances when not in use!**
+<details>
+<summary><strong>1. Leaving EC2 instances running 24/7</strong></summary>
 
-2. **Using the wrong instance type**
-   - Only `t2.micro` and `t3.micro` are free tier eligible
-   - Running a `t3.large` will cost money even within the 12-month window!
+- 750 hours/month = ~31 days of ONE instance
+- If you run 2 instances for 15 days = 720 hours (you're fine!)
+- But running 2 instances for a full month = 1,440 hours (**OVER THE LIMIT!**)
+- **Always stop/terminate instances when not in use!**
 
-3. **Storing too much in S3**
-   - 5 GB is free — sounds small, and it IS small
-   - Video files, large datasets, and backups add up fast
+</details>
 
-4. **Forgetting about data transfer**
-   - AWS charges for data going OUT to the internet
-   - 100 GB/month outbound is free — but uploading is always free
+<details>
+<summary><strong>2. Using the wrong instance type</strong></summary>
 
-5. **Not stopping RDS instances**
-   - RDS charges by uptime — stop them when not in use
-   - A `db.t2.micro` running 24/7 for a month = ~720 hours (within 750 limit)
-   - But forget about it for 2 months = surprise bill!
+- Only `t2.micro` and `t3.micro` are free tier eligible
+- Running a `t3.large` will cost money even within the 12-month window!
 
-> 🧠 **Rithu's Golden Rule:** *"If you're done using something, STOP it or TERMINATE it. You can always start it again later. AWS charges by the second for most services — so unused resources = wasted money."*
+</details>
+
+<details>
+<summary><strong>3. Storing too much in S3</strong></summary>
+
+- 5 GB is free — sounds small, and it IS small
+- Video files, large datasets, and backups add up fast
+
+</details>
+
+<details>
+<summary><strong>4. Forgetting about data transfer</strong></summary>
+
+- AWS charges for data going OUT to the internet
+- 100 GB/month outbound is free — but uploading is always free
+
+</details>
+
+<details>
+<summary><strong>5. Not stopping RDS instances</strong></summary>
+
+- RDS charges by uptime — stop them when not in use
+- A `db.t2.micro` running 24/7 for a month = ~720 hours (within 750 limit)
+- But forget about it for 2 months = surprise bill!
+
+</details>
+
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Golden%20Rule-FFC300?style=flat-square" />
+>
+> *"If you're done using something, STOP it or TERMINATE it. You can always start it again later. AWS charges by the second for most services — so unused resources = wasted money."*
 
 📸 [Screenshot: AWS Cost Explorer dashboard showing a sample monthly breakdown]
 
@@ -1063,13 +1452,17 @@ When creating an EC2 instance in our labs:
    - How much of your allocation is remaining
    - Alerts for services approaching their limits
 
-> 💡 **Pro Tip:** Bookmark this page. Check it weekly until you're comfortable with your spending patterns.
+> <img src="https://img.shields.io/badge/Info-Good%20to%20Know-3498DB?style=flat-square" />
+>
+> **Pro Tip:** Bookmark this page. Check it weekly until you're comfortable with your spending patterns.
 
 📸 [Screenshot: AWS Free Tier page showing usage tracking dashboard]
 
 ---
 
-## 11. ✅ Ready to Go!
+## 11. Ready to Go!
+
+<img src="https://img.shields.io/badge/Section%2011-Ready!-2ECC71?style=for-the-badge" />
 
 **Ravi:** *"Okay Rithu, I've done EVERYTHING. Let me recap:"*
 
@@ -1120,3 +1513,21 @@ Now that you're all set up, head over to **[Lab 01](./Lab-01/)** to start your f
 > - [AWS CLI documentation](https://docs.aws.amazon.com/cli/latest/userguide/getting-started.html)
 > - [IAM best practices](https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html)
 > - [AWS Budgets documentation](https://docs.aws.amazon.com/cost-management/latest/userguide/budgets.html)
+
+---
+
+<div align="center">
+
+<img src="https://img.shields.io/badge/Setup%20Complete!-You're%20Ready%20to%20Build-2ECC71?style=for-the-badge&labelColor=232F3E" />
+
+**Congratulations! You've completed all the prerequisites.**
+
+*Your AWS environment is secure, your tools are installed, and you're ready to start building on AWS.*
+
+**Next Step →** [Lab 01: Your First AWS Hands-On Exercise](./Lab-01/)
+
+---
+
+<sub>Made with care for the AWS Hands-On Labs</sub>
+
+</div>

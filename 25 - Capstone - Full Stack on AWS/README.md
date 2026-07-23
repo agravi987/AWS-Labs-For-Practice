@@ -1,11 +1,19 @@
+<div align="center">
+
+<img src="https://img.shields.io/badge/Lab%2025-Capstone%20Full%20Stack-E74C3C?style=for-the-badge&labelColor=232F3E" />
+
+<br/>
+
 # Lab 25 — Capstone: Full Stack on AWS
 
-![Difficulty](https://img.shields.io/badge/Difficulty-Hard-red)
-![Time](https://img.shields.io/badge/Time-~90min-purple)
-![Cost](https://img.shields.io/badge/Cost-%3C%245-orange)
-![Service](https://img.shields.io/badge/Service-Multiple%20Services-blueviolet)
+![Difficulty](https://img.shields.io/badge/Difficulty-Hard-red?style=for-the-badge&labelColor=232F3E)
+![Time](https://img.shields.io/badge/Time-~90min-purple?style=for-the-badge&labelColor=232F3E)
+![Cost](https://img.shields.io/badge/Cost-%3C%245-orange?style=for-the-badge&labelColor=232F3E)
+![Service](https://img.shields.io/badge/Service-Multiple%20Services-blueviolet?style=for-the-badge&labelColor=232F3E)
 
 > "This is it, Ravi. Everything you've learned, everything you've built — it all comes together now. Let's build something real." — Rithu
+
+</div>
 
 ---
 
@@ -51,7 +59,7 @@ This lab uses **multiple AWS services**. Estimated costs:
 | Data transfer (minimal) | ~$0.01 |
 | **Total estimated** | **~$3-5** |
 
-> ⚠️ **CRITICAL WARNING**: This lab creates MANY resources across multiple services. **You MUST follow the cleanup instructions at the end** or you WILL incur ongoing charges. The NAT Gateway is particularly expensive (~$0.045/hr = ~$32/month if left running). **CLEAN UP EVERYTHING!**
+> <img src="https://img.shields.io/badge/Warning-STOP!-E74C3C?style=flat-square" /> **CRITICAL WARNING**: This lab creates MANY resources across multiple services. **You MUST follow the cleanup instructions at the end** or you WILL incur ongoing charges. The NAT Gateway is particularly expensive (~$0.045/hr = ~$32/month if left running). **CLEAN UP EVERYTHING!**
 
 ---
 
@@ -104,6 +112,8 @@ This lab uses **multiple AWS services**. Estimated costs:
 
 ### Step 1: Create VPC
 
+<img src="https://img.shields.io/badge/Step%201-Create%20VPC-27AE60?style=for-the-badge" />
+
 Let's build the network foundation for our full-stack app!
 
 1. Go to **VPC** in the AWS Console
@@ -138,13 +148,15 @@ You should see a visual showing:
 16. Go to **Internet Gateways** → You should see one attached to the VPC
 17. Go to **NAT Gateways** → You should see one in a public subnet
 
-> 💡 **Rithu's Tip**: "The VPC is your virtual data center. Everything we build from here lives inside this VPC. The public subnets can talk to the internet; the private subnets are isolated. This is how real production architectures work!"
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> "The VPC is your virtual data center. Everything we build from here lives inside this VPC. The public subnets can talk to the internet; the private subnets are isolated. This is how real production architectures work!"
 
 📸 [Screenshot: VPC console showing the visual topology with all subnets, IGW, and NAT Gateway]
 
 ---
 
 ### Step 2: Create S3 Bucket for Static Assets
+
+<img src="https://img.shields.io/badge/Step%202-Create%20S3%20Bucket-27AE60?style=for-the-badge" />
 
 Our application needs a place to store static files (CSS, images, logos).
 
@@ -175,13 +187,15 @@ Our application needs a place to store static files (CSS, images, logos).
 12. Upload the file
 13. Click **Upload** → **Close**
 
-> 💡 **Rithu's Tip**: "In a real application, you'd store images, CSS, JavaScript, and fonts in S3. You can even configure S3 for static website hosting — serving HTML/CSS/JS directly from S3 without any server!"
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> "In a real application, you'd store images, CSS, JavaScript, and fonts in S3. You can even configure S3 for static website hosting — serving HTML/CSS/JS directly from S3 without any server!"
 
 📸 [Screenshot: S3 bucket with the style.css file uploaded and encryption enabled]
 
 ---
 
 ### Step 3: Create RDS MySQL
+
+<img src="https://img.shields.io/badge/Step%203-Create%20RDS%20MySQL-27AE60?style=for-the-badge" />
 
 Let's create the database for our application!
 
@@ -266,13 +280,15 @@ Let's create the database for our application!
     EXIT;
     ```
 
-> 💡 **Rithu's Tip**: "The RDS instance is in a private subnet — it has NO public IP. Only EC2 instances in the VPC can connect to it. This is a critical security pattern: databases should never be directly accessible from the internet!"
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> "The RDS instance is in a private subnet — it has NO public IP. Only EC2 instances in the VPC can connect to it. This is a critical security pattern: databases should never be directly accessible from the internet!"
 
 📸 [Screenshot: RDS instance available, security group configured, table created with data]
 
 ---
 
 ### Step 4: Create Security Groups
+
+<img src="https://img.shields.io/badge/Step%204-Create%20Security%20Groups-27AE60?style=for-the-badge" />
 
 Security Groups act as firewalls. Let's create them properly!
 
@@ -320,13 +336,15 @@ Security Groups act as firewalls. Let's create them properly!
 23. Click **Continue** → **Apply immediately** (for this lab)
 24. Click **Modify DB instance**
 
-> 💡 **Rithu's Tip**: "Notice the security group chain: Internet → ALB (port 80) → EC2 (port 80) → RDS (port 3306). Each layer only allows traffic from the layer above it. This is called 'defense in depth' — even if one layer is compromised, the next layer is still protected!"
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> "Notice the security group chain: Internet → ALB (port 80) → EC2 (port 80) → RDS (port 3306). Each layer only allows traffic from the layer above it. This is called 'defense in depth' — even if one layer is compromised, the next layer is still protected!"
 
 📸 [Screenshot: Three security groups showing their inbound rules chained together]
 
 ---
 
 ### Step 5: Create Launch Template
+
+<img src="https://img.shields.io/badge/Step%205-Create%20Launch%20Template-27AE60?style=for-the-badge" />
 
 A Launch Template defines what EC2 instances look like when Auto Scaling creates them.
 
@@ -373,13 +391,15 @@ systemctl enable httpd
 
 12. Click **Create launch template**
 
-> 💡 **Rithu's Tip**: "The User Data script runs every time an instance launches. It installs Apache (httpd) and PHP, then creates a simple HTML page. In production, you'd use a proper deployment pipeline, but this works great for a demo!"
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> "The User Data script runs every time an instance launches. It installs Apache (httpd) and PHP, then creates a simple HTML page. In production, you'd use a proper deployment pipeline, but this works great for a demo!"
 
 📸 [Screenshot: Launch template creation page with User Data script visible]
 
 ---
 
 ### Step 6: Create Auto Scaling Group
+
+<img src="https://img.shields.io/badge/Step%206-Create%20Auto%20Scaling%20Group-27AE60?style=for-the-badge" />
 
 Auto Scaling ensures we always have enough EC2 instances running!
 
@@ -428,13 +448,15 @@ Auto Scaling ensures we always have enough EC2 instances running!
 
 The ASG will launch 2 EC2 instances across the two public subnets. Wait 2-3 minutes for them to be in service.
 
-> 💡 **Rithu's Tip**: "Auto Scaling with target tracking is like cruise control for your servers. If CPU goes above 50%, it adds instances. If it drops below, it removes them. Your app always has exactly the right amount of capacity!"
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> "Auto Scaling with target tracking is like cruise control for your servers. If CPU goes above 50%, it adds instances. If it drops below, it removes them. Your app always has exactly the right amount of capacity!"
 
 📸 [Screenshot: Auto Scaling Group showing 2 instances InService across both AZs]
 
 ---
 
 ### Step 7: Create Application Load Balancer
+
+<img src="https://img.shields.io/badge/Step%207-Create%20ALB-27AE60?style=for-the-badge" />
 
 The ALB distributes traffic across our EC2 instances!
 
@@ -484,13 +506,15 @@ The ALB distributes traffic across our EC2 instances!
 22. Refresh the page 5-10 times
 23. You might see different responses if the instances are different (or same if the User Data is identical — that's expected)
 
-> 💡 **Rithu's Tip**: "The ALB is the front door to your application. It distributes traffic, performs health checks, and can even handle SSL/TLS termination. If one EC2 instance fails, the ALB automatically routes traffic to healthy instances."
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> "The ALB is the front door to your application. It distributes traffic, performs health checks, and can even handle SSL/TLS termination. If one EC2 instance fails, the ALB automatically routes traffic to healthy instances."
 
 📸 [Screenshot: ALB active with DNS name, browser showing the capstone web page]
 
 ---
 
 ### Step 8: Set Up CloudWatch
+
+<img src="https://img.shields.io/badge/Step%208-Set%20Up%20CloudWatch-27AE60?style=for-the-badge" />
 
 Let's monitor our application!
 
@@ -541,13 +565,15 @@ Let's monitor our application!
 29. Click **Create topic**
 30. Click **Next** → **Next** → **Create alarm**
 
-> 💡 **Rithu's Tip**: "Dashboards give you a bird's-eye view of your application's health. Alarms alert you when something goes wrong. Together, they're your early warning system. In production, you'd have alarms for CPU, memory, disk, error rates, and latency!"
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> "Dashboards give you a bird's-eye view of your application's health. Alarms alert you when something goes wrong. Together, they're your early warning system. In production, you'd have alarms for CPU, memory, disk, error rates, and latency!"
 
 📸 [Screenshot: CloudWatch dashboard showing EC2 CPU, ALB requests, RDS connections, and UnhealthyHostCount]
 
 ---
 
 ### Step 9: Enable CloudTrail
+
+<img src="https://img.shields.io/badge/Step%209-Enable%20CloudTrail-27AE60?style=for-the-badge" />
 
 Let's add audit logging for all API activity!
 
@@ -564,13 +590,15 @@ Let's add audit logging for all API activity!
 6. Check ✅ **Enable for all regions**
 7. Click **Create trail**
 
-> 💡 **Rithu's Tip**: "CloudTrail is your black box recorder. If something goes wrong — unauthorized access, accidental deletion, strange behavior — CloudTrail tells you exactly what happened, who did it, and when. Never fly without it!"
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> "CloudTrail is your black box recorder. If something goes wrong — unauthorized access, accidental deletion, strange behavior — CloudTrail tells you exactly what happened, who did it, and when. Never fly without it!"
 
 📸 [Screenshot: CloudTrail trail created and showing Logging status]
 
 ---
 
 ### Step 10: Configure Route 53 (Optional)
+
+<img src="https://img.shields.io/badge/Step%2010-Route%2053%20(Optional)-3498DB?style=for-the-badge" />
 
 If you have a domain name, you can point it to your ALB!
 
@@ -589,13 +617,15 @@ If you have a domain name, you can point it to your ALB!
 
 Just use the ALB DNS name directly. The architecture still works perfectly!
 
-> 💡 **Rithu's Tip**: "Route 53 is AWS's DNS service. It translates domain names (like example.com) to IP addresses or AWS resources. For this lab, the ALB DNS name works great. In production, you'd use a friendly domain name!"
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> "Route 53 is AWS's DNS service. It translates domain names (like example.com) to IP addresses or AWS resources. For this lab, the ALB DNS name works great. In production, you'd use a friendly domain name!"
 
 📸 [Screenshot: Route 53 record created pointing to ALB (or note: using ALB DNS directly)]
 
 ---
 
 ### Step 11: Full Verification
+
+<img src="https://img.shields.io/badge/Step%2011-Full%20Verification-27AE60?style=for-the-badge" />
 
 Time to verify everything is working! Let's check each component.
 
@@ -649,6 +679,8 @@ Time to verify everything is working! Let's check each component.
 
 ### Step 12: Document Your Architecture
 
+<img src="https://img.shields.io/badge/Step%2012-Document%20Architecture-27AE60?style=for-the-badge" />
+
 Great engineers document their work! Create a simple architecture summary.
 
 **Resources created:**
@@ -699,14 +731,44 @@ Estimated Cost: ~$3-5 for this lab session
 
 Before cleaning up, confirm ALL of these:
 
-- [ ] ALB DNS name loads the capstone web page in browser
-- [ ] 2 EC2 instances are running (Auto Scaling Group)
-- [ ] RDS instance is Available
-- [ ] S3 bucket has the style.css file
-- [ ] CloudWatch dashboard shows metrics
-- [ ] CloudTrail is logging events
-- [ ] VPC has 4 subnets, IGW, and NAT Gateway
-- [ ] Security groups are chained: ALB → EC2 → RDS
+<table>
+<tr>
+<th>Status</th>
+<th>Check</th>
+</tr>
+<tr>
+<td>- [ ]</td>
+<td>ALB DNS name loads the capstone web page in browser</td>
+</tr>
+<tr>
+<td>- [ ]</td>
+<td>2 EC2 instances are running (Auto Scaling Group)</td>
+</tr>
+<tr>
+<td>- [ ]</td>
+<td>RDS instance is Available</td>
+</tr>
+<tr>
+<td>- [ ]</td>
+<td>S3 bucket has the style.css file</td>
+</tr>
+<tr>
+<td>- [ ]</td>
+<td>CloudWatch dashboard shows metrics</td>
+</tr>
+<tr>
+<td>- [ ]</td>
+<td>CloudTrail is logging events</td>
+</tr>
+<tr>
+<td>- [ ]</td>
+<td>VPC has 4 subnets, IGW, and NAT Gateway</td>
+</tr>
+<tr>
+<td>- [ ]</td>
+<td>Security groups are chained: ALB → EC2 → RDS</td>
+</tr>
+</table>
 
 ---
 
@@ -714,7 +776,7 @@ Before cleaning up, confirm ALL of these:
 
 Follow this EXACT order to avoid dependency issues and ensure everything is deleted!
 
-**⚠️ Do NOT skip any step. Missing cleanup = ongoing charges!**
+> <img src="https://img.shields.io/badge/Warning-Cleanup-E74C3C?style=flat-square" /> **Do NOT skip any step. Missing cleanup = ongoing charges!**
 
 **Step 1: Route 53 (if you created records)**
 
@@ -781,37 +843,69 @@ Follow this EXACT order to avoid dependency issues and ensure everything is dele
 34. Go to **VPC** → **NAT Gateways**
 35. Select the NAT Gateway → **Delete**
 36. Confirm deletion
-37. ⚠️ **NAT Gateway costs ~$0.045/hr = ~$32/month! Do NOT skip this!**
+
+> <img src="https://img.shields.io/badge/Warning-NAT%20Gateway-E74C3C?style=flat-square" /> NAT Gateway costs ~$0.045/hr = ~$32/month! Do NOT skip this!
 
 **Step 11: VPC Resources**
 
-38. Go to **VPC** → **Subnets** → Delete private subnets first, then public subnets
-39. Go to **VPC** → **Route tables** → Delete custom route tables (keep the main one)
-40. Go to **VPC** → **Internet Gateways** → Detach from VPC → Delete
-41. Go to **VPC** → **Your VPCs** → Select `ravi-capstone-vpc` → **Delete**
+37. Go to **VPC** → **Subnets** → Delete private subnets first, then public subnets
+38. Go to **VPC** → **Route tables** → Delete custom route tables (keep the main one)
+39. Go to **VPC** → **Internet Gateways** → Detach from VPC → Delete
+40. Go to **VPC** → **Your VPCs** → Select `ravi-capstone-vpc` → **Delete**
 
 **Step 12: Security Groups**
 
-42. Go to **EC2** → **Security Groups**
-43. Delete `ravi-alb-sg`, `ravi-ec2-sg`, `ravi-rds-sg` (one by one — can't delete the default)
+41. Go to **EC2** → **Security Groups**
+42. Delete `ravi-alb-sg`, `ravi-ec2-sg`, `ravi-rds-sg` (one by one — can't delete the default)
 
 **Step 13: RDS Subnet Group**
 
-44. Go to **RDS** → **Subnet groups** → Delete `ravi-capstone-subnet-group`
+43. Go to **RDS** → **Subnet groups** → Delete `ravi-capstone-subnet-group`
 
 **Step 14: Final Verification**
 
-45. Go through each service one more time:
-    - EC2: No instances
-    - RDS: No databases
-    - S3: No buckets
-    - VPC: No VPCs (except default)
-    - CloudTrail: No trails
-    - CloudWatch: No dashboards
-    - ALB: No load balancers
-    - NAT Gateway: None active
+44. Go through each service one more time:
 
-> 💡 **Rithu's Tip**: "The cleanup order matters! You can't delete a VPC if resources are still in it. You can't delete subnets if route tables reference them. Follow the order and everything will clean up smoothly!"
+<table>
+<tr>
+<th>Service</th>
+<th>Expected State</th>
+</tr>
+<tr>
+<td>EC2</td>
+<td>No instances</td>
+</tr>
+<tr>
+<td>RDS</td>
+<td>No databases</td>
+</tr>
+<tr>
+<td>S3</td>
+<td>No buckets</td>
+</tr>
+<tr>
+<td>VPC</td>
+<td>No VPCs (except default)</td>
+</tr>
+<tr>
+<td>CloudTrail</td>
+<td>No trails</td>
+</tr>
+<tr>
+<td>CloudWatch</td>
+<td>No dashboards</td>
+</tr>
+<tr>
+<td>ALB</td>
+<td>No load balancers</td>
+</tr>
+<tr>
+<td>NAT Gateway</td>
+<td>None active</td>
+</tr>
+</table>
+
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> "The cleanup order matters! You can't delete a VPC if resources are still in it. You can't delete subnets if route tables reference them. Follow the order and everything will clean up smoothly!"
 
 📸 [Screenshot: All AWS services showing no resources remaining]
 
@@ -843,9 +937,15 @@ In this capstone lab, you brought together EVERY skill from Labs 01-24:
 
 ---
 
+<div align="center">
+
 ## 🔗 What's Next?
 
-> 🎉 **CONGRATULATIONS, RAVI!** 🎉
+![Complete](https://img.shields.io/badge/CAPSTONE%20COMPLETE!-E74C3C?style=for-the-badge&labelColor=232F3E)
+![Badge](https://img.shields.io/badge/AWS%20Builder-You%20Did%20It!-F1C40F?style=for-the-badge&labelColor=232F3E)
+![Celebration](https://img.shields.io/badge/Labs%2001--24-COMPLETE-27AE60?style=for-the-badge&labelColor=232F3E)
+
+> **CONGRATULATIONS, RAVI!**
 >
 > You did it! You've gone from launching your first EC2 instance to building a complete full-stack application on AWS. You should be incredibly proud of yourself.
 >
@@ -860,43 +960,106 @@ In this capstone lab, you brought together EVERY skill from Labs 01-24:
 >
 > — Rithu
 
+![Done](https://img.shields.io/badge/Mission-Accomplished-2ECC71?style=for-the-badge&labelColor=232F3E)
+
+</div>
+
 ---
 
-## ❓ Troubleshooting
+<details>
+<summary><img src="https://img.shields.io/badge/FAQ-Troubleshooting-3498DB?style=flat-square" /> <b>Problem: VPC creation fails or times out</b></summary>
+<br/>
 
-**Problem**: VPC creation fails or times out
 - **Fix**: Try creating with fewer subnets first, then add more. Make sure you have enough IP addresses in your CIDR block. Try a different region if us-east-1 is having issues.
 
-**Problem**: RDS instance won't create
+</details>
+
+<details>
+<summary><img src="https://img.shields.io/badge/FAQ-Troubleshooting-3498DB?style=flat-square" /> <b>Problem: RDS instance won't create</b></summary>
+<br/>
+
 - **Fix**: Check that you're using the Free Tier template. Ensure the subnet group selects private subnets. If you hit a quota limit, go to Service Quotas and request an increase for RDS instances.
 
-**Problem**: EC2 instances show as "Unhealthy" in ALB
+</details>
+
+<details>
+<summary><img src="https://img.shields.io/badge/FAQ-Troubleshooting-3498DB?style=flat-square" /> <b>Problem: EC2 instances show as "Unhealthy" in ALB</b></summary>
+<br/>
+
 - **Fix**: Wait 2-3 minutes after launch for the UserData script to complete. Check that the security group allows traffic from the ALB security group. Verify the health check path `/` returns HTTP 200.
 
-**Problem**: Can't SSH into EC2 instances
+</details>
+
+<details>
+<summary><img src="https://img.shields.io/badge/FAQ-Troubleshooting-3498DB?style=flat-square" /> <b>Problem: Can't SSH into EC2 instances</b></summary>
+<br/>
+
 - **Fix**: Ensure your security group allows SSH (port 22) from "My IP". Make sure you're using the correct key pair. Check that the instance has a public IP (it should, since it's in a public subnet).
 
-**Problem**: ALB returns 502 Bad Gateway
+</details>
+
+<details>
+<summary><img src="https://img.shields.io/badge/FAQ-Troubleshooting-3498DB?style=flat-square" /> <b>Problem: ALB returns 502 Bad Gateway</b></summary>
+<br/>
+
 - **Fix**: The target group health checks are failing. Check that EC2 instances are running and Apache is started. Verify security groups allow traffic from ALB → EC2 on port 80.
 
-**Problem**: RDS connection refused from EC2
+</details>
+
+<details>
+<summary><img src="https://img.shields.io/badge/FAQ-Troubleshooting-3498DB?style=flat-square" /> <b>Problem: RDS connection refused from EC2</b></summary>
+<br/>
+
 - **Fix**: Verify the RDS security group allows MySQL (3306) from the EC2 security group. Make sure you're using the correct endpoint. Check that the RDS instance is in the same VPC as the EC2 instances.
 
-**Problem**: Auto Scaling won't launch new instances
+</details>
+
+<details>
+<summary><img src="https://img.shields.io/badge/FAQ-Troubleshooting-3498DB?style=flat-square" /> <b>Problem: Auto Scaling won't launch new instances</b></summary>
+<br/>
+
 - **Fix**: Check that the launch template is valid. Ensure you haven't hit EC2 instance limits (check Service Quotas). Verify the subnets have available IP addresses.
 
-**Problem**: CloudWatch dashboard shows no data
+</details>
+
+<details>
+<summary><img src="https://img.shields.io/badge/FAQ-Troubleshooting-3498DB?style=flat-square" /> <b>Problem: CloudWatch dashboard shows no data</b></summary>
+<br/>
+
 - **Fix**: Wait 5-10 minutes for metrics to appear. CloudWatch metrics can take up to 15 minutes to populate. Ensure the correct region is selected in the CloudWatch console.
 
-**Problem**: Can't delete VPC
+</details>
+
+<details>
+<summary><img src="https://img.shields.io/badge/FAQ-Troubleshooting-3498DB?style=flat-square" /> <b>Problem: Can't delete VPC</b></summary>
+<br/>
+
 - **Fix**: This is usually because resources still exist in the VPC. Delete NAT Gateway, subnets, route tables, and security groups first. Then try deleting the VPC again.
 
-**Problem**: NAT Gateway won't delete
+</details>
+
+<details>
+<summary><img src="https://img.shields.io/badge/FAQ-Troubleshooting-3498DB?style=flat-square" /> <b>Problem: NAT Gateway won't delete</b></summary>
+<br/>
+
 - **Fix**: Make sure all resources using it (EC2 instances, etc.) are terminated first. The NAT Gateway must be detached from the subnet before deletion.
 
-**Problem**: S3 bucket won't delete
+</details>
+
+<details>
+<summary><img src="https://img.shields.io/badge/FAQ-Troubleshooting-3498DB?style=flat-square" /> <b>Problem: S3 bucket won't delete</b></summary>
+<br/>
+
 - **Fix**: You must EMPTY the bucket first (delete all objects), then delete the bucket itself. S3 buckets cannot be deleted if they contain any objects.
+
+</details>
 
 ---
 
-> 🎉 **Rithu says**: "I'm incredibly proud of you, Ravi. You started this journey knowing nothing about AWS, and now you've built a production-grade application architecture. You are officially a cloud engineer. Keep building, keep learning, and remember — every expert was once a beginner. You've got this!"
+<div align="center">
+
+> **Rithu says**: "I'm incredibly proud of you, Ravi. You started this journey knowing nothing about AWS, and now you've built a production-grade application architecture. You are officially a cloud engineer. Keep building, keep learning, and remember — every expert was once a beginner. You've got this!"
+
+![End](https://img.shields.io/badge/End%20of%20Lab-25-27AE60?style=for-the-badge&labelColor=232F3E)
+
+</div>

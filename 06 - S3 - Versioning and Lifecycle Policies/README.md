@@ -1,9 +1,19 @@
+<div align="center">
+
+<img src="https://img.shields.io/badge/Lab%2006-S3%20Versioning%20%26%20Lifecycle-3498DB?style=for-the-badge&labelColor=232F3E" />
+
+</div>
+
+<div align="center">
+
 # Lab 06 — S3: Versioning and Lifecycle Policies
 
-![Difficulty](https://img.shields.io/badge/Difficulty-Easy-brightgreen)
-![Time](https://img.shields.io/badge/Time-~20min-blue)
-![Cost](https://img.shields.io/badge/Cost-<1%20USD-green)
-![Service](https://img.shields.io/badge/Service-S3-orange)
+<img src="https://img.shields.io/badge/Difficulty-Easy-brightgreen?style=flat-square" />
+<img src="https://img.shields.io/badge/Time-~20min-blue?style=flat-square" />
+<img src="https://img.shields.io/badge/Cost-%3C1%20USD-green?style=flat-square" />
+<img src="https://img.shields.io/badge/Service-S3-orange?style=flat-square" />
+
+</div>
 
 > "Versioning is like having a time machine for your files. Accidentally deleted something? No worries — it's still there!" — Rithu 🚀
 
@@ -54,7 +64,7 @@ In this lab, you'll learn how S3 Versioning protects your data from accidental d
 
 ## 🛠️ Step-by-Step Instructions
 
-### Step 1: Create an S3 Bucket
+> <img src="https://img.shields.io/badge/Step%201-Create%20an%20S3%20Bucket-2ECC71?style=for-the-badge" />
 
 1. Log in to the [AWS Management Console](https://console.aws.amazon.com/)
 2. In the search bar at the top, type **S3** and click on **S3** under Services
@@ -65,11 +75,12 @@ In this lab, you'll learn how S3 Versioning protects your data from accidental d
 6. Scroll down and leave all other settings as default
 7. Click the orange **Create bucket** button at the bottom
 
-> 💡 **Rithu's Tip:** Bucket names must be globally unique across ALL of AWS. The `12345` suffix helps, but if it's taken, try a different number!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> Bucket names must be globally unique across ALL of AWS. The `12345` suffix helps, but if it's taken, try a different number!
 
 ---
 
-### Step 2: Enable Versioning on the Bucket
+> <img src="https://img.shields.io/badge/Step%202-Enable%20Versioning%20on%20the%20Bucket-3498DB?style=for-the-badge" />
 
 1. Click on your newly created bucket name: `ravi-versioning-lab-12345`
 2. Click on the **Properties** tab (next to Objects, at the top)
@@ -81,11 +92,12 @@ In this lab, you'll learn how S3 Versioning protects your data from accidental d
 
 > 📸 [Screenshot: Bucket Versioning showing "Enabled"]
 
-> 💡 **Rithu's Tip:** Once you enable versioning, you can NEVER go back to " suspended" — you can only suspend it, which stops new versions but doesn't delete old ones. Think of it like a one-way valve!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> Once you enable versioning, you can NEVER go back to " suspended" — you can only suspend it, which stops new versions but doesn't delete old ones. Think of it like a one-way valve!
 
 ---
 
-### Step 3: Upload Your First File (Version 1)
+> <img src="https://img.shields.io/badge/Step%203-Upload%20Version%201-E67E22?style=for-the-badge" />
 
 1. Click on the **Objects** tab
 2. Click the orange **Upload** button
@@ -105,7 +117,7 @@ In this lab, you'll learn how S3 Versioning protects your data from accidental d
 
 ---
 
-### Step 4: Upload the Same File Again (Version 2)
+> <img src="https://img.shields.io/badge/Step%204-Upload%20Version%202-9B59B6?style=for-the-badge" />
 
 1. Click on your bucket name to go back to the Objects tab
 2. Click the orange **Upload** button
@@ -120,11 +132,12 @@ In this lab, you'll learn how S3 Versioning protects your data from accidental d
 6. Click the orange **Upload** button
 7. You should see "Upload succeeded" again
 
-> 💡 **Rithu's Tip:** Notice that S3 didn't complain about "overwriting" the file? That's because versioning is enabled — it creates a NEW version instead of replacing the old one!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> Notice that S3 didn't complain about "overwriting" the file? That's because versioning is enabled — it creates a NEW version instead of replacing the old one!
 
 ---
 
-### Step 5: Upload the Same File Again (Version 3)
+> <img src="https://img.shields.io/badge/Step%205-Upload%20Version%203-E74C3C?style=for-the-badge" />
 
 1. Go back to the Objects tab
 2. Click **Upload**
@@ -138,7 +151,7 @@ In this lab, you'll learn how S3 Versioning protects your data from accidental d
 
 ---
 
-### Step 6: View All Versions of Your File
+> <img src="https://img.shields.io/badge/Step%206-View%20All%20Versions-1ABC9C?style=for-the-badge" />
 
 1. On the Objects tab, you should see `index.html` listed — but it looks like there's only ONE file, right? 😏
 2. Look above the file list — you'll see a toggle or link that says **List versions** or **Show versions**
@@ -148,11 +161,12 @@ In this lab, you'll learn how S3 Versioning protects your data from accidental d
 
 > 📸 [Screenshot: All 3 versions of index.html displayed with Version IDs]
 
-> 💡 **Rithu's Tip:** This is the magic of versioning! S3 kept every single version. If you ever accidentally upload the wrong file, you can roll back to any previous version. It's like Git, but for your files!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> This is the magic of versioning! S3 kept every single version. If you ever accidentally upload the wrong file, you can roll back to any previous version. It's like Git, but for your files!
 
 ---
 
-### Step 7: Delete the File (Soft Delete!)
+> <img src="https://img.shields.io/badge/Step%207-Delete%20the%20File%20(Soft%20Delete!)-F39C12?style=for-the-badge" />
 
 1. Make sure **List versions** is still turned ON
 2. Select `index.html` (the current version — the one with the checkmark)
@@ -169,11 +183,12 @@ In this lab, you'll learn how S3 Versioning protects your data from accidental d
 
 > 📸 [Screenshot: Delete marker shown with all 3 versions still present]
 
-> 💡 **Rithu's Tip:** When you "delete" a versioned object, S3 doesn't actually delete anything. It just adds a **Delete Marker** — think of it like putting a sticky note that says "pretend this file doesn't exist." The actual data is still safe underneath!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> When you "delete" a versioned object, S3 doesn't actually delete anything. It just adds a **Delete Marker** — think of it like putting a sticky note that says "pretend this file doesn't exist." The actual data is still safe underneath!
 
 ---
 
-### Step 8: Restore a Previous Version
+> <img src="https://img.shields.io/badge/Step%208-Restore%20a%20Previous%20Version-34495E?style=for-the-badge" />
 
 Now let's pretend we panicked and want our file back!
 
@@ -188,11 +203,12 @@ Now let's pretend we panicked and want our file back!
 
 > 📸 [Screenshot: Downloading/restoring a previous version]
 
-> 💡 **Rithu's Tip:** Versioning saved the day! Ravi, imagine you're a developer and you accidentally deployed broken code to production. With versioning, you just restore the last known good version. No stress!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> Versioning saved the day! Ravi, imagine you're a developer and you accidentally deployed broken code to production. With versioning, you just restore the last known good version. No stress!
 
 ---
 
-### Step 9: Remove the Delete Marker
+> <img src="https://img.shields.io/badge/Step%209-Remove%20the%20Delete%20Marker-16A085?style=for-the-badge" />
 
 Let's clean up the delete marker so our file is "visible" again:
 
@@ -207,7 +223,7 @@ Now the most recent version of `index.html` should be "current" again (visible w
 
 ---
 
-### Step 10: Set Up a Lifecycle Policy
+> <img src="https://img.shields.io/badge/Step%2010-Set%20Up%20a%20Lifecycle%20Policy-8E44AD?style=for-the-badge" />
 
 Now for the really cool part — let S3 manage your storage automatically!
 
@@ -246,7 +262,8 @@ Now for the really cool part — let S3 manage your storage automatically!
 
 > 📸 [Screenshot: Lifecycle rule configuration showing all three transitions]
 
-> 💡 **Rithu's Tip:** Why does this save money? Because different storage classes have different costs:
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> Why does this save money? Because different storage classes have different costs:
 > - **S3 Standard** — $0.023/GB/month (most accessible, most expensive)
 > - **S3 Standard-IA** — $0.0125/GB/month (half the price, but you pay to retrieve)
 > - **S3 Glacier** — $0.004/GB/month (cheap, but retrieval takes hours)
@@ -255,7 +272,7 @@ Now for the really cool part — let S3 manage your storage automatically!
 
 ---
 
-### Step 11: Verify Your Work
+> <img src="https://img.shields.io/badge/Step%2011-Verify%20Your%20Work-2C3E50?style=for-the-badge" />
 
 Let's make sure everything is set up correctly:
 
@@ -297,7 +314,8 @@ Let's make sure everything is set up correctly:
 5. In the confirmation box, type `permanently delete`
 6. Click the orange **Permanently delete** button
 
-> 💡 **Rithu's Tip:** With versioning enabled, you can't just "delete" objects — you have to delete ALL versions. S3 makes you type `permanently delete` to make sure you really mean it. Double-check!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> With versioning enabled, you can't just "delete" objects — you have to delete ALL versions. S3 makes you type `permanently delete` to make sure you really mean it. Double-check!
 
 ### Step 2: Delete the Bucket
 
@@ -337,7 +355,8 @@ Now that you know how to protect your data within a single region, let's learn h
 
 ---
 
-## ❓ Troubleshooting
+<details>
+<summary><strong>❓ Troubleshooting</strong></summary>
 
 | Problem | Solution |
 |---------|----------|
@@ -349,4 +368,15 @@ Now that you know how to protect your data within a single region, let's learn h
 | Can't delete bucket | Make sure the bucket is EMPTY first — including all versions. Turn on "List versions" and delete everything |
 | "Access Denied" when creating lifecycle rule | You need S3 full permissions. Check your IAM user/role has `s3:PutLifecycleConfiguration` |
 
-> 💡 **Rithu's Tip:** Stuck? Take a screenshot and check the AWS console error message carefully. 90% of S3 errors are about permissions or the bucket not being empty. You've got this, Ravi! 💪
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> Stuck? Take a screenshot and check the AWS console error message carefully. 90% of S3 errors are about permissions or the bucket not being empty. You've got this, Ravi! 💪
+
+</details>
+
+---
+
+<div align="center">
+
+<img src="https://img.shields.io/badge/Lab%20Complete!-3498DB?style=for-the-badge&labelColor=232F3E" />
+
+</div>

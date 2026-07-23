@@ -1,9 +1,21 @@
-# Lab 08 — VPC: Build from Scratch
+﻿<div align="center">
 
-![Difficulty](https://img.shields.io/badge/Difficulty-Medium-yellow)
-![Time](https://img.shields.io/badge/Time-~45min-blue)
-![Cost](https://img.shields.io/badge/Cost-<2%20USD-green)
-![Service](https://img.shields.io/badge/Service-VPC%20|%20EC2-blue)
+<img src="https://img.shields.io/badge/Lab%2008-VPC%20Build%20from%20Scratch-3498DB?style=for-the-badge&labelColor=232F3E" />
+
+# VPC: Build from Scratch
+
+<img src="https://img.shields.io/badge/Difficulty-Medium-F39C12?style=flat-square" />
+<img src="https://img.shields.io/badge/Time-~45%20min-3498DB?style=flat-square" />
+<img src="https://img.shields.io/badge/Cost-<%242-2ECC71?style=flat-square" />
+<img src="https://img.shields.io/badge/Service-VPC%20%7C%20EC2-3498DB?style=flat-square" />
+
+</div>
+
+---
+
+> **"A VPC is your private corner of the AWS cloud. Today we're building it from scratch - no defaults, no hand-holding. Well, maybe a little hand-holding."** - Rithu
+
+
 
 > "A VPC is your private corner of the AWS cloud. Today we're building it from scratch — no defaults, no hand-holding. Well, maybe a little hand-holding." — Rithu 🏗️
 
@@ -64,6 +76,8 @@ In this lab, you'll build a **Virtual Private Cloud (VPC)** completely from scra
 
 ## 🛠️ Step-by-Step Instructions
 
+> <img src="https://img.shields.io/badge/Step%201-Create%20VPC-27AE60?style=for-the-badge" />
+
 ### Step 1: Create the VPC
 
 1. Log in to the [AWS Management Console](https://console.aws.amazon.com/)
@@ -82,7 +96,7 @@ In this lab, you'll build a **Virtual Private Cloud (VPC)** completely from scra
 
 > 📸 [Screenshot: VPC configuration with CIDR 10.0.0.0/16]
 
-> 💡 **Rithu's Tip:** What does `10.0.0.0/16` mean? It means you get 65,536 IP addresses (from 10.0.0.0 to 10.0.255.255). That's more than enough for any lab! The `/16` is the subnet mask — it tells AWS how many IPs are in this VPC.
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> What does `10.0.0.0/16` mean? It means you get 65,536 IP addresses (from 10.0.0.0 to 10.0.255.255). That's more than enough for any lab! The `/16` is the subnet mask — it tells AWS how many IPs are in this VPC.
 
 7. Click **Create VPC**
 
@@ -91,6 +105,8 @@ In this lab, you'll build a **Virtual Private Cloud (VPC)** completely from scra
 > 📸 [Screenshot: VPC created successfully with VPC ID visible]
 
 ---
+
+> <img src="https://img.shields.io/badge/Step%202-Create%20Subnet-3498DB?style=for-the-badge" />
 
 ### Step 2: Create a Public Subnet
 
@@ -106,13 +122,15 @@ A subnet is a smaller chunk of IP addresses within your VPC. We'll create a publ
 
 > 📸 [Screenshot: Subnet configuration with AZ us-east-1a and CIDR 10.0.1.0/24]
 
-> 💡 **Rithu's Tip:** A `/24` gives you 256 IP addresses (10.0.1.0 to 10.0.1.255). We put it in `us-east-1a` — one of many data centers (Availability Zones) in the region. Always spread subnets across multiple AZs in production!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> A `/24` gives you 256 IP addresses (10.0.1.0 to 10.0.1.255). We put it in `us-east-1a` — one of many data centers (Availability Zones) in the region. Always spread subnets across multiple AZs in production!
 
 5. Click **Create subnet**
 
 > 📸 [Screenshot: Subnet created successfully]
 
 ---
+
+> <img src="https://img.shields.io/badge/Step%203-Internet%20Gateway-E67E22?style=for-the-badge" />
 
 ### Step 3: Create an Internet Gateway
 
@@ -133,9 +151,11 @@ An Internet Gateway (IGW) is the bridge between your VPC and the internet. Witho
 
 > 📸 [Screenshot: IGW attached to ravi-custom-vpc showing "Attached" state]
 
-> 💡 **Rithu's Tip:** Creating an IGW doesn't automatically connect it to your VPC. You must explicitly attach it. It's like plugging a cable into a router — the cable exists, but it doesn't do anything until you plug it in!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> Creating an IGW doesn't automatically connect it to your VPC. You must explicitly attach it. It's like plugging a cable into a router — the cable exists, but it doesn't do anything until you plug it in!
 
 ---
+
+> <img src="https://img.shields.io/badge/Step%204-Route%20Table-8E44AD?style=for-the-badge" />
 
 ### Step 4: Create a Route Table
 
@@ -161,7 +181,7 @@ A route table tells traffic where to go. Right now, even though we have an IGW, 
 
 > 📸 [Screenshot: Route added: 0.0.0.0/0 → ravi-igw]
 
-> 💡 **Rithu's Tip:** `0.0.0.0/0` means "all traffic." This route says: "If you don't know where to send this packet, send it to the internet gateway." It's like telling the post office: "For any address not in this building, take it to the main post office!"
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> `0.0.0.0/0` means "all traffic." This route says: "If you don't know where to send this packet, send it to the internet gateway." It's like telling the post office: "For any address not in this building, take it to the main post office!"
 
 6. Associate the route table with the public subnet:
    - Click the **Subnet associations** tab
@@ -172,6 +192,8 @@ A route table tells traffic where to go. Right now, even though we have an IGW, 
 > 📸 [Screenshot: Subnet association showing ravi-public-subnet-1a linked]
 
 ---
+
+> <img src="https://img.shields.io/badge/Step%205-Auto-Assign%20Public%20IP-E74C3C?style=for-the-badge" />
 
 ### Step 5: Enable Auto-Assign Public IP on the Subnet
 
@@ -185,9 +207,11 @@ By default, new subnets DON'T assign public IPs to instances. We need to change 
 
 > 📸 [Screenshot: Auto-assign public IP enabled on subnet]
 
-> 💡 **Rithu's Tip:** Without this setting, any EC2 instance launched in this subnet won't get a public IP, and you won't be able to SSH into it. This is a common gotcha!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> Without this setting, any EC2 instance launched in this subnet won't get a public IP, and you won't be able to SSH into it. This is a common gotcha!
 
 ---
+
+> <img src="https://img.shields.io/badge/Step%206-Security%20Group-1ABC9C?style=for-the-badge" />
 
 ### Step 6: Create a Security Group
 
@@ -208,7 +232,7 @@ A security group acts as a virtual firewall. Let's create one that allows SSH ac
    - **Source:** My IP (click the dropdown and select "My IP")
    - 📸 [Screenshot: Inbound rule showing SSH from My IP]
 
-> 💡 **Rithu's Tip:** "My IP" automatically fills in YOUR public IP address. This means ONLY you can SSH into the instance. In production, NEVER leave SSH open to `0.0.0.0/0` (the whole internet) — that's a security nightmare!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> "My IP" automatically fills in YOUR public IP address. This means ONLY you can SSH into the instance. In production, NEVER leave SSH open to `0.0.0.0/0` (the whole internet) — that's a security nightmare!
 
 5. Under **Outbound rules**, the default "Allow all traffic" rule is fine
 6. Click **Create security group**
@@ -216,6 +240,8 @@ A security group acts as a virtual firewall. Let's create one that allows SSH ac
 > 📸 [Screenshot: Security group created successfully]
 
 ---
+
+> <img src="https://img.shields.io/badge/Step%207-Launch%20EC2-F39C12?style=for-the-badge" />
 
 ### Step 7: Launch an EC2 Instance in the New VPC
 
@@ -250,7 +276,7 @@ Time to test our network! Let's launch an EC2 instance inside our custom VPC.
 
 > 📸 [Screenshot: Network settings showing ravi-custom-vpc, ravi-public-subnet-1a, and ravi-vpc-sg]
 
-> 💡 **Rithu's Tip:** Notice how the dropdown only shows subnets and security groups that belong to `ravi-custom-vpc`? AWS keeps things organized for you!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> Notice how the dropdown only shows subnets and security groups that belong to `ravi-custom-vpc`? AWS keeps things organized for you!
 
 **Storage:**
 10. Leave the default 8 GB gp2 (Free tier)
@@ -262,6 +288,8 @@ Time to test our network! Let's launch an EC2 instance inside our custom VPC.
 > 📸 [Screenshot: Instance running with public IP visible]
 
 ---
+
+> <img src="https://img.shields.io/badge/Step%208-Verify%20Everything-2980B9?style=for-the-badge" />
 
 ### Step 8: Verify Your Work
 
@@ -285,7 +313,7 @@ ssh -i "ravi-vpc-key.pem" ec2-user@<YOUR_PUBLIC_IP>
 
 Replace `<YOUR_PUBLIC_IP>` with the actual IP address.
 
-> 💡 **Rithu's Tip:** On Windows, make sure your key file (.pem) has the right permissions. If SSH gives you a "permissions too open" error, run:
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> On Windows, make sure your key file (.pem) has the right permissions. If SSH gives you a "permissions too open" error, run:
 > ```powershell
 > icacls "ravi-vpc-key.pem" /inheritance:r /grant:r "$($env:USERNAME):R"
 > ```
@@ -317,7 +345,7 @@ You should see replies! This confirms the instance has internet access through t
 
 > 📸 [Screenshot: VPC resource map showing the complete architecture]
 
-> 💡 **Rithu's Tip:** Congratulations, Ravi! You just built a VPC from scratch. In the real world, you'd have multiple subnets across multiple AZs, NAT gateways, NACLs, and more. But the fundamentals are exactly what you just did!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> Congratulations, Ravi! You just built a VPC from scratch. In the real world, you'd have multiple subnets across multiple AZs, NAT gateways, NACLs, and more. But the fundamentals are exactly what you just did!
 
 ---
 
@@ -343,6 +371,8 @@ You should see replies! This confirms the instance has internet access through t
 
 > ⚠️ **Delete everything in the right order!** Resources have dependencies — delete them in the correct order to avoid errors.
 
+> <img src="https://img.shields.io/badge/Step%201-Create%20VPC-27AE60?style=for-the-badge" />
+
 ### Step 1: Terminate the EC2 Instance
 
 1. Go to **EC2** → **Instances**
@@ -352,12 +382,16 @@ You should see replies! This confirms the instance has internet access through t
 
 > 📸 [Screenshot: Instance state showing "Terminated"]
 
+> <img src="https://img.shields.io/badge/Step%202-Create%20Subnet-3498DB?style=for-the-badge" />
+
 ### Step 2: Delete the Security Group
 
 1. Go to **VPC** → **Security Groups**
 2. Find `ravi-vpc-sg`
 3. Select it → click **Actions** → **Delete security groups**
 4. Type the security group name to confirm → click **Delete**
+
+> <img src="https://img.shields.io/badge/Step%203-Internet%20Gateway-E67E22?style=for-the-badge" />
 
 ### Step 3: Disassociate the Route Table
 
@@ -368,11 +402,15 @@ You should see replies! This confirms the instance has internet access through t
 5. Uncheck `ravi-public-subnet-1a`
 6. Click **Save**
 
+> <img src="https://img.shields.io/badge/Step%204-Route%20Table-8E44AD?style=for-the-badge" />
+
 ### Step 4: Delete the Route Table
 
 1. Still in **Route Tables**, select `ravi-public-rt`
 2. Click **Actions** → **Delete route table**
 3. Confirm and delete
+
+> <img src="https://img.shields.io/badge/Step%205-Auto-Assign%20Public%20IP-E74C3C?style=for-the-badge" />
 
 ### Step 5: Detach and Delete the Internet Gateway
 
@@ -381,11 +419,15 @@ You should see replies! This confirms the instance has internet access through t
 3. Click **Actions** → **Detach from VPC** → confirm
 4. Click **Actions** → **Delete internet gateway** → confirm
 
+> <img src="https://img.shields.io/badge/Step%206-Security%20Group-1ABC9C?style=for-the-badge" />
+
 ### Step 6: Delete the Subnet
 
 1. Go to **VPC** → **Subnets**
 2. Select `ravi-public-subnet-1a`
 3. Click **Actions** → **Delete subnet** → confirm
+
+> <img src="https://img.shields.io/badge/Step%207-Launch%20EC2-F39C12?style=for-the-badge" />
 
 ### Step 7: Delete the VPC
 
@@ -397,7 +439,7 @@ You should see replies! This confirms the instance has internet access through t
 
 > 📸 [Screenshot: Clean VPC console — no custom VPCs remaining]
 
-> 💡 **Rithu's Tip:** If you get an error deleting the VPC, something is still attached to it. Double-check: all subnets deleted, IGW detached, security groups deleted, route tables deleted. AWS won't let you delete a VPC that still has stuff in it!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> If you get an error deleting the VPC, something is still attached to it. Double-check: all subnets deleted, IGW detached, security groups deleted, route tables deleted. AWS won't let you delete a VPC that still has stuff in it!
 
 ---
 
@@ -433,4 +475,14 @@ Now that you have a working VPC with a public subnet, let's add a private subnet
 | "No subnets available" error | You may be looking at the wrong VPC. Make sure you selected `ravi-custom-vpc` in the subnet dropdown |
 | CIDR conflict error | The CIDR `10.0.0.0/16` may conflict with an existing VPC. Try `10.1.0.0/16` instead |
 
-> 💡 **Rithu's Tip:** The #1 mistake in VPC labs is forgetting to enable auto-assign public IP on the subnet. If your instance has no public IP, you can't reach it from the internet. Check the subnet settings! 🔍
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> The #1 mistake in VPC labs is forgetting to enable auto-assign public IP on the subnet. If your instance has no public IP, you can't reach it from the internet. Check the subnet settings! 🔍
+
+---
+
+<div align="center">
+
+<img src="https://img.shields.io/badge/✅-Lab%2008%20COMPLETE!-2ECC71?style=for-the-badge" />
+
+*The foundation of AWS networking is now in your hands!*
+
+</div>

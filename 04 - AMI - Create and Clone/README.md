@@ -1,9 +1,19 @@
+<div align="center">
+
+<img src="https://img.shields.io/badge/Lab%2004-AMI%20Create%20%26%20Clone-E67E22?style=for-the-badge&labelColor=232F3E" />
+
+</div>
+
+<div align="center">
+
 # Lab 04 — AMI: Create and Clone
 
-![Difficulty: Easy](https://img.shields.io/badge/Difficulty-Easy-green)
-![Time: ~20 min](https://img.shields.io/badge/Time-~20%20min-blue)
-![Cost: <$1](https://img.shields.io/badge/Cost-%3C%241-lightgrey)
-![Service: EC2/AMI](https://img.shields.io/badge/Service-EC2%2FAMI-orange)
+<img src="https://img.shields.io/badge/Difficulty-Easy-brightgreen?style=flat-square" />
+<img src="https://img.shields.io/badge/Time-~20%20min-blue?style=flat-square" />
+<img src="https://img.shields.io/badge/Cost-%3C%241-lightgrey?style=flat-square" />
+<img src="https://img.shields.io/badge/Service-EC2%2FAMI-orange?style=flat-square" />
+
+</div>
 
 > *"An AMI is a frozen pizza. Bake it once, configure it how you like, freeze it, and anytime you're hungry (for infrastructure) you just heat it up and boom — instant server."* — Rithu
 
@@ -43,7 +53,7 @@ Create a custom Amazon Machine Image (AMI) from a running EC2 instance that has 
 
 ## 🛠️ Step-by-Step Instructions
 
-### Step 1: Launch the Source Instance
+> <img src="https://img.shields.io/badge/Step%201-Launch%20the%20Source%20Instance-2ECC71?style=for-the-badge" />
 
 1. EC2 Console → **Launch instance**.
 2. Name: `ami-source-instance`.
@@ -58,7 +68,7 @@ Create a custom Amazon Machine Image (AMI) from a running EC2 instance that has 
 7. **Storage:** Default 8 GB gp2/gp3.
 8. Click **Launch instance**.
 
-### Step 2: Configure the Instance
+> <img src="https://img.shields.io/badge/Step%202-Configure%20the%20Instance-3498DB?style=for-the-badge" />
 
 Wait for 2/2 checks. SSH in:
 
@@ -89,7 +99,7 @@ curl http://localhost
 
 Output: `<h1>Custom AMI Lab - Built by Ravi</h1>`
 
-### Step 3: Stop the Instance
+> <img src="https://img.shields.io/badge/Step%203-Stop%20the%20Instance-E67E22?style=for-the-badge" />
 
 This is IMPORTANT:
 
@@ -100,9 +110,10 @@ This is IMPORTANT:
 
 📸 [Screenshot: ami-source-instance showing state "stopped"]
 
-> 💡 **Rithu's Tip:** You CAN create an AMI from a running instance. It'll CREATE the AMI while stuff keeps running. But for CONSISTENCY, stop the instance first. This ensures the filesystem is in a clean state before the snapshot. Stopped pizza makes better frozen pizza.
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> You CAN create an AMI from a running instance. It'll CREATE the AMI while stuff keeps running. But for CONSISTENCY, stop the instance first. This ensures the filesystem is in a clean state before the snapshot. Stopped pizza makes better frozen pizza.
 
-### Step 4: Create the AMI
+> <img src="https://img.shields.io/badge/Step%204-Create%20the%20AMI-9B59B6?style=for-the-badge" />
 
 1. Select the stopped instance.
 2. Right-click → **Image and templates** → **Create image**.
@@ -122,9 +133,10 @@ This is IMPORTANT:
 6. EC2 left sidebar → **AMIs** under Images.
 7. You'll see your AMI with status **pending** → then **available** (usually takes 1–3 minutes).
 
-> 💡 **Rithu's Tip:** Behind the scenes, AWS takes a snapshot of each EBS volume attached to the instance and registers those snapshots as the AMI's Block Device Mappings. Each AMI = Volume snapshot of root + permissions + tags + launch metadata.
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> Behind the scenes, AWS takes a snapshot of each EBS volume attached to the instance and registers those snapshots as the AMI's Block Device Mappings. Each AMI = Volume snapshot of root + permissions + tags + launch metadata.
 
-### Step 5: Launch a New Instance from the Custom AMI
+> <img src="https://img.shields.io/badge/Step%205-Launch%20Clone%20from%20AMI-E74C3C?style=for-the-badge" />
 
 Now the magical cloning moment:
 
@@ -149,7 +161,7 @@ Now the magical cloning moment:
 
 📸 [Screenshot: Two instances in the EC2 console: ami-source-instance (stopped) and ami-clone-instance (running)]
 
-### Step 6: Verify the Clone
+> <img src="https://img.shields.io/badge/Step%206-Verify%20the%20Clone-1ABC9C?style=for-the-badge" />
 
 Get the **public IP** of `ami-clone-instance`.
 
@@ -186,9 +198,10 @@ Output: `<h1>Custom AMI Lab - Built by Ravi</h1>`
 
 The httpd service didn't need to be manually started. Why? Because we ran `sudo systemctl enable httpd` on the source, which survived the snapshot, which means the clone ALSO has httpd auto-starting on boot.
 
-> 💡 **Rithu's Tip:** This is why AMIs are POWERFUL. With a properly baked AMI, your instances come alive already configured. Install once, clone forever. DevOps teams call this "immutable infrastructure" because you treat your instances as disposable and your AMIs as immutable artifacts.
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> This is why AMIs are POWERFUL. With a properly baked AMI, your instances come alive already configured. Install once, clone forever. DevOps teams call this "immutable infrastructure" because you treat your instances as disposable and your AMIs as immutable artifacts.
 
-### Step 7: Understand the AMI components
+> <img src="https://img.shields.io/badge/Step%207-Understand%20AMI%20Components-34495E?style=for-the-badge" />
 
 Go to EC2 Console → **AMIs** → select `custom-web-server-ami` → scroll to the **Block device mappings** tab.
 
@@ -241,7 +254,8 @@ Components of an AMI:
    - Select it → Actions → **Delete snapshot** → Confirm.
    - **CRITICAL:** Deregistering the AMI does NOT delete the underlying snapshots. AWS bills for those until you manually delete them.
 
-> 💡 **Rithu's Tip:** If your AMI registered two volumes (root + data), there will be TWO snapshots. Delete both.
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> If your AMI registered two volumes (root + data), there will be TWO snapshots. Delete both.
 
 ## 🎓 What You Learned
 
@@ -263,7 +277,8 @@ Time to LEAVE compute behind and dip into the world of OBJECT STORAGE. S3 is arg
 
 We'll host a full static website directly from an S3 bucket. No EC2 instance needed. Just you, HTML, and infinite scalability.
 
-## ❓ Troubleshooting
+<details>
+<summary><strong>❓ Troubleshooting</strong></summary>
 
 | Problem | Likely Cause | Fix |
 |---------|-------------|------|
@@ -274,6 +289,14 @@ We'll host a full static website directly from an S3 bucket. No EC2 instance nee
 | Cannot deregister AMI | AMI is being used by an active instance | Terminate the clone instance first |
 | Snapshot deletion fails | Snapshot is still attached to the active AMI | Deregister AMI first, THEN delete snapshots |
 
+</details>
+
 ---
 
+<div align="center">
+
+<img src="https://img.shields.io/badge/Lab%20Complete!-E67E22?style=for-the-badge&labelColor=232F3E" />
+
 *Written with the spirit of "bake once, launch a hundred times" — Rithu*
+
+</div>

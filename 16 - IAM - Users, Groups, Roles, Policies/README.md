@@ -1,9 +1,15 @@
+<div align="center">
+
+<img src="https://img.shields.io/badge/Lab%2016-IAM%20Users%20Groups%20Roles-3498DB?style=for-the-badge&labelColor=232F3E" />
+
 # Lab 16 — IAM: Users, Groups, Roles, Policies
 
-![Difficulty](https://img.shields.io/badge/Difficulty-Easy-brightgreen)
-![Time](https://img.shields.io/badge/Time-~30min-blue)
-![Cost](https://img.shields.io/badge/Cost-Free-00c853)
-![Service](https://img.shields.io/badge/Service-IAM-orange)
+<img src="https://img.shields.io/badge/Difficulty-Easy-brightgreen?style=flat-square" />
+<img src="https://img.shields.io/badge/Time-~30min-blue?style=flat-square" />
+<img src="https://img.shields.io/badge/Cost-Free-00c853?style=flat-square" />
+<img src="https://img.shields.io/badge/Service-IAM-orange?style=flat-square" />
+
+</div>
 
 > "IAM is the bouncer of your AWS club — nobody gets in without checking with the bouncer first!" — Rithu
 
@@ -29,7 +35,8 @@ In this lab, you will learn how AWS Identity and Access Management (IAM) control
 - [ ] AWS CLI configured (optional but helpful for Step 4)
 - [ ] Basic understanding of what IAM is (covered in lecture material)
 
-> 💡 **Rithu's Tip:** If you haven't finished Lab 15, go do that first. I'll wait. No really, I'll be here. ☕
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> If you haven't finished Lab 15, go do that first. I'll wait. No really, I'll be here. ☕
 
 ---
 
@@ -76,7 +83,7 @@ IAM is a globally available AWS service that does **not** charge you anything. Y
 
 ## 🛠️ Step-by-Step Instructions
 
-### Step 1: Create IAM Users
+> <img src="https://img.shields.io/badge/Step%201-Create%20IAM%20Users-2ECC71?style=for-the-badge" />
 
 1. Sign in to the **AWS Management Console** as root (or an admin user).
 2. In the search bar at the top, type **IAM** and click on **IAM** under Services.
@@ -101,7 +108,8 @@ IAM is a globally available AWS service that does **not** charge you anything. Y
 
 > 📸 [Screenshot: The user creation success page showing ravi-developer with the download CSV option]
 
-> 💡 **Rithu's Tip:** In a real production environment, you would **NEVER** give AdministratorAccess to a developer! We're doing it here so you can explore freely. In production, use the principle of least privilege — give only what's needed.
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> In a real production environment, you would **NEVER** give AdministratorAccess to a developer! We're doing it here so you can explore freely. In production, use the principle of least privilege — give only what's needed.
 
 #### Create User 2: ravi-readonly
 
@@ -127,11 +135,12 @@ Secret Access Key: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY  ← looks like this
 
 > 📸 [Screenshot: The access key creation success page for ravi-readonly]
 
-> 💡 **Rithu's Tip:** Store those access keys in a password manager or a secure file. Never commit them to Git. Never. I mean it, Ravi. 🔒
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> Store those access keys in a password manager or a secure file. Never commit them to Git. Never. I mean it, Ravi. 🔒
 
 ---
 
-### Step 2: Create IAM Groups
+> <img src="https://img.shields.io/badge/Step%202-Create%20IAM%20Groups-3498DB?style=for-the-badge" />
 
 1. In the left navigation pane, click **User groups**.
 2. You should see two groups already created:
@@ -150,11 +159,12 @@ Secret Access Key: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY  ← looks like this
 | Developers | AdministratorAccess | Full access to everything (all services, all actions, all resources) |
 | ReadOnlyUsers | ReadOnlyAccess | Read-only access to all AWS services (can view but cannot modify) |
 
-> 💡 **Rithu's Tip:** Groups are like teams. When someone joins the team, you add them to the group. When they leave, you remove them. The permissions follow the group, not the individual. This makes managing permissions at scale much easier!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> Groups are like teams. When someone joins the team, you add them to the group. When they leave, you remove them. The permissions follow the group, not the individual. This makes managing permissions at scale much easier!
 
 ---
 
-### Step 3: Create Custom IAM Policy
+> <img src="https://img.shields.io/badge/Step%203-Create%20Custom%20IAM%20Policy-E67E22?style=for-the-badge" />
 
 Now let's create a **custom policy** using the visual editor — no JSON required!
 
@@ -192,11 +202,12 @@ Now let's create a **custom policy** using the visual editor — no JSON require
 3. Search for `S3DeveloperAccess`.
 4. Check the box next to it → **Add permissions**.
 
-> 💡 **Rithu's Tip:** That IP condition is a great security practice! It means even if someone steals the developer's credentials, they can only use them from your IP address. In production, you'd also use MFA, VPC endpoints, and more. Security is a layer cake, Ravi — and you want LOTS of layers! 🎂
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> That IP condition is a great security practice! It means even if someone steals the developer's credentials, they can only use them from your IP address. In production, you'd also use MFA, VPC endpoints, and more. Security is a layer cake, Ravi — and you want LOTS of layers! 🎂
 
 ---
 
-### Step 4: Create IAM Role
+> <img src="https://img.shields.io/badge/Step%204-Create%20IAM%20Role-9B59B6?style=for-the-badge" />
 
 1. In the left navigation pane, click **Roles**.
 2. Click **Create role**.
@@ -221,7 +232,8 @@ Now let's create a **custom policy** using the visual editor — no JSON require
 8. Click **Launch instance** → **View all instances**.
 9. Wait for the instance to reach **Running** state and pass both status checks.
 
-> 💡 **Rithu's Tip:** The IAM role is like a temporary badge you hand to the EC2 instance. The instance doesn't store any credentials — AWS handles the authentication behind the scenes. This is WAY better than hardcoding access keys in your code!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> The IAM role is like a temporary badge you hand to the EC2 instance. The instance doesn't store any credentials — AWS handles the authentication behind the scenes. This is WAY better than hardcoding access keys in your code!
 
 #### Test the Role from CLI:
 
@@ -251,7 +263,7 @@ Now let's create a **custom policy** using the visual editor — no JSON require
 
 ---
 
-### Step 5: Test IAM Policies
+> <img src="https://img.shields.io/badge/Step%205-Test%20IAM%20Policies-E74C3C?style=for-the-badge" />
 
 Now let's test the different user permissions.
 
@@ -277,11 +289,12 @@ Now let's test the different user permissions.
 
 > 📸 [Screenshot: Comparison showing ravi-readonly being denied vs ravi-developer having access]
 
-> 💡 **Rithu's Tip:** Notice how different users see different things in the same AWS account? That's IAM in action! In a real company, the HR person sees billing and support, the developer sees code pipeline and databases, and the security team sees CloudTrail and GuardDuty. Everyone gets exactly what they need — nothing more, nothing less.
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> Notice how different users see different things in the same AWS account? That's IAM in action! In a real company, the HR person sees billing and support, the developer sees code pipeline and databases, and the security team sees CloudTrail and GuardDuty. Everyone gets exactly what they need — nothing more, nothing less.
 
 ---
 
-### Step 6: IAM Access Analyzer (Bonus)
+> <img src="https://img.shields.io/badge/Step%206-IAM%20Access%20Analyzer%20(Bonus)-1ABC9C?style=for-the-badge" />
 
 1. Go back to the **root/admin** account.
 2. In the IAM dashboard, click **Access analyzer** in the left pane.
@@ -294,11 +307,12 @@ Now let's test the different user permissions.
 
 > 📸 [Screenshot: IAM Access Analyzer findings page]
 
-> 💡 **Rithu's Tip:** Access Analyzer is like a security guard that watches your AWS account 24/7 and tells you if you've accidentally left the front door open. Run it periodically in production!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> Access Analyzer is like a security guard that watches your AWS account 24/7 and tells you if you've accidentally left the front door open. Run it periodically in production!
 
 ---
 
-### Step 7: Verify Your Work ✅
+> <img src="https://img.shields.io/badge/Step%207-Verify%20Your%20Work-F39C12?style=for-the-badge" />
 
 Let's confirm everything was set up correctly:
 
@@ -367,7 +381,8 @@ Let's confirm everything was set up correctly:
 ### Delete Access Analyzer:
 1. Go to **IAM → Access analyzer** → Delete the analyzer.
 
-> 💡 **Rithu's Tip:** Always clean up, even when things are free. A messy AWS account is like a messy desk — you can't find anything when you need it!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> Always clean up, even when things are free. A messy AWS account is like a messy desk — you can't find anything when you need it!
 
 ---
 
@@ -397,23 +412,55 @@ In the next lab, you'll create pub/sub notifications with SNS and message queues
 
 ## ❓ Troubleshooting
 
-### "Access Denied" when trying to create IAM users/groups
-**Cause:** You're signed in as a user without IAM permissions.**Fix:** Sign in as root or an IAM user with `AdministratorAccess`.
+<details>
+<summary><strong>"Access Denied" when trying to create IAM users/groups</strong></summary>
 
-### "Entity already exists" when creating a user or group
+**Cause:** You're signed in as a user without IAM permissions.
+**Fix:** Sign in as root or an IAM user with `AdministratorAccess`.
+
+</details>
+
+<details>
+<summary><strong>"Entity already exists" when creating a user or group</strong></summary>
+
 **Cause:** The name is already taken (IAM names are global across your account).
 **Fix:** Use a different name or delete the existing entity first.
 
-### EC2 cannot assume the IAM role
+</details>
+
+<details>
+<summary><strong>EC2 cannot assume the IAM role</strong></summary>
+
 **Cause:** The role wasn't attached during launch, or the trust policy is wrong.
 **Fix:** You can't attach a role to a running instance. Terminate it and launch a new one with the correct IAM instance profile.
 
-### Access keys show "pending" or don't appear
+</details>
+
+<details>
+<summary><strong>Access keys show "pending" or don't appear</strong></summary>
+
 **Cause:** Access keys are only available immediately after creation.
 **Fix:** If you lost them, delete the old access key and create a new one from the Security credentials tab.
 
-### `aws s3 ls` fails from EC2
+</details>
+
+<details>
+<summary><strong>`aws s3 ls` fails from EC2</strong></summary>
+
 **Cause:** The instance doesn't have an IAM role attached, or the role doesn't have S3 permissions.
 **Fix:** Check the instance's IAM profile in EC2 console. If missing, terminate and relaunch with the correct role.
 
-> 💡 **Rithu's Tip:** IAM issues are the #1 cause of "it worked for me but not for you" problems in AWS. When something doesn't work, check IAM permissions first — 9 times out of 10, that's the culprit!
+</details>
+
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> IAM issues are the #1 cause of "it worked for me but not for you" problems in AWS. When something doesn't work, check IAM permissions first — 9 times out of 10, that's the culprit!
+
+---
+
+<div align="center">
+
+<img src="https://img.shields.io/badge/Lab%2016-Complete!-3498DB?style=for-the-badge&labelColor=232F3E" />
+
+> 🎉 **Fantastic work, Ravi!** You've mastered IAM — the foundation of AWS security. You now know how to create users, groups, custom policies, and roles. Remember: security is never optional in the cloud. Keep building securely! 🔐🚀
+
+</div>

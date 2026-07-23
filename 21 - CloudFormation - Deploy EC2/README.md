@@ -1,9 +1,15 @@
+<div align="center">
+
+<img src="https://img.shields.io/badge/Lab%2021-CloudFormation%20Deploy%20EC2-E67E22?style=for-the-badge&labelColor=232F3E" />
+
 # Lab 21 — CloudFormation: Deploy EC2
 
-![Difficulty](https://img.shields.io/badge/Difficulty-Medium-yellow)
-![Time](https://img.shields.io/badge/Time-~30min-blue)
-![Cost](https://img.shields.io/badge/Cost-%3C%241-brightgreen)
-![Service](https://img.shields.io/badge/Service-CloudFormation-orange)
+<img src="https://img.shields.io/badge/Difficulty-Medium-yellow?style=flat-square" />
+<img src="https://img.shields.io/badge/Time-~30min-blue?style=flat-square" />
+<img src="https://img.shields.io/badge/Cost-%3C%241-brightgreen?style=flat-square" />
+<img src="https://img.shields.io/badge/Service-CloudFormation-orange?style=flat-square" />
+
+</div>
 
 > "Stop clicking around in the console, Ravi. Let's learn to write code that builds AWS for us!" — Rithu
 
@@ -71,7 +77,7 @@ Estimated total lab cost: **< $1** if cleaned up within 1 hour.
 
 ## 🛠️ Step-by-Step Instructions
 
-### Step 1: Understand CloudFormation
+### <img src="https://img.shields.io/badge/Step%201-Understand%20CloudFormation-FF6B6B?style=for-the-badge" />
 
 Before writing any code, let's understand what we're doing.
 
@@ -87,13 +93,14 @@ Before writing any code, let's understand what we're doing.
 - **Self-documenting**: Your template IS your infrastructure documentation
 - **Clean**: Delete the stack = every resource it created is gone
 
-> 💡 **Rithu's Tip**: "Think of CloudFormation as a spell book. You write the spell (template), cast it (create stack), and AWS builds everything. Break the spell (delete stack), and everything vanishes."
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> "Think of CloudFormation as a spell book. You write the spell (template), cast it (create stack), and AWS builds everything. Break the spell (delete stack), and everything vanishes."
 
 📸 [Screenshot: None needed for this step — just understanding!]
 
 ---
 
-### Step 2: Create a CloudFormation Template
+### <img src="https://img.shields.io/badge/Step%202-Create%20a%20Template-FFA500?style=for-the-badge" />
 
 Now let's write our first CloudFormation template!
 
@@ -174,13 +181,14 @@ Let's break down what each section does:
 - **Outputs** — Information displayed after the stack is created (like a receipt)
 - **!Ref** and **!Sub** — Special CloudFormation functions (like variables)
 
-> 💡 **Rithu's Tip**: "The `LatestAmiId` parameter uses SSM Parameter Store to automatically fetch the latest Amazon Linux 2023 AMI. No more hardcoding AMI IDs!"
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> "The `LatestAmiId` parameter uses SSM Parameter Store to automatically fetch the latest Amazon Linux 2023 AMI. No more hardcoding AMI IDs!"
 
 📸 [Screenshot: Screenshot of your ec2-stack.yaml file in your text editor]
 
 ---
 
-### Step 3: Create Stack via Console
+### <img src="https://img.shields.io/badge/Step%203-Create%20Stack%20via%20Console-9B59B6?style=for-the-badge" />
 
 Time to deploy! Let's use the AWS Console first.
 
@@ -219,7 +227,7 @@ Time to deploy! Let's use the AWS Console first.
 
 ---
 
-### Step 4: Wait for Stack Creation
+### <img src="https://img.shields.io/badge/Step%204-Wait%20for%20Stack%20Creation-3498DB?style=for-the-badge" />
 
 Now watch the magic happen! 🪄
 
@@ -237,13 +245,14 @@ Now watch the magic happen! 🪄
 
 5. Wait until the **Stack status** shows **`CREATE_COMPLETE`** (in green) at the top of the page
 
-> 💡 **Rithu's Tip**: "If you see `CREATE_FAILED`, don't panic! Read the error message — CloudFormation gives you detailed reasons. Common issues: wrong key pair name, missing permissions, or resource limits."
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> "If you see `CREATE_FAILED`, don't panic! Read the error message — CloudFormation gives you detailed reasons. Common issues: wrong key pair name, missing permissions, or resource limits."
 
 📸 [Screenshot: Events tab showing all resources created with CREATE_COMPLETE status]
 
 ---
 
-### Step 5: Verify Your Work
+### <img src="https://img.shields.io/badge/Step%205-Verify%20Your%20Work-1ABC9C?style=for-the-badge" />
 
 Time to check that everything was created correctly!
 
@@ -273,13 +282,14 @@ Time to check that everything was created correctly!
 - In this lab, you defined it in a YAML file and CloudFormation built it for you
 - Same result, but the CloudFormation approach is **repeatable, shareable, and deletable**!
 
-> 💡 **Rithu's Tip**: "The `UserData` script in the template automatically installed Apache and created a web page. This is called 'bootstrapping' — your instance is ready to serve traffic the moment it launches!"
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> "The `UserData` script in the template automatically installed Apache and created a web page. This is called 'bootstrapping' — your instance is ready to serve traffic the moment it launches!"
 
 📸 [Screenshot: Browser showing "Deployed by CloudFormation!" and the EC2 console showing the running instance]
 
 ---
 
-### Step 6: Update the Stack
+### <img src="https://img.shields.io/badge/Step%206-Update%20the%20Stack-E74C3C?style=for-the-badge" />
 
 CloudFormation doesn't just create — it also manages updates! Let's change the web page.
 
@@ -319,13 +329,14 @@ CloudFormation doesn't just create — it also manages updates! Let's change the
 19. Click the **WebsiteURL** link
 20. You should now see: **"Updated by CloudFormation!"**
 
-> 💡 **Rithu's Tip**: "CloudFormation is smart — it figures out which resources need to be replaced vs updated in place. Some changes require replacement (like changing an AMI), while others can be updated in place (like changing security group rules)."
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> "CloudFormation is smart — it figures out which resources need to be replaced vs updated in place. Some changes require replacement (like changing an AMI), while others can be updated in place (like changing security group rules)."
 
 📸 [Screenshot: Updated website showing "Updated by CloudFormation!" message]
 
 ---
 
-### Step 7: Create Stack via AWS CLI (Bonus)
+### <img src="https://img.shields.io/badge/Step%207-Create%20Stack%20via%20CLI-2ECC71?style=for-the-badge" />
 
 Want to feel like a real cloud engineer? Use the command line! 🖥️
 
@@ -367,7 +378,8 @@ aws cloudformation describe-stacks --stack-name ravi-ec2-stack-cli --query "Stac
 
 You should see the InstanceId, PublicIP, and WebsiteURL!
 
-> 💡 **Rithu's Tip**: "The CLI is powerful for automation. Imagine running this in a script at 3 AM to deploy infrastructure automatically. That's the power of IaC!"
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> "The CLI is powerful for automation. Imagine running this in a script at 3 AM to deploy infrastructure automatically. That's the power of IaC!"
 
 📸 [Screenshot: Terminal showing the CLI commands and their output]
 
@@ -413,7 +425,8 @@ aws cloudformation wait stack-delete-complete --stack-name ravi-ec2-stack-cli
 9. Confirm `CloudFormation-WebServer` is terminated
 10. Go to **CloudFormation** → confirm no stacks remain
 
-> 💡 **Rithu's Tip**: "This is why I love CloudFormation. One click and EVERYTHING is cleaned up. No orphaned resources, no surprise bills. Compare this to manually creating resources — you'd have to remember to delete each one individually!"
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> "This is why I love CloudFormation. One click and EVERYTHING is cleaned up. No orphaned resources, no surprise bills. Compare this to manually creating resources — you'd have to remember to delete each one individually!"
 
 📸 [Screenshot: CloudFormation console showing no stacks remaining]
 
@@ -446,24 +459,53 @@ You've mastered CloudFormation! In the next lab, we'll explore **CloudTrail** �
 
 ## ❓ Troubleshooting
 
-**Problem**: Stack creation fails with "The key pair does not exist"
-- **Fix**: Go to EC2 → Key Pairs and verify your key pair name. Make sure you typed it exactly (case-sensitive).
+<details>
+<summary><strong>Stack creation fails with "The key pair does not exist"</strong></summary>
 
-**Problem**: Stack creation fails with "AMI not found"
-- **Fix**: The SSM parameter should auto-resolve. If it fails, manually replace the LatestAmiId parameter with a specific AMI ID for your region.
+**Fix**: Go to EC2 → Key Pairs and verify your key pair name. Make sure you typed it exactly (case-sensitive).
+</details>
 
-**Problem**: Website shows "This site can't be reached"
-- **Fix**: Check that the EC2 instance is running. Check the Security Group allows inbound HTTP (port 80). Wait 1-2 minutes for the UserData script to finish.
+<details>
+<summary><strong>Stack creation fails with "AMI not found"</strong></summary>
 
-**Problem**: "Permission denied" when creating the stack
-- **Fix**: Make sure your IAM user/role has permissions for CloudFormation, EC2, and Security Groups. If using a root account, ensure MFA is enabled.
+**Fix**: The SSM parameter should auto-resolve. If it fails, manually replace the LatestAmiId parameter with a specific AMI ID for your region.
+</details>
 
-**Problem**: Stack update fails
-- **Fix**: Check the Events tab for the specific error. Some changes require resource replacement — CloudFormation will tell you which ones.
+<details>
+<summary><strong>Website shows "This site can't be reached"</strong></summary>
 
-**Problem**: Stack won't delete because of dependencies
-- **Fix**: Check if you manually created resources that reference stack resources. Delete those first, then try again.
+**Fix**: Check that the EC2 instance is running. Check the Security Group allows inbound HTTP (port 80). Wait 1-2 minutes for the UserData script to finish.
+</details>
+
+<details>
+<summary><strong>"Permission denied" when creating the stack</strong></summary>
+
+**Fix**: Make sure your IAM user/role has permissions for CloudFormation, EC2, and Security Groups. If using a root account, ensure MFA is enabled.
+</details>
+
+<details>
+<summary><strong>Stack update fails</strong></summary>
+
+**Fix**: Check the Events tab for the specific error. Some changes require resource replacement — CloudFormation will tell you which ones.
+</details>
+
+<details>
+<summary><strong>Stack won't delete because of dependencies</strong></summary>
+
+**Fix**: Check if you manually created resources that reference stack resources. Delete those first, then try again.
+</details>
 
 ---
 
-> 🎉 **Rithu says**: "You just wrote your first CloudFormation template! From now on, every AWS resource you create, try to think: 'Can I template this?' The answer is almost always yes. Welcome to the world of Infrastructure as Code!"
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> "You just wrote your first CloudFormation template! From now on, every AWS resource you create, try to think: 'Can I template this?' The answer is almost always yes. Welcome to the world of Infrastructure as Code!"
+
+---
+
+<div align="center">
+
+<img src="https://img.shields.io/badge/Lab%2021-Complete!-27AE60?style=for-the-badge&labelColor=232F3E" />
+
+**🎉 Congratulations on completing Lab 21! 🎉**
+
+</div>

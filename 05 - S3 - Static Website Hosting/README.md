@@ -1,9 +1,19 @@
+<div align="center">
+
+<img src="https://img.shields.io/badge/Lab%2005-S3%20Static%20Website-2ECC71?style=for-the-badge&labelColor=232F3E" />
+
+</div>
+
+<div align="center">
+
 # Lab 05 — S3: Static Website Hosting
 
-![Difficulty: Easy](https://img.shields.io/badge/Difficulty-Easy-green)
-![Time: ~25 min](https://img.shields.io/badge/Time-~25%20min-blue)
-![Cost: <$1](https://img.shields.io/badge/Cost-%3C%241-lightgrey)
-![Service: S3](https://img.shields.io/badge/Service-S3-yellow)
+<img src="https://img.shields.io/badge/Difficulty-Easy-brightgreen?style=flat-square" />
+<img src="https://img.shields.io/badge/Time-~25%20min-blue?style=flat-square" />
+<img src="https://img.shields.io/badge/Cost-%3C%241-lightgrey?style=flat-square" />
+<img src="https://img.shields.io/badge/Service-S3-yellow?style=flat-square" />
+
+</div>
 
 > *"S3 is like a magical empty filing cabinet in the sky. You can stuff files in it, and if you configure it right, the whole world can read them. Today, we're building a full static website inside that cabinet. No EC2. No Apache. Just S3."* — Rithu
 
@@ -60,7 +70,7 @@ Create an S3 bucket, configure it for static website hosting, upload HTML files,
 
 ## 🛠️ Step-by-Step Instructions
 
-### Step 1: Create an S3 Bucket
+> <img src="https://img.shields.io/badge/Step%201-Create%20an%20S3%20Bucket-2ECC71?style=for-the-badge" />
 
 1. AWS Management Console → search for **S3** → click it.
 2. Click the orange **Create bucket** button.
@@ -74,7 +84,8 @@ Create an S3 bucket, configure it for static website hosting, upload HTML files,
 | Bucket name | `ravi-static-website-12345` |
 | AWS Region | **US East (N. Virginia) us-east-1** |
 
-> 💡 **Rithu's Tip:** The bucket name MUST be globally unique across ALL AWS accounts and ALL regions. Not just your account. ALL OF AWS. Pick something nobody else would think of. If `ravi-static-website-12345` is taken (unlikely), add more numbers: your birthday, favorite number, whatever.
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> The bucket name MUST be globally unique across ALL AWS accounts and ALL regions. Not just your account. ALL OF AWS. Pick something nobody else would think of. If `ravi-static-website-12345` is taken (unlikely), add more numbers: your birthday, favorite number, whatever.
 
 4. **Object Ownership:**
    - Leave default: **ACLs disabled**.
@@ -90,7 +101,8 @@ Create an S3 bucket, configure it for static website hosting, upload HTML files,
 
    📸 [Screenshot: Block all public access section with all boxes UNCHECKED and the acknowledgment checked]
 
-   > 💡 **Rithu's Tip:** Normally, you NEVER want a bucket public. We're making an exception because STATIC WEBSITES require PUBLIC access to deliver content to browsers. In real life, MOST buckets should stay private. Use CloudFront (covered much later) to serve S3 content securely.
+   > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+   > Normally, you NEVER want a bucket public. We're making an exception because STATIC WEBSITES require PUBLIC access to deliver content to browsers. In real life, MOST buckets should stay private. Use CloudFront (covered much later) to serve S3 content securely.
 
 6. **Bucket Versioning:** Leave **Disable**.
 
@@ -107,7 +119,7 @@ Create an S3 bucket, configure it for static website hosting, upload HTML files,
 
 Congratulations, you own a cloud bucket! 🪣
 
-### Step 2: Enable Static Website Hosting
+> <img src="https://img.shields.io/badge/Step%202-Enable%20Static%20Website%20Hosting-3498DB?style=for-the-badge" />
 
 1. Click on your bucket name `ravi-static-website-12345`.
 2. Go to the **Properties** tab.
@@ -137,9 +149,10 @@ http://ravi-static-website-12345.s3-website-us-east-1.amazonaws.com
 
 Copy that URL. You'll need it later.
 
-> 💡 **Rithu's Tip:** Notice it's `http://` (unencrypted). S3 static website hosting doesn't support HTTPS natively. For HTTPS, you'd use CloudFront as a front CDN. File that away, young padawan.
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> Notice it's `http://` (unencrypted). S3 static website hosting doesn't support HTTPS natively. For HTTPS, you'd use CloudFront as a front CDN. File that away, young padawan.
 
-### Step 3: Prepare Your Website Files
+> <img src="https://img.shields.io/badge/Step%203-Prepare%20Your%20Website%20Files-E67E22?style=for-the-badge" />
 
 Create two HTML files on your LOCAL machine.
 
@@ -203,9 +216,10 @@ p {
 </html>
 ```
 
-> 💡 **Rithu's Tip:** You can write these files in any text editor. Notepad (Windows) works. VS Code works. Heck, you can type them in a `README.md` and copy them out. Just make sure you save them as `.html` and not `.html.txt`.
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> You can write these files in any text editor. Notepad (Windows) works. VS Code works. Heck, you can type them in a `README.md` and copy them out. Just make sure you save them as `.html` and not `.html.txt`.
 
-### Step 4: Upload the Website Files
+> <img src="https://img.shields.io/badge/Step%204-Upload%20the%20Website%20Files-9B59B6?style=for-the-badge" />
 
 1. S3 Console → bucket `ravi-static-website-12345`.
 2. Go to the **Objects** tab.
@@ -223,7 +237,7 @@ Once uploaded, you should see both files listed in the Objects tab.
 
 📸 [Screenshot: S3 Objects tab showing index.html and error.html listed, size ~300 bytes each]
 
-### Step 5: Add a Bucket Policy for Public Read Access
+> <img src="https://img.shields.io/badge/Step%205-Add%20Bucket%20Policy%20for%20Public%20Read-E74C3C?style=for-the-badge" />
 
 Even though the bucket is not fully blocked from public access, objects are STILL private by default. When a browser visits your website endpoint, S3 checks policy first.
 
@@ -248,7 +262,8 @@ Even though the bucket is not fully blocked from public access, objects are STIL
 }
 ```
 
-> 💡 **Rithu's Tip:** Let's decode this JSON:
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> Let's decode this JSON:
 > - `"Principal": "*"` → Anyone in the world
 > - `"Action": "s3:GetObject"` → can read objects
 > - `"Resource": "arn:aws:s3:::`ravi-static-website-12345`/*"` → from my bucket
@@ -260,7 +275,7 @@ You might see an error if there are conflicts with account-level block public ac
 
 📸 [Screenshot: Bucket policy editor showing the JSON pasted and saved]
 
-### Step 6: Verify Your Work
+> <img src="https://img.shields.io/badge/Step%206-Verify%20Your%20Work-1ABC9C?style=for-the-badge" />
 
 1. Open a fresh browser tab.
 2. Paste the **Bucket website endpoint** URL you copied earlier.
@@ -290,7 +305,8 @@ You should see your custom HTML page with:
 
 📸 [Screenshot: Browser showing the custom error page at a non-existent URL]
 
-> 💡 **Rithu's Tip:** Without the error document configured, S3 would return a generic XML error page. Ugly. With `error.html` configured, S3 intercepts all 4xx errors and returns YOUR page. Your site, your branding.
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> Without the error document configured, S3 would return a generic XML error page. Ugly. With `error.html` configured, S3 intercepts all 4xx errors and returns YOUR page. Your site, your branding.
 
 ### Alternative verification
 
@@ -328,7 +344,8 @@ Public buckets left running = potential bill and security risk.
    - Enter the bucket name in the confirmation field: `ravi-static-website-12345`.
    - Click **Delete bucket**.
 
-   > 💡 **Rithu's Tip:** If the bucket contains objects that failed to delete previously, enable **Show versions** and delete ALL versions and ALL delete markers. Then try bucket deletion again. AWS won't let you delete a non-empty bucket.
+   > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+   > If the bucket contains objects that failed to delete previously, enable **Show versions** and delete ALL versions and ALL delete markers. Then try bucket deletion again. AWS won't let you delete a non-empty bucket.
 
 ## 🎓 What You Learned
 
@@ -353,7 +370,8 @@ Check out upcoming labs —
 
 Or skip ahead. Whatever fuels your cloud engine. 🚀
 
-## ❓ Troubleshooting
+<details>
+<summary><strong>❓ Troubleshooting</strong></summary>
 
 | Problem | Likely Cause | Fix |
 |---------|-------------|------|
@@ -366,6 +384,14 @@ Or skip ahead. Whatever fuels your cloud engine. 🚀
 | Internet users still get Access Denied | Bucket Policy syntax error or resource ARN mismatch | Double-check `Resource` ends with `/*` (the wildcard covers all objects) |
 | Objects show ACLs disabled, bucket policy is wrong place | ACLs not needed for static sites | Bucket Owner Enforced + Bucket Policy = the way |
 
+</details>
+
 ---
 
+<div align="center">
+
+<img src="https://img.shields.io/badge/Lab%20Complete!-2ECC71?style=for-the-badge&labelColor=232F3E" />
+
 *Written by Rithu, after accidentally hosting a bucket named "rithu-fun-bucket-ohno" publicly for 3 weeks. Ravi's bucket maybe safer. maybe.*
+
+</div>

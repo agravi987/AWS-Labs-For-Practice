@@ -1,9 +1,19 @@
+<div align="center">
+
+<img src="https://img.shields.io/badge/Lab%2007-S3%20Cross-Region%20Replication-9B59B6?style=for-the-badge&labelColor=232F3E" />
+
+</div>
+
+<div align="center">
+
 # Lab 07 — S3: Cross-Region Replication
 
-![Difficulty](https://img.shields.io/badge/Difficulty-Medium-yellow)
-![Time](https://img.shields.io/badge/Time-~40min-blue)
-![Cost](https://img.shields.io/badge/Cost-<2%20USD-green)
-![Service](https://img.shields.io/badge/Service-S3%20|%20IAM-orange)
+<img src="https://img.shields.io/badge/Difficulty-Medium-yellow?style=flat-square" />
+<img src="https://img.shields.io/badge/Time-~40min-blue?style=flat-square" />
+<img src="https://img.shields.io/badge/Cost-%3C2%20USD-green?style=flat-square" />
+<img src="https://img.shields.io/badge/Service-S3%20|%20IAM-orange?style=flat-square" />
+
+</div>
 
 > "Disasters don't send calendar invites. Cross-region replication means your data is safe even if an entire region goes down!" — Rithu 🌍
 
@@ -55,7 +65,7 @@ In this lab, you'll set up **Cross-Region Replication (CRR)** — a feature that
 
 ## 🛠️ Step-by-Step Instructions
 
-### Step 1: Create the Source Bucket (us-east-1)
+> <img src="https://img.shields.io/badge/Step%201-Create%20the%20Source%20Bucket-2ECC71?style=for-the-badge" />
 
 1. Log in to the [AWS Management Console](https://console.aws.amazon.com/)
 2. In the search bar, type **S3** and click on **S3**
@@ -68,11 +78,12 @@ In this lab, you'll set up **Cross-Region Replication (CRR)** — a feature that
 
 > 📸 [Screenshot: Source bucket created successfully]
 
-> 💡 **Rithu's Tip:** us-east-1 is the default region for most AWS services and often the cheapest. It's our "home base" for this lab!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> us-east-1 is the default region for most AWS services and often the cheapest. It's our "home base" for this lab!
 
 ---
 
-### Step 2: Enable Versioning on the Source Bucket
+> <img src="https://img.shields.io/badge/Step%202-Enable%20Versioning%20on%20Source-3498DB?style=for-the-badge" />
 
 1. Click on `ravi-source-replication-12345`
 2. Click the **Properties** tab
@@ -84,7 +95,7 @@ In this lab, you'll set up **Cross-Region Replication (CRR)** — a feature that
 
 ---
 
-### Step 3: Create the Destination Bucket (us-west-2)
+> <img src="https://img.shields.io/badge/Step%203-Create%20the%20Destination%20Bucket-E67E22?style=for-the-badge" />
 
 1. Go back to the S3 console (click **S3** in the breadcrumbs)
 2. Click **Create bucket**
@@ -97,7 +108,7 @@ In this lab, you'll set up **Cross-Region Replication (CRR)** — a feature that
 
 ---
 
-### Step 4: Enable Versioning on the Destination Bucket
+> <img src="https://img.shields.io/badge/Step%204-Enable%20Versioning%20on%20Destination-9B59B6?style=for-the-badge" />
 
 1. Click on `ravi-dest-replication-12345`
 2. Click the **Properties** tab
@@ -105,11 +116,12 @@ In this lab, you'll set up **Cross-Region Replication (CRR)** — a feature that
 4. Select **Enable**
 5. Click **Save changes**
 
-> 💡 **Rithu's Tip:** Both buckets now have versioning enabled. This is a hard requirement for CRR — AWS won't let you replicate between non-versioned buckets. Why? Because replication needs to track which version of each object to copy!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> Both buckets now have versioning enabled. This is a hard requirement for CRR — AWS won't let you replicate between non-versioned buckets. Why? Because replication needs to track which version of each object to copy!
 
 ---
 
-### Step 5: Create an IAM Role for S3 Replication
+> <img src="https://img.shields.io/badge/Step%205-Create%20an%20IAM%20Role-E74C3C?style=for-the-badge" />
 
 Now we need to give S3 permission to read from one bucket and write to another. We do this with an IAM Role.
 
@@ -134,11 +146,12 @@ Now we need to give S3 permission to read from one bucket and write to another. 
 
 > 📸 [Screenshot: Role created successfully]
 
-> 💡 **Rithu's Tip:** IAM Roles are like giving someone a key card to your building. The role says "S3 service, you have permission to read from the source bucket and write to the destination bucket." Never give more permissions than needed in production!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> IAM Roles are like giving someone a key card to your building. The role says "S3 service, you have permission to read from the source bucket and write to the destination bucket." Never give more permissions than needed in production!
 
 ---
 
-### Step 6: Set Up the Replication Rule on the Source Bucket
+> <img src="https://img.shields.io/badge/Step%206-Set%20Up%20Replication%20Rule-1ABC9C?style=for-the-badge" />
 
 1. Go back to **S3** console
 2. Click on `ravi-source-replication-12345`
@@ -175,11 +188,12 @@ Now we need to give S3 permission to read from one bucket and write to another. 
 
 > 📸 [Screenshot: Replication rule saved successfully]
 
-> 💡 **Rithu's Tip:** Replication doesn't happen instantly — it can take a few minutes to initialize. After that, new objects are typically replicated within 15 minutes. Be patient, Ravi!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> Replication doesn't happen instantly — it can take a few minutes to initialize. After that, new objects are typically replicated within 15 minutes. Be patient, Ravi!
 
 ---
 
-### Step 7: Upload a Test File to the Source Bucket
+> <img src="https://img.shields.io/badge/Step%207-Upload%20a%20Test%20File-34495E?style=for-the-badge" />
 
 1. Click on `ravi-source-replication-12345` → **Objects** tab
 2. Click **Upload**
@@ -196,7 +210,7 @@ Hello from the source bucket in N. Virginia!
 
 ---
 
-### Step 8: Wait and Verify Replication
+> <img src="https://img.shields.io/badge/Step%208-Wait%20and%20Verify%20Replication-F39C12?style=for-the-badge" />
 
 1. Wait **2-5 minutes** (grab a coffee ☕ — replication takes a moment to kick in)
 2. Go to the S3 console and click on `ravi-dest-replication-12345`
@@ -206,11 +220,12 @@ Hello from the source bucket in N. Virginia!
 
 > 📸 [Screenshot: hello.txt appearing in the destination bucket in Oregon]
 
-> 💡 **Rithu's Tip:** If you don't see the file immediately, wait a few more minutes. The first replication can take up to 15 minutes. Check the **Management** tab → **Replication rules** on the source bucket to see the rule status.
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> If you don't see the file immediately, wait a few more minutes. The first replication can take up to 15 minutes. Check the **Management** tab → **Replication rules** on the source bucket to see the rule status.
 
 ---
 
-### Step 9: Upload More Files and Verify Replication
+> <img src="https://img.shields.io/badge/Step%209-Upload%20More%20Files-16A085?style=for-the-badge" />
 
 Let's test with a few more files:
 
@@ -233,11 +248,12 @@ Second file replicated automatically!
 
 > 📸 [Screenshot: All files replicated to destination bucket]
 
-> 💡 **Rithu's Tip:** From now on, EVERY file you upload to the source bucket will be automatically copied to the destination. You don't need to do anything — S3 handles it all behind the scenes!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> From now on, EVERY file you upload to the source bucket will be automatically copied to the destination. You don't need to do anything — S3 handles it all behind the scenes!
 
 ---
 
-### Step 10: Test Deletion Behavior
+> <img src="https://img.shields.io/badge/Step%2010-Test%20Deletion%20Behavior-E74C3C?style=for-the-badge" />
 
 Here's something interesting: **deleting from the source does NOT delete from the destination.**
 
@@ -249,11 +265,12 @@ Here's something interesting: **deleting from the source does NOT delete from th
 
 > 📸 [Screenshot: File deleted from source but still present in destination]
 
-> 💡 **Rithu's Tip:** This is a safety feature! If someone accidentally deletes files from the source, the copies in the destination are safe. In production, you can configure delete markers to replicate if you want synced deletions.
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> This is a safety feature! If someone accidentally deletes files from the source, the copies in the destination are safe. In production, you can configure delete markers to replicate if you want synced deletions.
 
 ---
 
-### Step 11: Verify Your Work
+> <img src="https://img.shields.io/badge/Step%2011-Verify%20Your%20Work-2C3E50?style=for-the-badge" />
 
 - [ ] Source bucket `ravi-source-replication-12345` exists in us-east-1 with Versioning enabled
 - [ ] Destination bucket `ravi-dest-replication-12345` exists in us-west-2 with Versioning enabled
@@ -313,7 +330,8 @@ Here's something interesting: **deleting from the source does NOT delete from th
 
 > 📸 [Screenshot: Clean S3 console and IAM Roles page — nothing left behind]
 
-> 💡 **Rithu's Tip:** Always clean up in reverse order: objects → rules → buckets → IAM roles. If you delete the bucket first, the replication rule becomes orphaned and may cause confusing error messages!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> Always clean up in reverse order: objects → rules → buckets → IAM roles. If you delete the bucket first, the replication rule becomes orphaned and may cause confusing error messages!
 
 ---
 
@@ -336,7 +354,8 @@ Now that you understand S3 storage and data protection, let's dive into networki
 
 ---
 
-## ❓ Troubleshooting
+<details>
+<summary><strong>❓ Troubleshooting</strong></summary>
 
 | Problem | Solution |
 |---------|----------|
@@ -348,4 +367,15 @@ Now that you understand S3 storage and data protection, let's dive into networki
 | Replication rule shows "Pending" | This is normal! It takes a few minutes to initialize. Give it 5-10 minutes |
 | Can't delete bucket | Empty ALL versions first. Turn on "List versions" and delete everything, including delete markers |
 
-> 💡 **Rithu's Tip:** The most common mistake is forgetting to enable versioning on one of the buckets. If something seems stuck, that's the first thing to check. You've got this! 🎯
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> The most common mistake is forgetting to enable versioning on one of the buckets. If something seems stuck, that's the first thing to check. You've got this! 🎯
+
+</details>
+
+---
+
+<div align="center">
+
+<img src="https://img.shields.io/badge/Lab%20Complete!-9B59B6?style=for-the-badge&labelColor=232F3E" />
+
+</div>

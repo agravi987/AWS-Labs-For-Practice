@@ -1,9 +1,21 @@
-# Lab 03 — EBS: Volumes and Snapshots
+﻿<div align="center">
 
-![Difficulty: Easy](https://img.shields.io/badge/Difficulty-Easy-green)
-![Time: ~30 min](https://img.shields.io/badge/Time-~30%20min-blue)
-![Cost: <$1](https://img.shields.io/badge/Cost-%3C%241-lightgrey)
-![Service: EBS](https://img.shields.io/badge/Service-EBS-blueviolet)
+<img src="https://img.shields.io/badge/Lab%2003-EBS%20Volumes%20%26%20Snapshots-9B59B6?style=for-the-badge&labelColor=232F3E" />
+
+# EBS: Volumes and Snapshots
+
+<img src="https://img.shields.io/badge/Difficulty-Easy-2ECC71?style=flat-square" />
+<img src="https://img.shields.io/badge/Time-~30%20min-3498DB?style=flat-square" />
+<img src="https://img.shields.io/badge/Cost-<%241-95A5A6?style=flat-square" />
+<img src="https://img.shields.io/badge/Service-EBS-9B59B6?style=flat-square" />
+
+</div>
+
+---
+
+> **"EBS volumes are like USB drives for your EC2 instance, except they never get lost in the couch cushions and you can take photo-perfect snapshots of them."** - Rithu
+
+
 
 > *"EBS volumes are like USB drives for your EC2 instance, except they never get lost in the couch cushions and you can take photo-perfect snapshots of them."* — Rithu
 
@@ -49,6 +61,8 @@ Create and attach an Elastic Block Store (EBS) volume to an EC2 instance, format
 
 ## 🛠️ Step-by-Step Instructions
 
+> <img src="https://img.shields.io/badge/Step%201-Launch%20Instance-27AE60?style=for-the-badge" />
+
 ### Step 1: Launch the Instance
 
 1. EC2 Console → **Launch instance**.
@@ -76,7 +90,9 @@ Create and attach an Elastic Block Store (EBS) volume to an EC2 instance, format
 
 9. Wait for the instance to become Running with 2/2 status checks.
 
-> 💡 **Rithu's Tip:** The Availability Zone (us-east-1a, us-east-1b, etc.) matters a LOT for EBS. You can only attach an EBS volume to an instance in the SAME Availability Zone. I learned this by clicking around aimlessly for 10 minutes.
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> The Availability Zone (us-east-1a, us-east-1b, etc.) matters a LOT for EBS. You can only attach an EBS volume to an instance in the SAME Availability Zone. I learned this by clicking around aimlessly for 10 minutes.
+
+> <img src="https://img.shields.io/badge/Step%202-SSH%20and%20Inspect-3498DB?style=for-the-badge" />
 
 ### Step 2: SSH and Inspect the Volume
 
@@ -122,7 +138,9 @@ This reads the raw device signature. It should say something about the ext4 file
 file -s /dev/xvda1
 ```
 
-> 💡 **Rithu's Tip:** `/dev/xvda` is the entire disk. `/dev/xvda1` is the first partition on that disk. Think of the disk as a pizza and partitions as the slices. mmm.
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> `/dev/xvda` is the entire disk. `/dev/xvda1` is the first partition on that disk. Think of the disk as a pizza and partitions as the slices. mmm.
+
+> <img src="https://img.shields.io/badge/Step%203-Create%20Volume-E67E22?style=for-the-badge" />
 
 ### Step 3: Create a New EBS Volume
 
@@ -146,6 +164,8 @@ file -s /dev/xvda1
 
 Wait for the volume status to turn **Available**.
 
+> <img src="https://img.shields.io/badge/Step%204-Attach%20Volume-8E44AD?style=for-the-badge" />
+
 ### Step 4: Attach the Volume to Your Instance
 
 1. Select the newly created volume (check the box).
@@ -159,6 +179,8 @@ Wait for the volume status to turn **Available**.
 Wait for the state to change to `in-use`.
 
 📸 [Screenshot: Volume list showing one available and one in-use volume]
+
+> <img src="https://img.shields.io/badge/Step%205-Format%20%26%20Mount-E74C3C?style=for-the-badge" />
 
 ### Step 5: Format and Mount the Volume
 
@@ -204,7 +226,9 @@ df -h
 
 You should see `/dev/xvdf` mounted at `/mnt/data` with 9.6G available.
 
-> 💡 **Rithu's Tip:** To make this mount survive a reboot, you'd add it to `/etc/fstab`. We won't do that here to keep things clean. But know that a reboot = the volume exists but AUTO-MOUNT WON'T HAPPEN without fstab.
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> To make this mount survive a reboot, you'd add it to `/etc/fstab`. We won't do that here to keep things clean. But know that a reboot = the volume exists but AUTO-MOUNT WON'T HAPPEN without fstab.
+
+> <img src="https://img.shields.io/badge/Step%206-Write%20Data-1ABC9C?style=for-the-badge" />
 
 ### Step 6: Write Some Data
 
@@ -228,6 +252,8 @@ Make sure it's readable:
 ls -la /mnt/data
 ```
 
+> <img src="https://img.shields.io/badge/Step%207-Take%20Snapshot-F39C12?style=for-the-badge" />
+
 ### Step 7: Take a Snapshot of the Root Volume
 
 1. EC2 Console → **Volumes**.
@@ -249,6 +275,8 @@ ls -la /mnt/data
 
 This might take 1–2 minutes. The snapshot is incremental: subsequent snapshots copy only the blocks that changed.
 
+> <img src="https://img.shields.io/badge/Step%208-Restore%20from%20Snapshot-2980B9?style=for-the-badge" />
+
 ### Step 8: Create a New Volume from the Snapshot
 
 1. EC2 Console → **Snapshots** → select your snapshot.
@@ -264,6 +292,8 @@ This might take 1–2 minutes. The snapshot is incremental: subsequent snapshots
 4. Click **Create volume**.
 
 You'll see a new volume appear that's a perfect copy of your root volume, including the filesystem, partitions, and any customizations.
+
+> <img src="https://img.shields.io/badge/Step%209-Attach%20%26%20Verify-16A085?style=for-the-badge" />
 
 ### Step 9: Attach and Verify the Restored Volume
 
@@ -296,7 +326,7 @@ sudo mkdir /mnt/restored
 sudo mount /dev/xvdg1 /mnt/restored  # adjust if needed
 ```
 
-> 💡 **Rithu's Tip:** If the snapshot was of a partitioned volume, the restored volume ALSO has partitions. You'll mount the PARTITION (`xvdg1`), not the raw disk (`xvdg`).
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> If the snapshot was of a partitioned volume, the restored volume ALSO has partitions. You'll mount the PARTITION (`xvdg1`), not the raw disk (`xvdg`).
 
 If it's a whole-filesystem snapshot (no partitions), mount directly:
 
@@ -311,6 +341,8 @@ ls /mnt/restored/
 ```
 
 You'll see the full Linux directory structure — it's your original 8 GB root at the moment the snapshot was taken.
+
+> <img src="https://img.shields.io/badge/Step%2010-Verify%20Work-2C3E50?style=for-the-badge" />
 
 ### Step 10: Verify Your Work
 
@@ -351,7 +383,7 @@ You'll see the full Linux directory structure — it's your original 8 GB root a
    - Select `ebs-lab-root-snapshot`.
    - Actions → **Delete snapshot** → Confirm.
 
-> 💡 **Rithu's Tip:** Snapshots live INDEPENDENTLY of their source volume. Even if you delete the volume, the snapshot stays. AWS charges for snapshot storage. DELETE IT.
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> Snapshots live INDEPENDENTLY of their source volume. Even if you delete the volume, the snapshot stays. AWS charges for snapshot storage. DELETE IT.
 
 ## 🎓 What You Learned
 
@@ -388,3 +420,13 @@ We'll snapshot a running instance WITH apps pre-installed, then launch duplicate
 ---
 
 *Written after accidentally leaving a 500 GB snapshot for three months — Rithu*
+
+---
+
+<div align="center">
+
+<img src="https://img.shields.io/badge/✅-Lab%2003%20COMPLETE!-2ECC71?style=for-the-badge" />
+
+*Written after accidentally leaving a 500 GB snapshot for three months - Rithu*
+
+</div>

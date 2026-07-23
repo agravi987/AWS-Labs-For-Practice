@@ -1,9 +1,15 @@
+<div align="center">
+
+<img src="https://img.shields.io/badge/Lab%2018-Lambda%20S3%20Trigger-F39C12?style=for-the-badge&labelColor=232F3E" />
+
 # Lab 18 — Lambda: S3 Triggered Function
 
-![Difficulty](https://img.shields.io/badge/Difficulty-Medium-orange)
-![Time](https://img.shields.io/badge/Time-~35min-blue)
-![Cost](https://img.shields.io/badge/Cost-<_%241-yellow)
-![Service](https://img.shields.io/badge/Service-Lambda%20%2F%20S3-purple)
+<img src="https://img.shields.io/badge/Difficulty-Medium-orange?style=flat-square" />
+<img src="https://img.shields.io/badge/Time-~35min-blue?style=flat-square" />
+<img src="https://img.shields.io/badge/Cost-<_%241-yellow?style=flat-square" />
+<img src="https://img.shields.io/badge/Service-Lambda%20%2F%20S3-purple?style=flat-square" />
+
+</div>
 
 > "Lambda is like a vending machine — put something in, get something out, and you don't have to worry about what's inside the machine." — Rithu
 
@@ -29,7 +35,8 @@ In this lab, you'll write a **Python Lambda function** that automatically runs e
 - [ ] A `.jpg` or `.png` image file to upload (any image, even a small one)
 - [ ] Basic familiarity with Python (don't worry — we'll provide the code!)
 
-> 💡 **Rithu's Tip:** You don't need to be a Python expert for this lab. The code is provided — your job is to understand what it does and how it connects to S3.
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> You don't need to be a Python expert for this lab. The code is provided — your job is to understand what it does and how it connects to S3.
 
 ---
 
@@ -61,7 +68,7 @@ S3 Free Tier (12 months):
 │   │   S3 Bucket   │ ──────────→   │   Lambda   │ │
 │   │ravi-lambda-   │               │  Function  │ │
 │   │trigger-bucket │               │s3-image-   │ │
-│   └──────────────┘               │ processor  │ │
+│   └──────────────┘               │processor  │ │
 │                                   └─────┬─────┘ │
 │                                         │       │
 │                                         ▼       │
@@ -76,7 +83,7 @@ S3 Free Tier (12 months):
 
 ## 🛠️ Step-by-Step Instructions
 
-### Step 1: Create S3 Bucket
+> <img src="https://img.shields.io/badge/Step%201-Create%20S3%20Bucket-2ECC71?style=for-the-badge" />
 
 1. Sign in to the **AWS Management Console**.
 2. In the search bar, type **S3** and click on **S3**.
@@ -90,11 +97,12 @@ S3 Free Tier (12 months):
 
 > 📸 [Screenshot: The S3 bucket creation form with ravi-lambda-trigger-bucket-12345 entered]
 
-> 💡 **Rithu's Tip:** Bucket names can only contain lowercase letters, numbers, hyphens, and periods. No spaces, no underscores, no capital letters. Think of it like a DNS name — it has to be globally unique!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> Bucket names can only contain lowercase letters, numbers, hyphens, and periods. No spaces, no underscores, no capital letters. Think of it like a DNS name — it has to be globally unique!
 
 ---
 
-### Step 2: Create Lambda Function
+> <img src="https://img.shields.io/badge/Step%202-Create%20Lambda%20Function-3498DB?style=for-the-badge" />
 
 1. In the search bar, type **Lambda** and click on **AWS Lambda**.
 2. Click the orange **Create function** button.
@@ -111,11 +119,12 @@ S3 Free Tier (12 months):
 
 After creation, you'll be taken to the function configuration page. You should see a success message.
 
-> 💡 **Rithu's Tip:** "Serverless" doesn't mean there's no server — it means YOU don't manage the server. AWS handles everything: the OS, the patches, the scaling, the availability. You just write code and deploy it. It's like getting a taxi instead of owning a car — someone else handles the maintenance! 🚕
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> "Serverless" doesn't mean there's no server — it means YOU don't manage the server. AWS handles everything: the OS, the patches, the scaling, the availability. You just write code and deploy it. It's like getting a taxi instead of owning a car — someone else handles the maintenance! 🚕
 
 ---
 
-### Step 3: Write Lambda Code
+> <img src="https://img.shields.io/badge/Step%203-Write%20Lambda%20Code-E67E22?style=for-the-badge" />
 
 1. In the Lambda function page, scroll down to the **Code source** section.
 2. You'll see a default file `lambda_function.py` with some example code.
@@ -168,11 +177,12 @@ def lambda_handler(event, context):
 | `print(...)` | Write to CloudWatch Logs for debugging |
 | `return {...}` | Return a response (for Lambda logs) |
 
-> 💡 **Rithu's Tip:** The `event` parameter is the star of the show here. When S3 triggers Lambda, it passes a JSON payload describing what happened — which bucket, which file, what action, what time, etc. This is the "event-driven" part of serverless!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> The `event` parameter is the star of the show here. When S3 triggers Lambda, it passes a JSON payload describing what happened — which bucket, which file, what action, what time, etc. This is the "event-driven" part of serverless!
 
 ---
 
-### Step 4: Add S3 Trigger
+> <img src="https://img.shields.io/badge/Step%204-Add%20S3%20Trigger-27AE60?style=for-the-badge" />
 
 1. In your Lambda function page, scroll to the **Function overview** section at the top.
 2. Click **+ Add trigger** (under the "Function overview" diagram).
@@ -189,11 +199,12 @@ def lambda_handler(event, context):
 
 > 📸 [Screenshot: The S3 trigger configuration showing bucket, event type, suffix filter, and the recursive invocation warning]
 
-> 💡 **Rithu's Tip:** That recursive invocation warning is no joke! If your Lambda writes a file back to the same bucket with the same suffix, it triggers itself again, which writes again, which triggers again... forever, until you hit the Lambda invocation limit and AWS sends you an angry bill. Always use separate input and output buckets in production!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> That recursive invocation warning is no joke! If your Lambda writes a file back to the same bucket with the same suffix, it triggers itself again, which writes again, which triggers again... forever, until you hit the Lambda invocation limit and AWS sends you an angry bill. Always use separate input and output buckets in production!
 
 ---
 
-### Step 5: Test
+> <img src="https://img.shields.io/badge/Step%205-Test-E74C3C?style=for-the-badge" />
 
 Now for the exciting part — let's test it!
 
@@ -236,11 +247,12 @@ Content Type: image/jpeg
 2. Go back to CloudWatch Logs → Click **Actions → Refresh** (or just go back and re-enter the log stream).
 3. A new log entry should appear for the second file!
 
-> 💡 **Rithu's Tip:** CloudWatch Logs are your best friend when debugging Lambda functions. If something doesn't work, ALWAYS check the logs first. In the console, you can also use the **Test** tab to invoke the function manually with a sample event.
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> CloudWatch Logs are your best friend when debugging Lambda functions. If something doesn't work, ALWAYS check the logs first. In the console, you can also use the **Test** tab to invoke the function manually with a sample event.
 
 ---
 
-### Step 6: Add IAM Permission (if needed)
+> <img src="https://img.shields.io/badge/Step%206-Add%20IAM%20Permission-9B59B6?style=for-the-badge" />
 
 If your Lambda function can't read S3 metadata (you see an error in CloudWatch Logs), you need to add the `s3:GetObject` permission to the Lambda execution role.
 
@@ -250,11 +262,12 @@ If your Lambda function can't read S3 metadata (you see an error in CloudWatch L
 4. Search for `AmazonS3ReadOnlyAccess`.
 5. Check the box → **Add permissions**.
 
-> 💡 **Rithu's Tip:** The basic S3 permissions created with the role allow S3 to invoke Lambda, but they might not include `s3:GetObject` for reading file metadata. In production, always create the smallest policy possible. The basic role is fine for this lab, but real-world roles should follow least privilege.
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> The basic S3 permissions created with the role allow S3 to invoke Lambda, but they might not include `s3:GetObject` for reading file metadata. In production, always create the smallest policy possible. The basic role is fine for this lab, but real-world roles should follow least privilege.
 
 ---
 
-### Step 7: Create a Simple Transformation (Advanced — Optional)
+> <img src="https://img.shields.io/badge/Step%207-Simple%20Transformation%20(Advanced)-1ABC9C?style=for-the-badge" />
 
 Want to take it further? Let's modify the Lambda to **copy the uploaded file to a destination bucket**.
 
@@ -307,11 +320,12 @@ def lambda_handler(event, context):
 
 > 📸 [Screenshot: The destination bucket showing the copied file in the processed/ folder]
 
-> 💡 **Rithu's Tip:** This pattern — copy file, process it, save to another location — is exactly how real-world data pipelines work. Think about Instagram: you upload a photo, Lambda resizes it into multiple sizes (thumbnail, medium, large), and stores them all. That's Lambda + S3 in production!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> This pattern — copy file, process it, save to another location — is exactly how real-world data pipelines work. Think about Instagram: you upload a photo, Lambda resizes it into multiple sizes (thumbnail, medium, large), and stores them all. That's Lambda + S3 in production!
 
 ---
 
-### Step 8: Verify Your Work ✅
+> <img src="https://img.shields.io/badge/Step%208-Verify%20Your%20Work-F39C12?style=for-the-badge" />
 
 1. **Lambda function exists:** Lambda → Functions → `s3-image-processor` appears.
 2. **S3 trigger configured:** Lambda → Configuration → Triggers → S3 trigger for `ravi-lambda-trigger-bucket-12345` with `.jpg` suffix.
@@ -379,7 +393,8 @@ def lambda_handler(event, context):
    - Select the S3 trigger → **Delete**
    - ⚠️ This step may be automatic when you delete the function, but verify it's gone
 
-> 💡 **Rithu's Tip:** Always empty S3 buckets before deleting them — AWS won't let you delete a bucket that still has objects in it. It's like trying to throw away a box without taking out the stuff inside first! And don't forget CloudWatch logs — they're sneaky costs that accumulate quietly!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> Always empty S3 buckets before deleting them — AWS won't let you delete a bucket that still has objects in it. It's like trying to throw away a box without taking out the stuff inside first! And don't forget CloudWatch logs — they're sneaky costs that accumulate quietly!
 
 ---
 
@@ -409,34 +424,69 @@ In the next lab, you'll create a REST API with API Gateway that invokes Lambda f
 
 ## ❓ Troubleshooting
 
-### Lambda doesn't trigger when I upload a file
+<details>
+<summary><strong>Lambda doesn't trigger when I upload a file</strong></summary>
+
 **Cause:** The S3 trigger isn't configured correctly, or the suffix filter doesn't match your file type.
 **Fix:** 
 - Go to Lambda → Configuration → Triggers → verify the S3 trigger exists.
 - Make sure you're uploading a `.jpg` file (if you set the suffix filter).
 - Check the S3 bucket event notification settings.
 
-### CloudWatch Logs are empty
+</details>
+
+<details>
+<summary><strong>CloudWatch Logs are empty</strong></summary>
+
 **Cause:** The Lambda function hasn't been invoked, or the log stream is in a different region.
 **Fix:**
 - Make sure you're looking in the same region as the Lambda function.
 - Check CloudWatch Logs → Log groups → `/aws/lambda/s3-image-processor`.
 - Verify the S3 trigger is configured.
 
-### Lambda fails with "Access Denied" or "AccessDeniedException"
+</details>
+
+<details>
+<summary><strong>Lambda fails with "Access Denied" or "AccessDeniedException"</strong></summary>
+
 **Cause:** The Lambda execution role doesn't have permission to access S3.
 **Fix:** Go to IAM → Roles → `lambda-s3-role` → Add the `AmazonS3ReadOnlyAccess` policy.
 
-### Lambda fails with "Unable to import module 'lambda_function'"
+</details>
+
+<details>
+<summary><strong>Lambda fails with "Unable to import module 'lambda_function'"</strong></summary>
+
 **Cause:** There's a syntax error in your Python code.
 **Fix:** Go to Lambda → Code → check for typos. Common issues: missing colons, wrong indentation, unmatched parentheses.
 
-### Recursive invocation warning / Lambda keeps running
+</details>
+
+<details>
+<summary><strong>Recursive invocation warning / Lambda keeps running</strong></summary>
+
 **Cause:** Your Lambda is writing to the same bucket it's reading from.
 **Fix:** Use a different destination bucket, or remove the file copy logic. If your Lambda is already stuck in a loop, go to Lambda → Configuration → Triggers → disable the S3 trigger immediately!
 
-### File doesn't appear in destination bucket (Step 7)
+</details>
+
+<details>
+<summary><strong>File doesn't appear in destination bucket (Step 7)</strong></summary>
+
 **Cause:** The destination bucket name is wrong, or the Lambda role doesn't have write permissions.
 **Fix:** Check the `DESTINATION_BUCKET` variable in your code matches the actual bucket name. Ensure the Lambda role has `AmazonS3FullAccess` (for lab purposes).
 
-> 💡 **Rithu's Tip:** Lambda failures are very common when learning — don't get discouraged! The key is to ALWAYS check CloudWatch Logs first. The logs will tell you exactly what went wrong. Think of CloudWatch as your Lambda's diary — it writes down everything that happens, good or bad! 📝
+</details>
+
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> Lambda failures are very common when learning — don't get discouraged! The key is to ALWAYS check CloudWatch Logs first. The logs will tell you exactly what went wrong. Think of CloudWatch as your Lambda's diary — it writes down everything that happens, good or bad! 📝
+
+---
+
+<div align="center">
+
+<img src="https://img.shields.io/badge/Lab%2018-Complete!-F39C12?style=for-the-badge&labelColor=232F3E" />
+
+> 🎉 **Incredible work, Ravi!** You've built your first event-driven serverless application! S3 + Lambda is one of the most powerful patterns in AWS. You're now thinking like a cloud architect! 🚀
+
+</div>

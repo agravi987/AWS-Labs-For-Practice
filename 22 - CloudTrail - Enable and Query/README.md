@@ -1,9 +1,15 @@
+<div align="center">
+
+<img src="https://img.shields.io/badge/Lab%2022-CloudTrail%20Enable%20%26%20Query-2980B9?style=for-the-badge&labelColor=232F3E" />
+
 # Lab 22 — CloudTrail: Enable and Query
 
-![Difficulty](https://img.shields.io/badge/Difficulty-Easy-green)
-![Time](https://img.shields.io/badge/Time-~20min-blue)
-![Cost](https://img.shields.io/badge/Cost-%3C%241-brightgreen)
-![Service](https://img.shields.io/badge/Service-CloudTrail-red)
+<img src="https://img.shields.io/badge/Difficulty-Easy-green?style=flat-square" />
+<img src="https://img.shields.io/badge/Time-~20min-blue?style=flat-square" />
+<img src="https://img.shields.io/badge/Cost-%3C%241-brightgreen?style=flat-square" />
+<img src="https://img.shields.io/badge/Service-CloudTrail-red?style=flat-square" />
+
+</div>
 
 > "In the cloud, someone is always watching. CloudTrail is your security camera — and it never blinks!" — Rithu
 
@@ -71,7 +77,7 @@ Estimated total lab cost: **< $1** if cleaned up within 1 hour.
 
 ## 🛠️ Step-by-Step Instructions
 
-### Step 1: Create a Trail
+### <img src="https://img.shields.io/badge/Step%201-Create%20a%20Trail-FF6B6B?style=for-the-badge" />
 
 Let's set up CloudTrail to record everything happening in your account.
 
@@ -97,13 +103,14 @@ Let's set up CloudTrail to record everything happening in your account.
 11. Check ✅ **Enable for all regions** — this is important! You want to log activity in every region
 12. Click **Create trail**
 
-> 💡 **Rithu's Tip**: "Why all regions? Attackers might try to create resources in a region you don't normally use. Logging everything means no blind spots!"
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> "Why all regions? Attackers might try to create resources in a region you don't normally use. Logging everything means no blind spots!"
 
 📸 [Screenshot: CloudTrail "Create trail" page with all settings configured as described]
 
 ---
 
-### Step 2: Generate Some Activity
+### <img src="https://img.shields.io/badge/Step%202-Generate%20Some%20Activity-FFA500?style=for-the-badge" />
 
 CloudTrail is only useful if there's something to log! Let's create some activity.
 
@@ -129,13 +136,14 @@ We just created three CloudTrail events:
 - `StopInstances` (stopping the instance)
 - `TerminateInstances` (terminating the instance)
 
-> 💡 **Rithu's Tip**: "Every click in the AWS Console generates an API call, and CloudTrail records every one of them. Launching, stopping, terminating — each action has a timestamp, user, and source IP."
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> "Every click in the AWS Console generates an API call, and CloudTrail records every one of them. Launching, stopping, terminating — each action has a timestamp, user, and source IP."
 
 📸 [Screenshot: EC2 console showing the instance being terminated]
 
 ---
 
-### Step 3: View Events in CloudTrail
+### <img src="https://img.shields.io/badge/Step%203-View%20Events%20in%20CloudTrail-9B59B6?style=for-the-badge" />
 
 Now let's see what CloudTrail recorded!
 
@@ -164,13 +172,14 @@ Now let's see what CloudTrail recorded!
 
 10. Try filtering by `StopInstances` and `TerminateInstances` to see those events too
 
-> 💡 **Rithu's Tip**: "The Event History view shows the last 90 days of events. For longer retention, you need the S3 bucket we configured. Think of Event History as a 'recent calls' log on your phone."
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> "The Event History view shows the last 90 days of events. For longer retention, you need the S3 bucket we configured. Think of Event History as a 'recent calls' log on your phone."
 
 📸 [Screenshot: CloudTrail Event History showing the RunInstances event with details expanded]
 
 ---
 
-### Step 4: Query Events in S3
+### <img src="https://img.shields.io/badge/Step%204-Query%20Events%20in%20S3-3498DB?style=for-the-badge" />
 
 Your trail sends events to S3 as JSON files. Let's look at them!
 
@@ -215,13 +224,14 @@ Your trail sends events to S3 as JSON files. Let's look at them!
 }
 ```
 
-> 💡 **Rithu's Tip**: "These S3 log files are your permanent audit trail. In a real company, you'd keep these for years for compliance (HIPAA, PCI-DSS, SOC 2). Security teams and auditors love CloudTrail!"
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> "These S3 log files are your permanent audit trail. In a real company, you'd keep these for years for compliance (HIPAA, PCI-DSS, SOC 2). Security teams and auditors love CloudTrail!"
 
 📸 [Screenshot: S3 bucket showing the folder structure and a downloaded log file]
 
 ---
 
-### Step 5: Use CloudWatch Logs Insights
+### <img src="https://img.shields.io/badge/Step%205-CloudWatch%20Logs%20Insights-1ABC9C?style=for-the-badge" />
 
 This is where CloudTrail gets powerful! Let's query our events using SQL-like syntax.
 
@@ -275,13 +285,14 @@ fields eventTime, eventName, userIdentity.arn, sourceIPAddress
 13. Click **Run query**
 14. This finds all destructive actions — useful for security audits!
 
-> 💡 **Rithu's Tip**: "CloudWatch Logs Insights is like Google for your CloudTrail logs. Instead of scrolling through thousands of events, you write a query and get instant answers. In a real job, you might be asked: 'Who stopped our production server at 3 AM last Tuesday?' — and this is how you'd find out!"
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> "CloudWatch Logs Insights is like Google for your CloudTrail logs. Instead of scrolling through thousands of events, you write a query and get instant answers. In a real job, you might be asked: 'Who stopped our production server at 3 AM last Tuesday?' — and this is how you'd find out!"
 
 📸 [Screenshot: CloudWatch Logs Insights showing the query and results]
 
 ---
 
-### Step 6: Create CloudWatch Metric Filter (Optional)
+### <img src="https://img.shields.io/badge/Step%206-Create%20Metric%20Filter-E74C3C?style=for-the-badge" />
 
 Want to get alerted when suspicious activity happens? Create a metric filter!
 
@@ -305,7 +316,8 @@ Want to get alerted when suspicious activity happens? Create a metric filter!
 
 Now you can create a CloudWatch Alarm on this metric to get notified of failed login attempts!
 
-> 💡 **Rithu's Tip**: "Metric filters are how you turn logs into actionable alerts. Failed logins, unauthorized API calls, root user activity — all of these can trigger alarms that notify your security team."
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> "Metric filters are how you turn logs into actionable alerts. Failed logins, unauthorized API calls, root user activity — all of these can trigger alarms that notify your security team."
 
 📸 [Screenshot: Metric filter creation page with the filter pattern entered]
 
@@ -374,7 +386,8 @@ CloudTrail is powerful but logs can accumulate. Clean up everything!
 27. Go to S3 → confirm the bucket is gone
 28. Go to CloudWatch → confirm the log group is gone
 
-> 💡 **Rithu's Tip**: "In production, you'd NEVER delete your CloudTrail. But for this lab, we clean up to avoid any charges. In your real AWS account, always keep at least one trail enabled — it's your security lifeline!"
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> "In production, you'd NEVER delete your CloudTrail. But for this lab, we clean up to avoid any charges. In your real AWS account, always keep at least one trail enabled — it's your security lifeline!"
 
 📸 [Screenshot: CloudTrail console showing no trails remaining]
 
@@ -408,27 +421,59 @@ You now have eyes on everything happening in your AWS account! In the next lab, 
 
 ## ❓ Troubleshooting
 
-**Problem**: No events showing in Event History
-- **Fix**: Wait 5-10 minutes after creating the trail — it can take time for events to appear. Also make sure you're looking in the correct region.
+<details>
+<summary><strong>No events showing in Event History</strong></summary>
 
-**Problem**: Trail shows "Logging" but no CloudWatch Logs
-- **Fix**: The IAM role might not have permissions. Go to the trail settings and verify the CloudWatch Logs IAM role was created correctly.
+**Fix**: Wait 5-10 minutes after creating the trail — it can take time for events to appear. Also make sure you're looking in the correct region.
+</details>
 
-**Problem**: CloudWatch Logs Insights query returns no results
-- **Fix**: Make sure you selected the correct log group (`ravi-cloudtrail-logs`). Also verify that events have been delivered (can take 5-15 minutes for new trails).
+<details>
+<summary><strong>Trail shows "Logging" but no CloudWatch Logs</strong></summary>
 
-**Problem**: S3 bucket is empty
-- **Fix**: CloudTrail delivers logs within 15 minutes. If the bucket is empty after 30 minutes, check the trail status in CloudTrail console.
+**Fix**: The IAM role might not have permissions. Go to the trail settings and verify the CloudWatch Logs IAM role was created correctly.
+</details>
 
-**Problem**: "Access Denied" when creating the trail
-- **Fix**: Ensure your IAM user has the `AWSCloudTrail_FullAccess` policy. You can also attach the `CloudTrailFullAccess` managed policy.
+<details>
+<summary><strong>CloudWatch Logs Insights query returns no results</strong></summary>
 
-**Problem**: Can't delete the S3 bucket
-- **Fix**: You must EMPTY the bucket first (delete all objects), then delete the bucket. S3 buckets cannot be deleted if they contain objects.
+**Fix**: Make sure you selected the correct log group (`ravi-cloudtrail-logs`). Also verify that events have been delivered (can take 5-15 minutes for new trails).
+</details>
 
-**Problem**: Metric filter doesn't seem to work
-- **Fix**: After creating the filter, wait 5-10 minutes for it to start processing new log events. The filter only applies to NEW events, not historical ones.
+<details>
+<summary><strong>S3 bucket is empty</strong></summary>
+
+**Fix**: CloudTrail delivers logs within 15 minutes. If the bucket is empty after 30 minutes, check the trail status in CloudTrail console.
+</details>
+
+<details>
+<summary><strong>"Access Denied" when creating the trail</strong></summary>
+
+**Fix**: Ensure your IAM user has the `AWSCloudTrail_FullAccess` policy. You can also attach the `CloudTrailFullAccess` managed policy.
+</details>
+
+<details>
+<summary><strong>Can't delete the S3 bucket</strong></summary>
+
+**Fix**: You must EMPTY the bucket first (delete all objects), then delete the bucket. S3 buckets cannot be deleted if they contain objects.
+</details>
+
+<details>
+<summary><strong>Metric filter doesn't seem to work</strong></summary>
+
+**Fix**: After creating the filter, wait 5-10 minutes for it to start processing new log events. The filter only applies to NEW events, not historical ones.
+</details>
 
 ---
 
-> 🎉 **Rithu says**: "You now know more about AWS security auditing than most people! CloudTrail is one of those services that seems boring until something goes wrong — then it's the most important thing in the world. Always keep it enabled!"
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> "You now know more about AWS security auditing than most people! CloudTrail is one of those services that seems boring until something goes wrong — then it's the most important thing in the world. Always keep it enabled!"
+
+---
+
+<div align="center">
+
+<img src="https://img.shields.io/badge/Lab%2022-Complete!-27AE60?style=for-the-badge&labelColor=232F3E" />
+
+**🎉 Congratulations on completing Lab 22! 🎉**
+
+</div>

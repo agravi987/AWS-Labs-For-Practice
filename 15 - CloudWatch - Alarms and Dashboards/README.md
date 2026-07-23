@@ -1,9 +1,15 @@
+<div align="center">
+
+<img src="https://img.shields.io/badge/Lab%2015-CloudWatch%20Alarms%20%26%20Dashboards-E67E22?style=for-the-badge&labelColor=232F3E" />
+
 # Lab 15 — CloudWatch: Alarms and Dashboards — Your Infrastructure's Control Center
 
-![Difficulty](https://img.shields.io/badge/Difficulty-Easy-green)
-![Time](https://img.shields.io/badge/Time-~25_min-blue)
-![Cost](https://img.shields.io/badge/Cost-<%241-green)
-![Service](https://img.shields.io/badge/Service-CloudWatch-orange)
+<img src="https://img.shields.io/badge/Difficulty-Easy-green?style=flat-square" />
+<img src="https://img.shields.io/badge/Time-~25_min-blue?style=flat-square" />
+<img src="https://img.shields.io/badge/Cost-<%241-green?style=flat-square" />
+<img src="https://img.shields.io/badge/Service-CloudWatch-orange?style=flat-square" />
+
+</div>
 
 > "Ravi, you've built amazing infrastructure in the last 14 labs. But how do you know when something breaks at 3 AM? CloudWatch is your 24/7 security camera, fire alarm, and health monitor all rolled into one. Let's set it up!" — Rithu
 
@@ -82,7 +88,7 @@ Before you start, make sure you have:
 
 ## 🛠️ Step-by-Step Instructions
 
-### Step 1: Launch a Test EC2 Instance
+> <img src="https://img.shields.io/badge/Step%201-Launch%20a%20Test%20EC2%20Instance-2ECC71?style=for-the-badge" />
 
 If you don't already have a running EC2 instance, let's launch one!
 
@@ -106,7 +112,8 @@ yum install -y httpd stress
 systemctl start httpd
 ```
 
-> 💡 **Rithu's Tip:** We're pre-installing `stress` in the user data so we don't have to install it later via SSH. Efficiency! 🚀
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> We're pre-installing `stress` in the user data so we don't have to install it later via SSH. Efficiency! 🚀
 
 4. Click **Launch Instance**
 5. Wait for it to be **Running** and **2/2 status checks passed**
@@ -115,7 +122,7 @@ systemctl start httpd
 
 ---
 
-### Step 2: Explore CloudWatch Metrics
+> <img src="https://img.shields.io/badge/Step%202-Explore%20CloudWatch%20Metrics-3498DB?style=for-the-badge" />
 
 Let's see what CloudWatch is already tracking for your EC2 instance!
 
@@ -135,7 +142,8 @@ Let's see what CloudWatch is already tracking for your EC2 instance!
 
 📸 **[Screenshot: CloudWatch metrics page showing CPU utilization graph for the EC2 instance]**
 
-> 💡 **Rithu's Tip:** EC2 automatically sends basic metrics to CloudWatch every 5 minutes for FREE. No agent needed! But if you want 1-minute granularity or custom metrics (like memory usage), you'd install the CloudWatch Agent. For this lab, 5-minute intervals are perfect.
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> EC2 automatically sends basic metrics to CloudWatch every 5 minutes for FREE. No agent needed! But if you want 1-minute granularity or custom metrics (like memory usage), you'd install the CloudWatch Agent. For this lab, 5-minute intervals are perfect.
 
 **Explore Other Metrics:**
 
@@ -150,7 +158,7 @@ Let's see what CloudWatch is already tracking for your EC2 instance!
 
 ---
 
-### Step 3: Create a CloudWatch Alarm
+> <img src="https://img.shields.io/badge/Step%203-Create%20a%20CloudWatch%20Alarm-E67E22?style=for-the-badge" />
 
 This is the star of the show — let's create an alarm that emails you when CPU goes above 80%!
 
@@ -177,7 +185,8 @@ This is the star of the show — let's create an alarm that emails you when CPU 
 | Datapoints to alarm | **5 out of 5** consecutive periods |
 | Period | **5 minutes** |
 
-> 💡 **Rithu's Tip:** "5 out of 5 consecutive periods" means the CPU must stay above 80% for 5 consecutive 5-minute periods (25 minutes total) before the alarm triggers. This prevents false alarms from brief CPU spikes. You can make it more sensitive by changing to "3 out of 5" — but for this lab, 5/5 works great!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> "5 out of 5 consecutive periods" means the CPU must stay above 80% for 5 consecutive 5-minute periods (25 minutes total) before the alarm triggers. This prevents false alarms from brief CPU spikes. You can make it more sensitive by changing to "3 out of 5" — but for this lab, 5/5 works great!
 
 **Step 3c: Configure Notification**
 
@@ -195,7 +204,8 @@ This is the star of the show — let's create an alarm that emails you when CPU 
 4. Click **Create topic**
 5. ⚠️ **IMPORTANT:** Check your email inbox! You'll receive a confirmation email from AWS. Click the **Confirm subscription** link!
 
-> 💡 **Rithu's Tip:** If you don't confirm the subscription, you won't receive notifications. Check your spam folder too! The email comes from `no-reply@sns.amazonaws.com`.
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> If you don't confirm the subscription, you won't receive notifications. Check your spam folder too! The email comes from `no-reply@sns.amazonaws.com`.
 
 **Step 3d: Create the Alarm**
 
@@ -208,7 +218,7 @@ This is the star of the show — let's create an alarm that emails you when CPU 
 
 ---
 
-### Step 4: Trigger the Alarm — Let's Push Some Buttons! 🔴
+> <img src="https://img.shields.io/badge/Step%204-Trigger%20the%20Alarm-E74C3C?style=for-the-badge" />
 
 Now let's make the alarm actually fire!
 
@@ -230,7 +240,8 @@ sudo yum install -y stress
 stress --cpu 4 --timeout 600s
 ```
 
-> 💡 **Rithu's Tip:** This runs 4 CPU stress workers for 10 minutes. With our alarm set at 5 out of 5 periods at 5 minutes each, we need the CPU above 80% for 25 minutes. So we'll keep the stress running long enough!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> This runs 4 CPU stress workers for 10 minutes. With our alarm set at 5 out of 5 periods at 5 minutes each, we need the CPU above 80% for 25 minutes. So we'll keep the stress running long enough!
 
 4. Open a **second terminal** and SSH into the same instance (or just wait)
 
@@ -259,11 +270,12 @@ stress --cpu 4 --timeout 600s
 
 11. After CPU drops below 80% for a while, the alarm will return to **OK** state
 
-> 💡 **Rithu's Tip:** In the real world, you'd set this up with tighter thresholds (like 3 out of 5 periods) and maybe different actions for different severity levels. For example: Warning at 70%, Critical at 90%. But the concept is the same!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> In the real world, you'd set this up with tighter thresholds (like 3 out of 5 periods) and maybe different actions for different severity levels. For example: Warning at 70%, Critical at 90%. But the concept is the same!
 
 ---
 
-### Step 5: Create a Dashboard — Your Personal Control Center! 🎛️
+> <img src="https://img.shields.io/badge/Step%205-Create%20a%20Dashboard-9B59B6?style=for-the-badge" />
 
 Let's build a beautiful dashboard to visualize your infrastructure!
 
@@ -308,7 +320,8 @@ Let's build a beautiful dashboard to visualize your infrastructure!
 
 📸 **[Screenshot: Complete Ravi-Labs-Dashboard with all 4 widgets visible]**
 
-> 💡 **Rithu's Tip:** Dashboards update automatically every minute! You can share them with your team by clicking the **Share** button. In production, teams often have dashboards on big screens in the office showing real-time infrastructure health. Now you know how to build one! 🎨
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> Dashboards update automatically every minute! You can share them with your team by clicking the **Share** button. In production, teams often have dashboards on big screens in the office showing real-time infrastructure health. Now you know how to build one! 🎨
 
 **Customize the Dashboard:**
 
@@ -319,7 +332,7 @@ Let's build a beautiful dashboard to visualize your infrastructure!
 
 ---
 
-### Step 6: Create a CloudWatch Log Group (Bonus)
+> <img src="https://img.shields.io/badge/Step%206-Create%20a%20CloudWatch%20Log%20Group-F39C12?style=for-the-badge" />
 
 Let's learn about CloudWatch Logs — where applications send their log files!
 
@@ -334,7 +347,8 @@ Let's learn about CloudWatch Logs — where applications send their log files!
 
 4. Click **Create**
 
-> 💡 **Rithu's Tip:** Log groups are like folders for your logs. You'd configure your application (Apache, Nginx, your custom app) to send logs here instead of writing them to local files. This is incredibly useful because:
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> Log groups are like folders for your logs. You'd configure your application (Apache, Nginx, your custom app) to send logs here instead of writing them to local files. This is incredibly useful because:
 > - Logs are centralized (not scattered across instances)
 > - Logs persist even if the instance is terminated
 > - You can search and filter logs across all instances
@@ -360,11 +374,12 @@ aws logs create-log-stream \
 
 📸 **[Screenshot: CloudWatch Logs showing the test log message]**
 
-> 💡 **Rithu's Tip:** In a real application, you'd configure the CloudWatch Agent on your EC2 instances to automatically ship logs to CloudWatch. For example, Apache logs (`/var/log/httpd/access_log`) would be sent here automatically. Then you can search across ALL your servers' logs in one place. Game changer! 🎮
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> In a real application, you'd configure the CloudWatch Agent on your EC2 instances to automatically ship logs to CloudWatch. For example, Apache logs (`/var/log/httpd/access_log`) would be sent here automatically. Then you can search across ALL your servers' logs in one place. Game changer! 🎮
 
 ---
 
-### Step 7: Verify Your Work
+> <img src="https://img.shields.io/badge/Step%207-Verify%20Your%20Work-1ABC9C?style=for-the-badge" />
 
 - [ ] EC2 instance `cloudwatch-test-ec2` is running
 - [ ] CloudWatch Metrics show CPU, Network, and Status Check metrics
@@ -439,7 +454,8 @@ CloudWatch costs are small but let's clean up properly!
 
 📸 **[Screenshot: All CloudWatch resources deleted — empty Dashboards and Alarms pages]**
 
-> 💡 **Rithu's Tip:** Always clean up dashboards and alarms! A forgotten dashboard costs ~$3/month and an alarm costs ~$0.10/month. Small amounts add up, and more importantly, it's good cloud hygiene! 🧹
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> Always clean up dashboards and alarms! A forgotten dashboard costs ~$3/month and an alarm costs ~$0.10/month. Small amounts add up, and more importantly, it's good cloud hygiene! 🧹
 
 ---
 
@@ -472,44 +488,68 @@ Congratulations on completing all 15 labs! Here's where you can go from here:
 
 ## ❓ Troubleshooting
 
-### I don't see any metrics for my EC2 instance
+<details>
+<summary><strong>I don't see any metrics for my EC2 instance</strong></summary>
 
 - Metrics take **5-10 minutes** to appear for a new instance
 - Make sure you're looking in the correct region
 - Check that the instance is **Running** (not stopped or terminated)
 - Try refreshing the metrics page
 
-### Alarm is stuck in "Insufficient Data" state
+</details>
+
+<details>
+<summary><strong>Alarm is stuck in "Insufficient Data" state</strong></summary>
 
 - This means CloudWatch doesn't have enough data points yet
 - Wait at least 5 minutes (one metric period)
 - The alarm needs data from at least 1 period before it can evaluate
 
-### I didn't receive the email notification
+</details>
+
+<details>
+<summary><strong>I didn't receive the email notification</strong></summary>
 
 - Check your **spam/junk folder**
 - Verify you confirmed the SNS subscription (check your inbox for the confirmation email)
 - Make sure the alarm actually triggered (showing "ALARM" state, not "Insufficient Data")
 - Check the SNS topic has your email listed correctly
 
-### The stress test didn't push CPU above 80%
+</details>
+
+<details>
+<summary><strong>The stress test didn't push CPU above 80%</strong></summary>
 
 - t2.micro only has 1 vCPU — `stress --cpu 4` may still max it out
 - Check that stress is actually running: `top` in another terminal
 - Some instance types have burstable CPU — t2.micro can burst above baseline but may throttle
 
-### Dashboard widgets show "No data"
+</details>
+
+<details>
+<summary><strong>Dashboard widgets show "No data"</strong></summary>
 
 - Wait a few minutes — widgets need time to populate
 - Make sure the metrics exist and are being reported
 - Check the time range selector on the dashboard (might be set to the wrong time period)
 
-### Log group creation fails
+</details>
+
+<details>
+<summary><strong>Log group creation fails</strong></summary>
 
 - Check that the log group name doesn't already exist
 - Verify you have CloudWatch Logs permissions
 - Make sure you're in the correct region
 
+</details>
+
 ---
 
+<div align="center">
+
+<img src="https://img.shields.io/badge/Lab%2015-Complete!-E67E22?style=for-the-badge&labelColor=232F3E" />
+
 > 🎉 **AMAZING work, Ravi!** You've completed all 15 labs! From launching your first EC2 instance to building auto-scaling architectures, configuring DNS failover, managing databases, and now monitoring everything with CloudWatch — you've built a solid foundation in AWS. You should be incredibly proud of yourself! The cloud journey never really ends, but you've taken the most important steps. Keep building, keep learning, and remember — Rithu believes in you! 🚀✨
+
+</div>

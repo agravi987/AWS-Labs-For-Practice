@@ -1,9 +1,17 @@
-# Lab 12 — Route 53: DNS and Failover — Your Domain, Your Rules
+<div align="center">
 
-![Difficulty](https://img.shields.io/badge/Difficulty-Medium-yellow)
-![Time](https://img.shields.io/badge/Time-~35_min-blue)
-![Cost](https://img.shields.io/badge/Cost-<%243-green)
-![Service](https://img.shields.io/badge/Service-Route_53-blue)
+<img src="https://img.shields.io/badge/Lab%2012-Route%2053%20DNS%20%26%20Failover-2980B9?style=for-the-badge&labelColor=232F3E" />
+
+</div>
+
+<div align="center">
+
+<img src="https://img.shields.io/badge/Difficulty-Medium-F4D03F?style=flat-square" />
+<img src="https://img.shields.io/badge/Time-~35min-3498DB?style=flat-square" />
+<img src="https://img.shields.io/badge/Cost-%3C%243-2ECC71?style=flat-square" />
+<img src="https://img.shields.io/badge/Service-Route%2053-8E44AD?style=flat-square" />
+
+</div>
 
 > "Ravi, every time you type google.com, DNS is working behind the scenes to find the right server. Today you become the DNS wizard. And yes, we'll also teach your domain to switch to a backup when the main server goes down — like a bat signal for your infrastructure!" — Rithu
 
@@ -49,7 +57,8 @@ Before you start, make sure you have:
 - **Option A:** Register a real domain (~$12) — Great if you want your own `.com`!
 - **Option B:** Skip domain registration and practice with health checks only (**Free**) — The failover concepts still apply!
 
-> 💡 **Rithu's Tip:** I recommend Option B for your first time. You can always register a domain later. The important thing is understanding how DNS and failover routing work!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> I recommend Option B for your first time. You can always register a domain later. The important thing is understanding how DNS and failover routing work!
 
 ---
 
@@ -83,6 +92,8 @@ Before you start, make sure you have:
 ## 🛠️ Step-by-Step Instructions
 
 ### Step 1: Prepare Your EC2 Instances
+
+> <img src="https://img.shields.io/badge/Step%201-Prepare%20EC2%20Instances-3498DB?style=for-the-badge" />
 
 You need **two EC2 instances** for failover routing — a primary and a secondary.
 
@@ -138,6 +149,8 @@ echo "<h1>Hello from BACKUP server!</h1><p>This is the failover instance.</p>" >
 
 ### Step 2: Create a Health Check
 
+> <img src="https://img.shields.io/badge/Step%202-Create%20Health%20Check-2ECC71?style=for-the-badge" />
+
 Route 53 uses health checks to know if your server is alive. Let's create one for the primary server.
 
 1. Go to **Route 53 Console** → left sidebar → **Health checks**
@@ -157,7 +170,8 @@ Route 53 uses health checks to know if your server is alive. Let's create one fo
 
 4. Click **Create health check**
 
-> 💡 **Rithu's Tip:** "Fast" interval means Route 53 checks your server every 10 seconds. "Failure threshold 3" means it must fail 3 consecutive checks before marking the server as unhealthy. This prevents false alarms from one slow response!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> "Fast" interval means Route 53 checks your server every 10 seconds. "Failure threshold 3" means it must fail 3 consecutive checks before marking the server as unhealthy. This prevents false alarms from one slow response!
 
 5. Wait about 1 minute, then check the health check status. It should show **Healthy** (green)
 
@@ -166,6 +180,8 @@ Route 53 uses health checks to know if your server is alive. Let's create one fo
 ---
 
 ### Step 3: Create a Hosted Zone (Option A Only)
+
+> <img src="https://img.shields.io/badge/Step%203-Create%20Hosted%20Zone-E74C3C?style=for-the-badge" />
 
 > ⏭️ **Skip this step if you chose Option B** (no domain registration)
 
@@ -180,6 +196,8 @@ If you registered a domain in Step 1:
 ---
 
 ### Step 4: Create a Simple DNS Record (Testing)
+
+> <img src="https://img.shields.io/badge/Step%204-Create%20Simple%20DNS%20Record-F39C12?style=for-the-badge" />
 
 Let's first point our domain to the primary server to make sure DNS is working.
 
@@ -215,6 +233,8 @@ You should see the primary server's response! 🎉
 
 ### Step 5: Set Up Failover Routing — The Real Deal!
 
+> <img src="https://img.shields.io/badge/Step%205-Set%20Up%20Failover%20Routing-9B59B6?style=for-the-badge" />
+
 Now let's set up automatic failover. This is where Route 53 really shines!
 
 **Step 5a: Create the PRIMARY Failover Record**
@@ -234,7 +254,8 @@ Now let's set up automatic failover. This is where Route 53 really shines!
 
 2. Click **Create records**
 
-> 💡 **Rithu's Tip:** The "Evaluate target health" option is crucial! It tells Route 53 to actually check if the primary server is healthy before sending traffic to it.
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> The "Evaluate target health" option is crucial! It tells Route 53 to actually check if the primary server is healthy before sending traffic to it.
 
 **Step 5b: Create the SECONDARY Failover Record**
 
@@ -255,11 +276,14 @@ Now let's set up automatic failover. This is where Route 53 really shines!
 
 📸 **[Screenshot: Route 53 records page showing both Primary and Secondary failover records]**
 
-> 💡 **Rithu's Tip:** Notice both records have the SAME name (`www`) but different failover types (Primary vs Secondary). Route 53 knows to check Primary first, and only use Secondary when Primary is unhealthy. It's like having a plan B that automatically kicks in! 🔄
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> Notice both records have the SAME name (`www`) but different failover types (Primary vs Secondary). Route 53 knows to check Primary first, and only use Secondary when Primary is unhealthy. It's like having a plan B that automatically kicks in! 🔄
 
 ---
 
 ### Step 6: Test Failover — Let's Break the Primary! 💥
+
+> <img src="https://img.shields.io/badge/Step%206-Test%20Failover-1ABC9C?style=for-the-badge" />
 
 Time to simulate a disaster and watch Route 53 save the day!
 
@@ -331,6 +355,8 @@ sudo systemctl start httpd
 ---
 
 ### Step 7: Verify Your Work
+
+> <img src="https://img.shields.io/badge/Step%207-Verify%20Your%20Work-E67E22?style=for-the-badge" />
 
 Let's make sure everything is set up correctly:
 
@@ -420,6 +446,9 @@ Now that you can direct traffic to instances, let's learn about managing databas
 
 ## ❓ Troubleshooting
 
+<details>
+<summary><strong>Click to expand Troubleshooting Section</strong></summary>
+
 ### My health check stays "Unhealthy" even though the server is running
 
 - Verify the security group allows inbound HTTP (port 80) from anywhere (`0.0.0.0/0`)
@@ -456,6 +485,14 @@ Now that you can direct traffic to instances, let's learn about managing databas
 - SSH into the backup and check: `curl http://localhost`
 - If it shows the default page, restart httpd: `sudo systemctl restart httpd`
 
----
+</details>
 
 > 🎉 **Fantastic work, Ravi!** DNS and failover routing are fundamental to building resilient applications. You now know how to automatically redirect traffic when something goes wrong — a skill that separates beginners from real cloud engineers. Next up, let's tackle databases! 🚀
+
+---
+
+<div align="center">
+
+<img src="https://img.shields.io/badge/Lab%2012-Complete!-27AE60?style=for-the-badge&labelColor=232F3E" />
+
+</div>

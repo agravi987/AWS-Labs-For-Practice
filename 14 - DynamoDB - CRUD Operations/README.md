@@ -1,9 +1,15 @@
+<div align="center">
+
+<img src="https://img.shields.io/badge/Lab%2014-DynamoDB%20CRUD-2ECC71?style=for-the-badge&labelColor=232F3E" />
+
 # Lab 14 — DynamoDB: CRUD Operations — NoSQL Made Simple
 
-![Difficulty](https://img.shields.io/badge/Difficulty-Easy-green)
-![Time](https://img.shields.io/badge/Time-~25_min-blue)
-![Cost](https://img.shields.io/badge/Cost-<%241-green)
-![Service](https://img.shields.io/badge/Service-DynamoDB-blue)
+<img src="https://img.shields.io/badge/Difficulty-Easy-green?style=flat-square" />
+<img src="https://img.shields.io/badge/Time-~25_min-blue?style=flat-square" />
+<img src="https://img.shields.io/badge/Cost-<%241-green?style=flat-square" />
+<img src="https://img.shields.io/badge/Service-DynamoDB-blue?style=flat-square" />
+
+</div>
 
 > "Ravi, if RDS is like a filing cabinet with strict rules, DynamoDB is like a magical backpack that holds anything you throw in it. No schemas, no SQL, just raw key-value power. And the Free Tier? Chef's kiss!" — Rithu
 
@@ -73,7 +79,7 @@ Before you start, make sure you have:
 
 ## 🛠️ Step-by-Step Instructions
 
-### Step 1: Create a DynamoDB Table
+> <img src="https://img.shields.io/badge/Step%201-Create%20a%20DynamoDB%20Table-2ECC71?style=for-the-badge" />
 
 1. Go to the **DynamoDB Console** → left sidebar → click **Tables**
 2. Click **Create table**
@@ -86,18 +92,20 @@ Before you start, make sure you have:
 | Partition key type | **String** |
 | Settings | **Use default settings** ✅ |
 
-> 💡 **Rithu's Tip:** In DynamoDB, the partition key is like the primary key in SQL — it uniquely identifies each item. Unlike SQL though, DynamoDB doesn't enforce a schema, so each item can have different attributes!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> In DynamoDB, the partition key is like the primary key in SQL — it uniquely identifies each item. Unlike SQL though, DynamoDB doesn't enforce a schema, so each item can have different attributes!
 
 4. Click **Create table**
 5. Wait for the table status to change from **Creating** to **Active** ⏱️ (about 30 seconds)
 
 📸 **[Screenshot: DynamoDB table creation page with Students table name and student_id partition key]**
 
-> 💡 **Rithu's Tip:** Notice the "Default settings" option uses **Provisioned** capacity with 5 Read Capacity Units (RCU) and 5 Write Capacity Units (WCU). This is well within the Free Tier and means DynamoDB will handle up to 5 reads and 5 writes per second. Plenty for this lab!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> Notice the "Default settings" option uses **Provisioned** capacity with 5 Read Capacity Units (RCU) and 5 Write Capacity Units (WCU). This is well within the Free Tier and means DynamoDB will handle up to 5 reads and 5 writes per second. Plenty for this lab!
 
 ---
 
-### Step 2: CREATE — Add Items
+> <img src="https://img.shields.io/badge/Step%202-CREATE%20Add%20Items-3498DB?style=for-the-badge" />
 
 Let's add some data! We'll use both the Console and CLI.
 
@@ -143,13 +151,14 @@ aws dynamodb put-item \
   --item '{"student_id": {"S": "S003"}, "name": {"S": "Alex"}, "topic": {"S": "S3"}, "score": {"N": "88"}, "status": {"S": "active"}}'
 ```
 
-> 💡 **Rithu's Tip:** Notice the CLI syntax! Each value needs a type descriptor: `"S"` for String, `"N"` for Number. DynamoDB is very strict about types — `"95"` (string) is different from `95` (number). This trips up beginners a lot!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> Notice the CLI syntax! Each value needs a type descriptor: `"S"` for String, `"N"` for Number. DynamoDB is very strict about types — `"95"` (string) is different from `95` (number). This trips up beginners a lot!
 
 📸 **[Screenshot: Terminal showing the put-item command and no error output (success = no output)]**
 
 ---
 
-### Step 3: READ — Query Items
+> <img src="https://img.shields.io/badge/Step%203-READ%20Query%20Items-27AE60?style=for-the-badge" />
 
 Let's read back what we just inserted!
 
@@ -162,7 +171,7 @@ Let's read back what we just inserted!
    - Enter: `student_id = "S001"`
    - You'll see only Ravi's record
 
-📸 **[Screenshot: DynamoDB table showing all 3 items]
+📸 **[Screenshot: DynamoDB table showing all 3 items]**
 
 **Method B: Using the AWS CLI**
 
@@ -207,11 +216,12 @@ You'll get only Ravi's record:
 }
 ```
 
-> 💡 **Rithu's Tip:** **Query vs Scan** — A Query is fast and efficient (it uses the partition key to find exactly what you need). A Scan reads EVERY item in the table — slow and expensive at scale. Always prefer Query when possible!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> **Query vs Scan** — A Query is fast and efficient (it uses the partition key to find exactly what you need). A Scan reads EVERY item in the table — slow and expensive at scale. Always prefer Query when possible!
 
 ---
 
-### Step 4: UPDATE — Modify an Item
+> <img src="https://img.shields.io/badge/Step%204-UPDATE%20Modify%20an%20Item-E67E22?style=for-the-badge" />
 
 Let's update Ravi's score and add a new attribute!
 
@@ -255,13 +265,14 @@ You should now see the updated score and the new `grade` attribute:
 }
 ```
 
-> 💡 **Rithu's Tip:** Notice that the `grade` attribute didn't exist before, but we just added it with an update! In SQL, you'd need to ALTER TABLE first. In DynamoDB, each item can have completely different attributes. This is the beauty (and danger) of NoSQL! 🎨
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> Notice that the `grade` attribute didn't exist before, but we just added it with an update! In SQL, you'd need to ALTER TABLE first. In DynamoDB, each item can have completely different attributes. This is the beauty (and danger) of NoSQL! 🎨
 
 📸 **[Screenshot: Terminal showing the update-item command and the updated query result]**
 
 ---
 
-### Step 5: DELETE — Remove an Item
+> <img src="https://img.shields.io/badge/Step%205-DELETE%20Remove%20an%20Item-E74C3C?style=for-the-badge" />
 
 Let's remove Alex (S003) from the table.
 
@@ -304,7 +315,7 @@ You should now see only **2 items**:
 
 ---
 
-### Step 6: Explore Additional Features
+> <img src="https://img.shields.io/badge/Step%206-Explore%20Additional%20Features-9B59B6?style=for-the-badge" />
 
 Let's add a **Global Secondary Index (GSI)** to query by `topic`!
 
@@ -346,7 +357,8 @@ aws dynamodb query \
   --expression-attribute-values '{":t": {"S": "EC2"}}'
 ```
 
-> 💡 **Rithu's Tip:** GSIs are like having multiple "views" of your data. Without a GSI, you can only query by partition key (`student_id`). With a GSI on `topic`, you can efficiently query by topic too. Think of it as creating a shortcut to your data! 🗺️
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> GSIs are like having multiple "views" of your data. Without a GSI, you can only query by partition key (`student_id`). With a GSI on `topic`, you can efficiently query by topic too. Think of it as creating a shortcut to your data! 🗺️
 
 **View CloudWatch Metrics:**
 
@@ -362,7 +374,7 @@ aws dynamodb query \
 
 ---
 
-### Step 7: Verify Your Work
+> <img src="https://img.shields.io/badge/Step%207-Verify%20Your%20Work-1ABC9C?style=for-the-badge" />
 
 - [ ] DynamoDB table `Students` is active
 - [ ] Table has correct partition key: `student_id` (String)
@@ -403,7 +415,8 @@ DynamoDB's Free Tier is generous, but let's clean up anyway!
 
 2. Wait for the table to disappear from the list
 
-> 💡 **Rithu's Tip:** Unlike RDS, DynamoDB doesn't charge you when there are no tables! But it's still good practice to delete resources you're not using. If you leave this table around, it'll consume Free Tier capacity that you might need for future labs.
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> Unlike RDS, DynamoDB doesn't charge you when there are no tables! But it's still good practice to delete resources you're not using. If you leave this table around, it'll consume Free Tier capacity that you might need for future labs.
 
 📸 **[Screenshot: DynamoDB console with no tables listed]**
 
@@ -434,44 +447,68 @@ You've covered compute, networking, DNS, and databases. Now let's learn how to m
 
 ## ❓ Troubleshooting
 
-### "ResourceNotFoundException: Requested table not found"
+<details>
+<summary><strong>ResourceNotFoundException: Requested table not found</strong></summary>
 
 - Make sure you're in the correct AWS region (check the URL — it should end with `us-east-1` or wherever you created the table)
 - Verify the table name is exactly `Students` (case-sensitive!)
 - Wait a few seconds after creation — tables take a moment to become active
 
-### "ProvisionedThroughputExceededException"
+</details>
+
+<details>
+<summary><strong>ProvisionedThroughputExceededException</strong></summary>
 
 - You've exceeded the read or write capacity
 - For this lab, you shouldn't hit this with 5 WCU/5 RCU
 - If you see this, wait a few seconds and retry
 - Solution: Use the default provisioned capacity or switch to On-Demand mode
 
-### "ValidationException: The provided key element does not match the schema"
+</details>
+
+<details>
+<summary><strong>ValidationException: The provided key element does not match the schema</strong></summary>
 
 - DynamoDB requires ALL key attributes in every operation
 - For put-item, query, and delete, you must provide `student_id`
 - Check the type — `"S"` for String, `"N"` for Number
 
-### CLI command returns "Unknown option"
+</details>
+
+<details>
+<summary><strong>CLI command returns "Unknown option"</strong></summary>
 
 - Make sure JSON values are properly quoted
 - Use single quotes around the entire JSON on Linux/Mac
 - On Windows PowerShell, use double quotes and escape inner quotes: `\"` 
 - Or save the JSON to a file and use `--cli-input-json file://params.json`
 
-### GSI query returns empty results
+</details>
+
+<details>
+<summary><strong>GSI query returns empty results</strong></summary>
 
 - Make sure the GSI is **Active** (not "Updating")
 - Verify you're querying with the correct attribute name and type
 - Check that the items actually have the `topic` attribute
 
-### Items have different attributes — is that okay?
+</details>
+
+<details>
+<summary><strong>Items have different attributes — is that okay?</strong></summary>
 
 - Yes! That's the beauty of DynamoDB — each item can have different attributes
 - Unlike SQL tables where every row must have the same columns
 - This flexibility is why DynamoDB is great for applications with evolving data models
 
+</details>
+
 ---
 
+<div align="center">
+
+<img src="https://img.shields.io/badge/Lab%2014-Complete!-2ECC71?style=for-the-badge&labelColor=232F3E" />
+
 > 🎉 **Fantastic work, Ravi!** You've conquered both relational (RDS) and non-relational (DynamoDB) databases. You now have a solid understanding of when to use each. DynamoDB's simplicity and power make it a favorite for serverless applications. Next up, let's learn how to keep an eye on everything with CloudWatch! 🚀
+
+</div>

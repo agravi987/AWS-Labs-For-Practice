@@ -1,9 +1,15 @@
+<div align="center">
+
+<img src="https://img.shields.io/badge/Lab%2023-KMS%20Encrypt%20S3%20%26%20EBS-E74C3C?style=for-the-badge&labelColor=232F3E" />
+
 # Lab 23 — KMS: Encrypt S3 and EBS
 
-![Difficulty](https://img.shields.io/badge/Difficulty-Medium-yellow)
-![Time](https://img.shields.io/badge/Time-~30min-blue)
-![Cost](https://img.shields.io/badge/Cost-%3C%241-brightgreen)
-![Service](https://img.shields.io/badge/Service-KMS-purple)
+<img src="https://img.shields.io/badge/Difficulty-Medium-yellow?style=flat-square" />
+<img src="https://img.shields.io/badge/Time-~30min-blue?style=flat-square" />
+<img src="https://img.shields.io/badge/Cost-%3C%241-brightgreen?style=flat-square" />
+<img src="https://img.shields.io/badge/Service-KMS-purple?style=flat-square" />
+
+</div>
 
 > "If your data isn't encrypted, it's like leaving your front door wide open with a neon sign saying 'Free Stuff!'" — Rithu
 
@@ -79,7 +85,7 @@ Estimated total lab cost: **< $1** if cleaned up within 1 hour (the $1 key charg
 
 ## 🛠️ Step-by-Step Instructions
 
-### Step 1: Create a Customer Managed KMS Key
+### <img src="https://img.shields.io/badge/Step%201-Create%20KMS%20Key-FF6B6B?style=for-the-badge" />
 
 Let's create your own encryption key!
 
@@ -118,13 +124,14 @@ Let's create your own encryption key!
 
 Your key is now created! You should see it listed with a status of **Enabled**.
 
-> 💡 **Rithu's Tip**: "Customer Managed Keys give YOU control over who can use the key, how it's used, and when it's deleted. AWS-managed keys are fine for basic encryption, but customer managed keys are required for compliance (HIPAA, PCI-DSS)."
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> "Customer Managed Keys give YOU control over who can use the key, how it's used, and when it's deleted. AWS-managed keys are fine for basic encryption, but customer managed keys are required for compliance (HIPAA, PCI-DSS)."
 
 📸 [Screenshot: KMS console showing the newly created `ravi-lab-key` with Enabled status]
 
 ---
 
-### Step 2: Encrypt an S3 Bucket with KMS
+### <img src="https://img.shields.io/badge/Step%202-Encrypt%20S3%20Bucket-FFA500?style=for-the-badge" />
 
 Now let's use your key to encrypt an S3 bucket!
 
@@ -161,13 +168,14 @@ Now let's use your key to encrypt an S3 bucket!
 
 Your file is now encrypted with your custom KMS key! 🔐
 
-> 💡 **Rithu's Tip**: "S3 server-side encryption means AWS encrypts the data when it's written to disk and decrypts it when you download it. The encryption/decryption is transparent — you don't need to do anything special to read your files."
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> "S3 server-side encryption means AWS encrypts the data when it's written to disk and decrypts it when you download it. The encryption/decryption is transparent — you don't need to do anything special to read your files."
 
 📸 [Screenshot: S3 object Properties showing KMS encryption with ravi-lab-key ARN]
 
 ---
 
-### Step 3: Verify KMS Encryption via CLI
+### <img src="https://img.shields.io/badge/Step%203-Verify%20via%20CLI-9B59B6?style=for-the-badge" />
 
 Let's verify the encryption using the AWS CLI!
 
@@ -198,13 +206,14 @@ Replace `your-file-name.txt` with the actual name of the file you uploaded.
 - **`ServerSideEncryption`**: Shows `aws:kms` — confirms KMS encryption
 - **`SSEKMSKeyId`**: Shows the ARN of your `ravi-lab-key` — confirms YOUR key was used
 
-> 💡 **Rithu's Tip**: "The `head-object` command is like checking the label on a package — it tells you metadata about the file without downloading it. The encryption info is right there in the metadata!"
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> "The `head-object` command is like checking the label on a package — it tells you metadata about the file without downloading it. The encryption info is right there in the metadata!"
 
 📸 [Screenshot: Terminal showing the head-object output with SSEKMSKeyId visible]
 
 ---
 
-### Step 4: Create an Encrypted EBS Volume
+### <img src="https://img.shields.io/badge/Step%204-Create%20Encrypted%20EBS-3498DB?style=for-the-badge" />
 
 Let's create an encrypted EBS volume using your KMS key!
 
@@ -233,13 +242,14 @@ Let's create an encrypted EBS volume using your KMS key!
     - **Encryption**: Enabled
     - **KMS key ID**: Shows your `ravi-lab-key` ARN
 
-> 💡 **Rithu's Tip**: "Encrypted EBS volumes mean that data at rest on the disk is encrypted. If someone steals the physical drive, they can't read your data without the KMS key. This is a must-have for sensitive data!"
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> "Encrypted EBS volumes mean that data at rest on the disk is encrypted. If someone steals the physical drive, they can't read your data without the KMS key. This is a must-have for sensitive data!"
 
 📸 [Screenshot: EBS volume details showing encryption enabled with ravi-lab-key]
 
 ---
 
-### Step 5: Attach Encrypted Volume to EC2
+### <img src="https://img.shields.io/badge/Step%205-Attach%20Volume%20to%20EC2-1ABC9C?style=for-the-badge" />
 
 Let's attach the encrypted volume to an EC2 instance and verify it works!
 
@@ -298,13 +308,14 @@ Wait for the instance to be in **Running** state:
 
 You should see the volume mounted and the data written! The data on this volume is encrypted with your KMS key.
 
-> 💡 **Rithu's Tip**: "The encryption is transparent to the operating system. You mount and use the volume normally — AWS handles all the encrypt/decrypt operations behind the scenes using the KMS key."
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> "The encryption is transparent to the operating system. You mount and use the volume normally — AWS handles all the encrypt/decrypt operations behind the scenes using the KMS key."
 
 📸 [Screenshot: Terminal showing lsblk, mount, and the encrypted data]
 
 ---
 
-### Step 6: Enable Default EBS Encryption
+### <img src="https://img.shields.io/badge/Step%206-Enable%20Default%20EBS%20Encryption-E74C3C?style=for-the-badge" />
 
 Want ALL new EBS volumes to be encrypted automatically? Enable default encryption!
 
@@ -321,13 +332,14 @@ Want ALL new EBS volumes to be encrypted automatically? Enable default encryptio
 
 Now, every new EBS volume you create will automatically be encrypted with your KMS key!
 
-> 💡 **Rithu's Tip**: "Default encryption is like setting your phone to auto-lock. You don't have to remember to lock it — it just happens. Same with EBS volumes — encrypt everything by default and you'll never accidentally create an unencrypted volume."
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> "Default encryption is like setting your phone to auto-lock. You don't have to remember to lock it — it just happens. Same with EBS volumes — encrypt everything by default and you'll never accidentally create an unencrypted volume."
 
 📸 [Screenshot: EBS encryption defaults page showing encryption enabled with ravi-lab-key]
 
 ---
 
-### Step 7: Understand KMS Key Policy
+### <img src="https://img.shields.io/badge/Step%207-Understand%20Key%20Policy-2ECC71?style=for-the-badge" />
 
 Let's look at who can use your key and how!
 
@@ -358,7 +370,8 @@ The key policy is a JSON document that controls:
    - `Encrypt` — when S3/EBS used the key
    - `Decrypt` — when data was decrypted
 
-> 💡 **Rithu's Tip**: "KMS key policies are like a VIP list at a club. The key policy says who gets in (can use the key) and who can change the guest list (can administer the key). Everyone else is turned away!"
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> "KMS key policies are like a VIP list at a club. The key policy says who gets in (can use the key) and who can change the guest list (can administer the key). Everyone else is turned away!"
 
 📸 [Screenshot: KMS key policy tab showing the policy document]
 
@@ -430,7 +443,8 @@ KMS keys cost $1/month. Delete everything carefully!
 26. Go to S3 → confirm the bucket is gone
 27. Go to EC2 → confirm the volume is gone
 
-> 💡 **Rithu's Tip**: "The 7-day waiting period for KMS key deletion is intentional — it's a safety net. If you accidentally schedule a key for deletion, you have 7 days to cancel it. In production, never delete a key that's encrypting important data!"
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> "The 7-day waiting period for KMS key deletion is intentional — it's a safety net. If you accidentally schedule a key for deletion, you have 7 days to cancel it. In production, never delete a key that's encrypting important data!"
 
 📸 [Screenshot: KMS console showing the key in "Pending deletion" status]
 
@@ -464,30 +478,65 @@ Your data is now encrypted! In the next lab, we'll learn about **AWS Backup** �
 
 ## ❓ Troubleshooting
 
-**Problem**: Can't find `ravi-lab-key` in the KMS dropdown
-- **Fix**: Make sure you're in the same region where you created the key. KMS keys are regional. Also verify your IAM user has `kms:DescribeKey` permission.
+<details>
+<summary><strong>Can't find `ravi-lab-key` in the KMS dropdown</strong></summary>
 
-**Problem**: S3 bucket doesn't show encryption option
-- **Fix**: When creating the bucket, scroll down to "Default encryption" section. If you missed it, go to the bucket Properties tab after creation and edit the encryption settings.
+**Fix**: Make sure you're in the same region where you created the key. KMS keys are regional. Also verify your IAM user has `kms:DescribeKey` permission.
+</details>
 
-**Problem**: EBS volume shows "Encryption not enabled"
-- **Fix**: Make sure you checked the "Enable" box during volume creation. You cannot enable encryption on an existing unencrypted volume — you must create a new encrypted volume.
+<details>
+<summary><strong>S3 bucket doesn't show encryption option</strong></summary>
 
-**Problem**: Can't attach the encrypted volume
-- **Fix**: Ensure the EC2 instance is in the same Availability Zone as the volume. EBS volumes are AZ-specific — you can only attach them to instances in the same AZ.
+**Fix**: When creating the bucket, scroll down to "Default encryption" section. If you missed it, go to the bucket Properties tab after creation and edit the encryption settings.
+</details>
 
-**Problem**: SSH fails after mounting the volume
-- **Fix**: This shouldn't be related to the volume. Check your security group allows SSH (port 22). Make sure you're using the correct key pair and public IP.
+<details>
+<summary><strong>EBS volume shows "Encryption not enabled"</strong></summary>
 
-**Problem**: "Access Denied" when trying to use the KMS key
-- **Fix**: Your IAM user needs `kms:Encrypt`, `kms:Decrypt`, and `kms:GenerateDataKey` permissions. Check the key policy to ensure your user is listed under Key users.
+**Fix**: Make sure you checked the "Enable" box during volume creation. You cannot enable encryption on an existing unencrypted volume — you must create a new encrypted volume.
+</details>
 
-**Problem**: Can't delete the KMS key
-- **Fix**: You cannot immediately delete a KMS key. You must schedule deletion with a minimum 7-day waiting period. Go to the key → Actions → Key deletion to schedule it.
+<details>
+<summary><strong>Can't attach the encrypted volume</strong></summary>
 
-**Problem**: Default EBS encryption change doesn't affect existing volumes
-- **Fix**: Default encryption only applies to NEW volumes. Existing unencrypted volumes remain unencrypted. You'd need to create snapshots and copy them with encryption to convert existing volumes.
+**Fix**: Ensure the EC2 instance is in the same Availability Zone as the volume. EBS volumes are AZ-specific — you can only attach them to instances in the same AZ.
+</details>
+
+<details>
+<summary><strong>SSH fails after mounting the volume</strong></summary>
+
+**Fix**: This shouldn't be related to the volume. Check your security group allows SSH (port 22). Make sure you're using the correct key pair and public IP.
+</details>
+
+<details>
+<summary><strong>"Access Denied" when trying to use the KMS key</strong></summary>
+
+**Fix**: Your IAM user needs `kms:Encrypt`, `kms:Decrypt`, and `kms:GenerateDataKey` permissions. Check the key policy to ensure your user is listed under Key users.
+</details>
+
+<details>
+<summary><strong>Can't delete the KMS key</strong></summary>
+
+**Fix**: You cannot immediately delete a KMS key. You must schedule deletion with a minimum 7-day waiting period. Go to the key → Actions → Key deletion to schedule it.
+</details>
+
+<details>
+<summary><strong>Default EBS encryption change doesn't affect existing volumes</strong></summary>
+
+**Fix**: Default encryption only applies to NEW volumes. Existing unencrypted volumes remain unencrypted. You'd need to create snapshots and copy them with encryption to convert existing volumes.
+</details>
 
 ---
 
-> 🎉 **Rithu says**: "Encryption isn't optional anymore — it's a best practice and often a legal requirement. You now know how to encrypt data at rest in S3 and EBS using KMS. The rule is simple: if the data is sensitive, encrypt it. If you're not sure, encrypt it anyway!"
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> "Encryption isn't optional anymore — it's a best practice and often a legal requirement. You now know how to encrypt data at rest in S3 and EBS using KMS. The rule is simple: if the data is sensitive, encrypt it. If you're not sure, encrypt it anyway!"
+
+---
+
+<div align="center">
+
+<img src="https://img.shields.io/badge/Lab%2023-Complete!-27AE60?style=for-the-badge&labelColor=232F3E" />
+
+**🎉 Congratulations on completing Lab 23! 🎉**
+
+</div>

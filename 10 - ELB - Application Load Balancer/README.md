@@ -1,9 +1,17 @@
-# Lab 10 — ELB: Application Load Balancer
+<div align="center">
 
-![Difficulty](https://img.shields.io/badge/Difficulty-Medium-yellow)
-![Time](https://img.shields.io/badge/Time-~40min-blue)
-![Cost](https://img.shields.io/badge/Cost-<2%20USD-green)
-![Service](https://img.shields.io/badge/Service-EC2%20|%20ELB-blue)
+<img src="https://img.shields.io/badge/Lab%2010-Application%20Load%20Balancer-E74C3C?style=for-the-badge&labelColor=232F3E" />
+
+</div>
+
+<div align="center">
+
+<img src="https://img.shields.io/badge/Difficulty-Medium-F4D03F?style=flat-square" />
+<img src="https://img.shields.io/badge/Time-~40min-3498DB?style=flat-square" />
+<img src="https://img.shields.io/badge/Cost-%3C2%20USD-2ECC71?style=flat-square" />
+<img src="https://img.shields.io/badge/Service-EC2%20%7C%20ELB-8E44AD?style=flat-square" />
+
+</div>
 
 > "An Application Load Balancer is like a traffic cop at a busy intersection — it takes incoming requests and spreads them across your servers so no single one gets overwhelmed. Let's build one!" — Rithu ⚖️
 
@@ -65,6 +73,8 @@ Security Groups:
 
 ### Step 1: Create Security Group for the ALB
 
+> <img src="https://img.shields.io/badge/Step%201-Create%20ALB%20Security%20Group-3498DB?style=for-the-badge" />
+
 The ALB needs its own security group that accepts HTTP traffic from the internet.
 
 1. Log in to the [AWS Management Console](https://console.aws.amazon.com/)
@@ -89,11 +99,14 @@ Configure:
 6. **Outbound rules:** Allow all traffic (default — leave as is)
 7. Click **Create security group**
 
-> 💡 **Rithu's Tip:** The ALB accepts traffic from the entire internet on port 80 (HTTP). That's fine — it's a public-facing load balancer. The important thing is that the EC2 instances behind it are more restricted!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> The ALB accepts traffic from the entire internet on port 80 (HTTP). That's fine — it's a public-facing load balancer. The important thing is that the EC2 instances behind it are more restricted!
 
 ---
 
 ### Step 2: Create Security Group for EC2 Instances
+
+> <img src="https://img.shields.io/badge/Step%202-Create%20EC2%20Security%20Group-2ECC71?style=for-the-badge" />
 
 The EC2 instances should ONLY accept traffic from the ALB — not directly from the internet.
 
@@ -112,7 +125,8 @@ The EC2 instances should ONLY accept traffic from the ALB — not directly from 
    - **Source:** Select **Custom** → start typing `alb-sg` → select the security group ID of `alb-sg`
      - 📸 [Screenshot: Source field showing alb-sg security group reference]
 
-> 💡 **Rithu's Tip:** This is the key to ALB security! Instead of allowing HTTP from `0.0.0.0/0` on the EC2 instances, we allow it ONLY from the ALB's security group. This means:
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> This is the key to ALB security! Instead of allowing HTTP from `0.0.0.0/0` on the EC2 instances, we allow it ONLY from the ALB's security group. This means:
 > - ✅ ALB → EC2 (allowed)
 > - ❌ Internet → EC2 directly (blocked)
 >
@@ -124,6 +138,8 @@ The EC2 instances should ONLY accept traffic from the ALB — not directly from 
 ---
 
 ### Step 3: Create a Target Group
+
+> <img src="https://img.shields.io/badge/Step%203-Create%20Target%20Group-E74C3C?style=for-the-badge" />
 
 A Target Group tells the ALB which instances to send traffic to.
 
@@ -149,11 +165,14 @@ Configure:
 7. On the "Register targets" page — **DON'T register any targets yet!** We'll do that after launching the instances.
 8. Click **Create target group**
 
-> 💡 **Rithu's Tip:** Health checks are how the ALB knows if your instances are healthy. It sends a request to `/` every few seconds. If the instance responds with a 200 OK, it's "healthy." If it times out or returns an error, the ALB marks it as "unhealthy" and stops sending traffic to it. Smart, right?
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> Health checks are how the ALB knows if your instances are healthy. It sends a request to `/` every few seconds. If the instance responds with a 200 OK, it's "healthy." If it times out or returns an error, the ALB marks it as "unhealthy" and stops sending traffic to it. Smart, right?
 
 ---
 
 ### Step 4: Launch EC2 Instance 1 (Web Server 1)
+
+> <img src="https://img.shields.io/badge/Step%204-Launch%20Web%20Server%201-F39C12?style=for-the-badge" />
 
 1. Go to **EC2** → **Launch instance**
 2. Configure:
@@ -181,7 +200,8 @@ echo "<h1>Hello from Web Server 1! Hostname: $(hostname)</h1>" > /var/www/html/i
 
 > 📸 [Screenshot: User data script pasted in advanced details]
 
-> 💡 **Rithu's Tip:** This script installs Apache web server and creates a simple webpage. The `$(hostname)` part shows the server's actual hostname — this lets you see WHICH server responded when you test the load balancer!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> This script installs Apache web server and creates a simple webpage. The `$(hostname)` part shows the server's actual hostname — this lets you see WHICH server responded when you test the load balancer!
 
 5. Click **Launch instance**
 6. Wait for the instance to be **Running**
@@ -189,6 +209,8 @@ echo "<h1>Hello from Web Server 1! Hostname: $(hostname)</h1>" > /var/www/html/i
 ---
 
 ### Step 5: Launch EC2 Instance 2 (Web Server 2)
+
+> <img src="https://img.shields.io/badge/Step%205-Launch%20Web%20Server%202-1ABC9C?style=for-the-badge" />
 
 1. **Launch instance** again
 2. Configure:
@@ -218,11 +240,14 @@ echo "<h1>Hello from Web Server 2! Hostname: $(hostname)</h1>" > /var/www/html/i
 
 > 📸 [Screenshot: Both instances running with status checks passed]
 
-> 💡 **Rithu's Tip:** In production, you'd launch instances in different Availability Zones (AZs) for high availability. If one AZ goes down, the other keeps serving traffic. We're doing that by using us-east-1a and us-east-1b!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> In production, you'd launch instances in different Availability Zones (AZs) for high availability. If one AZ goes down, the other keeps serving traffic. We're doing that by using us-east-1a and us-east-1b!
 
 ---
 
 ### Step 6: Register Instances in the Target Group
+
+> <img src="https://img.shields.io/badge/Step%206-Register%20Targets-E67E22?style=for-the-badge" />
 
 1. Go to **EC2** → **Target Groups** (left sidebar)
 2. Click on `ravi-target-group`
@@ -238,7 +263,8 @@ echo "<h1>Hello from Web Server 2! Hostname: $(hostname)</h1>" > /var/www/html/i
 
 > 📸 [Screenshot: Both targets showing "healthy" status]
 
-> 💡 **Rithu's Tip:** If a target shows "unhealthy," it usually means:
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> If a target shows "unhealthy," it usually means:
 > - The web server didn't start properly (check your user data script)
 > - The security group blocks port 80 from the ALB
 > - The health check path `/` doesn't return a 200 response
@@ -248,6 +274,8 @@ echo "<h1>Hello from Web Server 2! Hostname: $(hostname)</h1>" > /var/www/html/i
 ---
 
 ### Step 7: Create the Application Load Balancer
+
+> <img src="https://img.shields.io/badge/Step%207-Create%20ALB-9B59B6?style=for-the-badge" />
 
 Now for the main event! 🎉
 
@@ -270,7 +298,8 @@ Configure:
      - Check **us-east-1b** → select a public subnet
      - 📸 [Screenshot: ALB mapped to both AZs with public subnets]
 
-> 💡 **Rithu's Tip:** The ALB MUST be in at least two AZs. This is a requirement, not a suggestion. If one AZ goes down, the ALB continues working from the other AZ. That's the whole point!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> The ALB MUST be in at least two AZs. This is a requirement, not a suggestion. If one AZ goes down, the ALB continues working from the other AZ. That's the whole point!
 
 5. **Security groups:**
    - Remove the default security group
@@ -293,6 +322,8 @@ Configure:
 ---
 
 ### Step 8: Verify — Watch the Magic Happen! 🎉
+
+> <img src="https://img.shields.io/badge/Step%208-Verify%20Load%20Balancing-27AE60?style=for-the-badge" />
 
 1. Click on `ravi-alb` in the Load Balancers list
 2. Find the **DNS name** in the details panel — it looks something like:
@@ -322,7 +353,8 @@ Configure:
 > 📸 [Screenshot: Browser showing "Hello from Web Server 1!" after refresh]
 > 📸 [Screenshot: Browser showing "Hello from Web Server 2!" after another refresh]
 
-> 💡 **Rithu's Tip:** 🎉 Congratulations, Ravi! You just set up load balancing! The ALB is distributing requests between your two servers using a round-robin algorithm. In the real world, this means:
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> 🎉 Congratulations, Ravi! You just set up load balancing! The ALB is distributing requests between your two servers using a round-robin algorithm. In the real world, this means:
 > - If one server crashes, the ALB sends all traffic to the healthy one
 > - If you get a traffic spike, you can add more servers behind the ALB
 > - Users always get a response, even during deployments or maintenance
@@ -330,6 +362,8 @@ Configure:
 ---
 
 ### Step 9: Check Target Group Health
+
+> <img src="https://img.shields.io/badge/Step%209-Check%20Health-3498DB?style=for-the-badge" />
 
 1. Go to **EC2** → **Target Groups**
 2. Click on `ravi-target-group`
@@ -340,11 +374,14 @@ Configure:
 
 > 📸 [Screenshot: Target group showing both targets as healthy]
 
-> 💡 **Rithu's Tip:** The ALB health checks every 30 seconds by default. If an instance fails 2 consecutive health checks, it's marked unhealthy and the ALB stops sending traffic to it. When it recovers, the ALB automatically adds it back. Self-healing infrastructure!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> The ALB health checks every 30 seconds by default. If an instance fails 2 consecutive health checks, it's marked unhealthy and the ALB stops sending traffic to it. When it recovers, the ALB automatically adds it back. Self-healing infrastructure!
 
 ---
 
 ### Step 10: Verify Your Work
+
+> <img src="https://img.shields.io/badge/Step%2010-Verify%20Your%20Work-2ECC71?style=for-the-badge" />
 
 - [ ] ALB `ravi-alb` is in **Active** state
 - [ ] ALB has an **internet-facing** DNS name
@@ -377,6 +414,8 @@ Configure:
 
 ### Step 1: Delete the Application Load Balancer
 
+> <img src="https://img.shields.io/badge/Step%201-Delete%20ALB-E74C3C?style=for-the-badge" />
+
 1. Go to **EC2** → **Load Balancers**
 2. Select `ravi-alb`
 3. Click **Actions** → **Delete load balancer**
@@ -384,9 +423,12 @@ Configure:
 
 > 📸 [Screenshot: ALB deletion confirmed]
 
-> 💡 **Rithu's Tip:** Delete the ALB first — it has dependencies. If you try to delete the target group first, AWS will complain that it's still in use by the load balancer!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> Delete the ALB first — it has dependencies. If you try to delete the target group first, AWS will complain that it's still in use by the load balancer!
 
 ### Step 2: Delete the Target Group
+
+> <img src="https://img.shields.io/badge/Step%202-Delete%20Target%20Group-F39C12?style=for-the-badge" />
 
 1. Go to **EC2** → **Target Groups**
 2. Select `ravi-target-group`
@@ -395,12 +437,16 @@ Configure:
 
 ### Step 3: Terminate Both EC2 Instances
 
+> <img src="https://img.shields.io/badge/Step%203-Terminate%20EC2%20Instances-2ECC71?style=for-the-badge" />
+
 1. Go to **EC2** → **Instances**
 2. Select `web-server-1` and `web-server-2`
 3. Click **Instance state** → **Terminate instance**
 4. Click **Terminate**
 
 ### Step 4: Delete Both Security Groups
+
+> <img src="https://img.shields.io/badge/Step%204-Delete%20Security%20Groups-9B59B6?style=for-the-badge" />
 
 1. Go to **EC2** → **Security Groups**
 2. Select `alb-sg` → **Actions** → **Delete security groups** → confirm
@@ -432,11 +478,15 @@ You've covered S3, VPC, and Load Balancing! Here are some ideas for your next la
 - 🗄️ **Lab 13 — RDS: Relational Database Service** (managed databases!)
 - 🐳 **Lab 14 — ECS: Containers on AWS** (Docker containers in the cloud)
 
-> 💡 **Rithu's Tip:** You've come a long way, Ravi! From creating your first S3 bucket to building a load-balanced web application. Keep going — you're building real cloud engineering skills! 🚀
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> You've come a long way, Ravi! From creating your first S3 bucket to building a load-balanced web application. Keep going — you're building real cloud engineering skills! 🚀
 
 ---
 
 ## ❓ Troubleshooting
+
+<details>
+<summary><strong>Click to expand Troubleshooting Table</strong></summary>
 
 | Problem | Solution |
 |---------|----------|
@@ -450,8 +500,19 @@ You've covered S3, VPC, and Load Balancing! Here are some ideas for your next la
 | Can't delete target group | Make sure the ALB is deleted first — the target group is still attached |
 | Security group won't delete | Make sure it's not attached to any instances or the ALB |
 
-> 💡 **Rithu's Tip:** The most common issue is the security group configuration. Double-check:
+</details>
+
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> The most common issue is the security group configuration. Double-check:
 > 1. `alb-sg` allows HTTP (80) from `0.0.0.0/0`
 > 2. `ec2-from-alb-sg` allows HTTP (80) from `alb-sg` ONLY
 >
 > If the EC2 security group doesn't reference `alb-sg` as the source, health checks will fail! 🔍
+
+---
+
+<div align="center">
+
+<img src="https://img.shields.io/badge/Lab%2010-Complete!-27AE60?style=for-the-badge&labelColor=232F3E" />
+
+</div>

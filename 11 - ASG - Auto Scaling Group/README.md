@@ -1,9 +1,17 @@
-# Lab 11 — Auto Scaling Group: Let AWS Do the Heavy Lifting
+<div align="center">
 
-![Difficulty](https://img.shields.io/badge/Difficulty-Medium-yellow)
-![Time](https://img.shields.io/badge/Time-~35_min-blue)
-![Cost](https://img.shields.io/badge/Cost-<%242-green)
-![Service](https://img.shields.io/badge/Service-EC2%2FASG-orange)
+<img src="https://img.shields.io/badge/Lab%2011-Auto%20Scaling%20Group-F39C12?style=for-the-badge&labelColor=232F3E" />
+
+</div>
+
+<div align="center">
+
+<img src="https://img.shields.io/badge/Difficulty-Medium-F4D03F?style=flat-square" />
+<img src="https://img.shields.io/badge/Time-~35min-3498DB?style=flat-square" />
+<img src="https://img.shields.io/badge/Cost-%3C%242-2ECC71?style=flat-square" />
+<img src="https://img.shields.io/badge/Service-EC2%2FASG-E67E22?style=flat-square" />
+
+</div>
 
 > "Ravi, imagine never having to manually launch an EC2 instance again. Auto Scaling Groups are like having a robot intern who watches your servers and spins up new ones when things get busy. Let's build one!" — Rithu
 
@@ -72,6 +80,8 @@ Before you start, make sure you have:
 
 ### Step 1: Create a Launch Template
 
+> <img src="https://img.shields.io/badge/Step%201-Create%20Launch%20Template-3498DB?style=for-the-badge" />
+
 A Launch Template is like a recipe card — it tells the ASG exactly what kind of EC2 instance to create every time it needs a new one.
 
 1. Go to the **EC2 Console** → left sidebar → click **Launch Templates**
@@ -106,7 +116,8 @@ systemctl start httpd
 echo "<h1>Hello from Auto Scaling Group!</h1><p>Instance: $(hostname)</p>" > /var/www/html/index.html
 ```
 
-> 💡 **Rithu's Tip:** This user data script installs Apache and creates a simple webpage that shows which instance is serving you. When the ASG launches new instances, each one runs this script automatically. Magic! ✨
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> This user data script installs Apache and creates a simple webpage that shows which instance is serving you. When the ASG launches new instances, each one runs this script automatically. Magic! ✨
 
 9. Click **Create launch template**
 
@@ -115,6 +126,8 @@ echo "<h1>Hello from Auto Scaling Group!</h1><p>Instance: $(hostname)</p>" > /va
 ---
 
 ### Step 2: Create the Auto Scaling Group
+
+> <img src="https://img.shields.io/badge/Step%202-Create%20Auto%20Scaling%20Group-2ECC71?style=for-the-badge" />
 
 Now the fun part — let's build the ASG!
 
@@ -138,7 +151,8 @@ Now the fun part — let's build the ASG!
 | VPC | Default VPC |
 | Subnets | Select **us-east-1a** AND **us-east-1b** (click both checkboxes!) |
 
-> 💡 **Rithu's Tip:** Selecting 2 Availability Zones is super important! It means if one AZ goes down, your app still runs in the other. This is the cloud equivalent of "don't put all your eggs in one basket." 🧺
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> Selecting 2 Availability Zones is super important! It means if one AZ goes down, your app still runs in the other. This is the cloud equivalent of "don't put all your eggs in one basket." 🧺
 
 4. Click **Next**
 
@@ -168,7 +182,8 @@ Now the fun part — let's build the ASG!
 | Metric type | Average CPU utilization |
 | Target value | **50** |
 
-> 💡 **Rithu's Tip:** A target value of 50% means: "Hey AWS, keep the average CPU across all my instances around 50%. If it goes above that, add more instances. If it drops below, remove some." It's like a thermostat for your servers! 🌡️
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> A target value of 50% means: "Hey AWS, keep the average CPU across all my instances around 50%. If it goes above that, add more instances. If it drops below, remove some." It's like a thermostat for your servers! 🌡️
 
 7. Click **Next**
 8. **Add notifications:** Skip (click Next)
@@ -180,6 +195,8 @@ Now the fun part — let's build the ASG!
 ---
 
 ### Step 3: Wait for Instances to Launch
+
+> <img src="https://img.shields.io/badge/Step%203-Wait%20for%20Instances-E74C3C?style=for-the-badge" />
 
 1. Go to **EC2 Console** → **Instances**
 2. You should see **2 new instances** launching! They'll have names containing "asg"
@@ -193,11 +210,14 @@ Now the fun part — let's build the ASG!
 
 📸 **[Screenshot: EC2 instances page showing 2 ASG-managed instances running]**
 
-> 💡 **Rithu's Tip:** Notice that ASG automatically launched exactly 2 instances (your desired capacity) across 2 different AZs. You didn't have to manually do anything. This is the power of automation!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> Notice that ASG automatically launched exactly 2 instances (your desired capacity) across 2 different AZs. You didn't have to manually do anything. This is the power of automation!
 
 ---
 
 ### Step 4: Verify Your Instances
+
+> <img src="https://img.shields.io/badge/Step%204-Verify%20Instances-F39C12?style=for-the-badge" />
 
 Let's make sure everything is working:
 
@@ -220,6 +240,8 @@ Instance: ip-172-31-xx-xx.ec2.internal
 
 ### Step 5: Test Scaling — Let's Break Things! 🔥
 
+> <img src="https://img.shields.io/badge/Step%205-Test%20Scaling-9B59B6?style=for-the-badge" />
+
 Now comes the exciting part — let's force the ASG to scale out by stressing our instances!
 
 1. Open your terminal and SSH into **one** of the ASG instances:
@@ -240,7 +262,8 @@ sudo yum install -y stress
 stress --cpu 4 --timeout 300s
 ```
 
-> 💡 **Rithu's Tip:** The `stress` tool pushes your CPU to 100%. Since our target tracking policy is set at 50%, ASG should detect the high CPU and start spinning up new instances. Science in action! 🔬
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> The `stress` tool pushes your CPU to 100%. Since our target tracking policy is set at 50%, ASG should detect the high CPU and start spinning up new instances. Science in action! 🔬
 
 4. Now, keep an eye on the **ASG Activity** tab:
 
@@ -268,6 +291,8 @@ stress --cpu 4 --timeout 300s
 ---
 
 ### Step 6: Verify Your Work
+
+> <img src="https://img.shields.io/badge/Step%206-Verify%20Your%20Work-1ABC9C?style=for-the-badge" />
 
 Let's confirm everything worked as expected:
 
@@ -336,7 +361,8 @@ Let's confirm everything worked as expected:
    - Click **Actions** → **Delete security group**
    - Confirm deletion
 
-> 💡 **Rithu's Tip:** Always clean up ASGs first! If you delete the security group while the ASG is still running, the ASG might try to launch new instances and fail, leaving you in a weird state. Order matters! 🔑
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> Always clean up ASGs first! If you delete the security group while the ASG is still running, the ASG might try to launch new instances and fail, leaving you in a weird state. Order matters! 🔑
 
 📸 **[Screenshot: All resources deleted — empty Launch Templates and ASG pages]**
 
@@ -364,6 +390,9 @@ You've mastered auto scaling! Time to learn how to direct traffic to your instan
 ---
 
 ## ❓ Troubleshooting
+
+<details>
+<summary><strong>Click to expand Troubleshooting Section</strong></summary>
 
 ### My ASG didn't launch any instances
 
@@ -396,6 +425,14 @@ You've mastered auto scaling! Time to learn how to direct traffic to your instan
 - Check your limits at: **Service Quotas** → **EC2** → **Running On-Demand Standard instances**
 - Request a limit increase if needed (but for t2.micro Free Tier, you should be fine)
 
----
+</details>
 
 > 🎉 **Amazing work, Ravi!** Auto Scaling Groups are one of the most powerful features in AWS. You now know how to build self-healing, automatically-scaling infrastructure. In the next lab, we'll explore Route 53 and DNS failover — another critical piece of building resilient applications! 🚀
+
+---
+
+<div align="center">
+
+<img src="https://img.shields.io/badge/Lab%2011-Complete!-27AE60?style=for-the-badge&labelColor=232F3E" />
+
+</div>

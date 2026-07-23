@@ -1,9 +1,17 @@
-# Lab 13 — RDS: MySQL on AWS — Databases Without the Drama
+<div align="center">
 
-![Difficulty](https://img.shields.io/badge/Difficulty-Medium-yellow)
-![Time](https://img.shields.io/badge/Time-~35_min-blue)
-![Cost](https://img.shields.io/badge/Cost-<%243-green)
-![Service](https://img.shields.io/badge/Service-RDS-purple)
+<img src="https://img.shields.io/badge/Lab%2013-RDS%20MySQL%20on%20AWS-8E44AD?style=for-the-badge&labelColor=232F3E" />
+
+</div>
+
+<div align="center">
+
+<img src="https://img.shields.io/badge/Difficulty-Medium-F4D03F?style=flat-square" />
+<img src="https://img.shields.io/badge/Time-~35min-3498DB?style=flat-square" />
+<img src="https://img.shields.io/badge/Cost-%3C%243-2ECC71?style=flat-square" />
+<img src="https://img.shields.io/badge/Service-RDS-8E44AD?style=flat-square" />
+
+</div>
 
 > "Ravi, installing MySQL on your laptop is like building a shelf from IKEA instructions — possible, but painful. Amazon RDS gives you a fully managed MySQL database in the cloud. No patching, no backing up at 3 AM, no drama. Just pure database joy!" — Rithu
 
@@ -44,7 +52,8 @@ Before you start, make sure you have:
 
 > ⚠️ **CRITICAL — Rithu says:** RDS instances keep running and keep charging even after you close your browser! Unlike EC2 where you can stop an instance and stop paying, RDS **charges you even when stopped** (for the storage). You MUST **delete** the RDS instance after this lab. I cannot stress this enough! 💸
 
-> 💡 **Rithu's Tip:** The Free Tier gives you 750 hours/month of db.t2.micro for 12 months. But storage and backups are NOT Free Tier eligible. Delete after the lab to avoid surprises!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> The Free Tier gives you 750 hours/month of db.t2.micro for 12 months. But storage and backups are NOT Free Tier eligible. Delete after the lab to avoid surprises!
 
 ---
 
@@ -71,6 +80,8 @@ Before you start, make sure you have:
 
 ### Step 1: Create a DB Subnet Group
 
+> <img src="https://img.shields.io/badge/Step%201-Create%20DB%20Subnet%20Group-3498DB?style=for-the-badge" />
+
 A DB Subnet Group tells RDS which subnets (and therefore which Availability Zones) it can place your database in.
 
 1. Go to the **RDS Console** → left sidebar → **Subnet groups**
@@ -89,13 +100,16 @@ A DB Subnet Group tells RDS which subnets (and therefore which Availability Zone
 
 5. Click **Create**
 
-> 💡 **Rithu's Tip:** Just like with ASG, we're putting our database in 2 AZs for high availability. If one AZ has issues, RDS can failover to the other. Even for a lab, it's good practice! 🏗️
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> Just like with ASG, we're putting our database in 2 AZs for high availability. If one AZ has issues, RDS can failover to the other. Even for a lab, it's good practice! 🏗️
 
 📸 **[Screenshot: DB Subnet Group creation page showing 2 AZs selected]**
 
 ---
 
 ### Step 2: Create a Security Group for RDS
+
+> <img src="https://img.shields.io/badge/Step%202-Create%20RDS%20Security%20Group-2ECC71?style=for-the-badge" />
 
 Your database needs its own security group. We'll allow MySQL access from anywhere (for lab purposes only!).
 
@@ -126,6 +140,8 @@ Your database needs its own security group. We'll allow MySQL access from anywhe
 
 ### Step 3: Create the RDS Instance
 
+> <img src="https://img.shields.io/badge/Step%203-Create%20RDS%20Instance-E74C3C?style=for-the-badge" />
+
 This is the main event — let's launch a MySQL database!
 
 1. Go to **RDS Console** → **Databases** (left sidebar)
@@ -147,7 +163,8 @@ This is the main event — let's launch a MySQL database!
 | Master username | `admin` |
 | Master password | **Use a strong password! Write it down!** |
 
-> 💡 **Rithu's Tip:** Pick a password you'll remember but that's not "password123". I recommend something like `Ravi#MySQL2024!` — mix of uppercase, lowercase, numbers, and symbols. WRITE IT DOWN somewhere safe!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> Pick a password you'll remember but that's not "password123". I recommend something like `Ravi#MySQL2024!` — mix of uppercase, lowercase, numbers, and symbols. WRITE IT DOWN somewhere safe!
 
 **Instance configuration:**
 
@@ -179,7 +196,8 @@ This is the main event — let's launch a MySQL database!
 | Backup | **Disable** (for lab — explain below) |
 | Enable automated backups | ❌ |
 
-> 💡 **Rithu's Tip:** In production, automated backups are essential! They let you restore to any point in time. But for a lab, we don't need them, and they cost extra storage.
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> In production, automated backups are essential! They let you restore to any point in time. But for a lab, we don't need them, and they cost extra storage.
 
 **Monitoring & Maintenance:**
 - Leave all defaults
@@ -187,13 +205,16 @@ This is the main event — let's launch a MySQL database!
 
 4. Wait for the database to be created — this takes **5-10 minutes** ⏱️
 
-> 💡 **Rithu's Tip:** Go grab a coffee while you wait! ☕ RDS is setting up MySQL, configuring networking, setting up the security group, and more. This is the "managed" part of a managed database — AWS does all the boring stuff for you.
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> Go grab a coffee while you wait! ☕ RDS is setting up MySQL, configuring networking, setting up the security group, and more. This is the "managed" part of a managed database — AWS does all the boring stuff for you.
 
 📸 **[Screenshot: RDS console showing the database with "Creating" status]**
 
 ---
 
 ### Step 4: Wait for DB to Be Available
+
+> <img src="https://img.shields.io/badge/Step%204-Wait%20for%20DB-F39C12?style=for-the-badge" />
 
 1. In the **RDS Console** → **Databases** → click `ravi-mysql-db`
 2. Watch the **Status** column:
@@ -209,6 +230,8 @@ This is the main event — let's launch a MySQL database!
 ---
 
 ### Step 5: Connect to Your RDS Database
+
+> <img src="https://img.shields.io/badge/Step%205-Connect%20to%20RDS-1ABC9C?style=for-the-badge" />
 
 You have two options for connecting:
 
@@ -248,13 +271,16 @@ mysql -h ravi-mysql-db.xxxxxxxxxxxx.us-east-1.rds.amazonaws.com -u admin -p
 mysql>
 ```
 
-> 💡 **Rithu's Tip:** If you get "Access denied", double-check your password. If you get "Can't connect", check that the security group allows port 3306 from your IP or the EC2 instance's private IP.
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> If you get "Access denied", double-check your password. If you get "Can't connect", check that the security group allows port 3306 from your IP or the EC2 instance's private IP.
 
 📸 **[Screenshot: Terminal showing successful MySQL connection]**
 
 ---
 
 ### Step 6: Create Tables and Insert Data
+
+> <img src="https://img.shields.io/badge/Step%206-Create%20Tables%20%26%20Insert%20Data-E67E22?style=for-the-badge" />
 
 Now let's do some real database work! Run these commands in your MySQL prompt:
 
@@ -326,6 +352,8 @@ EXIT;
 
 ### Step 7: View RDS Metrics in CloudWatch
 
+> <img src="https://img.shields.io/badge/Step%207-View%20CloudWatch%20Metrics-9B59B6?style=for-the-badge" />
+
 RDS automatically sends metrics to CloudWatch. Let's check them out!
 
 1. Go to **RDS Console** → **Databases** → click `ravi-mysql-db`
@@ -339,11 +367,14 @@ RDS automatically sends metrics to CloudWatch. Let's check them out!
 
 📸 **[Screenshot: RDS monitoring tab showing CPU and connection metrics]**
 
-> 💡 **Rithu's Tip:** In production, you'd set up CloudWatch alarms on these metrics — like alerting when CPU goes above 80% or free storage drops below 1 GB. We'll cover that in Lab 15!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> In production, you'd set up CloudWatch alarms on these metrics — like alerting when CPU goes above 80% or free storage drops below 1 GB. We'll cover that in Lab 15!
 
 ---
 
 ### Step 8: Verify Your Work
+
+> <img src="https://img.shields.io/badge/Step%208-Verify%20Your%20Work-27AE60?style=for-the-badge" />
 
 Let's confirm everything worked:
 
@@ -417,7 +448,8 @@ Let's confirm everything worked:
 
 📸 **[Screenshot: RDS console with instance deleted and subnet group removed]**
 
-> 💡 **Rithu's Tip:** After deletion, your RDS charges stop immediately. Storage is released and you stop paying. Always double-check that the database is gone! You can verify by going to RDS → Databases and confirming the list is empty (or doesn't contain your lab DB). Also verify EC2 instances are terminated so you don't pay for compute you're not using!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> After deletion, your RDS charges stop immediately. Storage is released and you stop paying. Always double-check that the database is gone! You can verify by going to RDS → Databases and confirming the list is empty (or doesn't contain your lab DB). Also verify EC2 instances are terminated so you don't pay for compute you're not using!
 
 ---
 
@@ -444,6 +476,9 @@ You've mastered relational databases in the cloud. Now let's explore the NoSQL w
 ---
 
 ## ❓ Troubleshooting
+
+<details>
+<summary><strong>Click to expand Troubleshooting Section</strong></summary>
 
 ### "Can't connect to MySQL server" error
 
@@ -477,6 +512,14 @@ You've mastered relational databases in the cloud. Now let's explore the NoSQL w
 - For this lab, 20 GB should be more than enough
 - In production, enable storage autoscaling with a maximum limit
 
----
+</details>
 
 > 🎉 **Incredible work, Ravi!** You just set up a production-grade MySQL database in the cloud. RDS handles all the boring stuff — patching, backups, monitoring — so you can focus on building awesome applications. Next, we'll explore the wild world of NoSQL with DynamoDB! 🚀
+
+---
+
+<div align="center">
+
+<img src="https://img.shields.io/badge/Lab%2013-Complete!-27AE60?style=for-the-badge&labelColor=232F3E" />
+
+</div>

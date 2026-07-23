@@ -1,9 +1,15 @@
+<div align="center">
+
+<img src="https://img.shields.io/badge/Lab%2024-AWS%20Backup%20Multi-Service-8E44AD?style=for-the-badge&labelColor=232F3E" />
+
 # Lab 24 — AWS Backup: Multi-Service Backup
 
-![Difficulty](https://img.shields.io/badge/Difficulty-Medium-yellow)
-![Time](https://img.shields.io/badge/Time-~35min-blue)
-![Cost](https://img.shields.io/badge/Cost-%3C%242-orange)
-![Service](https://img.shields.io/badge/Service-AWS%20Backup-red)
+<img src="https://img.shields.io/badge/Difficulty-Medium-yellow?style=flat-square" />
+<img src="https://img.shields.io/badge/Time-~35min-blue?style=flat-square" />
+<img src="https://img.shields.io/badge/Cost-%3C%242-orange?style=flat-square" />
+<img src="https://img.shields.io/badge/Service-AWS%20Backup-red?style=flat-square" />
+
+</div>
 
 > "Ravi, backups aren't exciting — until you NEED one. Then they're the most exciting thing in the world!" — Rithu
 
@@ -75,7 +81,7 @@ Estimated total lab cost: **< $2** if cleaned up within 1 hour.
 
 ## 🛠️ Step-by-Step Instructions
 
-### Step 1: Create Resources to Back Up
+### <img src="https://img.shields.io/badge/Step%201-Create%20Resources%20to%20Back%20Up-FF6B6B?style=for-the-badge" />
 
 Before we can back things up, we need something TO back up! Let's create a few resources.
 
@@ -136,13 +142,14 @@ Wait for the instance to be **Running**.
 35. Add an item with `id` = `1`, `name` = `Test User`
 36. Add another item with `id` = `2`, `name` = `Another User`
 
-> 💡 **Rithu's Tip**: "We're creating multiple resource types to show how AWS Backup can protect everything from a single dashboard. In the real world, you might back up databases, file systems, and virtual machines all from one backup plan."
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> "We're creating multiple resource types to show how AWS Backup can protect everything from a single dashboard. In the real world, you might back up databases, file systems, and virtual machines all from one backup plan."
 
 📸 [Screenshot: Four AWS resources created — EC2, RDS, S3, DynamoDB]
 
 ---
 
-### Step 2: Enable AWS Backup
+### <img src="https://img.shields.io/badge/Step%202-Enable%20AWS%20Backup-FFA500?style=for-the-badge" />
 
 Let's see what AWS Backup already knows about your resources.
 
@@ -158,13 +165,14 @@ Let's see what AWS Backup already knows about your resources.
 - EBS volumes and RDS databases are commonly discovered
 - DynamoDB and S3 may need manual assignment
 
-> 💡 **Rithu's Tip**: "AWS Backup auto-discovers some resources, but not all. Don't worry if you don't see everything yet — we'll assign them to our backup plan in the next steps."
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> "AWS Backup auto-discovers some resources, but not all. Don't worry if you don't see everything yet — we'll assign them to our backup plan in the next steps."
 
 📸 [Screenshot: AWS Backup Protected resources page showing discovered resources]
 
 ---
 
-### Step 3: Create a Backup Plan
+### <img src="https://img.shields.io/badge/Step%203-Create%20a%20Backup%20Plan-9B59B6?style=for-the-badge" />
 
 Now let's create the backup plan — this is the heart of AWS Backup!
 
@@ -196,13 +204,14 @@ Now let's create the backup plan — this is the heart of AWS Backup!
 
 Your backup plan is created! It will run daily at noon UTC and retain backups for 35 days.
 
-> 💡 **Rithu's Tip**: "The lifecycle settings are important for cost management. Cold storage (like Glacier) is cheaper for long-term retention. For this lab, we're keeping things simple, but in production, you'd definitely use lifecycle rules!"
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> "The lifecycle settings are important for cost management. Cold storage (like Glacier) is cheaper for long-term retention. For this lab, we're keeping things simple, but in production, you'd definitely use lifecycle rules!"
 
 📸 [Screenshot: Backup plan creation page showing the schedule and retention settings]
 
 ---
 
-### Step 4: Assign Resources to Backup Plan
+### <img src="https://img.shields.io/badge/Step%204-Assign%20Resources-3498DB?style=for-the-badge" />
 
 Now let's tell AWS Backup which resources to protect!
 
@@ -228,13 +237,14 @@ Now let's tell AWS Backup which resources to protect!
 10. You should see backup jobs starting for your resources
 11. Wait for the jobs to show **Completed** status (this may take 5-15 minutes)
 
-> 💡 **Rithu's Tip**: "The first backup is always a 'full backup' — it copies everything. Subsequent backups are incremental (only changed data), which is much faster and cheaper."
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> "The first backup is always a 'full backup' — it copies everything. Subsequent backups are incremental (only changed data), which is much faster and cheaper."
 
 📸 [Screenshot: Backup jobs page showing completed backup jobs for EBS and RDS]
 
 ---
 
-### Step 5: Run an On-Demand Backup
+### <img src="https://img.shields.io/badge/Step%205-On-Demand%20Backup-1ABC9C?style=for-the-badge" />
 
 Don't want to wait for the scheduled backup? Run one right now!
 
@@ -260,13 +270,14 @@ Don't want to wait for the scheduled backup? Run one right now!
     - Backup size
     - Backup vault where it's stored
 
-> 💡 **Rithu's Tip**: "On-demand backups are great before risky operations. About to run a database migration? Take an on-demand backup first. About to test a destructive script? Back up first. The 'oops' insurance policy!"
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> "On-demand backups are great before risky operations. About to run a database migration? Take an on-demand backup first. About to test a destructive script? Back up first. The 'oops' insurance policy!"
 
 📸 [Screenshot: On-demand backup job showing Completed status with backup details]
 
 ---
 
-### Step 6: Restore from Backup
+### <img src="https://img.shields.io/badge/Step%206-Restore%20from%20Backup-E74C3C?style=for-the-badge" />
 
 This is the moment of truth! Let's restore from a backup.
 
@@ -298,13 +309,14 @@ This is the moment of truth! Let's restore from a backup.
 17. It should have the same size and encryption as the original
 18. You could attach this to an EC2 instance and access the data
 
-> 💡 **Rithu's Tip**: "Notice we chose 'New resource' for the restore. This is the safe option — it creates a separate volume without touching the original. In an emergency, you could restore to the original location (destructive), but always prefer non-destructive restores!"
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> "Notice we chose 'New resource' for the restore. This is the safe option — it creates a separate volume without touching the original. In an emergency, you could restore to the original location (destructive), but always prefer non-destructive restores!"
 
 📸 [Screenshot: Restored EBS volume visible in EC2 Volumes console]
 
 ---
 
-### Step 7: View Backup Reports (Optional)
+### <img src="https://img.shields.io/badge/Step%207-View%20Backup%20Reports-2ECC71?style=for-the-badge" />
 
 AWS Backup provides compliance and audit reports!
 
@@ -321,7 +333,8 @@ AWS Backup provides compliance and audit reports!
 - **Job history**: All backup and restore jobs with timestamps
 - **Resource coverage**: Which services are covered by backup plans
 
-> 💡 **Rithu's Tip**: "Compliance reports are crucial for regulated industries. Imagine an auditor asking: 'Can you prove your database was backed up every day for the last year?' These reports answer that question instantly!"
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> "Compliance reports are crucial for regulated industries. Imagine an auditor asking: 'Can you prove your database was backed up every day for the last year?' These reports answer that question instantly!"
 
 📸 [Screenshot: AWS Backup compliance report showing resource backup status]
 
@@ -419,7 +432,8 @@ AWS Backup charges for stored backups. Delete everything!
 44. Go to DynamoDB → confirm no tables
 45. Go to IAM → confirm no backup role
 
-> 💡 **Rithu's Tip**: "AWS Backup cleanup is easy — delete the plan and all its backups go with it. Compare this to manually managing snapshots across EC2, RDS, and DynamoDB. That's the power of a centralized backup service!"
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> "AWS Backup cleanup is easy — delete the plan and all its backups go with it. Compare this to manually managing snapshots across EC2, RDS, and DynamoDB. That's the power of a centralized backup service!"
 
 📸 [Screenshot: AWS Backup console showing no backup plans or backups remaining]
 
@@ -454,30 +468,65 @@ You now know how to protect your data with automated backups! In the final lab, 
 
 ## ❓ Troubleshooting
 
-**Problem**: No resources appear in "Protected resources"
-- **Fix**: Wait 5-10 minutes after creating resources. AWS Backup needs time to discover them. Also verify the resources are in the same region as your backup plan.
+<details>
+<summary><strong>No resources appear in "Protected resources"</strong></summary>
 
-**Problem**: Backup jobs stuck in "Pending" status
-- **Fix**: Check that the IAM role has the correct permissions. The backup role needs access to the source resource and the backup vault. Wait 5-10 minutes — the first backup can take time to initialize.
+**Fix**: Wait 5-10 minutes after creating resources. AWS Backup needs time to discover them. Also verify the resources are in the same region as your backup plan.
+</details>
 
-**Problem**: Can't assign RDS to the backup plan
-- **Fix**: Make sure the RDS instance is in **Available** state. RDS instances must be available to be backed up. Also check that the backup IAM role has `rds:CreateDBSnapshot` permission.
+<details>
+<summary><strong>Backup jobs stuck in "Pending" status</strong></summary>
 
-**Problem**: Restore fails or gets stuck
-- **Fix**: Check that you have sufficient service quotas for EBS volumes. Also verify the destination AZ has capacity. Try restoring to a different AZ if one fails.
+**Fix**: Check that the IAM role has the correct permissions. The backup role needs access to the source resource and the backup vault. Wait 5-10 minutes — the first backup can take time to initialize.
+</details>
 
-**Problem**: "Insufficient permissions" error when creating backup
-- **Fix**: The IAM role created by AWS Backup might be missing permissions. Go to IAM → Roles → find the backup role → verify it has the AWS managed policy `AWSBackupServiceRolePolicyForBackup` attached.
+<details>
+<summary><strong>Can't assign RDS to the backup plan</strong></summary>
 
-**Problem**: On-demand backup not appearing in vault
-- **Fix**: Wait 5-15 minutes for the backup to complete and be stored in the vault. Check the Backup jobs page to see if the job is still running or if it failed.
+**Fix**: Make sure the RDS instance is in **Available** state. RDS instances must be available to be backed up. Also check that the backup IAM role has `rds:CreateDBSnapshot` permission.
+</details>
 
-**Problem**: Can't delete the backup plan
-- **Fix**: First delete all backup jobs and restore jobs associated with the plan. Then delete the plan. If jobs are stuck, they may need to expire (usually after 7 days).
+<details>
+<summary><strong>Restore fails or gets stuck</strong></summary>
 
-**Problem**: RDS deletion fails
-- **Fix**: Make sure no other resources are connected to the RDS instance. Check that you unchecked "Create final snapshot" if you want a quick deletion. The final snapshot deletion takes extra time.
+**Fix**: Check that you have sufficient service quotas for EBS volumes. Also verify the destination AZ has capacity. Try restoring to a different AZ if one fails.
+</details>
+
+<details>
+<summary><strong>"Insufficient permissions" error when creating backup</strong></summary>
+
+**Fix**: The IAM role created by AWS Backup might be missing permissions. Go to IAM → Roles → find the backup role → verify it has the AWS managed policy `AWSBackupServiceRolePolicyForBackup` attached.
+</details>
+
+<details>
+<summary><strong>On-demand backup not appearing in vault</strong></summary>
+
+**Fix**: Wait 5-15 minutes for the backup to complete and be stored in the vault. Check the Backup jobs page to see if the job is still running or if it failed.
+</details>
+
+<details>
+<summary><strong>Can't delete the backup plan</strong></summary>
+
+**Fix**: First delete all backup jobs and restore jobs associated with the plan. Then delete the plan. If jobs are stuck, they may need to expire (usually after 7 days).
+</details>
+
+<details>
+<summary><strong>RDS deletion fails</strong></summary>
+
+**Fix**: Make sure no other resources are connected to the RDS instance. Check that you unchecked "Create final snapshot" if you want a quick deletion. The final snapshot deletion takes extra time.
+</details>
 
 ---
 
-> 🎉 **Rithu says**: "You've just completed one of the most important skills in cloud computing — protecting data with backups. In the real world, the engineer who set up proper backups is the hero of every disaster recovery story. You're now that engineer!"
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> "You've just completed one of the most important skills in cloud computing — protecting data with backups. In the real world, the engineer who set up proper backups is the hero of every disaster recovery story. You're now that engineer!"
+
+---
+
+<div align="center">
+
+<img src="https://img.shields.io/badge/Lab%2024-Complete!-27AE60?style=for-the-badge&labelColor=232F3E" />
+
+**🎉 Congratulations on completing Lab 24! 🎉**
+
+</div>
