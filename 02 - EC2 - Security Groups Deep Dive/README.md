@@ -13,7 +13,7 @@
 
 <br/>
 
-*"Security groups are the bouncers of your EC2 club. They decide who gets in (inbound) and what the party people can access (outbound). Tonight, YOU are the bouncer."* — Rithu
+_"Security groups are the bouncers of your EC2 club. They decide who gets in (inbound) and what the party people can access (outbound). Tonight, YOU are the bouncer."_ — Rithu
 
 </div>
 
@@ -95,18 +95,18 @@ Let's leave behind the auto-created groups from Lab 01.
 2. Click **Create security group** (blue button, top left).
 3. Fill in:
 
-   | Field | Value |
-   |-------|-------|
-   | Security group name | `web-server-sg` |
-   | Description | `Security group for the web server lab` |
-   | VPC | default VPC |
+   | Field               | Value                                   |
+   | ------------------- | --------------------------------------- |
+   | Security group name | `web-server-sg`                         |
+   | Description         | `Security group for the web server lab` |
+   | VPC                 | default VPC                             |
 
 4. Add these **Inbound rules**:
 
-   | Type | Protocol | Port | Source | Description |
-   |------|----------|------|--------|-------------|
-   | SSH | TCP | 22 | **My IP** | SSH from my secure fortress |
-   | HTTP | TCP | 80 | **0.0.0.0/0** | Allow all web traffic |
+   | Type | Protocol | Port | Source        | Description                 |
+   | ---- | -------- | ---- | ------------- | --------------------------- |
+   | SSH  | TCP      | 22   | **My IP**     | SSH from my secure fortress |
+   | HTTP | TCP      | 80   | **0.0.0.0/0** | Allow all web traffic       |
 
    > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> Notice how SSH is locked to YOUR IP and HTTP is open to the entire internet. That's intentional. You manage the server privately, your users browse the website publicly.
 
@@ -115,6 +115,7 @@ Let's leave behind the auto-created groups from Lab 01.
 6. Click **Create security group** at the bottom.
 
 📸 [Screenshot: Security group creation page with web-server-sg showing SSH and HTTP inbound rules]
+![Security group creation page with web-server-sg showing SSH and HTTP inbound rules](screenshots/01-security-group-creation.png)
 
 ---
 
@@ -163,7 +164,7 @@ sudo yum update -y
 sudo yum install -y httpd
 sudo systemctl start httpd
 sudo systemctl enable httpd
-echo "<h1>Security Groups Lab - Ravi rocks!</h1>" | sudo tee /var/www/html/index.html
+echo '<h1>Security Groups Lab - Ravi rocks!</h1>' | sudo tee /var/www/html/index.html
 ```
 
 ---
@@ -176,6 +177,7 @@ echo "<h1>Security Groups Lab - Ravi rocks!</h1>" | sudo tee /var/www/html/index
 2. Go to `http://<public-ip>` (not https).
 
 📸 [Screenshot: Browser displaying "Security Groups Lab - Ravi rocks!"]
+![Browser displaying "Security Groups Lab - Ravi rocks!"](screenshots/02-browser-web-page.png)
 
 **Take a moment to celebrate.** 🎉
 
@@ -218,6 +220,7 @@ To simulate:
 4. Refresh your browser at `http://<public-ip>`.
 
 📸 [Screenshot: Browser showing connection refused or timeout error]
+![Browser showing connection refused or timeout error](screenshots/03-browser-connection-refused.png)
 
 The page won't load. Why? Because HTTP traffic can't reach port 80. AWS is silently dropping those packets.
 
@@ -261,11 +264,11 @@ This is where things get spicy. Security groups can reference OTHER security gro
 
 1. Create a second SG:
 
-   | Field | Value |
-   |-------|-------|
-   | Security group name | `app-sg` |
-   | Description | `Backend app tier that trusts web-server-sg` |
-   | VPC | default |
+   | Field               | Value                                        |
+   | ------------------- | -------------------------------------------- |
+   | Security group name | `app-sg`                                     |
+   | Description         | `Backend app tier that trusts web-server-sg` |
+   | VPC                 | default                                      |
 
 2. Add a single inbound rule:
    - Type: **HTTP**
@@ -277,6 +280,7 @@ This is where things get spicy. Security groups can reference OTHER security gro
 3. Click **Create security group**.
 
 📸 [Screenshot: app-sg inbound rule showing source as web-server-sg]
+![app-sg inbound rule showing source as web-server-sg](screenshots/04-app-sg-referencing-web-sg.png)
 
 Now launch a SECOND EC2 instance:
 
@@ -314,31 +318,31 @@ You should see the response! The `app-sg` is configured to trust traffic only if
 
 <img src="https://img.shields.io/badge/Step%2010-Verify-16A085?style=for-the-badge" />
 
-| ✅ | Check |
-|----|-------|
-| ☐ | `web-server-sg` has SSH from My IP, HTTP from anywhere, HTTPS from anywhere |
-| ☐ | SSH works from your laptop |
-| ☐ | Browser loads `http://<public-ip>` → sees the Security Groups Lab page |
-| ☐ | Removing HTTP rule kills the site |
-| ☐ | Re-adding HTTP restores the site |
-| ☐ | `app-sg` references `web-server-sg` as source |
-| ☐ | Web server can curl the app instance's HTTP endpoint via private IP |
+| ✅  | Check                                                                       |
+| --- | --------------------------------------------------------------------------- |
+| ☐   | `web-server-sg` has SSH from My IP, HTTP from anywhere, HTTPS from anywhere |
+| ☐   | SSH works from your laptop                                                  |
+| ☐   | Browser loads `http://<public-ip>` → sees the Security Groups Lab page      |
+| ☐   | Removing HTTP rule kills the site                                           |
+| ☐   | Re-adding HTTP restores the site                                            |
+| ☐   | `app-sg` references `web-server-sg` as source                               |
+| ☐   | Web server can curl the app instance's HTTP endpoint via private IP         |
 
 ---
 
 ## ✅ Validation Checklist
 
-| ✅ | Validation Item | Status |
-|----|----------------|--------|
-| ☐ | Security group `web-server-sg` created with SSH + HTTP inbound rules | ⬜ |
-| ☐ | EC2 instance launched and serving custom index.html via httpd | ⬜ |
-| ☐ | HTTP access verified from browser | ⬜ |
-| ☐ | Temporary SSH restriction by changing source to 1.2.3.4/32 | ⬜ |
-| ☐ | HTTP rule removed → site goes down → verified | ⬜ |
-| ☐ | HTTP rule re-added → site comes back → verified | ⬜ |
-| ☐ | HTTPS rule added (placeholder) | ⬜ |
-| ☐ | Security group `app-sg` created referencing `web-server-sg` | ⬜ |
-| ☐ | Cross-SG HTTP access verified via curl on private IP | ⬜ |
+| ✅  | Validation Item                                                      | Status |
+| --- | -------------------------------------------------------------------- | ------ |
+| ☐   | Security group `web-server-sg` created with SSH + HTTP inbound rules | ⬜     |
+| ☐   | EC2 instance launched and serving custom index.html via httpd        | ⬜     |
+| ☐   | HTTP access verified from browser                                    | ⬜     |
+| ☐   | Temporary SSH restriction by changing source to 1.2.3.4/32           | ⬜     |
+| ☐   | HTTP rule removed → site goes down → verified                        | ⬜     |
+| ☐   | HTTP rule re-added → site comes back → verified                      | ⬜     |
+| ☐   | HTTPS rule added (placeholder)                                       | ⬜     |
+| ☐   | Security group `app-sg` created referencing `web-server-sg`          | ⬜     |
+| ☐   | Cross-SG HTTP access verified via curl on private IP                 | ⬜     |
 
 > **POV:** You just removed the HTTP rule and now your website shows "connection refused" - exactly as planned.
 
@@ -370,20 +374,21 @@ You should see the response! The `app-sg` is configured to trust traffic only if
 
 ## 🎓 What You Learned
 
-| Concept | Takeaway |
-|---------|----------|
-| **Inbound vs Outbound** | Inbound controls incoming traffic; outbound controls what your resource reaches |
-| **Source IP filtering** | SSH restricted to My IP keeps attackers out |
-| **Stateful firewalls** | Security groups track connections; replies flow automatically |
-| **Dynamic rule changes** | Rules apply immediately. No restart needed. |
-| **SG-to-SG referencing** | Allows traffic between resources without exposing IPs |
-| **HTTP/HTTPS rules** | Port 80 (HTTP) and 443 (HTTPS). Different rules, same drill |
+| Concept                  | Takeaway                                                                        |
+| ------------------------ | ------------------------------------------------------------------------------- |
+| **Inbound vs Outbound**  | Inbound controls incoming traffic; outbound controls what your resource reaches |
+| **Source IP filtering**  | SSH restricted to My IP keeps attackers out                                     |
+| **Stateful firewalls**   | Security groups track connections; replies flow automatically                   |
+| **Dynamic rule changes** | Rules apply immediately. No restart needed.                                     |
+| **SG-to-SG referencing** | Allows traffic between resources without exposing IPs                           |
+| **HTTP/HTTPS rules**     | Port 80 (HTTP) and 443 (HTTPS). Different rules, same drill                     |
 
 ### Pro Tip vs Noob Tip
-| | Approach |
-|---|---|
-| **Noob Tip** | One security group with all ports open "for convenience" |
-| **Pro Tip** | Separate SGs per tier. Web gets 80/443, App gets web-SG only, DB gets 3306 from app-SG only. |
+
+|              | Approach                                                                                     |
+| ------------ | -------------------------------------------------------------------------------------------- |
+| **Noob Tip** | One security group with all ports open "for convenience"                                     |
+| **Pro Tip**  | Separate SGs per tier. Web gets 80/443, App gets web-SG only, DB gets 3306 from app-SG only. |
 
 ---
 
@@ -395,7 +400,7 @@ Time to talk disks. EC2 without storage is like a laptop without a hard drive.
 
 👉 **Proceed to Lab 03:** [EBS — Volumes and Snapshots](../03%20-%20EBS%20-%20Volumes%20and%20Snapshots/README.md)
 
-*We'll add extra storage volumes, format them, take snapshots, and restore from a backup. Yes, like cloud forensics but friendlier.*
+_We'll add extra storage volumes, format them, take snapshots, and restore from a backup. Yes, like cloud forensics but friendlier._
 
 </div>
 
@@ -469,6 +474,6 @@ Time to talk disks. EC2 without storage is like a laptop without a hard drive.
 
 <img src="https://img.shields.io/badge/Lab%20Complete-Well%20Done!-27AE60?style=for-the-badge&labelColor=232F3E" />
 
-*Written with a click-click, save-save, test-test philosophy — Rithu*
+_Written with a click-click, save-save, test-test philosophy — Rithu_
 
 </div>
