@@ -96,6 +96,7 @@ In this lab, you'll set up **Cross-Region Replication (CRR)** — a feature that
 6. Click **Create bucket**
 
 > 📸 [Screenshot: Source bucket created successfully]
+![Source bucket created successfully](screenshots/01-source-bucket-created.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > us-east-1 is the default region for most AWS services and often the cheapest. It's our "home base" for this lab!
@@ -152,6 +153,7 @@ Now we need to give S3 permission to read from one bucket and write to another. 
 6. Click **Next**
 
 > 📸 [Screenshot: Trusted entity selection showing S3]
+![Trusted entity selection showing S3](screenshots/02-iam-trusted-entity-s3.png)
 
 7. On the "Add permissions" page, search for `AmazonS3FullAccess`
 8. Check the box next to **AmazonS3FullAccess**
@@ -159,11 +161,13 @@ Now we need to give S3 permission to read from one bucket and write to another. 
 9. Click **Next**
 
 > 📸 [Screenshot: AmazonS3FullAccess policy selected]
+![AmazonS3FullAccess policy selected](screenshots/03-amazon-s3-fullaccess.png)
 
 10. For **Role name**, type: `s3-replication-role`
 11. Scroll down and click **Create role**
 
 > 📸 [Screenshot: Role created successfully]
+![Role created successfully](screenshots/04-role-created.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > IAM Roles are like giving someone a key card to your building. The role says "S3 service, you have permission to read from the source bucket and write to the destination bucket." Never give more permissions than needed in production!
@@ -185,15 +189,18 @@ Now we need to give S3 permission to read from one bucket and write to another. 
 3. Click **Next**
 
 > 📸 [Screenshot: Rule name and scope configuration]
+![Rule name and scope configuration](screenshots/05-rule-name-scope-config.png)
 
 4. **Destination:** Select **Choose a bucket in this account**
 5. Browse and select `ravi-dest-replication-12345`
    - 📸 [Screenshot: Destination bucket selected]
+   ![Destination bucket selected](screenshots/06-destination-bucket-selected.png)
 
 6. Click **Next**
 
 7. **IAM Role:** Select `s3-replication-role` from the dropdown
    - 📸 [Screenshot: IAM role selected]
+   ![IAM role selected](screenshots/07-iam-role-selected.png)
 
 8. **Replication Time Control (RTC):** Leave unchecked (this is optional and adds cost)
 9. Click **Next**
@@ -206,6 +213,7 @@ Now we need to give S3 permission to read from one bucket and write to another. 
 11. Click **Save**
 
 > 📸 [Screenshot: Replication rule saved successfully]
+![Replication rule saved successfully](screenshots/08-replication-rule-saved.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > Replication doesn't happen instantly — it can take a few minutes to initialize. After that, new objects are typically replicated within 15 minutes. Be patient, Ravi!
@@ -226,6 +234,7 @@ Hello from the source bucket in N. Virginia!
 5. Wait for the upload to succeed
 
 > 📸 [Screenshot: hello.txt uploaded to source bucket]
+![hello.txt uploaded to source bucket](screenshots/09-hello-txt-uploaded.png)
 
 ---
 
@@ -238,6 +247,7 @@ Hello from the source bucket in N. Virginia!
 5. Click on `hello.txt` and check the details — it should show the same content
 
 > 📸 [Screenshot: hello.txt appearing in the destination bucket in Oregon]
+![hello.txt appearing in the destination bucket in Oregon](screenshots/10-replication-verified.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > If you don't see the file immediately, wait a few more minutes. The first replication can take up to 15 minutes. Check the **Management** tab → **Replication rules** on the source bucket to see the rule status.
@@ -266,6 +276,7 @@ Second file replicated automatically!
 4. Check `ravi-dest-replication-12345` — both files should appear!
 
 > 📸 [Screenshot: All files replicated to destination bucket]
+![All files replicated to destination bucket](screenshots/11-all-files-replicated.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > From now on, EVERY file you upload to the source bucket will be automatically copied to the destination. You don't need to do anything — S3 handles it all behind the scenes!
@@ -282,7 +293,6 @@ Here's something interesting: **deleting from the source does NOT delete from th
 4. Go to `ravi-dest-replication-12345`
 5. Check — `hello.txt` is still there! 😮
 
-> 📸 [Screenshot: File deleted from source but still present in destination]
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > This is a safety feature! If someone accidentally deletes files from the source, the copies in the destination are safe. In production, you can configure delete markers to replicate if you want synced deletions.
@@ -353,7 +363,7 @@ Here's something interesting: **deleting from the source does NOT delete from th
 2. Search for `s3-replication-role`
 3. Click on it → **Delete** → type `s3-replication-role` → confirm deletion
 
-> 📸 [Screenshot: Clean S3 console and IAM Roles page — nothing left behind]
+
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > Always clean up in reverse order: objects → rules → buckets → IAM roles. If you delete the bucket first, the replication rule becomes orphaned and may cause confusing error messages!
