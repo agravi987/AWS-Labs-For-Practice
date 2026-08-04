@@ -95,6 +95,7 @@ Create an S3 bucket, configure it for static website hosting, upload HTML files,
 2. Click the orange **Create bucket** button.
 
 📸 [Screenshot: S3 Console with the Create bucket button highlighted]
+![S3 Console with the Create bucket button highlighted](screenshots/create-bucket-button.png)
 
 3. General configuration:
 
@@ -119,6 +120,8 @@ Create an S3 bucket, configure it for static website hosting, upload HTML files,
    - Read the warning. Acknowledge it by checking: **I acknowledge that the current settings may result in a bucket and objects becoming public.**
 
    📸 [Screenshot: Block all public access section with all boxes UNCHECKED and the acknowledgment checked]
+  ![Block all public access section with all boxes UNCHECKED and the acknowledgment checked](screenshots/public-access-settings.png)
+
 
    > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
    > Normally, you NEVER want a bucket public. We're making an exception because STATIC WEBSITES require PUBLIC access to deliver content to browsers. In real life, MOST buckets should stay private. Use CloudFront (covered much later) to serve S3 content securely.
@@ -165,6 +168,7 @@ http://ravi-static-website-12345.s3-website-us-east-1.amazonaws.com
 ```
 
 📸 [Screenshot: Static website hosting card showing the endpoint URL]
+![Static website hosting card showing the endpoint URL](screenshots/static-website-endpoint.png)
 
 Copy that URL. You'll need it later.
 
@@ -245,6 +249,7 @@ p {
 3. Click **Upload**.
 
 📸 [Screenshot: Upload page in S3 Objects tab]
+!Upload page in S3 Objects tab](screenshots/upload-page.png)
 
 4. Click **Add files**.
 5. Select **both** `index.html` and `error.html`.
@@ -255,6 +260,7 @@ Alternative: drag and drop files from your computer onto the Upload panel.
 Once uploaded, you should see both files listed in the Objects tab.
 
 📸 [Screenshot: S3 Objects tab showing index.html and error.html listed, size ~300 bytes each]
+![ S3 Objects tab showing index.html and error.html listed, size ~300 bytes each](screenshots/uploaded-objects.png)
 
 > <img src="https://img.shields.io/badge/Step%205-Add%20Bucket%20Policy%20for%20Public%20Read-E74C3C?style=for-the-badge" />
 
@@ -293,6 +299,7 @@ Even though the bucket is not fully blocked from public access, objects are STIL
 You might see an error if there are conflicts with account-level block public access settings. Since we disabled block all public access earlier, this should save cleanly.
 
 📸 [Screenshot: Bucket policy editor showing the JSON pasted and saved]
+![ Bucket policy editor showing the JSON pasted and saved](screenshots/bucket-policy-editor.png)
 
 > <img src="https://img.shields.io/badge/Step%206-Verify%20Your%20Work-1ABC9C?style=for-the-badge" />
 
@@ -309,6 +316,7 @@ You should see your custom HTML page with:
 > This website runs entirely on S3. No servers. No maintenance. Just magic.
 
 📸 [Screenshot: Browser showing the index.html page loaded from S3 website endpoint]
+![ Browser showing the index.html page loaded from S3 website endpoint](screenshots/website-homepage.png)
 
 **Now test the error page:**
 
@@ -323,6 +331,7 @@ You should see your custom HTML page with:
 > Ravi says: This page doesn't exist!
 
 📸 [Screenshot: Browser showing the custom error page at a non-existent URL]
+![Browser showing the custom error page at a non-existent URL](screenshots/error-page.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > Without the error document configured, S3 would return a generic XML error page. Ugly. With `error.html` configured, S3 intercepts all 4xx errors and returns YOUR page. Your site, your branding.

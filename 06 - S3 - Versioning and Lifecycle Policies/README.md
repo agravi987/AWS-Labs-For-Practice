@@ -90,6 +90,7 @@ In this lab, you'll learn how S3 Versioning protects your data from accidental d
 3. Click the orange **Create bucket** button
 4. Under **Bucket name**, type: `ravi-versioning-lab-12345`
    - 📸 [Screenshot: Bucket name field filled in]
+      ![Bucket name field filled in](screenshots/bucket-name-field.png)
 5. Leave **AWS Region** as **US East (N. Virginia) us-east-1**
 6. Scroll down and leave all other settings as default
 7. Click the orange **Create bucket** button at the bottom
@@ -110,6 +111,7 @@ In this lab, you'll learn how S3 Versioning protects your data from accidental d
 7. You should see a green banner saying "Successfully edited bucket versioning"
 
 > 📸 [Screenshot: Bucket Versioning showing "Enabled"]
+![Bucket Versioning showing "Enabled"](screenshots/versioning-enabled.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > Once you enable versioning, you can NEVER go back to " suspended" — you can only suspend it, which stops new versions but doesn't delete old ones. Think of it like a one-way valve!
@@ -133,6 +135,7 @@ In this lab, you'll learn how S3 Versioning protects your data from accidental d
 8. You should see a green banner: "Upload succeeded"
 
 > 📸 [Screenshot: Upload succeeded screen]
+![Upload succeeded screen](screenshots/upload-succeeded.png)
 
 ---
 
@@ -179,6 +182,7 @@ In this lab, you'll learn how S3 Versioning protects your data from accidental d
 5. Notice which one has the checkmark icon — that's the **current** version (v3)
 
 > 📸 [Screenshot: All 3 versions of index.html displayed with Version IDs]
+![All 3 versions of index.html displayed with Version IDs](screenshots/versions-list.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > This is the magic of versioning! S3 kept every single version. If you ever accidentally upload the wrong file, you can roll back to any previous version. It's like Git, but for your files!
@@ -201,6 +205,7 @@ In this lab, you'll learn how S3 Versioning protects your data from accidental d
 9. The three versions are still listed below it
 
 > 📸 [Screenshot: Delete marker shown with all 3 versions still present]
+![Delete marker shown with all 3 versions still present](screenshots/delete-marker-with-versions.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > When you "delete" a versioned object, S3 doesn't actually delete anything. It just adds a **Delete Marker** — think of it like putting a sticky note that says "pretend this file doesn't exist." The actual data is still safe underneath!
@@ -221,6 +226,7 @@ Now let's pretend we panicked and want our file back!
    - Download v1, then re-upload it (S3 will create a NEW current version from it)
 
 > 📸 [Screenshot: Downloading/restoring a previous version]
+![Downloading/restoring a previous version](screenshots/restore-version.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > Versioning saved the day! Ravi, imagine you're a developer and you accidentally deployed broken code to production. With versioning, you just restore the last known good version. No stress!
@@ -246,7 +252,7 @@ Now the most recent version of `index.html` should be "current" again (visible w
 
 Now for the really cool part — let S3 manage your storage automatically!
 
-1. Click on the **Properties** tab of your bucket
+1. Click on the **Management** tab of your bucket
 2. Scroll down to find **Lifecycle rules** (under "Bucket polices and rules")
 3. Click **Create lifecycle rule**
 
@@ -280,6 +286,8 @@ Now for the really cool part — let S3 manage your storage automatically!
 7. Click **Create rule**
 
 > 📸 [Screenshot: Lifecycle rule configuration showing all three transitions]
+![ Lifecycle rule configuration showing all three transitions](screenshots/lifecycle-rule-config.png)
+
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > Why does this save money? Because different storage classes have different costs:
@@ -301,7 +309,7 @@ Let's make sure everything is set up correctly:
 - [ ] The lifecycle rule `move-to-standard-ia` exists and is enabled
 - [ ] The lifecycle rule shows transitions for both current and noncurrent versions
 
-> 📸 [Screenshot: Properties tab showing Versioning Enabled and Lifecycle rules listed]
+
 
 ---
 
@@ -357,7 +365,7 @@ If you want to delete the lifecycle rule before emptying the bucket:
 2. Select the rule
 3. Click **Delete**
 
-> 📸 [Screenshot: Empty S3 console — no buckets remaining]
+
 
 ---
 
