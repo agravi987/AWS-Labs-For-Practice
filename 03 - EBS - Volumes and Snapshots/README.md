@@ -180,6 +180,7 @@ file -s /dev/xvda1
 3. Click **Create volume**.
 
 📸 [Screenshot: Create Volume screen with gp3, 10 GB, us-east-1a settings]
+![Create Volume screen with gp3, 10 GB, us-east-1a settings](screenshots/01-create-ebs-volume.png)
 
 Wait for the volume status to turn **Available**.
 
@@ -197,7 +198,6 @@ Wait for the volume status to turn **Available**.
 
 Wait for the state to change to `in-use`.
 
-📸 [Screenshot: Volume list showing one available and one in-use volume]
 
 > <img src="https://img.shields.io/badge/Step%205-Format%20%26%20Mount-E74C3C?style=for-the-badge" />
 

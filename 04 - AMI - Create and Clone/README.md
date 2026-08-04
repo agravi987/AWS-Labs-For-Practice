@@ -128,6 +128,7 @@ This is IMPORTANT:
 4. Wait for the instance state to show **stopped**.
 
 📸 [Screenshot: ami-source-instance showing state "stopped"]
+![ami-source-instance showing state "stopped"](screenshots/01-source-instance-stopped.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > You CAN create an AMI from a running instance. It'll CREATE the AMI while stuff keeps running. But for CONSISTENCY, stop the instance first. This ensures the filesystem is in a clean state before the snapshot. Stopped pizza makes better frozen pizza.
@@ -148,7 +149,7 @@ This is IMPORTANT:
 5. Click **Create image**.
 
 📸 [Screenshot: Create Image screen showing image name and description]
-
+![Create Image screen showing image name and description](screenshots/02-create-image-screen.png)
 6. EC2 left sidebar → **AMIs** under Images.
 7. You'll see your AMI with status **pending** → then **available** (usually takes 1–3 minutes).
 
@@ -179,6 +180,7 @@ Now the magical cloning moment:
 6. Wait for the clone to have 2/2 status checks.
 
 📸 [Screenshot: Two instances in the EC2 console: ami-source-instance (stopped) and ami-clone-instance (running)]
+![Two instances in the EC2 console: ami-source-instance (stopped) and ami-clone-instance (running)](screenshots/03-clone-instance-console.png)
 
 > <img src="https://img.shields.io/badge/Step%206-Verify%20the%20Clone-1ABC9C?style=for-the-badge" />
 
@@ -192,6 +194,8 @@ Get the **public IP** of `ami-clone-instance`.
 > **Custom AMI Lab - Built by Ravi**
 
 📸 [Screenshot: Browser showing the custom AMI page on the clone instance]
+![Browser showing the custom AMI page on the clone instance](screenshots/04-clone-browser-page.png)
+
 
 **SSH test:**
 
@@ -233,6 +237,7 @@ You'll see something like:
 Go to EC2 Console → **Snapshots** → search for the snapshot ID you see above.
 
 📸 [Screenshot: AMI Block device mapping showing device, snapshot ID, size, volume type]
+![AMI Block device mapping showing device, snapshot ID, size, volume type](screenshots/05-ami-block-device-mapping.png)
 
 This shows that an AMI is essentially a catalog entry backed by one or more EBS snapshots, launch permissions, and tags.
 
