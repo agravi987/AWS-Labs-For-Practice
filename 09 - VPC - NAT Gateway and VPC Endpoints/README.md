@@ -166,6 +166,7 @@ A private subnet has NO direct internet access — instances here can't be reach
    - **IPv4 CIDR block:** `10.0.2.0/24`
 
 > 📸 [Screenshot: Private subnet configuration]
+![Private subnet configuration](screenshots/private-subnet-configuration.png)
 
 4. Click **Create subnet**
 
@@ -179,6 +180,7 @@ A private subnet has NO direct internet access — instances here can't be reach
    - Click **Save**
 
 > 📸 [Screenshot: Auto-assign public IP DISABLED on private subnet]
+![Auto-assign public IP DISABLED on private subnet](screenshots/private-subnet-no-public-ip.png)
 
 ---
 
@@ -196,7 +198,6 @@ The NAT Gateway lets instances in the private subnet access the internet (for up
 3. Click **Allocate Elastic IP** (or **Allocate new EIP**)
 4. This assigns a static public IP address to the NAT Gateway
 
-> 📸 [Screenshot: Allocate Elastic IP button]
 
 #### Configure the NAT Gateway:
 
@@ -208,6 +209,8 @@ The NAT Gateway lets instances in the private subnet access the internet (for up
 9. Click **Create NAT Gateway**
 
 > 📸 [Screenshot: NAT Gateway creation form]
+![NAT Gateway creation form](screenshots/nat-gateway-creation-form.png)
+
 
 10. Wait for the NAT Gateway state to change to **Available** (this takes about 2-3 minutes)
 
@@ -230,6 +233,7 @@ We need a route table for the private subnet that routes internet traffic throug
 4. Click **Create route table**
 
 > 📸 [Screenshot: Private route table created]
+![Private route table created](screenshots/private-route-table-created.png)
 
 5. Add a route to the internet via NAT:
    - Click on `ravi-private-rt`
@@ -240,6 +244,7 @@ We need a route table for the private subnet that routes internet traffic throug
    - Click **Save changes**
 
 > 📸 [Screenshot: Route: 0.0.0.0/0 → ravi-nat-gw]
+![Route: 0.0.0.0/0 → ravi-nat-gw](screenshots/route-to-nat-gateway.png)
 
 6. Associate with the private subnet:
    - **Subnet associations** tab → **Edit subnet associations**
@@ -247,6 +252,7 @@ We need a route table for the private subnet that routes internet traffic throug
    - Click **Save**
 
 > 📸 [Screenshot: Private subnet associated with private route table]
+![Private subnet associated with private route table](screenshots/private-route-table-association.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > Notice the private route table has `0.0.0.0/0 → ravi-nat-gw` instead of `→ ravi-igw`. This means traffic goes through the NAT Gateway (outbound only) instead of directly to the internet (bidirectional). That's what makes the subnet "private"!
@@ -271,6 +277,8 @@ We need a security group that allows SSH access from the public subnet.
    - **Port range:** 22
    - **Source:** Select **Custom** → type `10.0.1.0/24` (the public subnet CIDR)
    - 📸 [Screenshot: SSH rule from public subnet CIDR 10.0.1.0/24]
+   ![SSH rule from public subnet CIDR 10.0.1.0/24](screenshots/security-group-ssh-rule.png)
+
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > We're allowing SSH only from the public subnet (10.0.1.0/24). This means you can SSH to the private EC2 from the public EC2 (bastion host) but NOT directly from the internet. This is a common security pattern!
@@ -299,6 +307,7 @@ We need a security group that allows SSH access from the public subnet.
 5. Wait for it to be **Running**
 
 > 📸 [Screenshot: Private EC2 instance running — note NO public IP!]
+![Private EC2 instance running — note NO public IP!](screenshots/private-ec2-no-public-ip.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > Notice that the private EC2 has NO public IP address. You can't SSH to it directly from your laptop. That's by design! We'll access it through the public EC2 (bastion host).
@@ -326,6 +335,7 @@ We need a "jump box" or "bastion host" to SSH into the private instance.
 5. Wait for it to be **Running** and get a public IP
 
 > 📸 [Screenshot: Bastion EC2 with public IP in public subnet]
+![Bastion EC2 with public IP in public subnet](screenshots/bastion-ec2-public-ip.png)
 
 ---
 
@@ -368,6 +378,7 @@ curl http://checkip.amazonaws.com
 **Important:** The IP returned should be the **NAT Gateway's Elastic IP** — NOT the instance's IP (because the instance has no public IP!).
 
 You can verify: go to the NAT Gateway in the VPC console and check its Elastic IP — it should match!
+![verification ](screenshots/nat-gateway-verification.png)
 
 ```bash
 ping -c 4 8.8.8.8
@@ -375,7 +386,6 @@ ping -c 4 8.8.8.8
 
 This should work! The private EC2 can reach the internet through the NAT Gateway.
 
-> 📸 [Screenshot: Private EC2 showing NAT Gateway's IP via curl]
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > This is the magic of NAT Gateways! The private EC2 has no public IP, yet it can access the internet. The NAT Gateway acts as a proxy — it forwards outbound traffic and routes the responses back. But nobody from the internet can initiate connections TO the private EC2. It's a one-way door!
@@ -400,6 +410,7 @@ VPC Endpoints let your private instances access AWS services (like S3) through t
 4. Click **Create endpoint**
 
 > 📸 [Screenshot: VPC Endpoint creation with S3 gateway endpoint]
+![VPC Endpoint creation with S3 gateway endpoint](screenshots/s3-endpoint-creation.png)
 
 5. Wait for the endpoint to become **Available**
 
@@ -433,7 +444,7 @@ aws s3 ls
 
 This should list your S3 buckets (or return empty if you have none). The important thing is that it WORKS — and it's going through the VPC Endpoint, NOT the NAT Gateway!
 
-> 📸 [Screenshot: `aws s3 ls` working on private EC2 via VPC endpoint]
+![verification ](screenshots/nat-gateway-verification.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > Without the VPC Endpoint, S3 traffic from the private EC2 would go: Private EC2 → NAT Gateway → Internet → S3. With the endpoint: Private EC2 → VPC Endpoint → S3. The second path is faster, cheaper, and more secure!
@@ -484,6 +495,7 @@ This should list your S3 buckets (or return empty if you have none). The importa
 5. Click **Delete**
 
 > 📸 [Screenshot: NAT Gateway deletion confirmed]
+![NAT Gateway deletion confirmed](screenshots/nat-gateway-delete-confirmation.png)
 
 > ⚠️ **THIS IS THE MOST IMPORTANT STEP. Do not skip it!**
 
@@ -548,7 +560,7 @@ This should list your S3 buckets (or return empty if you have none). The importa
 
 1. **Your VPCs** → select `ravi-custom-vpc` → **Delete VPC** → type name → confirm
 
-> 📸 [Screenshot: All resources deleted — clean console]
+
 
 ---
 
