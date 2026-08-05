@@ -91,7 +91,7 @@ In this lab, you'll build a **Virtual Private Cloud (VPC)** completely from scra
 └─────────────────────────────────────────────────────────────┘
 ```
 
-![VPC Architecture Overview](00-architecture-overview.png)
+![VPC Architecture Overview](screenshots/00-architecture-overview.png)
 
 ---
 
@@ -107,7 +107,7 @@ In this lab, you'll build a **Virtual Private Cloud (VPC)** completely from scra
 4. Click the orange **Create VPC** button
 5. Choose **VPC settings** → **VPC only** (NOT "VPC and more")
 
-![VPC Create - VPC Only Selected](01-vpc-create-vpc-only.png)
+![VPC Create - VPC Only Selected](screenshots/01-vpc-create-vpc-only.png)
 
 6. Configure the VPC:
    - **Name tag (optional):** `ravi-custom-vpc`
@@ -115,14 +115,14 @@ In this lab, you'll build a **Virtual Private Cloud (VPC)** completely from scra
    - **IPv6 CIDR block:** No IPv6 block
    - **Tenancy:** Default
 
-![VPC Configuration with CIDR 10.0.0.0/16](02-vpc-configuration-cidr.png)
+![VPC Configuration with CIDR 10.0.0.0/16](screenshots/02-vpc-configuration-cidr.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> **What does `10.0.0.0/16` mean?** It means you get 65,536 IP addresses (from 10.0.0.0 to 10.0.255.255). That's more than enough for any lab! The `/16` is the subnet mask — it tells AWS how many IPs are in this VPC.
 
 7. Click **Create VPC**
 8. You should see a success banner! Click on the VPC ID to view details.
 
-![VPC Created Successfully](03-vpc-created-success.png)
+![VPC Created Successfully](screenshots/03-vpc-created-success.png)
 
 ---
 
@@ -140,7 +140,7 @@ A subnet is a smaller chunk of IP addresses within your VPC. We'll create a publ
    - **Availability Zone:** `us-east-1a`
    - **IPv4 CIDR block:** `10.0.1.0/24`
 
-![Subnet Configuration](04-subnet-configuration.png)
+![Subnet Configuration](screenshots/04-subnet-configuration.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> A `/24` gives you 256 IP addresses (10.0.1.0 to 10.0.1.255). We put it in `us-east-1a` — one of many data centers (Availability Zones) in the region. **Always spread subnets across multiple AZs in production!**
 
@@ -159,7 +159,7 @@ An Internet Gateway (IGW) is the bridge between your VPC and the internet. Witho
 3. **Name tag:** `ravi-igw`
 4. Click **Create internet gateway**
 
-![Internet Gateway Created](05-igw-created.png)
+![Internet Gateway Created](screenshots/05-igw-created.png)
 
 5. Now you need to **attach** it to your VPC:
    - Click on the newly created IGW
@@ -167,7 +167,7 @@ An Internet Gateway (IGW) is the bridge between your VPC and the internet. Witho
    - Select `ravi-custom-vpc` from the dropdown
    - Click **Attach internet gateway**
 
-![IGW Attached to VPC](06-igw-attached.png)
+![IGW Attached to VPC](screenshots/06-igw-attached.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> Creating an IGW doesn't automatically connect it to your VPC. You must explicitly attach it. It's like plugging a cable into a router — the cable exists, but it doesn't do anything until you plug it in!
 
@@ -186,7 +186,7 @@ A route table tells traffic where to go. Right now, even though we have an IGW, 
    - **VPC:** `ravi-custom-vpc`
 4. Click **Create route table**
 
-![Route Table Created](07-route-table-created.png)
+![Route Table Created](screenshots/07-route-table-created.png)
 
 5. Now add a route to the internet:
    - Click on `ravi-public-rt` to view details
@@ -197,7 +197,7 @@ A route table tells traffic where to go. Right now, even though we have an IGW, 
    - **Target:** Select **Internet Gateway** → choose `ravi-igw`
    - Click **Save changes**
 
-![Route Added: 0.0.0.0/0 → ravi-igw](08-route-table-route-added.png)
+![Route Added: 0.0.0.0/0 → ravi-igw](screenshots/08-route-table-route-added.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> `0.0.0.0/0` means "all traffic." This route says: "If you don't know where to send this packet, send it to the internet gateway." It's like telling the post office: "For any address not in this building, take it to the main post office!"
 
@@ -221,7 +221,7 @@ By default, new subnets DON'T assign public IPs to instances. We need to change 
 4. Check the box: ✅ **Enable auto-assign public IPv4 address**
 5. Click **Save**
 
-![Auto-Assign Public IP Enabled](09-subnet-auto-assign-public-ip.png)
+![Auto-Assign Public IP Enabled](screenshots/09-subnet-auto-assign-public-ip.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> Without this setting, any EC2 instance launched in this subnet won't get a public IP, and you won't be able to SSH into it. This is a **common gotcha!**
 
@@ -240,7 +240,7 @@ A security group acts as a virtual firewall. Let's create one that allows SSH ac
    - **Description:** `SSH access for Ravi's VPC lab`
    - **VPC:** `ravi-custom-vpc`
 
-![Security Group Creation Form](10-security-group-creation.png)
+![Security Group Creation Form](screenshots/10-security-group-creation.png)
 
 4. Under **Inbound rules**, click **Add rule**:
    - **Type:** SSH
@@ -279,7 +279,7 @@ Time to test our network! Let's launch an EC2 instance inside our custom VPC.
    - **Auto-assign public IP:** Enable
    - **Security group:** Select **Select existing security group** → choose `ravi-vpc-sg`
 
-![EC2 Network Settings](11-ec2-network-settings.png)
+![EC2 Network Settings](screenshots/11-ec2-network-settings.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> Notice how the dropdown only shows subnets and security groups that belong to `ravi-custom-vpc`? AWS keeps things organized for you!
 
@@ -290,7 +290,7 @@ Time to test our network! Let's launch an EC2 instance inside our custom VPC.
 12. Click **View all instances**
 13. Wait for the instance state to change to **Running** and status checks to pass (1/2 or 2/2)
 
-![EC2 Instance Running](12-ec2-instance-running.png)
+![EC2 Instance Running](screenshots/12-ec2-instance-running.png)
 
 ---
 
@@ -337,7 +337,7 @@ ping -c 4 8.8.8.8
 
 You should see replies! This confirms the instance has internet access through the IGW. ✅
 
-![SSH, Curl, and Ping Verification](13-ssh-curl-ping-verification.png)
+![SSH, Curl, and Ping Verification](screenshots/13-ssh-curl-ping-verification.png)
 
 #### 8d: View the VPC Diagram
 
@@ -346,7 +346,7 @@ You should see replies! This confirms the instance has internet access through t
 3. Click **Resource Map** tab (if available)
 4. You should see a visual diagram of your VPC, subnets, and route tables
 
-![VPC Resource Map](14-vpc-resource-map.png)
+![VPC Resource Map](screenshots/14-vpc-resource-map.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> Congratulations! You just built a VPC from scratch. In the real world, you'd have multiple subnets across multiple AZs, NAT gateways, NACLs, and more. But the fundamentals are exactly what you just did!
 
