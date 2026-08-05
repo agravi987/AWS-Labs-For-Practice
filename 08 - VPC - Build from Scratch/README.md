@@ -47,7 +47,7 @@
   - [Step 2: Create a Public Subnet](#step-2-create-a-public-subnet)
   - [Step 3: Create an Internet Gateway](#step-3-create-an-internet-gateway)
   - [Step 4: Create a Route Table](#step-4-create-a-route-table)
-  - [Step 5: Enable Auto-Assign Public IP on Subnet](#step-5-enable-auto-assign-public-ip-on-subnet)
+  - [Step 5: Enable Auto-Assign Public IP on the Subnet](#step-5-enable-auto-assign-public-ip-on-the-subnet)
   - [Step 6: Create a Security Group](#step-6-create-a-security-group)
   - [Step 7: Launch an EC2 Instance](#step-7-launch-an-ec2-instance)
   - [Step 8: Verify Your Work](#step-8-verify-your-work)

@@ -24,7 +24,7 @@
 | [06](#-lab-06--s3-versioning-and-lifecycle) | S3 — Versioning & Lifecycle | 3 |
 | [07](#-lab-07--s3-cross-region-replication) | S3 — Cross-Region Replication | 3 |
 | [08](#-lab-08--vpc-build-from-scratch) | VPC — Build from Scratch | 3 |
-| [09](#-lab-09--vpc-nat-and-endpoints) | VPC — NAT Gateway & Endpoints | 3 |
+| [09](#-lab-09--vpc-nat-gateway-and-endpoints) | VPC — NAT Gateway & Endpoints | 3 |
 | [10](#-lab-10--application-load-balancer) | ELB — Application Load Balancer | 3 |
 | [11](#-lab-11--auto-scaling-group) | ASG — Auto Scaling Group | 3 |
 | [12](#-lab-12--route-53-dns-and-failover) | Route 53 — DNS & Failover | 3 |
