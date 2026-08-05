@@ -12,7 +12,7 @@
 
 ## Table of Contents
 
-1. [Welcome & Why Prerequisites Matter](#1-welcome-why-prerequisites-matter)
+1. [Welcome & Why Prerequisites Matter](#1-welcome--why-prerequisites-matter)
 2. [Creating an AWS Account](#2-creating-an-aws-account)
 3. [Enabling MFA on Root Account](#3-enabling-mfa-on-root-account)
 4. [Creating an IAM Admin User](#4-creating-an-iam-admin-user)

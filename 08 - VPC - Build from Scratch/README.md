@@ -55,7 +55,7 @@
 - [🧹 Cleanup (IMPORTANT!)](#-cleanup-important)
 - [🧠 Memory Tips](#-memory-tips)
 - [🎓 What You Learned](#-what-you-learned)
-- [🎮 Test Yourself](#-test-yourself-no-peeking)
+- [🎮 Test Yourself](#-test-yourself-no-peeking-)
 - [🆚 Pro Tip vs Noob Tip](#-pro-tip-vs-noob-tip)
 - [🔗 What's Next?](#-whats-next)
 - [❓ Troubleshooting](#-troubleshooting)

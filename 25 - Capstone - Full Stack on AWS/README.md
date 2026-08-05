@@ -37,13 +37,13 @@
 - [🤔 In Plain English](#-in-plain-english)
 - [🧠 Prerequisites](#-prerequisites)
 - [💰 Cost Warning](#-cost-warning)
-- [🏗️ Architecture](#-architecture)
-- [🛠️ Step-by-Step Instructions](#-step-by-step-instructions)
+- [🏗️ Architecture](#️-architecture)
+- [🛠️ Step-by-Step Instructions](#️-step-by-step-instructions)
 - [✅ Validation Checklist](#-validation-checklist)
 - [🧹 Cleanup (IMPORTANT!)](#-cleanup-important)
 - [🧠 Memory Tips](#-memory-tips)
 - [🎓 What You Learned](#-what-you-learned)
-- [🎮 Test Yourself](#-test-yourself-no-peeking)
+- [🎮 Test Yourself](#-test-yourself-no-peeking-)
 - [🔗 What's Next?](#-whats-next)
 
 ---

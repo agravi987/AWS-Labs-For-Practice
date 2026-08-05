@@ -29,18 +29,18 @@
 | [11](#-lab-11--auto-scaling-group) | ASG — Auto Scaling Group | 3 |
 | [12](#-lab-12--route-53-dns-and-failover) | Route 53 — DNS & Failover | 3 |
 | [13](#-lab-13--rds-mysql-on-aws) | RDS — MySQL on AWS | 3 |
-| [14](#-lab-14--dynamodb-crud) | DynamoDB — CRUD Operations | 3 |
+| [14](#-lab-14--dynamodb-crud-operations) | DynamoDB — CRUD Operations | 3 |
 | [15](#-lab-15--cloudwatch-alarms-and-dashboards) | CloudWatch — Alarms & Dashboards | 3 |
-| [16](#-lab-16--iam) | IAM — Users, Groups, Roles, Policies | 3 |
-| [17](#-lab-17--sns-and-sqs) | SNS & SQS — Messaging | 3 |
-| [18](#-lab-18--lambda-s3-trigger) | Lambda — S3 Triggered Function | 3 |
-| [19](#-lab-19--lambda-api-gateway) | Lambda — API Gateway REST API | 3 |
-| [20](#-lab-20--ecs-fargate-nginx) | ECS — NGINX on Fargate | 3 |
-| [21](#-lab-21--cloudformation) | CloudFormation — Deploy EC2 | 3 |
-| [22](#-lab-22--cloudtrail) | CloudTrail — Enable & Query | 3 |
-| [23](#-lab-23--kms) | KMS — Encrypt S3 and EBS | 3 |
-| [24](#-lab-24--aws-backup) | AWS Backup — Multi-Service | 3 |
-| [25](#-lab-25--capstone) | Capstone — Full Stack on AWS | 4 |
+| [16](#-lab-16--iam-users-groups-roles-policies) | IAM — Users, Groups, Roles, Policies | 3 |
+| [17](#-lab-17--sns-and-sqs-messaging) | SNS & SQS — Messaging | 3 |
+| [18](#-lab-18--lambda-s3-triggered-function) | Lambda — S3 Triggered Function | 3 |
+| [19](#-lab-19--lambda-api-gateway-rest-api) | Lambda — API Gateway REST API | 3 |
+| [20](#-lab-20--ecs-deploy-nginx-on-fargate) | ECS — Deploy NGINX on Fargate | 3 |
+| [21](#-lab-21--cloudformation-deploy-ec2) | CloudFormation — Deploy EC2 | 3 |
+| [22](#-lab-22--cloudtrail-enable-and-query) | CloudTrail — Enable & Query | 3 |
+| [23](#-lab-23--kms-encrypt-s3-and-ebs) | KMS — Encrypt S3 and EBS | 3 |
+| [24](#-lab-24--aws-backup-multi-service-backup) | AWS Backup — Multi-Service Backup | 3 |
+| [25](#-lab-25--capstone-full-stack-on-aws) | Capstone — Full Stack on AWS | 4 |
 
 ---
 
