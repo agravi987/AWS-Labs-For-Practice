@@ -30,6 +30,42 @@
 
 </details>
 
+## 📋 Table of Contents
+
+- [🎯 Objective](#-objective)
+- [📊 Lab Progress](#-lab-progress)
+- [🤔 In Plain English](#-in-plain-english)
+- [🧠 Prerequisites](#-prerequisites)
+- [💰 Cost Warning](#-cost-warning)
+- [🏗️ Architecture](#-architecture)
+- [🛠️ Step-by-Step Instructions](#-step-by-step-instructions)
+- [✅ Validation Checklist](#-validation-checklist)
+- [🧹 Cleanup (IMPORTANT!)](#-cleanup-important)
+- [🧠 Memory Tips](#-memory-tips)
+- [🎓 What You Learned](#-what-you-learned)
+- [🎮 Test Yourself](#-test-yourself-no-peeking)
+- [🔗 What's Next?](#-whats-next)
+
+---
+
+<div align="center">
+
+## 📊 Lab Progress
+
+`[███░░░░░░░░░░░░░░░░░] 8% — The Final Boss Awaits!`
+
+</div>
+
+---
+
+## 🤔 In Plain English
+
+> **What is this, really?** The Capstone is **everything you've learned, assembled into one real application**. A VPC with public/private subnets, EC2 servers behind an ALB, an Auto Scaling Group, an RDS database, S3 for storage, CloudWatch watching it all, and CloudTrail logging everything. It's the same architecture real companies run — built by you, from scratch. 🏗️
+>
+> 🌍 **Why you should care:** This is your **portfolio piece**. When someone asks "what have you built on AWS?", this is the answer. Take your time — you've earned the right to be proud of this one.
+
+---
+
 ## 🎯 Objective
 
 By the end of this capstone lab, you will:
@@ -936,6 +972,22 @@ Follow this EXACT order to avoid dependency issues and ensure everything is dele
 
 ---
 
+## 🧠 Memory Tips
+
+Final exam edition — the mnemonics that should now be muscle memory. 🧲
+
+| 🧠 Memory Hook | Remember it like... |
+|---|---|
+| **VPC = gated neighborhood** | Subnets = streets, IGW = front gate, route tables = street signs. 🏘️ |
+| **ALB = traffic cop, ASG = robot manager** | ALB spreads traffic; ASG keeps the right number of servers alive. 🚦🤖 |
+| **SG = bouncer, RDS = managed vault** | Firewall rules at the door; database in a locked, backed-up room. 🚪🗄️ |
+| **S3 = cabinet, CloudWatch = cameras, CloudTrail = black box** | Storage, monitoring, and audit — your observability trio. 📦🎥🕵️ |
+| **Defense in depth** | Layers of security: VPC isolation + SG rules + private subnets. No single door = the whole castle. 🏰 |
+
+> 🗣️ **Rithu:** *"If you can explain every piece of this architecture to a friend without notes, you've genuinely learned AWS. That's the real final exam."
+
+---
+
 ## 🎓 What You Learned
 
 In this capstone lab, you brought together EVERY skill from Labs 01-24:
@@ -968,6 +1020,48 @@ In this capstone lab, you brought together EVERY skill from Labs 01-24:
 ---
 
 <div align="center">
+
+## 🎮 Test Yourself! (No Peeking 👀)
+
+**Q1:** Why does the database live in a **private subnet** while the web servers live in a **public** one?
+
+<details><summary>👀 Show answer</summary>
+
+**A:** **Defense in depth** — web servers *must* face the internet, but the database should only be reachable by your app layer. Private subnet + strict SG = the crown jewels stay hidden. 🏰
+
+</details>
+
+**Q2:** If one web server dies, name the TWO services that keep the app online.
+
+<details><summary>👀 Show answer</summary>
+
+**A:** The **ALB** stops sending it traffic (health check), and the **ASG** launches a replacement automatically. Traffic cop + robot manager working as a team. 🤝
+
+</details>
+
+**Q3:** The app is getting slow. Which service tells you WHERE to look, and which one tells you WHO did what?
+
+<details><summary>👀 Show answer</summary>
+
+**A:** **CloudWatch** shows you the metrics (CPU, latency, alarms) — the "where". **CloudTrail** logs every API action — the "who". Observability + auditability. 📊🕵️
+
+</details>
+
+**Q4:** What makes this architecture *production-like* compared to the earlier labs?
+
+<details><summary>👀 Show answer</summary>
+
+**A:** **Multi-tier design, high availability (multi-AZ), auto-scaling, managed database, monitoring, and audit logging** — the full enterprise checklist, not just a single service demo. 🏆
+
+</details>
+
+### 🔥 Final Challenge
+
+**Break it, then prove it recovers:** kill the primary web instance and watch the ALB + ASG recover. Then terminate an instance and find the event in **CloudTrail**. Finally, delete the entire stack piece by piece following the cleanup checklist. When the account is empty, you've completed AWS Bootcamp. 👏
+
+> 💪 **Rithu:** *"You didn't watch tutorials — you BUILT. That puts you ahead of 90% of people who 'want to learn AWS.' Go be a cloud engineer."
+
+---
 
 ## 🔗 What's Next?
 

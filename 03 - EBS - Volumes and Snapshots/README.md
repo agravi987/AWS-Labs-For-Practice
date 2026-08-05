@@ -36,6 +36,44 @@
 
 ---
 
+## 📋 Table of Contents
+
+- [🎯 Objective](#-objective)
+- [📊 Lab Progress](#-lab-progress)
+- [🤔 In Plain English](#-in-plain-english)
+- [🧠 Prerequisites](#-prerequisites)
+- [💰 Cost Warning](#-cost-warning)
+- [🏗️ Architecture](#-architecture)
+- [🛠️ Step-by-Step Instructions](#-step-by-step-instructions)
+- [✅ Validation Checklist](#-validation-checklist)
+- [🧹 Cleanup (IMPORTANT!)](#-cleanup-important)
+- [🧠 Memory Tips](#-memory-tips)
+- [🎓 What You Learned](#-what-you-learned)
+- [🎮 Test Yourself](#-test-yourself-no-peeking)
+- [🆚 Pro Tip vs Noob Tip](#-pro-tip-vs-noob-tip)
+- [🔗 What's Next?](#-whats-next)
+- [❓ Troubleshooting](#-troubleshooting)
+
+---
+
+<div align="center">
+
+## 📊 Lab Progress
+
+`[██░░░░░░░░░░░░░░░░░░] 5% — Let's Begin!`
+
+</div>
+
+---
+
+## 🤔 In Plain English
+
+> **What is this, really?** EBS is a **virtual hard drive you can unplug and plug into EC2 instances**. Your instance's "system disk" is already an EBS volume — but you can add more! It's like an external USB drive, except it's network-attached and lives in the same building (Availability Zone) as your server.
+>
+> 🌍 **Why you should care:** Real apps separate the OS disk from the data disk so they can scale, back up, and even swap servers without losing data. Snapshots are how every AWS backup actually works under the hood.
+
+---
+
 ## 🎯 Objective
 
 Create and attach an Elastic Block Store (EBS) volume to an EC2 instance, format and mount it, write data to it, take a snapshot of an existing volume, and restore data from that snapshot onto a new volume. This is how backups really work in the cloud.
@@ -412,6 +450,21 @@ You'll see the full Linux directory structure — it's your original 8 GB root a
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> Snapshots live INDEPENDENTLY of their source volume. Even if you delete the volume, the snapshot stays. AWS charges for snapshot storage. DELETE IT.
 
+## 🧠 Memory Tips
+
+Stick these in your brain and they'll never leave. 🧲
+
+| 🧠 Memory Hook | Remember it like... |
+|---|---|
+| **EBS lifecycle: CAFMU** | **C**reate → **A**ttach → **F**ormat → **M**ount → **U**se. Say it like a pirate: "**C**an **A**nyone **F**ormat **M**y **U**niverse?" 🏴☠️ |
+| **Same-AZ rule** | A USB drive only works in the **same laptop**. EBS volume in `us-east-1a` cannot attach to an instance in `us-east-1b`. Period. 🗄️ |
+| **Snapshots → S3** | Snapshots are stored in **S3** behind the scenes — your "photo" of the disk lives in the cloud object store. 📸 |
+| **`/etc/fstab` = permanent** | `mount` is temporary (gone on reboot). `/etc/fstab` is the **permanent contract** — the OS mounts it every boot. 📜 |
+
+> 🗣️ **Rithu:** *"The #1 exam trap: can an EBS volume attach cross-AZ? NO. Cross-region? NO. Same AZ only. I've watched people lose points on this for years."*
+
+---
+
 ## 🎓 What You Learned
 
 | Concept | Takeaway |
@@ -423,6 +476,49 @@ You'll see the full Linux directory structure — it's your original 8 GB root a
 | Snapshots | Point-in-time backups stored in S3 (incrementally) |
 | Snapshots → Volume restore | Create a new volume from snapshot → attach → mount |
 | Block device mapping | `/dev/sd*` maps to `/dev/xvd*` on Nitro, `/dev/nvme*` on newer instances |
+
+## 🎮 Test Yourself! (No Peeking 👀)
+
+**Q1:** Your EBS volume is in `us-east-1a`. Your EC2 instance is in `us-east-1b`. Can you attach it?
+
+<details><summary>👀 Show answer</summary>
+
+**A:** **No!** EBS volumes are locked to their **Availability Zone**. Create the volume in the same AZ as the instance — or take a snapshot and restore it into the right AZ. 🎯
+
+</details>
+
+**Q2:** Where are EBS snapshots physically stored, and are they full copies each time?
+
+<details><summary>👀 Show answer</summary>
+
+**A:** In **S3**, and they're **incremental** — only the changed blocks are stored after the first snapshot. Cheap, fast, clever. 🧠
+
+</details>
+
+**Q3:** You `mount /dev/xvdf /data`, reboot, and the mount is gone. Why?
+
+<details><summary>👀 Show answer</summary>
+
+**A:** Because `mount` alone is temporary. Add the entry to **`/etc/fstab`** so the OS remounts it automatically on every boot. 📜
+
+</details>
+
+### 🔥 Bonus Challenge
+
+Take a snapshot, **delete the original volume**, then restore a brand-new volume from that snapshot. Attach it, mount it, and confirm your data is back. That's the exact same flow AWS uses to recover from a dead disk in production. 🧟
+
+> 💪 **Rithu:** *"Snapshots are your time machine. Take them before you break things — not after."*
+
+---
+
+### 🆚 Pro Tip vs Noob Tip
+
+| | Approach |
+|---|---|
+| **Noob Tip** | Cram everything onto the root volume "it's simpler" → out of space, and one bad day loses it all |
+| **Pro Tip** | Separate data volume + snapshots before risky changes. Server dies? New one mounts the data and you're back |
+
+---
 
 ## 🔗 What's Next?
 

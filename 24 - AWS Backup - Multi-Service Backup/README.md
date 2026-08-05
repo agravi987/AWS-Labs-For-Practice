@@ -28,6 +28,44 @@
 
 </details>
 
+## 📋 Table of Contents
+
+- [🎯 Objective](#-objective)
+- [📊 Lab Progress](#-lab-progress)
+- [🤔 In Plain English](#-in-plain-english)
+- [🧠 Prerequisites](#-prerequisites)
+- [💰 Cost Warning](#-cost-warning)
+- [🏗️ Architecture](#-architecture)
+- [🛠️ Step-by-Step Instructions](#-step-by-step-instructions)
+- [✅ Validation Checklist](#-validation-checklist)
+- [🧹 Cleanup (IMPORTANT!)](#-cleanup-important)
+- [🧠 Memory Tips](#-memory-tips)
+- [🎓 What You Learned](#-what-you-learned)
+- [🎮 Test Yourself](#-test-yourself-no-peeking)
+- [🆚 Pro Tip vs Noob Tip](#-pro-tip-vs-noob-tip)
+- [🔗 What's Next?](#-whats-next)
+- [❓ Troubleshooting](#-troubleshooting)
+
+---
+
+<div align="center">
+
+## 📊 Lab Progress
+
+`[██░░░░░░░░░░░░░░░░░░] 5% — Let's Begin!`
+
+</div>
+
+---
+
+## 🤔 In Plain English
+
+> **What is this, really?** AWS Backup is **one alarm clock for ALL your backups**. Instead of setting separate schedules for EC2 snapshots, RDS snapshots, and S3 backups, you write **one backup plan** (what, when, how long to keep) and AWS Backup handles every service with it. Backups land in a **vault** (an encrypted storage room) and you can restore any of them with a click. 🗄️
+>
+> 🌍 **Why you should care:** "We have backups" is a lie if you've never tested a restore. AWS Backup makes scheduled, compliant, testable backups a 5-minute setup instead of a 5-hour project.
+
+---
+
 ## 🎯 Objective
 
 By the end of this lab, you will:
@@ -460,6 +498,22 @@ AWS Backup charges for stored backups. Delete everything!
 
 ---
 
+## 🧠 Memory Tips
+
+Stick these in your brain and they'll never leave. 🧲
+
+| 🧠 Memory Hook | Remember it like... |
+|---|---|
+| **Backup plan = one alarm clock** | Define **what** to back up, **when**, and **how long to keep it** — once, for every service. ⏰ |
+| **Vault = encrypted storage room** | Backups live in a **vault** — locked, encrypted, organized. 🗄️ |
+| **On-demand = manual backup** | The "backup RIGHT NOW" button, outside the schedule. 💾 |
+| **Non-destructive restore** | Restoring creates a **new resource** — the original stays untouched. No fear of overwriting. 🆕 |
+| **Retention = how long it lives** | 7 days? 1 year? The plan decides when backups **expire and auto-delete**. 🗓️ |
+
+> 🗣️ **Rithu:** *"A backup you've never restored is just a rumor. This lab ends with a real restore — that's what makes you dangerous."
+
+---
+
 ## 🎓 What You Learned
 
 In this lab, you learned:
@@ -476,6 +530,49 @@ In this lab, you learned:
 | **Non-Destructive Restore** | Restoring to a new resource without overwriting the original |
 | **Compliance Reports** | Auditing which resources are backed up and on schedule |
 | **Backup Vault** | Encrypted storage location for backups |
+
+---
+
+## 🎮 Test Yourself! (No Peeking 👀)
+
+**Q1:** What does a backup plan define?
+
+<details><summary>👀 Show answer</summary>
+
+**A:** **What** resources to back up, **when** (schedule), and **how long** to keep them (retention). One plan, many services. ⏰
+
+</details>
+
+**Q2:** What's the difference between a scheduled backup and an on-demand backup?
+
+<details><summary>👀 Show answer</summary>
+
+**A:** **Scheduled** = automatic, per the plan's cron schedule. **On-demand** = a manual "back up now" when you need a point-in-time copy immediately. 💾
+
+</details>
+
+**Q3:** You restore a resource from a backup. What happens to the original?
+
+<details><summary>👀 Show answer</summary>
+
+**A:** **Nothing — restore is non-destructive.** AWS creates a **new** resource from the backup; the original is left alone. No overwriting, no fear. 🆕
+
+</details>
+
+### 🔥 Bonus Challenge
+
+Modify a file on an EC2 instance, run an **on-demand backup**, then **restore from it** to a NEW instance — and confirm the file is back. That's a full disaster-recovery drill. Do it once and you'll never skip backups again. 🛟
+
+> 💪 **Rithu:** *"Practice the restore BEFORE the emergency. Emergencies are bad times for first attempts."
+
+---
+
+### 🆚 Pro Tip vs Noob Tip
+
+| | Approach |
+|---|---|
+| **Noob Tip** | Back up manually "whenever I remember" — and hope the disaster waits |
+| **Pro Tip** | One automated plan + retention + quarterly restore drills. Sleep like a baby |
 
 ---
 

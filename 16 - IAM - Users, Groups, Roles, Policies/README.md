@@ -28,6 +28,44 @@
 
 </details>
 
+## 📋 Table of Contents
+
+- [🎯 Objective](#-objective)
+- [📊 Lab Progress](#-lab-progress)
+- [🤔 In Plain English](#-in-plain-english)
+- [🧠 Prerequisites](#-prerequisites)
+- [💰 Cost Warning](#-cost-warning)
+- [🏗️ Architecture](#-architecture)
+- [🛠️ Step-by-Step Instructions](#-step-by-step-instructions)
+- [✅ Validation Checklist](#-validation-checklist)
+- [🧹 Cleanup (IMPORTANT!)](#-cleanup-important)
+- [🧠 Memory Tips](#-memory-tips)
+- [🎓 What You Learned](#-what-you-learned)
+- [🎮 Test Yourself](#-test-yourself-no-peeking)
+- [🆚 Pro Tip vs Noob Tip](#-pro-tip-vs-noob-tip)
+- [🔗 What's Next?](#-whats-next)
+- [❓ Troubleshooting](#-troubleshooting)
+
+---
+
+<div align="center">
+
+## 📊 Lab Progress
+
+`[██░░░░░░░░░░░░░░░░░░] 5% — Let's Begin!`
+
+</div>
+
+---
+
+## 🤔 In Plain English
+
+> **What is this, really?** IAM is **AWS's security guard with a clipboard** — it decides *who* (users, services) can do *what* (actions on resources). **Users** = people, **groups** = teams of people, **policies** = permission slips (JSON), and **roles** = temporary hats that AWS services wear to get things done. 🪪
+>
+> 🌍 **Why you should care:** This is the most important lab in the whole series. Every AWS security breach you've ever read about came down to IAM mistakes. Get this right and you're 90% safer than most AWS users.
+
+---
+
 ## 🎯 Objective
 
 In this lab, you will learn how AWS Identity and Access Management (IAM) controls **who** can access **what** in your AWS account. You'll create users, groups, custom policies, and roles — the building blocks of AWS security. This is arguably the most important lab in the entire series, Ravi. Pay attention! 🎓
@@ -407,6 +445,22 @@ Let's confirm everything was set up correctly:
 
 ---
 
+## 🧠 Memory Tips
+
+Stick these in your brain and they'll never leave. 🧲
+
+| 🧠 Memory Hook | Remember it like... |
+|---|---|
+| **Users = people, Roles = hats** | A **user** is a person with a password/keys. A **role** is a **temporary hat** worn by a service (like EC2) to get permissions. 👒 |
+| **Policy = permission slip** | JSON that says "allow `s3:ListBucket` on bucket X." Show the slip, get access. 📝 |
+| **Least privilege** | Give **exactly enough** and nothing more. Like giving a contractor one room key, not the master key. 🔑 |
+| **Managed vs custom** | Managed = AWS's pre-built policies. Custom = your own JSON. Start managed, customize when needed. 🏗️ |
+| **Root = master key** | Root can do *anything* — so it's locked in a vault (MFA) and used almost never. 🏦 |
+
+> 🗣️ **Rithu:** *"If a service can read your keys from a config file, an attacker can too. Roles are how the pros do it — no keys, no problem."
+
+---
+
 ## 🎓 What You Learned
 
 In this lab, you learned:
@@ -418,6 +472,49 @@ In this lab, you learned:
 5. **IAM Roles** — Temporary credentials assumed by AWS services (like EC2) instead of hardcoding access keys.
 6. **Principle of Least Privilege** — Give only the minimum permissions needed.
 7. **IAM Access Analyzer** — A tool that finds resources shared externally or publicly.
+
+---
+
+## 🎮 Test Yourself! (No Peeking 👀)
+
+**Q1:** What's the difference between an IAM User and an IAM Role?
+
+<details><summary>👀 Show answer</summary>
+
+**A:** A **user** is a person with long-term credentials. A **role** is a **temporary identity** that a service (like EC2) assumes to get permissions — no passwords or keys to leak. 👒
+
+</details>
+
+**Q2:** What does "principle of least privilege" mean in practice?
+
+<details><summary>👀 Show answer</summary>
+
+**A:** Grant **only the minimum permissions** needed to do the job. If it only needs to read S3, don't give it full admin. 🔑
+
+</details>
+
+**Q3:** When should you use an AWS managed policy vs writing a custom one?
+
+<details><summary>👀 Show answer</summary>
+
+**A:** Use **managed** policies for common jobs (they're maintained by AWS). Write a **custom** policy when you need exactly specific, narrow permissions. 📝
+
+</details>
+
+### 🔥 Bonus Challenge
+
+Create a **role** with ONLY `s3:ListBucket` + `s3:GetObject` on one bucket, attach it to an EC2 instance, then try to *delete* an object from that instance — it should fail with Access Denied. Proving least privilege works. Then grant `s3:DeleteObject` and watch it succeed. 🎯
+
+> 💪 **Rithu:** *"Security isn't about what you can do — it's about what you CAN'T. Test the denials."
+
+---
+
+### 🆚 Pro Tip vs Noob Tip
+
+| | Approach |
+|---|---|
+| **Noob Tip** | Give every user AdministratorAccess "so they never get stuck" |
+| **Pro Tip** | Least privilege + groups + roles. If a credential leaks, the blast radius is tiny |
 
 ---
 

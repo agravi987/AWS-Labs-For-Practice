@@ -34,6 +34,43 @@
 
 ---
 
+## 📋 Table of Contents
+
+- [🎯 Objective](#-objective)
+- [📊 Lab Progress](#-lab-progress)
+- [🤔 In Plain English](#-in-plain-english)
+- [🧠 Prerequisites](#-prerequisites)
+- [💰 Cost Warning](#-cost-warning)
+- [🏗️ Architecture](#-architecture)
+- [🛠️ Step-by-Step Instructions](#-step-by-step-instructions)
+- [✅ Validation Checklist](#-validation-checklist)
+- [🧹 Cleanup (IMPORTANT!)](#-cleanup-important)
+- [🧠 Memory Tips](#-memory-tips)
+- [🎓 What You Learned](#-what-you-learned)
+- [🎮 Test Yourself](#-test-yourself-no-peeking)
+- [🆚 Pro Tip vs Noob Tip](#-pro-tip-vs-noob-tip)
+- [🔗 What's Next?](#-whats-next)
+
+---
+
+<div align="center">
+
+## 📊 Lab Progress
+
+`[██░░░░░░░░░░░░░░░░░░] 5% — Let's Begin!`
+
+</div>
+
+---
+
+## 🤔 In Plain English
+
+> **What is this, really?** S3 is a **giant cloud filing cabinet**. You create a bucket (the drawer), upload files (the folders), and every file gets its own address on the internet. Flip on "static website hosting" and S3 becomes a tiny web server that serves your HTML files to anyone — **no EC2 instance needed**. 🗄️
+>
+> 🌍 **Why you should care:** Static sites (portfolios, landing pages, SPAs) are served to millions of users from S3 every day. It costs pennies, never goes down, and scales to infinity. This is the cheapest "hosting" you'll ever buy.
+
+---
+
 ## 🎯 Objective
 
 Create an S3 bucket, configure it for static website hosting, upload HTML files, set a bucket policy for public read access, and verify the site loads in a browser. You'll ALSO test the custom error document by trying to reach a non-existent page.
@@ -383,6 +420,22 @@ Public buckets left running = potential bill and security risk.
    > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
    > If the bucket contains objects that failed to delete previously, enable **Show versions** and delete ALL versions and ALL delete markers. Then try bucket deletion again. AWS won't let you delete a non-empty bucket.
 
+## 🧠 Memory Tips
+
+Stick these in your brain and they'll never leave. 🧲
+
+| 🧠 Memory Hook | Remember it like... |
+|---|---|
+| **Bucket names are globally unique** | Like a **username for the entire internet** — someone on Earth owns every name you try. Add numbers if yours is taken. 🌍 |
+| **index.html + error doc** | S3's deal: serve **`index.html`** at the root, and a custom error page (like `error.html`) when a file is missing. 📄 |
+| **Bucket policy = door policy** | A JSON statement that says "everyone can **read** objects here" — required to make your site public. 🚪 |
+| **Endpoint format** | `http://<bucket>.s3-website-<region>.amazonaws.com` — sing it like a song title. 🎵 |
+| **Public ≠ private** | Public buckets are fine for websites, **disaster for private data**. If it's not meant for the world, keep it locked. 🔒 |
+
+> 🗣️ **Rithu:** *"I once left a bucket public for 3 weeks. Lesson learned: public is a choice you make ON PURPOSE, not by accident."*
+
+---
+
 ## 🎓 What You Learned
 
 | Concept | Takeaway |
@@ -394,6 +447,49 @@ Public buckets left running = potential bill and security risk.
 | Public access | Useful for websites. Dangerous for private data. Use CloudFront |
 | S3 website endpoint | URL format: `http://<bucket-name>.s3-website-<region>.amazonaws.com` |
 | Custom error documents | Provide user-friendly 4xx pages |
+
+## 🎮 Test Yourself! (No Peeking 👀)
+
+**Q1:** Can two different AWS accounts create a bucket with the same name?
+
+<details><summary>👀 Show answer</summary>
+
+**A:** **No.** Bucket names are **globally unique across all AWS accounts worldwide**. That's why the lab makes you add random numbers. 🌍
+
+</details>
+
+**Q2:** You visit your S3 site and get **403 Forbidden**. What's the likely cause?
+
+<details><summary>👀 Show answer</summary>
+
+**A:** The bucket policy is missing/wrong, or objects are still private. Check: **Block Public Access** unchecked + valid **bucket policy** with `/*` in the Resource. 🔧
+
+</details>
+
+**Q3:** Why does S3 make you upload `index.html` with that exact name?
+
+<details><summary>👀 Show answer</summary>
+
+**A:** Because static hosting treats **`index.html` as the homepage** — it's served automatically when someone visits the root URL. Rename it and you'll get a 404. 📄
+
+</details>
+
+### 🔥 Bonus Challenge
+
+Make your **error page funny**: upload a custom `error.html` with a meme-style "404 — page not found, but coffee is still available ☕" and a broken link back to home. Then visit a random URL like `/does-not-exist` and show it off. 🎉
+
+> 💪 **Rithu:** *"A good 404 page is the mark of a developer who cares about the little things."
+
+---
+
+### 🆚 Pro Tip vs Noob Tip
+
+| | Approach |
+|---|---|
+| **Noob Tip** | Put private data in a public bucket "nobody knows the URL anyway" — until a bot finds it |
+| **Pro Tip** | Public buckets only for websites; private data stays locked (or served via CloudFront) |
+
+---
 
 ## 🔗 What's Next?
 

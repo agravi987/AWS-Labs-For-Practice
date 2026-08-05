@@ -28,6 +28,44 @@
 
 </details>
 
+## 📋 Table of Contents
+
+- [🎯 Objective](#-objective)
+- [📊 Lab Progress](#-lab-progress)
+- [🤔 In Plain English](#-in-plain-english)
+- [🧠 Prerequisites](#-prerequisites)
+- [💰 Cost Warning](#-cost-warning)
+- [🏗️ Architecture](#-architecture)
+- [🛠️ Step-by-Step Instructions](#-step-by-step-instructions)
+- [✅ Validation Checklist](#-validation-checklist)
+- [🧹 Cleanup (IMPORTANT!)](#-cleanup-important)
+- [🧠 Memory Tips](#-memory-tips)
+- [🎓 What You Learned](#-what-you-learned)
+- [🎮 Test Yourself](#-test-yourself-no-peeking)
+- [🆚 Pro Tip vs Noob Tip](#-pro-tip-vs-noob-tip)
+- [🔗 What's Next?](#-whats-next)
+- [❓ Troubleshooting](#-troubleshooting)
+
+---
+
+<div align="center">
+
+## 📊 Lab Progress
+
+`[██░░░░░░░░░░░░░░░░░░] 5% — Let's Begin!`
+
+</div>
+
+---
+
+## 🤔 In Plain English
+
+> **What is this, really?** API Gateway is the **doorman + menu + kitchen order-slip system** for your backend. The browser hits a URL (`/students`), API Gateway checks the menu (resources & methods), routes the request to the right chef (Lambda function), and serves the finished dish (JSON response) back. No servers, no framework, just HTTP magic. 🍽️
+>
+> 🌍 **Why you should care:** Every modern "serverless API" — including most AI and mobile backends — is built exactly this way: API Gateway → Lambda → database.
+
+---
+
 ## 🎯 Objective
 
 In this lab, you'll create a **REST API** using **Amazon API Gateway** that invokes a **Lambda function** for every HTTP request. You'll build a simple student management API with GET and POST endpoints — the foundation of modern serverless web applications.
@@ -513,6 +551,22 @@ Repeat the same for the `/students` resource.
 
 ---
 
+## 🧠 Memory Tips
+
+Stick these in your brain and they'll never leave. 🧲
+
+| 🧠 Memory Hook | Remember it like... |
+|---|---|
+| **Resource = path, Method = verb** | `/students` is the **resource**; GET/POST/PUT/DELETE are the **methods**. Path + verb = full request. 🛣️ |
+| **GET reads, POST creates** | GET = "show me", POST = "make new". 200 OK vs 201 Created. 🆕 |
+| **Stage = environment** | `dev`, `prod`... each stage gets its **own URL**. Deploy to a stage to make changes live. 🚀 |
+| **Proxy integration = pass-through** | The full HTTP request goes **straight to Lambda**, which builds the whole response. Full control. 🎛️ |
+| **CORS = cross-site permission slip** | Lets a browser on site A call your API on site B. No slip = blocked by the browser. 📄 |
+
+> 🗣️ **Rithu:** *"When your API returns 404 for a route you 'know exists' — you probably forgot to DEPLOY to the stage. We've all been there."
+
+---
+
 ## 🎓 What You Learned
 
 In this lab, you learned:
@@ -524,6 +578,49 @@ In this lab, you learned:
 5. **CORS** — Understanding Cross-Origin Resource Sharing and how to enable it.
 6. **Request Routing** — How API Gateway routes requests to Lambda based on path and method.
 7. **HTTP Status Codes** — 200 (OK), 201 (Created), 404 (Not Found).
+
+---
+
+## 🎮 Test Yourself! (No Peeking 👀)
+
+**Q1:** In `GET /students`, what's the resource and what's the method?
+
+<details><summary>👀 Show answer</summary>
+
+**A:** `/students` = the **resource** (the path); `GET` = the **method** (the verb/action). Together they define the request. 🛣️
+
+</details>
+
+**Q2:** What's the difference between 200 OK and 201 Created?
+
+<details><summary>👀 Show answer</summary>
+
+**A:** **200** = successful read/update; **201** = a new resource was **created** (e.g., after a successful POST). 📋
+
+</details>
+
+**Q3:** You change your Lambda but the API still returns old behavior. What did you forget?
+
+<details><summary>👀 Show answer</summary>
+
+**A:** **Deploy the API to the stage!** Editing resources alone isn't enough — you must **Deploy API** for changes to go live on the stage URL. 🚀
+
+</details>
+
+### 🔥 Bonus Challenge
+
+Add a **`DELETE /students/{id}`** method wired to your Lambda, handle the `{id}` path parameter, and test it with curl/Postman. Then re-enable CORS on the new method and confirm a browser can call it. You've now built a full CRUD API — congratulations, you're a backend developer! 🏆
+
+> 💪 **Rithu:** *"Path parameters (`{id}`) are the key to real APIs. Master them and every tutorial makes sense after this."
+
+---
+
+### 🆚 Pro Tip vs Noob Tip
+
+| | Approach |
+|---|---|
+| **Noob Tip** | Expose Lambda URLs directly with no auth, no stages, no CORS |
+| **Pro Tip** | API Gateway with stages, proxy integration, and proper CORS — the standard serverless stack |
 
 ---
 

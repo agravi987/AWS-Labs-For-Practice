@@ -28,6 +28,44 @@
 
 </details>
 
+## 📋 Table of Contents
+
+- [🎯 Objective](#-objective)
+- [📊 Lab Progress](#-lab-progress)
+- [🤔 In Plain English](#-in-plain-english)
+- [🧠 Prerequisites](#-prerequisites)
+- [💰 Cost Warning](#-cost-warning)
+- [🏗️ Architecture](#-architecture)
+- [🛠️ Step-by-Step Instructions](#-step-by-step-instructions)
+- [✅ Validation Checklist](#-validation-checklist)
+- [🧹 Cleanup (IMPORTANT!)](#-cleanup-important)
+- [🧠 Memory Tips](#-memory-tips)
+- [🎓 What You Learned](#-what-you-learned)
+- [🎮 Test Yourself](#-test-yourself-no-peeking)
+- [🆚 Pro Tip vs Noob Tip](#-pro-tip-vs-noob-tip)
+- [🔗 What's Next?](#-whats-next)
+- [❓ Troubleshooting](#-troubleshooting)
+
+---
+
+<div align="center">
+
+## 📊 Lab Progress
+
+`[██░░░░░░░░░░░░░░░░░░] 5% — Let's Begin!`
+
+</div>
+
+---
+
+## 🤔 In Plain English
+
+> **What is this, really?** KMS is AWS's **secure keychain**. It holds the master keys that encrypt and decrypt your data. When S3 or EBS needs to encrypt something, they ask KMS: "lock this with the key" — and the data is scrambled on disk. You never see or handle the keys yourself; everything happens behind the scenes. 🔐
+>
+> 🌍 **Why you should care:** Encryption is table stakes in cloud security. If a disk is stolen, encrypted data is just noise. KMS makes encryption a checkbox instead of a nightmare.
+
+---
+
 ## 🎯 Objective
 
 By the end of this lab, you will:
@@ -471,6 +509,22 @@ KMS keys cost $1/month. Delete everything carefully!
 
 ---
 
+## 🧠 Memory Tips
+
+Stick these in your brain and they'll never leave. 🧲
+
+| 🧠 Memory Hook | Remember it like... |
+|---|---|
+| **KMS = secure keychain** | Keys live in AWS's vault — you control them via policies, never by hand. 🔑 |
+| **Customer vs AWS-managed key** | **Customer-managed** = you control it (rotation, policies) — costs **$1/month**. **AWS-managed** = free but limited control. 💰 |
+| **Key deletion = 7-day waiting room** | Deleting a key doesn't happen instantly — a **7-day waiting period** gives you time to change your mind. ⏳ |
+| **Encryption transparency** | S3/EBS encrypt/decrypt **automatically** with the key — you use data normally, keys stay hidden. 🪄 |
+| **Default EBS encryption** | Flip one account setting and **every new EBS volume is encrypted automatically**. Set it and forget it. ✅ |
+
+> 🗣️ **Rithu:** *"If you can click 'enable default EBS encryption' today, do it. Future-you will never have to remember to encrypt anything again."
+
+---
+
 ## 🎓 What You Learned
 
 In this lab, you learned:
@@ -486,6 +540,49 @@ In this lab, you learned:
 | **Default EBS Encryption** | Auto-encrypt all new EBS volumes |
 | **Encryption Transparency** | KMS encrypts/decrypts behind the scenes — you use data normally |
 | **Key Deletion** | 7-day waiting period prevents accidental key deletion |
+
+---
+
+## 🎮 Test Yourself! (No Peeking 👀)
+
+**Q1:** What's the difference between a customer-managed and an AWS-managed KMS key?
+
+<details><summary>👀 Show answer</summary>
+
+**A:** **Customer-managed** = you create and control it (rotation, access policies) — costs ~**$1/month**. **AWS-managed** = AWS creates and controls it — **free**, but less control. 💰
+
+</details>
+
+**Q2:** You delete a KMS key. What happens to the data encrypted with it, and when?
+
+<details><summary>👀 Show answer</summary>
+
+**A:** After a **7-day waiting period** the key is deleted — and **data encrypted with it becomes unrecoverable** forever. Delete keys with extreme care! ⏳
+
+</details>
+
+**Q3:** Why does KMS encryption feel "transparent" to your applications?
+
+<details><summary>👀 Show answer</summary>
+
+**A:** Because S3/EBS **encrypt and decrypt automatically** using the key — your app reads and writes data normally, never handling keys. 🪄
+
+</details>
+
+### 🔥 Bonus Challenge
+
+Enable **Default EBS Encryption** in your account settings (EC2 → Settings → EBS encryption), then launch a quick instance and verify its volume shows **Encrypted: Yes** — with zero extra config. You just made your whole account safer forever. 🛡️
+
+> 💪 **Rithu:** *"Default encryption is the gift that keeps giving. One click now, protection forever."
+
+---
+
+### 🆚 Pro Tip vs Noob Tip
+
+| | Approach |
+|---|---|
+| **Noob Tip** | Skip encryption because "my data isn't sensitive" |
+| **Pro Tip** | Encrypt everything by default. Stolen disks are useless; compliance is effortless |
 
 ---
 

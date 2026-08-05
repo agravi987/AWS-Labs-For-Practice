@@ -28,6 +28,44 @@
 
 </details>
 
+## 📋 Table of Contents
+
+- [🎯 Objective](#-objective)
+- [📊 Lab Progress](#-lab-progress)
+- [🤔 In Plain English](#-in-plain-english)
+- [🧠 Prerequisites](#-prerequisites)
+- [💰 Cost Warning](#-cost-warning)
+- [🏗️ Architecture](#-architecture)
+- [🛠️ Step-by-Step Instructions](#-step-by-step-instructions)
+- [✅ Validation Checklist](#-validation-checklist)
+- [🧹 Cleanup (IMPORTANT!)](#-cleanup-important)
+- [🧠 Memory Tips](#-memory-tips)
+- [🎓 What You Learned](#-what-you-learned)
+- [🎮 Test Yourself](#-test-yourself-no-peeking)
+- [🆚 Pro Tip vs Noob Tip](#-pro-tip-vs-noob-tip)
+- [🔗 What's Next?](#-whats-next)
+- [❓ Troubleshooting](#-troubleshooting)
+
+---
+
+<div align="center">
+
+## 📊 Lab Progress
+
+`[██░░░░░░░░░░░░░░░░░░] 5% — Let's Begin!`
+
+</div>
+
+---
+
+## 🤔 In Plain English
+
+> **What is this, really?** Lambda is **code that runs on its own when events happen** — no servers to manage, nothing to keep running. Upload a file to S3 → Lambda fires automatically, processes the file, and goes back to sleep. It's like a fire alarm that calls the fire department *by itself*. 🚒
+>
+> 🌍 **Why you should care:** Event-driven serverless is how modern apps process images, resize videos, validate uploads, and trigger pipelines — paying only for the milliseconds the code actually runs.
+
+---
+
 ## 🎯 Objective
 
 In this lab, you'll write a **Python Lambda function** that automatically runs every time a file is uploaded to an S3 bucket. This is one of the most common serverless patterns in AWS — event-driven processing at scale!
@@ -419,6 +457,22 @@ def lambda_handler(event, context):
 
 ---
 
+## 🧠 Memory Tips
+
+Stick these in your brain and they'll never leave. 🧲
+
+| 🧠 Memory Hook | Remember it like... |
+|---|---|
+| **Lambda = serverless** | There are **no servers to patch, babysit, or pay for while idle**. Code appears, runs, vanishes. 🪄 |
+| **`lambda_handler(event, context)`** | The **front door** of every Python Lambda. `event` = what happened; `context` = runtime info. 🚪 |
+| **Execution role = ID badge** | Lambda needs an **IAM role** to touch S3/CloudWatch. No badge, no access. 🪪 |
+| **Event payload = the story** | S3 sends a JSON story about what happened (bucket, key, size). Your function reads it like a detective. 🕵️ |
+| **Logs → CloudWatch** | Every `print()` lands in CloudWatch Logs — your debugging window. 👀 |
+
+> 🗣️ **Rithu:** *"If you can write a function that reacts to an S3 upload, you can build half the modern internet's plumbing."
+
+---
+
 ## 🎓 What You Learned
 
 In this lab, you learned:
@@ -430,6 +484,49 @@ In this lab, you learned:
 5. **CloudWatch Logs** — Lambda automatically logs to CloudWatch for debugging and monitoring.
 6. **Lambda Handler Function** — The `lambda_handler(event, context)` function is the entry point for all Lambda functions.
 7. **S3 Event Payload** — Understanding the JSON structure of S3 events (bucket, key, size, etc.).
+
+---
+
+## 🎮 Test Yourself! (No Peeking 👀)
+
+**Q1:** What triggers the Lambda function in this lab?
+
+<details><summary>👀 Show answer</summary>
+
+**A:** An **S3 event** — when an object is uploaded to the bucket, S3 fires a notification that invokes your function. 📬
+
+</details>
+
+**Q2:** What is the entry point of a Python Lambda function?
+
+<details><summary>👀 Show answer</summary>
+
+**A:** **`lambda_handler(event, context)`** — the named handler you set in the Lambda configuration. 🚪
+
+</details>
+
+**Q3:** Where can you see your function's `print()` output for debugging?
+
+<details><summary>👀 Show answer</summary>
+
+**A:** **CloudWatch Logs** — Lambda writes all logs to a log group named after your function, with a new stream per invocation. 👀
+
+</details>
+
+### 🔥 Bonus Challenge
+
+Modify the function to also log the **file size** from the event payload, upload a big file, and check CloudWatch Logs to confirm the size appears. Then add a second event type (e.g., `s3:ObjectRemoved:Delete`) and watch the function react to deletions too. 🔄
+
+> 💪 **Rithu:** *"Reading the event JSON is the superpower. Log it, pretty-print it, study it — that's where all the answers live."
+
+---
+
+### 🆚 Pro Tip vs Noob Tip
+
+| | Approach |
+|---|---|
+| **Noob Tip** | Run a 24/7 server to watch a bucket and process files |
+| **Pro Tip** | Event-driven Lambda: zero cost when idle, infinite scale when busy |
 
 ---
 

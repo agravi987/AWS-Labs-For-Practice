@@ -47,6 +47,34 @@
 
 ---
 
+## 📋 Table of Contents
+
+- [🎯 What You'll Accomplish](#-what-youll-accomplish)
+- [📊 Lab Progress](#-lab-progress)
+- [🤔 In Plain English](#-in-plain-english)
+- [🧠 Prerequisites](#-prerequisites)
+- [💸 Cost Warning](#-cost-warning)
+- [🏗️ Architecture Overview](#-architecture-overview)
+- [🛠️ Step-by-Step Walkthrough](#-step-by-step-walkthrough)
+- [✅ Validation Checklist](#-validation-checklist)
+- [🧹 Cleanup (DO NOT SKIP!)](#-cleanup-do-not-skip)
+- [🧠 Memory Tips](#-memory-tips)
+- [🎓 What You Learned](#-what-you-learned)
+- [🎮 Test Yourself](#-test-yourself-no-peeking)
+- [🆚 Pro Tip vs Noob Tip](#-pro-tip-vs-noob-tip)
+- [🔗 What's Next?](#-whats-next)
+- [❓ Troubleshooting](#-troubleshooting)
+
+---
+
+## 🤔 In Plain English
+
+> **What is this, really?** EC2 is just **renting a computer that lives in AWS's data center** instead of buying one. You pick the size (t2.micro = the small free one), the operating system, and where it lives — and it boots up in about a minute. It's *your* server: you can SSH in, install software, and host websites on it.
+>
+> 🌍 **Why you should care:** Every company with a website, app, or API uses servers just like this one. Once you've launched one EC2, you've done the AWS rite of passage. Everything else builds on this.
+
+---
+
 ## 🎯 What You'll Accomplish
 
 By the end of this lab, you'll have **your own virtual server running in the cloud** — accessible from your laptop, serving a real webpage to the entire internet.
@@ -426,6 +454,22 @@ EC2 Console → **Security Groups** → select your SG → **Delete security gro
 
 ---
 
+## 🧠 Memory Tips
+
+Stick these in your brain and they'll never leave. 🧲
+
+| 🧠 Memory Hook | Remember it like... |
+|---|---|
+| **t2.micro = Free Tier king** | Think "**t**iny **2**-slice **micro** sandwich" — the free lunch of compute. 🥪 |
+| **`.pem` vs `.ppk`** | **PEM** stays on **P**enguins (**M**ac/Linux), **PPK** is **Pu**TTY's pet. Convert with PuTTYgen. 🐧 |
+| **Security Group = bouncer** | It has a guest list (rules). Only names on the list get in — stateful means it remembers who walked out. 🚪 |
+| **Install → Start → Enable** | Remember **ISE** — "**I**nstall, **S**tart, **E**nable". Enable = auto-start on reboot. 🔄 |
+| **SSH = port 22** | Port 22 sounds like "two-two, who's there?" — the secret knock for your server. 🤫 |
+
+> 🗣️ **Rithu:** *"If you remember just ONE thing: don't open SSH to the whole world. My-IP-only, always. The bouncer should know your face!"*
+
+---
+
 ## 🎓 What You Learned
 
 <table>
@@ -443,6 +487,40 @@ EC2 Console → **Security Groups** → select your SG → **Delete security gro
 |---|---|
 | **Noob Tip** | Open SSH to 0.0.0.0/0 "so I can connect from anywhere" |
 | **Pro Tip** | Lock SSH to My IP only. Security is not optional. |
+
+---
+
+## 🎮 Test Yourself! (No Peeking 👀)
+
+**Q1:** Which EC2 instance type is Free Tier eligible?
+
+<details><summary>👀 Show answer</summary>
+
+**A:** `t2.micro` (or `t3.micro`) — the tiny workhorse that costs you nothing for 750 hours/month. 🐴
+
+</details>
+
+**Q2:** What port does SSH use, and why does it matter for your security group?
+
+<details><summary>👀 Show answer</summary>
+
+**A:** Port **22**. You should only allow it from **My IP**, so random bots on the internet can't try to break in.
+
+</details>
+
+**Q3:** What does `sudo systemctl enable httpd` do that `start` doesn't?
+
+<details><summary>👀 Show answer</summary>
+
+**A:** `start` runs it now; **`enable` makes it auto-start after every reboot**. Both together = server that survives restarts. 💪
+
+</details>
+
+### 🔥 Bonus Challenge
+
+Your site works on `http://`. Now **add an HTTPS (port 443) rule** to your security group and try `https://<your-ip>`. It won't fully work (no SSL cert yet) — but watch what happens, and note why browsers complain. That's exactly how real traffic gets encrypted later. 🔐
+
+> 💪 **Rithu:** *"Breaking things on purpose is how you learn what 'working' actually means. Click the button, Ravi!"*
 
 ---
 

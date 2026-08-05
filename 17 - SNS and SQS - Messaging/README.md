@@ -28,6 +28,44 @@
 
 </details>
 
+## 📋 Table of Contents
+
+- [🎯 Objective](#-objective)
+- [📊 Lab Progress](#-lab-progress)
+- [🤔 In Plain English](#-in-plain-english)
+- [🧠 Prerequisites](#-prerequisites)
+- [💰 Cost Warning](#-cost-warning)
+- [🏗️ Architecture](#-architecture)
+- [🛠️ Step-by-Step Instructions](#-step-by-step-instructions)
+- [✅ Validation Checklist](#-validation-checklist)
+- [🧹 Cleanup (IMPORTANT!)](#-cleanup-important)
+- [🧠 Memory Tips](#-memory-tips)
+- [🎓 What You Learned](#-what-you-learned)
+- [🎮 Test Yourself](#-test-yourself-no-peeking)
+- [🆚 Pro Tip vs Noob Tip](#-pro-tip-vs-noob-tip)
+- [🔗 What's Next?](#-whats-next)
+- [❓ Troubleshooting](#-troubleshooting)
+
+---
+
+<div align="center">
+
+## 📊 Lab Progress
+
+`[██░░░░░░░░░░░░░░░░░░] 5% — Let's Begin!`
+
+</div>
+
+---
+
+## 🤔 In Plain English
+
+> **What is this, really?** Two cousins with different jobs. **SNS** is a **loudspeaker** — it *pushes* one message to many subscribers instantly (email, SMS, Lambda, SQS...). **SQS** is a **mailbox** — it *stores* messages until a worker *pulls* them. Together (SNS → SQS) they form the **fan-out pattern**: one announcement, many listeners, zero lost messages. 📣
+>
+> 🌍 **Why you should care:** Every big system decouples its parts with messages — order placed → email sent → inventory updated — so a slow worker never blocks the whole shop.
+
+---
+
 ## 🎯 Objective
 
 In this lab, you will explore two of AWS's core messaging services: **Simple Notification Service (SNS)** and **Simple Queue Service (SQS)**. You'll create topics, subscriptions, and queues — and connect them together to build a real **fan-out messaging pattern**.
@@ -399,6 +437,22 @@ Let's confirm everything is working:
 
 ---
 
+## 🧠 Memory Tips
+
+Stick these in your brain and they'll never leave. 🧲
+
+| 🧠 Memory Hook | Remember it like... |
+|---|---|
+| **SNS = loudspeaker (PUSH)** | One shout, many ears. Subscribers get it **immediately**, whether they asked or not. 📣 |
+| **SQS = mailbox (PULL)** | Messages **wait** in the queue until a worker comes to fetch them. Nobody pushes. 📬 |
+| **Fan-out pattern** | One message in SNS → delivered to **multiple subscribers at once** (email + SQS + Lambda). 🌊 |
+| **Visibility timeout = "I'm eating this"** | While a worker processes a message, it's **hidden** from other workers. If it crashes, the message comes back. 🍽️ |
+| **SNS pushes, SQS polls** | If they ask "who pushes?" → SNS. "Who pulls?" → SQS. Commit it to memory. 🧠 |
+
+> 🗣️ **Rithu:** *"SNS is a megaphone, SQS is a post office. Once you get that, every messaging architecture makes sense."
+
+---
+
 ## 🎓 What You Learned
 
 In this lab, you learned:
@@ -410,6 +464,49 @@ In this lab, you learned:
 5. **Fan-out Pattern** — Publishing one message to SNS and having it delivered to multiple subscribers simultaneously.
 6. **Message Polling** — SQS consumers poll for messages (pull-based model).
 7. **Message Lifecycle** — Messages are hidden during processing (visibility timeout) and deleted after successful processing.
+
+---
+
+## 🎮 Test Yourself! (No Peeking 👀)
+
+**Q1:** Which service *pushes* messages to subscribers, and which one *pulls* them?
+
+<details><summary>👀 Show answer</summary>
+
+**A:** **SNS pushes** (loudspeaker 📣) and **SQS pulls** (mailbox 📬). Push = proactive delivery; pull = waiting for a worker to poll.
+
+</details>
+
+**Q2:** What is the fan-out pattern?
+
+<details><summary>👀 Show answer</summary>
+
+**A:** Publishing **one message to SNS** and having it **delivered to many subscribers at once** — email, SQS queues, Lambda, SMS. One-to-many. 🌊
+
+</details>
+
+**Q3:** A worker grabs a message but crashes halfway. What happens to the message?
+
+<details><summary>👀 Show answer</summary>
+
+**A:** The **visibility timeout** expires and the message **returns to the queue** for another worker. No message is ever lost. 🍽️→📬
+
+</details>
+
+### 🔥 Bonus Challenge
+
+Add a **second SQS queue** as another SNS subscriber. Publish ONE message and watch BOTH queues receive it — the fan-out pattern in action. Then process the same message from each queue and see the lifecycle (available → in flight → deleted). 🌀
+
+> 💪 **Rithu:** *"If you can draw the fan-out diagram on a whiteboard, you understand distributed systems better than you think."
+
+---
+
+### 🆚 Pro Tip vs Noob Tip
+
+| | Approach |
+|---|---|
+| **Noob Tip** | Connect services directly — one slow service blocks the whole pipeline |
+| **Pro Tip** | Decouple with SNS/SQS. Slow workers just drain the queue; nothing breaks |
 
 ---
 
