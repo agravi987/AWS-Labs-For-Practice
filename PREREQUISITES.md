@@ -12,17 +12,17 @@
 
 ## Table of Contents
 
-1. [Welcome & Why Prerequisites Matter](#1--welcome--why-prerequisites-matter)
-2. [Creating an AWS Account](#2--creating-an-aws-account)
-3. [Enabling MFA on Root Account](#3--enabling-mfa-on-root-account)
-4. [Creating an IAM Admin User](#4--creating-an-iam-admin-user)
-5. [Setting Up Billing Alerts (AWS Budgets)](#5--setting-up-billing-alerts-aws-budgets)
-6. [Installing AWS CLI](#6--installing-aws-cli)
-7. [Configuring AWS CLI](#7--configuring-aws-cli)
-8. [Installing a Code Editor (VS Code)](#8--installing-a-code-editor-vs-code)
-9. [SSH Key Pair Setup](#9--ssh-key-pair-setup)
-10. [Understanding Free Tier Limits](#10--understanding-free-tier-limits)
-11. [Ready to Go!](#11--ready-to-go)
+1. [Welcome & Why Prerequisites Matter](#1-welcome-why-prerequisites-matter)
+2. [Creating an AWS Account](#2-creating-an-aws-account)
+3. [Enabling MFA on Root Account](#3-enabling-mfa-on-root-account)
+4. [Creating an IAM Admin User](#4-creating-an-iam-admin-user)
+5. [Setting Up Billing Alerts (AWS Budgets)](#5-setting-up-billing-alerts-aws-budgets)
+6. [Installing AWS CLI](#6-installing-aws-cli)
+7. [Configuring AWS CLI](#7-configuring-aws-cli)
+8. [Installing a Code Editor (VS Code)](#8-installing-a-code-editor-vs-code)
+9. [SSH Key Pair Setup](#9-ssh-key-pair-setup)
+10. [Understanding Free Tier Limits](#10-understanding-free-tier-limits)
+11. [Ready to Go!](#11-ready-to-go)
 
 ---
 
@@ -1513,6 +1513,21 @@ Now that you're all set up, head over to **[Lab 01](./Lab-01/)** to start your f
 > - [AWS CLI documentation](https://docs.aws.amazon.com/cli/latest/userguide/getting-started.html)
 > - [IAM best practices](https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html)
 > - [AWS Budgets documentation](https://docs.aws.amazon.com/cost-management/latest/userguide/budgets.html)
+
+## 🧠 Memory Tips
+
+Stick these in your brain and they'll never leave. 🧲
+
+| 🧠 Memory Hook | Remember it like... |
+|---|---|
+| **MFA = deadbolt on the front door** | A password alone is just a doorknob. MFA adds the deadbolt — even a stolen key can't open it. 🔒 |
+| **Root = master key** | Root can open EVERYTHING — so lock it in the vault (MFA) and carry your IAM admin key for daily use. 🏦 |
+| **IAM admin user = regular key** | Opens most doors, but not the safe. If it's stolen, the damage is limited. 🗝️ |
+| **Budget = smoke alarm** | A $1 budget with an 80% alert rings BEFORE the fire. No alarm = surprise $500 bill. 🚨 |
+| **`.pem` vs `.ppk`** | **PEM** stays on **P**enguins (**M**ac/Linux); **PPK** is **Pu**TTY's pet. Convert with PuTTYgen. 🐧 |
+| **Free Tier = 3 flavors** | **Always Free** (forever), **12 months** (from account creation!), and **trials**. Know which is which — the clock is always ticking. ⏰ |
+
+> 🗣️ **Rithu:** *"Thirty minutes of setup here will save you hours of debugging and dollars of surprise bills later. Security first, fun second — but both are coming!"*
 
 ---
 

@@ -20,6 +20,30 @@ Whether you're just getting started or sharpening your skills, you're in the rig
 
 </div>
 
+## 📋 Table of Contents
+
+- [🤔 In Plain English](#-in-plain-english)
+- [Welcome!](#welcome)
+- [What Is This Repository?](#what-is-this-repository)
+- [Prerequisites](#prerequisites)
+- [The Learning Path - All 25 Labs](#the-learning-path---all-25-labs)
+- [Recommended Learning Tracks](#recommended-learning-tracks)
+- [How to Use These Labs](#how-to-use-these-labs)
+- [Cost Management Tips - READ THIS!](#cost-management-tips---read-this)
+- [CLEANUP REMINDER](#cleanup-reminder)
+- [Contributing](#contributing)
+- [Support](#support)
+- [Milestones](#milestones)
+- [🎯 Quiz Answer Key](./ANSWERS.md)
+
+---
+
+## 🤔 In Plain English
+
+> **What is this, really?** A collection of **25 hands-on AWS labs** where you build real things — EC2 servers, S3 websites, VPC networks, databases, serverless APIs — instead of just watching theory videos. Every lab is a step-by-step recipe with screenshots, cost warnings, memory tips, and a quiz at the end. 🏗️
+>
+> 🌍 **The golden workflow:** Read the theory → do the lab → break it on purpose → clean up → repeat. By Lab 25 you'll have deployed a full production-style architecture with your own two hands.
+
 ---
 
 ## Welcome!
