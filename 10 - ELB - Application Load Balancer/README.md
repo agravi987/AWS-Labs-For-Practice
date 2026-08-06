@@ -145,6 +145,7 @@ Configure:
 - **VPC:** Select the **default VPC** (or your custom VPC if you prefer)
 
 > 📸 [Screenshot: ALB security group creation]
+![ ALB security group creation](screenshots/01-alb-security-group.png)
 
 5. **Inbound rules:**
    - Click **Add rule**
@@ -152,6 +153,7 @@ Configure:
    - **Port range:** 80
    - **Source:** Anywhere-IPv4 (`0.0.0.0/0`)
    - 📸 [Screenshot: Inbound rule: HTTP from 0.0.0.0/0]
+   ![Inbound rule: HTTP from 0.0.0.0/0](screenshots/02-alb-inbound-http-from-anywhere.png)
 
 6. **Outbound rules:** Allow all traffic (default — leave as is)
 7. Click **Create security group**
@@ -173,7 +175,6 @@ The EC2 instances should ONLY accept traffic from the ALB — not directly from 
    - **Description:** `Allow HTTP only from ALB security group`
    - **VPC:** Select the **same VPC** as the ALB security group
 
-> 📸 [Screenshot: EC2 security group creation]
 
 3. **Inbound rules:**
    - Click **Add rule**
@@ -181,6 +182,7 @@ The EC2 instances should ONLY accept traffic from the ALB — not directly from 
    - **Port range:** 80
    - **Source:** Select **Custom** → start typing `alb-sg` → select the security group ID of `alb-sg`
      - 📸 [Screenshot: Source field showing alb-sg security group reference]
+     ![Source field showing alb-sg security group reference](screenshots/03-ec2-security-group-reference.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > This is the key to ALB security! Instead of allowing HTTP from `0.0.0.0/0` on the EC2 instances, we allow it ONLY from the ALB's security group. This means:
@@ -212,11 +214,12 @@ Configure:
 - **VPC:** Select the **same VPC** as your security groups
 
 > 📸 [Screenshot: Target group creation with HTTP port 80]
+![Target group creation with HTTP port 80](screenshots/04-target-group-http80.png)
 
 4. **Health checks:**
    - **Protocol:** HTTP
    - **Path:** `/`
-     - 📸 [Screenshot: Health check path set to /]
+
 5. **Advanced health check settings:** Leave as default
 6. Click **Next**
 7. On the "Register targets" page — **DON'T register any targets yet!** We'll do that after launching the instances.
@@ -245,6 +248,7 @@ Configure:
    - **Security group:** Select existing → `ec2-from-alb-sg`
 
 > 📸 [Screenshot: Instance 1 network settings with ec2-from-alb-sg]
+![Instance 1 network settings with ec2-from-alb-sg](screenshots/05-instance1-network-settings.png)
 
 4. **User data** — expand "Advanced details" and paste this in the **User data** field:
 
@@ -256,6 +260,7 @@ echo "<h1>Hello from Web Server 1! Hostname: $(hostname)</h1>" > /var/www/html/i
 ```
 
 > 📸 [Screenshot: User data script pasted in advanced details]
+![User data script pasted in advanced details](screenshots/06-user-data-script.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > This script installs Apache web server and creates a simple webpage. The `$(hostname)` part shows the server's actual hostname — this lets you see WHICH server responded when you test the load balancer!
@@ -279,7 +284,6 @@ echo "<h1>Hello from Web Server 1! Hostname: $(hostname)</h1>" > /var/www/html/i
 3. **Network settings** → **Edit:**
    - **VPC:** Same VPC
    - **Subnet:** Select a **different** subnet if possible (e.g., `us-east-1b`)
-     - 📸 [Screenshot: Instance 2 in us-east-1b subnet]
    - **Auto-assign public IP:** Enable
    - **Security group:** Select existing → `ec2-from-alb-sg`
 
@@ -296,6 +300,7 @@ echo "<h1>Hello from Web Server 2! Hostname: $(hostname)</h1>" > /var/www/html/i
 6. Wait for both instances to be **Running** and pass status checks (2/2)
 
 > 📸 [Screenshot: Both instances running with status checks passed]
+![Both instances running with status checks passed](screenshots/07-both-instances-running.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > In production, you'd launch instances in different Availability Zones (AZs) for high availability. If one AZ goes down, the other keeps serving traffic. We're doing that by using us-east-1a and us-east-1b!
@@ -313,12 +318,10 @@ echo "<h1>Hello from Web Server 2! Hostname: $(hostname)</h1>" > /var/www/html/i
 5. Select both `web-server-1` and `web-server-2`
 6. Click **Include as pending below**
 7. Click **Register pending targets**
-
-> 📸 [Screenshot: Both instances registered as "pending" in target group]
-
 8. Wait about 30-60 seconds, then refresh. Both targets should show **Health status: healthy** ✅
 
 > 📸 [Screenshot: Both targets showing "healthy" status]
+![Both targets showing "healthy" status](screenshots/10-targets-healthy.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > If a target shows "unhealthy," it usually means:
@@ -347,13 +350,13 @@ Configure:
 - **IP address type:** IPv4
 
 > 📸 [Screenshot: ALB basic configuration]
+![ALB basic configuration](screenshots/08-alb-basic-configuration.png)
 
 4. **Network mapping:**
    - **VPC:** Select the same VPC as everything else
    - **Mappings:**
      - Check **us-east-1a** → select a public subnet
      - Check **us-east-1b** → select a public subnet
-     - 📸 [Screenshot: ALB mapped to both AZs with public subnets]
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > The ALB MUST be in at least two AZs. This is a requirement, not a suggestion. If one AZ goes down, the ALB continues working from the other AZ. That's the whole point!
@@ -371,10 +374,9 @@ Configure:
 
 7. Leave all other settings as default
 8. Click **Create load balancer**
-
-> 📸 [Screenshot: ALB creation in progress]
-
 9. Wait for the ALB state to change to **Active** (this takes 2-5 minutes)
+> 📸 [Screenshot: ALB created]
+![ALB created](screenshots/09-alb-created.png)
 
 ---
 
@@ -408,7 +410,9 @@ Configure:
 7. You should see the response **alternate between Server 1 and Server 2**!
 
 > 📸 [Screenshot: Browser showing "Hello from Web Server 1!" after refresh]
+![ Browser showing "Hello from Web Server 1!" after refresh](screenshots/11-browser-web-server-1.png)
 > 📸 [Screenshot: Browser showing "Hello from Web Server 2!" after another refresh]
+![Browser showing "Hello from Web Server 2!" after another refresh](screenshots/12-browser-web-server-2.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > 🎉 Congratulations, Ravi! You just set up load balancing! The ALB is distributing requests between your two servers using a round-robin algorithm. In the real world, this means:
@@ -430,6 +434,7 @@ Configure:
    - **Description:** Target registration succeeded
 
 > 📸 [Screenshot: Target group showing both targets as healthy]
+![Target group showing both targets as healthy](screenshots/13-target-group-healthy.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > The ALB health checks every 30 seconds by default. If an instance fails 2 consecutive health checks, it's marked unhealthy and the ALB stops sending traffic to it. When it recovers, the ALB automatically adds it back. Self-healing infrastructure!
