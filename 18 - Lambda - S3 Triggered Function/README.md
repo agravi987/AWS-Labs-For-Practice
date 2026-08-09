@@ -166,7 +166,7 @@ S3 Free Tier (12 months):
 5. **Runtime:** Select **Python 3.12** from the dropdown.
 6. **Architecture:** `x86_64`
 7. **Execution role:**
-   - Select: ⚫ **Create a new role with basic S3 permissions**
+   - Select: ⚫ **Create a new role with basic Lambda permissions**
    - **Role name:** `lambda-s3-role`
 8. Click **Create function**.
 
@@ -318,7 +318,7 @@ If your Lambda function can't read S3 metadata (you see an error in CloudWatch L
 5. Check the box → **Add permissions**.
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> The basic S3 permissions created with the role allow S3 to invoke Lambda, but they might not include `s3:GetObject` for reading file metadata. In production, always create the smallest policy possible. The basic role is fine for this lab, but real-world roles should follow least privilege.
+> The basic Lambda permissions role only includes CloudWatch Logs access — the `s3:GetObject` permission for reading file metadata is added in the step below. In production, always create the smallest policy possible.
 
 ---
 

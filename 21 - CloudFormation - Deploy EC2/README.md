@@ -211,7 +211,7 @@ Resources:
       UserData:
         Fn::Base64: |
           #!/bin/bash
-          yum install -y httpd
+          dnf install -y httpd
           systemctl start httpd
           echo "<h1>Deployed by CloudFormation!</h1>" > /var/www/html/index.html
 

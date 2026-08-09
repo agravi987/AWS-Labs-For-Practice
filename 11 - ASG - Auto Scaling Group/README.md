@@ -168,17 +168,20 @@ A Launch Template is like a recipe card — it tells the ASG exactly what kind o
 
 ```bash
 #!/bin/bash
-yum install -y httpd
+dnf install -y httpd
 systemctl start httpd
 echo "<h1>Hello from Auto Scaling Group!</h1><p>Instance: $(hostname)</p>" > /var/www/html/index.html
 ```
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > This user data script installs Apache and creates a simple webpage that shows which instance is serving you. When the ASG launches new instances, each one runs this script automatically. Magic! ✨
+>
+> 💡 **Note:** Amazon Linux 2023 uses `dnf` as its package manager (`yum` still works as a compatibility alias, but `dnf` is the recommended command).
 
 9. Click **Create launch template**
 
-📸 **[Screenshot: Launch template creation page with all fields filled in]**
+📸 **[Screenshot: Created launch template ]**
+![ Created launch template](screenshots/01-launch-template-created.png)
 
 ---
 
@@ -247,7 +250,8 @@ Now the fun part — let's build the ASG!
 9. **Add tags:** Optional — add a tag `Name` = `ravi-asg-instance`
 10. Click **Create Auto Scaling group**
 
-📸 **[Screenshot: ASG creation page showing group sizes and scaling policy]**
+📸 **[Screenshot: ASG creation page]**
+![ ASG creation page](screenshots/02-asg-creation-page.png)
 
 ---
 
@@ -266,6 +270,7 @@ Now the fun part — let's build the ASG!
    - Check the **Targets** tab — you should see both instances registered
 
 📸 **[Screenshot: EC2 instances page showing 2 ASG-managed instances running]**
+![ EC2 instances page showing 2 ASG-managed instances running](screenshots/03-asg-instances-running.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > Notice that ASG automatically launched exactly 2 instances (your desired capacity) across 2 different AZs. You didn't have to manually do anything. This is the power of automation!
@@ -292,7 +297,7 @@ Instance: ip-172-31-xx-xx.ec2.internal
 5. Try the other instance's public IP too — both should show the same page
 
 📸 **[Screenshot: Browser showing the "Hello from Auto Scaling Group!" page]**
-
+![ Browser showing the "Hello from Auto Scaling Group!" page](screenshots/04-browser-hello-page.png)
 ---
 
 ### Step 5: Test Scaling — Let's Break Things! 🔥
@@ -301,26 +306,32 @@ Instance: ip-172-31-xx-xx.ec2.internal
 
 Now comes the exciting part — let's force the ASG to scale out by stressing our instances!
 
-1. Open your terminal and SSH into **one** of the ASG instances:
+1. Open **TWO terminal windows** and SSH into **BOTH** ASG instances (one per terminal):
 
 ```bash
-ssh -i "first-key-pair.pem" ec2-user@<PUBLIC_IP>
-```
-
-2. Install the stress tool:
-
-```bash
-sudo yum install -y stress
-```
-
-3. Start stressing the CPU! We'll max out all available CPUs for 5 minutes:
-
-```bash
-stress --cpu 4 --timeout 300s
+ssh -i "first-key-pair.pem" ec2-user@<PUBLIC_IP_1>
+ssh -i "first-key-pair.pem" ec2-user@<PUBLIC_IP_2>
 ```
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> The `stress` tool pushes your CPU to 100%. Since our target tracking policy is set at 50%, ASG should detect the high CPU and start spinning up new instances. Science in action! 🔬
+> **This matters!** The target-tracking policy watches the **average** CPU across *all* instances. If you stress only 1 of 2 instances, the average sits around 50% (100% + ~5% ÷ 2) — right *at* the target, so scaling may never trigger. Stressing **both** pushes the average well above 50%. This is the #1 reason "autoscaling didn't work". 🎯
+
+2. Install the stress tool on **both** instances:
+
+```bash
+sudo dnf install -y stress
+```
+
+3. Start stressing the CPU on **both** instances! We'll max out all available CPUs for 10 minutes:
+
+```bash
+stress --cpu 4 --timeout 600s
+```
+
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> The `stress` tool pushes your CPU to 100%. With target tracking set at 50%, ASG should detect the high average CPU and start spinning up new instances. Science in action! 🔬
+>
+> ⚠️ **t2.micro caveat:** t2 instances are *burstable* — they run at 100% only until their CPU credits run out, then get throttled to ~10%. 10 minutes is usually fine for this lab, but if you see CPU dip before scaling starts, run `stress --cpu 4` again (no timeout) in both terminals.
 
 4. Now, keep an eye on the **ASG Activity** tab:
 
@@ -338,8 +349,9 @@ stress --cpu 4 --timeout 300s
    - Watch the CPU spike above 80%!
 
 📸 **[Screenshot: CloudWatch CPU metrics showing the spike above 50%]**
+![CloudWatch CPU metrics showing the spike above 50%](screenshots/05-cloudwatch-cpu-spike.png)
 
-7. Wait for the stress command to finish (5 minutes), or press `Ctrl+C` in the SSH session to stop it early
+7. Wait for the stress command to finish (10 minutes), or press `Ctrl+C` in both SSH sessions to stop it early
 
 8. After CPU drops back below 50% for a while, ASG will **scale in** — it will terminate the extra instance automatically!
 
@@ -524,9 +536,11 @@ You've mastered auto scaling! Time to learn how to direct traffic to your instan
 
 ### The stress test didn't trigger scaling
 
-- Wait at least 5 minutes — target tracking needs time to evaluate the metric
+- **Did you stress BOTH instances?** The target-tracking policy uses the **average** CPU across the whole group. Stressing only one of two instances keeps the average at ~50% — right at the target — so scaling may never trigger. Open two terminals and stress both! 🎯
+- Wait at least 5-10 minutes — target tracking needs time to evaluate the metric before it launches anything
 - Check that the stress is actually running: `top` or `htop` in the SSH session
 - Check CloudWatch metrics to verify CPU is actually above 50%
+- **t2.micro is burstable:** it runs at 100% only until its CPU credits are exhausted, then throttles to ~10% baseline. If you see the CPU dip, restart `stress --cpu 4` in both terminals before it throttles back down
 - The ASG needs CPU to stay above 50% for the full evaluation period (usually 5 minutes)
 
 ### My security group won't delete

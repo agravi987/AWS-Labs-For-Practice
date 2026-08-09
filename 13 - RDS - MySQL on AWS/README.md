@@ -103,14 +103,14 @@ Before you start, make sure you have:
 
 | Resource | Cost |
 |----------|------|
-| RDS db.t2.micro | ~$0.017/hour (~$12/month) |
-| Storage (20 GB GP2) | ~$2.30/month |
+| RDS db.t3.micro | ~$0.017/hour (~$12/month) |
+| Storage (20 GB gp3) | ~$2.30/month |
 | **Estimated total for this lab** | **< $3** (if cleaned up within an hour!) |
 
 > ⚠️ **CRITICAL — Rithu says:** RDS instances keep running and keep charging even after you close your browser! Unlike EC2 where you can stop an instance and stop paying, RDS **charges you even when stopped** (for the storage). You MUST **delete** the RDS instance after this lab. I cannot stress this enough! 💸
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> The Free Tier gives you 750 hours/month of db.t2.micro for 12 months. But storage and backups are NOT Free Tier eligible. Delete after the lab to avoid surprises!
+> The Free Tier gives you 750 hours/month of `db.t3.micro` or `db.t4g.micro` for 12 months (legacy accounts). But storage and backups are NOT Free Tier eligible. Delete after the lab to avoid surprises!
 
 ---
 
@@ -120,8 +120,8 @@ Before you start, make sure you have:
     ┌──────────────────┐        ┌──────────────────────┐
     │   Your Computer   │        │   Amazon RDS MySQL    │
     │   (or EC2 instance)│──────▶│   ravi-mysql-db       │
-    │                    │ :3306 │   db.t2.micro         │
-    │  mysql -h ravi...  │       │   20 GB GP2           │
+    │                    │ :3306 │   db.t3.micro         │
+    │  mysql -h ravi...  │       │   20 GB gp3           │
     └──────────────────┘        │   Database: ravilabs   │
                                 └──────────────────────┘
                                             │
@@ -227,8 +227,8 @@ This is the main event — let's launch a MySQL database!
 
 | Field | Value |
 |-------|-------|
-| DB instance class | **db.t2.micro** (Free Tier) |
-| Storage type | **General Purpose SSD (gp2)** |
+| DB instance class | **db.t3.micro** (Free Tier) |
+| Storage type | **General Purpose SSD (gp3)** |
 | Allocated storage | **20 GB** |
 | Storage autoscaling | ❌ Uncheck this (keep costs predictable) |
 
@@ -238,11 +238,13 @@ This is the main event — let's launch a MySQL database!
 |-------|-------|
 | VPC | Default VPC |
 | DB subnet group | `ravi-db-subnet-group` |
-| Publicly accessible | **Yes** ⚠️ |
+| Public access | **Yes** ⚠️ |
 | Security group | `rds-sg` |
 | Availability zone | Don't specify (let RDS choose) |
 
-> ⚠️ **Production Reality Check:** "Publicly accessible: Yes" means your database can be reached from the internet (protected by the security group). In production, this should almost ALWAYS be "No" — you'd connect through a VPN or from within the VPC. But for this lab, we need public access.
+> ⚠️ **Production Reality Check:** "Public access: Yes" means your database can be reached from the internet (protected by the security group). In production, this should almost ALWAYS be "No" — you'd connect through a VPN or from within the VPC. But for this lab, we need public access.
+>
+> 💡 **Note:** Free Tier supports `db.t3.micro` and `db.t4g.micro`. The console lists `db.t3.micro` first. `gp3` is the current default storage type (cheaper and faster than the older `gp2`).
 
 **Database options:**
 
@@ -310,8 +312,10 @@ ssh -i "first-key-pair.pem" ec2-user@<EC2_PUBLIC_IP>
 
 2. Install the MySQL client:
 
+> 💡 On Amazon Linux 2023 the `mysql` package isn't available. AWS's recommended client package is **`mariadb105`** (MariaDB), which provides the `mysql` command and is fully compatible with RDS MySQL:
+
 ```bash
-sudo yum install -y mysql
+sudo dnf install -y mariadb105
 ```
 
 3. Connect to RDS:
@@ -602,7 +606,7 @@ You've mastered relational databases in the cloud. Now let's explore the NoSQL w
 - Check that `rds-sg` security group allows inbound on port 3306
 - If connecting from your local machine, your home IP must be in the security group (or use `0.0.0.0/0`)
 - Make sure you're using the full endpoint (not just the identifier)
-- Check that "Publicly accessible" is set to **Yes**
+- Check that "Public access" is set to **Yes**
 
 ### "Access denied for user 'admin'" error
 
@@ -617,7 +621,7 @@ You've mastered relational databases in the cloud. Now let's explore the NoSQL w
 - Try deleting and recreating with a different identifier
 - Make sure your default VPC has subnets in at least 2 AZs
 
-### "Publicly accessible" option is greyed out
+### "Public access" option is greyed out
 
 - This happens when the subnet group only has private subnets
 - Make sure your DB Subnet Group includes subnets that are in the default VPC (which should have public subnets)

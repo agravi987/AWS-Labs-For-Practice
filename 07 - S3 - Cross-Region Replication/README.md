@@ -221,33 +221,30 @@ Now we need to give S3 permission to read from one bucket and write to another. 
 
 #### Configure the Rule:
 
+> 📝 **Console note:** The replication rule editor is a single scrolling page (no wizard steps). Fill in the sections below and finish with the **Save** button.
+
 1. **Replication rule name:** `replicate-to-west`
-2. Under **Scope**, select **Entire bucket** (replicate all objects)
-3. Click **Next**
+2. Under **Source bucket**, select **Apply to all objects in the bucket** (replicate all objects)
 
 > 📸 [Screenshot: Rule name and scope configuration]
 ![Rule name and scope configuration](screenshots/05-rule-name-scope-config.png)
 
-4. **Destination:** Select **Choose a bucket in this account**
-5. Browse and select `ravi-dest-replication-12345`
+3. **Destination:** Select **Choose a bucket in this account**
+4. Browse and select `ravi-dest-replication-12345`
    - 📸 [Screenshot: Destination bucket selected]
    ![Destination bucket selected](screenshots/06-destination-bucket-selected.png)
 
-6. Click **Next**
-
-7. **IAM Role:** Select `s3-replication-role` from the dropdown
+5. **IAM Role:** Select `s3-replication-role` from the dropdown
    - 📸 [Screenshot: IAM role selected]
    ![IAM role selected](screenshots/07-iam-role-selected.png)
 
-8. **Replication Time Control (RTC):** Leave unchecked (this is optional and adds cost)
-9. Click **Next**
-
-10. Review all settings:
+6. **Additional options:** Leave **Replication Time Control (RTC)** unchecked (this is optional and adds cost)
+7. Review all settings:
     - Source: `ravi-source-replication-12345`
     - Destination: `ravi-dest-replication-12345`
     - Rule name: `replicate-to-west`
     - IAM Role: `s3-replication-role`
-11. Click **Save**
+8. Click **Save**
 
 > 📸 [Screenshot: Replication rule saved successfully]
 ![Replication rule saved successfully](screenshots/08-replication-rule-saved.png)

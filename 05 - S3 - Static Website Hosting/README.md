@@ -153,8 +153,8 @@ Create an S3 bucket, configure it for static website hosting, upload HTML files,
    ⚠️ **This is the most important step.**
 
    - UNCHECK **Block all public access**.
-   - A warning banner appears: "Turning off Block all public access is prohibited for new buckets in this account."
-   - Read the warning. Acknowledge it by checking: **I acknowledge that the current settings may result in a bucket and objects becoming public.**
+   - A warning banner appears: "Turning off Block all public access might result in this bucket and the objects within becoming public."
+   - Read the warning. Acknowledge it by checking: **I acknowledge that turning off Block all public access might result in this bucket and the objects within becoming public.**
 
    📸 [Screenshot: Block all public access section with all boxes UNCHECKED and the acknowledgment checked]
   ![Block all public access section with all boxes UNCHECKED and the acknowledgment checked](screenshots/public-access-settings.png)
@@ -172,7 +172,7 @@ Create an S3 bucket, configure it for static website hosting, upload HTML files,
    | Name | `ravi-static-website` |
    | Project | `AWS-Hands-On-Labs` |
 
-8. **Default encryption:** Leave at **Disable** (SSE-S3 active by default). AWS encrypts S3 objects by default now.
+8. **Default encryption:** Leave the default (**SSE-S3**). AWS has encrypted all new S3 buckets by default since January 2023 — there's no "Disable" option anymore, which is a good thing!
 
 9. Click **Create bucket** at the bottom.
 

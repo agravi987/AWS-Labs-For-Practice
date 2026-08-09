@@ -254,7 +254,7 @@ Configure:
 
 ```bash
 #!/bin/bash
-yum install -y httpd
+dnf install -y httpd
 systemctl start httpd
 echo "<h1>Hello from Web Server 1! Hostname: $(hostname)</h1>" > /var/www/html/index.html
 ```
@@ -291,7 +291,7 @@ echo "<h1>Hello from Web Server 1! Hostname: $(hostname)</h1>" > /var/www/html/i
 
 ```bash
 #!/bin/bash
-yum install -y httpd
+dnf install -y httpd
 systemctl start httpd
 echo "<h1>Hello from Web Server 2! Hostname: $(hostname)</h1>" > /var/www/html/index.html
 ```

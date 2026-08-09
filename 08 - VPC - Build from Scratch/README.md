@@ -325,7 +325,7 @@ Time to test our network! Let's launch an EC2 instance inside our custom VPC.
 
 **Storage:**
 
-10. Leave the default 8 GB gp2 (Free tier)
+10. Leave the default 8 GB gp3 (Free tier)
 11. Click **Launch instance**
 12. Click **View all instances**
 13. Wait for the instance state to change to **Running** and status checks to pass (1/2 or 2/2)

@@ -167,7 +167,7 @@ Wait for the instance to be **Running**.
 16. **Master password**: Create a secure password (write it down!)
 17. **Confirm password**: Re-enter the password
 18. Scroll down to **Storage**:
-    - **Storage type**: gp2
+    - **Storage type**: gp3
     - **Allocated storage**: 20 GB (Free Tier max)
     - **Storage autoscaling**: Uncheck to stay in Free Tier
 19. Under **Connectivity**:

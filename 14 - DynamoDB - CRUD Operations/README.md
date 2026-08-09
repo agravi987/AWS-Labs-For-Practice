@@ -225,7 +225,7 @@ Let's read back what we just inserted!
 2. You should see all 3 items listed
 3. To query by partition key:
    - Click **Run** in the query section
-   - Enter: `student_id = "S001"`
+   - In the **Partition key** field, enter the value `S001` (the console fills in `student_id` as the key name for you)
    - You'll see only Ravi's record
 
 📸 **[Screenshot: DynamoDB table showing all 3 items]**
@@ -378,7 +378,7 @@ Let's add a **Global Secondary Index (GSI)** to query by `topic`!
 
 **Create a GSI:**
 
-1. Go to **Students** table → **Additional info** tab → **Indexes**
+1. Go to **Students** table → **Overview** tab → scroll to the **Indexes** section
 2. Click **Create index**
 3. Configure:
 
@@ -401,7 +401,7 @@ In the console:
 1. Go to **Students** table → **Explore table items**
 2. In the dropdown that says "Scan", switch to **Query**
 3. Change the index to `topic-index`
-4. Enter: `topic = "EC2"`
+4. In the **Partition key** field, enter `EC2` (the console uses `topic` as the key name from the index)
 5. Click **Run** — you'll see only Ravi's EC2 record!
 
 Via CLI:

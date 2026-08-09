@@ -231,7 +231,7 @@ Wait for the volume status to turn **Available**.
 3. Or Actions → Attach volume.
 4. Fill in:
    - **Instance:** Start typing `ebs-lab-instance` and select it.
-   - **Device name:** Linux recommends `/dev/sdf` (maps to `/dev/xvdf` on Nitro instances). Just leave `/dev/sdf`.
+   - **Device name:** Linux recommends `/dev/sdf` (appears as `/dev/xvdf` on Xen-based instances like t2.micro). Just leave `/dev/sdf`.
 5. Click **Attach volume**.
 
 Wait for the state to change to `in-use`.
@@ -363,7 +363,7 @@ You'll see a new volume appear that's a perfect copy of your root volume, includ
 lsblk
 ```
 
-You should see `xdg`:
+You should see `xvdg`:
 
 ```bash
 xvdf    202:80   0   10G  0 disk /mnt/data
@@ -475,7 +475,7 @@ Stick these in your brain and they'll never leave. 🧲
 | Mounting | Temporary via `mount`; permanent via `/etc/fstab` |
 | Snapshots | Point-in-time backups stored in S3 (incrementally) |
 | Snapshots → Volume restore | Create a new volume from snapshot → attach → mount |
-| Block device mapping | `/dev/sd*` maps to `/dev/xvd*` on Nitro, `/dev/nvme*` on newer instances |
+| Block device mapping | Console names (`/dev/sd*`) appear as `/dev/xvd*` on Xen-based instances (t2.micro) and `/dev/nvme*` on Nitro instances (t3, m5, etc.) |
 
 ## 🎮 Test Yourself! (No Peeking 👀)
 

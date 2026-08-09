@@ -257,26 +257,25 @@ Now let's deploy the task definition as a running service!
 1. Go to **ECS → Clusters → ravi-fargate-cluster**.
 2. In the **Services** tab, click **Create**.
 
-#### Compute Options:
-1. **Compute options:** ⚫ **Launch type** (Fargate)
-2. **Task definition:**
-   - Family: `nginx-task`
-   - Revision: `1 (latest)`
-3. **Service name:** `nginx-service`
-4. **Desired tasks:** `2`
+> 📝 **Console note:** The **Create service** page is a single scrolling form. Fill in the sections below and finish with the **Create** button at the bottom.
+
+#### Service details:
+1. **Compute options:** ⚫ **Launch type**
+2. **Launch type:** ⚫ **Fargate**
+3. **Task definition family:** `nginx-task`
+   - **Revision:** `1 (latest)`
+4. **Service name:** `nginx-service`
+
+#### Deployment configuration:
+1. **Service type:** ⚫ **Replica**
+2. **Desired tasks:** `2`
    - This means ECS will maintain exactly 2 running tasks at all times.
    - If a task dies, ECS automatically starts a new one!
-
-#### Deployment Options:
-1. Keep **Rolling update** (default) — this deploys new versions without downtime.
+3. Expand **Deployment options**:
+   - **Deployment type:** **Rolling update** (default) — this deploys new versions without downtime.
 
 #### Service Connect (optional):
 1. Skip (leave unchecked).
-
-#### Load Balancer:
-1. **Load balancer type:** ⚫ **None**
-   - ⚠️ For this lab, we'll access tasks directly via their public IPs. In production, you'd use an Application Load Balancer.
-2. Click **Next**.
 
 #### Networking:
 1. **VPC:** Select your **default VPC**.
@@ -285,16 +284,16 @@ Now let's deploy the task definition as a running service!
 3. **Security groups:** Select `ecs-sg` (the one you created in Step 3).
 4. **Public IP:** ⚫ **Assign public IP** → **Turn on**
    - ⚠️ This is REQUIRED for Fargate tasks to pull images from Docker Hub and for you to access the NGINX web server.
-5. Click **Next**.
 
 > 📸 [Screenshot: The networking configuration showing 2 public subnets selected, ecs-sg security group, and public IP enabled]
 
-#### Service Integration (optional):
-1. Skip all integrations (Cloud Map, etc.) → Click **Next**.
+#### Load Balancing:
+1. **Load balancer type:** ⚫ **None**
+   - ⚠️ For this lab, we'll access tasks directly via their public IPs. In production, you'd use an Application Load Balancer.
 
 #### Review and Create:
 1. Review all settings.
-2. Click **Create service**.
+2. Click **Create**.
 3. Wait for the success banner.
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />

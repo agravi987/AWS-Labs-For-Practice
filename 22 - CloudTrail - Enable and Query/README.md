@@ -92,8 +92,8 @@ CloudTrail has a generous free tier:
 
 | What | Cost |
 |------|------|
-| First trail — management events | **FREE** (1 trail per region) |
-| Management events beyond the first | ~$0.50 per 100K events |
+| First trail — management events | **FREE** (first copy per region) |
+| Management events beyond the first | ~$2.00 per 100K events |
 | Data events (S3/Lambda) | $0.10 per 100K events (not needed for this lab) |
 | CloudWatch Logs ingestion | ~$0.50/GB (minimal for this lab) |
 | S3 storage for logs | Standard S3 pricing (pennies) |
@@ -155,11 +155,10 @@ Let's set up CloudTrail to record everything happening in your account.
     - Select **Create new S3 bucket**
     - **S3 bucket**: Type `ravi-cloudtrail-bucket-` followed by some random numbers (like `12345`) — bucket names must be globally unique
     - Leave the rest as default
-11. Check ✅ **Enable for all regions** — this is important! You want to log activity in every region
-12. Click **Create trail**
+11. Click **Create trail**
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> "Why all regions? Attackers might try to create resources in a region you don't normally use. Logging everything means no blind spots!"
+> **Good news:** Every trail you create in the CloudTrail **console** is a **multi-Region trail** by default — it logs activity in all enabled Regions automatically, so there's no checkbox to worry about. (A single-Region trail can only be created with the AWS CLI.) Why does this matter? Attackers might try to create resources in a region you don't normally use. Logging everything means no blind spots!
 
 📸 [Screenshot: CloudTrail "Create trail" page with all settings configured as described]
 

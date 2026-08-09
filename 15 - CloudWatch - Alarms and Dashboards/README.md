@@ -163,12 +163,12 @@ If you don't already have a running EC2 instance, let's launch one!
 
 ```bash
 #!/bin/bash
-yum install -y httpd stress
+dnf install -y httpd stress
 systemctl start httpd
 ```
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> We're pre-installing `stress` in the user data so we don't have to install it later via SSH. Efficiency! 🚀
+> We're pre-installing `stress` in the user data so we don't have to install it later via SSH. Efficiency! 🚀 (Amazon Linux 2023 uses `dnf` — `yum` is just a compatibility alias.)
 
 4. Click **Launch Instance**
 5. Wait for it to be **Running** and **2/2 status checks passed**
@@ -237,11 +237,11 @@ This is the star of the show — let's create an alarm that emails you when CPU 
 | Threshold type | **Static** |
 | Whenever CPUUtilization is... | **Greater than** |
 | than... | **80** |
-| Datapoints to alarm | **5 out of 5** consecutive periods |
+| Datapoints to alarm | **1 out of 1** consecutive period |
 | Period | **5 minutes** |
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> "5 out of 5 consecutive periods" means the CPU must stay above 80% for 5 consecutive 5-minute periods (25 minutes total) before the alarm triggers. This prevents false alarms from brief CPU spikes. You can make it more sensitive by changing to "3 out of 5" — but for this lab, 5/5 works great!
+> "1 out of 1 consecutive period" means the alarm fires as soon as a single 5-minute evaluation window shows CPU above 80% — fast enough to actually watch it trigger during this lab. In production you'd typically use "3 out of 5" or "5 out of 5" to avoid false alarms from brief spikes, but that would require keeping the CPU pegged for 15-25 minutes straight. We use 1/1 so you actually see it fire! ⏱️
 
 **Step 3c: Configure Notification**
 
@@ -286,7 +286,7 @@ ssh -i "first-key-pair.pem" ec2-user@<PUBLIC_IP>
 2. Install stress (if not already installed via user data):
 
 ```bash
-sudo yum install -y stress
+sudo dnf install -y stress
 ```
 
 3. Start stressing the CPU hard:
@@ -296,7 +296,7 @@ stress --cpu 4 --timeout 600s
 ```
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> This runs 4 CPU stress workers for 10 minutes. With our alarm set at 5 out of 5 periods at 5 minutes each, we need the CPU above 80% for 25 minutes. So we'll keep the stress running long enough!
+> This runs 4 CPU stress workers for 10 minutes. With our alarm set at 1 out of 1 periods, we just need one 5-minute evaluation window above 80% — the stress run is more than long enough!
 
 4. Open a **second terminal** and SSH into the same instance (or just wait)
 
@@ -309,13 +309,13 @@ stress --cpu 4 --timeout 600s
 
 6. Go to **CloudWatch** → **Alarms**
 7. Watch your alarm state:
-   - 🟢 **OK** → 🟡 **Insufficient Data** → 🔴 **ALARM**
-8. Wait for the alarm to trigger (this takes about 25 minutes)
+   - 🟢 **OK** → 🟡 **Insufficient Data** → 🔴 **In alarm**
+8. Wait for the alarm to trigger (this takes 5-10 minutes after you start stressing)
 9. Check your email — you should receive a notification! 📧
 
-> ⏱️ **Be patient, Ravi!** The alarm needs 5 consecutive periods (25 minutes) of CPU above 80%. Go grab a well-deserved snack while you wait! 🍕
+> ⏱️ **Be patient, Ravi!** The alarm needs one full 5-minute evaluation window with CPU above 80%. Grab a snack while you wait! 🍕
 
-📸 **[Screenshot: Alarm showing "ALARM" state in the CloudWatch console]**
+📸 **[Screenshot: Alarm showing "In alarm" state in the CloudWatch console]**
 
 10. Once you get the email notification, stop the stress:
 
@@ -363,7 +363,7 @@ Let's build a beautiful dashboard to visualize your infrastructure!
 1. Click **Add widget** → **Alarm status**
 2. Select your alarm: `ec2-cpu-alarm`
 3. Click **Create widget**
-4. This widget shows a big green (OK) or red (ALARM) indicator!
+4. This widget shows a big green (OK) or red (In alarm) indicator!
 
 **Widget 4: Network Out Line Chart (Bonus)**
 
@@ -440,7 +440,7 @@ aws logs create-log-stream \
 - [ ] CloudWatch Metrics show CPU, Network, and Status Check metrics
 - [ ] CPU Utilization graph shows a spike when stress was running
 - [ ] CloudWatch Alarm `ec2-cpu-alarm` was created
-- [ ] Alarm triggered (went to ALARM state) during stress test
+- [ ] Alarm triggered (went to In alarm state) during stress test
 - [ ] Email notification received from SNS
 - [ ] Dashboard `Ravi-Labs-Dashboard` has 4 widgets
 - [ ] Log group `ravi-app-logs` exists with 7-day retention
@@ -629,7 +629,7 @@ Congratulations on completing all 15 labs! Here's where you can go from here:
 
 - Check your **spam/junk folder**
 - Verify you confirmed the SNS subscription (check your inbox for the confirmation email)
-- Make sure the alarm actually triggered (showing "ALARM" state, not "Insufficient Data")
+- Make sure the alarm actually triggered (showing "In alarm" state, not "Insufficient Data")
 - Check the SNS topic has your email listed correctly
 
 </details>
@@ -637,9 +637,9 @@ Congratulations on completing all 15 labs! Here's where you can go from here:
 <details>
 <summary><strong>The stress test didn't push CPU above 80%</strong></summary>
 
-- t2.micro only has 1 vCPU — `stress --cpu 4` may still max it out
+- t2.micro only has 1 vCPU — `stress --cpu 4` spawns 4 workers on 1 core, so it should max it out
 - Check that stress is actually running: `top` in another terminal
-- Some instance types have burstable CPU — t2.micro can burst above baseline but may throttle
+- **t2.micro is burstable:** it runs at 100% only until its CPU credits run out, then gets throttled to ~10% baseline. If CPU drops, restart `stress --cpu 4` in the SSH session
 
 </details>
 

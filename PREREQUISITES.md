@@ -368,8 +368,9 @@
 
 1. **User name:** Enter `admin-user`.
 2. Under **"Provide user access to the AWS Management Console"**:
-   - Select **"I want to create an IAM user"**.
-   - Check **"User must create a password at next sign-in"** (this lets you set a password for console access).
+   - Check the box **"Provide user access to the AWS Management Console"** (it's optional, but we need it for console sign-in).
+   - Under **"Are you providing access to a human user?"**, select **"I want to create an IAM user"**.
+   - Under **Console password**, select **"Custom password"** and enter a password, then check **"Users must create a new password at next sign-in (recommended)"**.
 3. Click **"Next"**.
 
 📸 [Screenshot: User creation form with username "admin-user" entered and console access options selected]
@@ -710,7 +711,40 @@ aws --version
 
 ### 🐧 Linux
 
-#### Option A: Using pip (Recommended)
+#### Option A: Using the Bundled Installer (Recommended)
+
+AWS's officially recommended method. Make sure `curl` and `unzip` are installed:
+
+```bash
+# Ubuntu/Debian
+sudo apt update && sudo apt install -y curl unzip
+# Amazon Linux/RHEL/CentOS/Fedora
+sudo dnf install -y curl unzip
+```
+
+Then download and install AWS CLI v2:
+
+```bash
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+```
+
+**Verify the installation:**
+
+```bash
+aws --version
+```
+
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+>
+> *"The bundled installer gives you AWS CLI v2, which is the current version. Make sure `unzip` is installed first — Amazon Linux 2023 doesn't include it by default!"*
+
+---
+
+#### Option B: Using pip (Not Recommended)
+
+> ⚠️ **Note:** `pip install awscli` installs the older **AWS CLI v1**, which is deprecated. AWS only recommends the bundled installer. Use this only as a last resort.
 
 1. Make sure you have Python 3 installed:
 
@@ -720,7 +754,7 @@ aws --version
 
    If Python is not installed, install it first:
    - **Ubuntu/Debian:** `sudo apt update && sudo apt install python3-pip -y`
-   - **Amazon Linux/RHEL/CentOS:** `sudo yum install python3-pip -y`
+   - **Amazon Linux/RHEL/CentOS:** `sudo dnf install python3-pip -y`
 
 2. Install AWS CLI using pip:
 
@@ -746,17 +780,6 @@ aws --version
 
 ---
 
-#### Option B: Using the Bundled Installer
-
-```bash
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-unzip awscliv2.zip
-sudo ./aws/install
-aws --version
-```
-
----
-
 #### Option C: Using Snap (Ubuntu)
 
 ```bash
@@ -766,7 +789,7 @@ aws --version
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 >
-> *"On Linux, I recommend the bundled installer (Option B) or pip (Option A) for the cleanest install. The snap version sometimes lags behind in updates."*
+> *"On Linux, I recommend the bundled installer (Option A) for the cleanest install. The snap version sometimes lags behind in updates."*
 
 📸 [Screenshot: Terminal showing successful AWS CLI installation output]
 
@@ -1117,6 +1140,10 @@ When creating an EC2 instance in our labs:
 
 **Rithu:** *"That's the common misconception! There are THREE types of free tiers, and they work very differently:"*
 
+> <img src="https://img.shields.io/badge/Warning-Important-E74C3C?style=flat-square" />
+>
+> **⚠️ Free Tier changed on July 15, 2025!** For **new AWS accounts created on/after July 15, 2025**, the old "12 months free" plan was replaced by a **6-month free plan with up to $200 in credits** ($100 at sign-up + up to $100 more for completing starter activities). Existing accounts (created before July 15, 2025) keep the legacy 12-month free tier. Everything below describes the **legacy** plan; check [aws.amazon.com/free](https://aws.amazon.com/free/) for your account's terms.
+
 ### The Three Types of Free Tier
 
 <table>
@@ -1135,7 +1162,7 @@ When creating an EC2 instance in our labs:
     </tr>
     <tr>
       <td><strong>12 Months Free</strong></td>
-      <td>Free for 12 months after you create your AWS account</td>
+      <td>Free for 12 months after you create your AWS account (legacy accounts only — see note above)</td>
       <td>12 months from sign-up</td>
     </tr>
     <tr>
@@ -1148,7 +1175,7 @@ When creating an EC2 instance in our labs:
 
 > <img src="https://img.shields.io/badge/Warning-Important-E74C3C?style=flat-square" />
 >
-> **Critical:** The **12-month free tier starts from the day you create your account** — not from when you start using a service. If you created your account 6 months ago, you only have 6 months of free tier left for those services!
+> **Critical (legacy accounts):** The **12-month free tier starts from the day you create your account** — not from when you start using a service. If you created your account 6 months ago, you only have 6 months of free tier left for those services!
 
 ---
 
@@ -1168,7 +1195,7 @@ When creating an EC2 instance in our labs:
   <tbody>
     <tr>
       <td><strong>EC2</strong></td>
-      <td>750 hours/month of <code>t2.micro</code> or <code>t3.micro</code></td>
+      <td>750 hours/month of <code>t2.micro</code> or <code>t3.micro</code> (legacy accounts); new accounts use credits instead</td>
       <td>12 months</td>
       <td>Linux or Windows, in specific regions only</td>
     </tr>
@@ -1180,7 +1207,7 @@ When creating an EC2 instance in our labs:
     </tr>
     <tr>
       <td><strong>ECS</strong></td>
-      <td>750 hours/month of <code>t2.micro</code> Fargate</td>
+      <td>750 hours/month of Fargate tasks (0.25 vCPU + 0.5 GB memory)</td>
       <td>12 months</td>
       <td>Container orchestration</td>
     </tr>
@@ -1215,7 +1242,7 @@ When creating an EC2 instance in our labs:
     </tr>
     <tr>
       <td><strong>EBS</strong></td>
-      <td>30 GB of gp2/gp3 or Magnetic</td>
+      <td>30 GB of gp2/gp3</td>
       <td>12 months</td>
       <td>Block storage for EC2</td>
     </tr>
@@ -1244,7 +1271,7 @@ When creating an EC2 instance in our labs:
   <tbody>
     <tr>
       <td><strong>RDS</strong></td>
-      <td>750 hours/month of <code>db.t2.micro</code> (MySQL, PostgreSQL, MariaDB, Oracle BYOL)</td>
+      <td>750 hours/month of <code>db.t3.micro</code> (MySQL, PostgreSQL, MariaDB, Oracle BYOL)</td>
       <td>12 months</td>
       <td>20 GB of storage included</td>
     </tr>
@@ -1256,7 +1283,7 @@ When creating an EC2 instance in our labs:
     </tr>
     <tr>
       <td><strong>ElastiCache</strong></td>
-      <td>750 hours/month of <code>cache.t2.micro</code> (Redis or Memcached)</td>
+      <td>750 hours/month of <code>cache.t3.micro</code> or <code>cache.t4g.micro</code> (Redis or Memcached)</td>
       <td>12 months</td>
       <td>In-memory caching</td>
     </tr>
@@ -1291,9 +1318,9 @@ When creating an EC2 instance in our labs:
     </tr>
     <tr>
       <td><strong>Route 53</strong></td>
-      <td>1 million queries/month</td>
-      <td>Always Free</td>
-      <td>DNS service</td>
+      <td>No Free Tier (hosted zone <code>$0.50</code>/month; <code>$0.40</code> per million standard queries)</td>
+      <td>—</td>
+      <td>Queries to Alias records targeting AWS resources (ELB, CloudFront, S3) are free</td>
     </tr>
     <tr>
       <td><strong>Data Transfer</strong></td>
@@ -1338,9 +1365,9 @@ When creating an EC2 instance in our labs:
     </tr>
     <tr>
       <td><strong>CodeCommit</strong></td>
-      <td>5 users + 5 GB storage</td>
-      <td>Always Free</td>
-      <td>Private Git repositories</td>
+      <td>No longer available to new customers (closed July 2024); legacy: 5 users + 5 GB storage</td>
+      <td>—</td>
+      <td>Use GitHub/GitLab instead</td>
     </tr>
     <tr>
       <td><strong>CodeDeploy</strong></td>
@@ -1430,7 +1457,7 @@ When creating an EC2 instance in our labs:
 <summary><strong>5. Not stopping RDS instances</strong></summary>
 
 - RDS charges by uptime — stop them when not in use
-- A `db.t2.micro` running 24/7 for a month = ~720 hours (within 750 limit)
+- A `db.t3.micro` running 24/7 for a month = ~720 hours (within 750 limit)
 - But forget about it for 2 months = surprise bill!
 
 </details>

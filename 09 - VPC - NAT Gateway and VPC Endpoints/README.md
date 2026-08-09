@@ -430,7 +430,7 @@ VPC Endpoints let your private instances access AWS services (like S3) through t
 On the PRIVATE EC2 (via bastion), install the AWS CLI if not already present:
 
 ```bash
-# Install AWS CLI v2
+# Install AWS CLI v2 (install unzip first if missing: sudo dnf install -y unzip)
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 unzip awscliv2.zip
 sudo ./aws/install
@@ -620,7 +620,7 @@ Stick these in your brain and they'll never leave. 🧲
 
 ### 🔥 Bonus Challenge
 
-Delete (or stop) the NAT Gateway temporarily, then from your private instance try `sudo yum update`. It fails — because the one-way door is gone. Recreate it and watch the update work again. You just *felt* what NAT actually does. 🪞
+Delete (or stop) the NAT Gateway temporarily, then from your private instance try `sudo dnf update`. It fails — because the one-way door is gone. Recreate it and watch the update work again. You just *felt* what NAT actually does. 🪞
 
 > 💪 **Rithu:** *"Security is best understood by feeling the absence of it. Break it, fix it, learn it."
 
@@ -654,7 +654,7 @@ You've built a proper VPC with public and private subnets! Now let's learn how t
 | `curl checkip.amazonaws.com` times out | NAT Gateway may still be initializing (wait 2-3 min). Also check the NAT's subnet has a route to the IGW |
 | Can't SSH to private EC2 from bastion | Make sure: (1) Private SG allows SSH from public subnet CIDR `10.0.1.0/24`, (2) Bastion and private EC2 are in the same VPC, (3) You're using the correct key pair |
 | `aws s3 ls` fails on private EC2 | Check: (1) VPC Endpoint is Available, (2) Endpoint is associated with `ravi-private-rt`, (3) AWS CLI is installed and configured |
-| "Too many NAT Gateways" error | You may have hit the limit (5 per region). Delete unused NAT Gateways first |
+| "Too many NAT Gateways" error | You may have hit the limit (5 per Availability Zone). Delete unused NAT Gateways first |
 | Can't delete NAT Gateway | Make sure no resources are actively using it. Wait a moment and try again |
 | Elastic IP won't release | Disassociate it from any resource first (NAT Gateway should be deleted by now) |
 | VPC Endpoint creation fails | Make sure you selected the **Gateway** type (not Interface) for S3 |

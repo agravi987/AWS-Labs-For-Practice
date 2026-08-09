@@ -290,18 +290,20 @@ Now the most recent version of `index.html` should be "current" again (visible w
 Now for the really cool part — let S3 manage your storage automatically!
 
 1. Click on the **Management** tab of your bucket
-2. Scroll down to find **Lifecycle rules** (under "Bucket polices and rules")
+2. Scroll down to the **Lifecycle rules** section
 3. Click **Create lifecycle rule**
+
+> 📝 **Console note:** The lifecycle rule editor is now a single scrolling page (no "Next" wizard steps). Fill in the sections below and finish with the **Create rule** button at the bottom.
 
 #### Configure Rule 1: Move Current Versions to Standard-IA
 
 1. **Rule name:** `move-to-standard-ia`
 2. Under **Choose a rule scope**, select **Apply to all objects in the bucket**
-3. Click **Next**
-4. Under **Current version**, check the box for **Move current versions of objects between storage classes**
-5. In the dropdown, select **Standard-IA**
-6. In the **Days after creation** field, type: `30`
-7. Click **Add transition** (if needed)
+   - ⚠️ Check **I acknowledge that this rule applies to all objects in the bucket** when prompted
+3. Under **Lifecycle rule actions**, check the box for **Move current versions of objects between storage classes**
+4. In the dropdown, select **Standard-IA**
+5. In the **Days after creation** field, type: `30`
+6. Click **Add transition** (if needed)
 
 #### Configure Rule 2: Move Noncurrent Versions to Glacier
 
@@ -315,12 +317,11 @@ Now for the really cool part — let S3 manage your storage automatically!
 1. Still under **Noncurrent versions**, check **Permanently delete noncurrent versions of objects**
 2. **Days after objects become noncurrent:** `90`
 
-5. Click **Next**
-6. Review your rules — you should see:
+3. Review your rules — you should see:
    - Current → Standard-IA after 30 days
    - Noncurrent → Glacier after 7 days
    - Noncurrent → Delete after 90 days
-7. Click **Create rule**
+4. Click **Create rule**
 
 > 📸 [Screenshot: Lifecycle rule configuration showing all three transitions]
 ![ Lifecycle rule configuration showing all three transitions](screenshots/lifecycle-rule-config.png)

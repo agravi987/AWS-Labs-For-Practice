@@ -100,7 +100,7 @@ This lab uses **multiple AWS services**. Estimated costs:
 | Service | Estimated Cost |
 |---------|---------------|
 | EC2 (2x t2.micro, ~1.5 hours) | ~$0.03 |
-| RDS (db.t2.micro, ~1.5 hours) | ~$0.05 |
+| RDS (db.t3.micro, ~1.5 hours) | ~$0.05 |
 | ALB (Application Load Balancer) | ~$0.02 |
 | NAT Gateway (~1.5 hours) | ~$0.04 |
 | S3 (minimal storage) | ~$0.01 |
@@ -268,7 +268,7 @@ Let's create the database for our application!
 
 **Configure storage:**
 
-11. **Storage type**: gp2
+11. **Storage type**: gp3
 12. **Allocated storage**: 20 GB
 13. **Storage autoscaling**: Uncheck (stay in Free Tier)
 
@@ -307,8 +307,9 @@ Let's create the database for our application!
 33. SSH into one of your EC2 instances (or launch a temporary one)
 34. Install MySQL client:
     ```bash
-    sudo yum install -y mysql
+    sudo dnf install -y mariadb105
     ```
+    > 💡 On Amazon Linux 2023, the `mysql` package isn't available. `mariadb105` provides the `mysql` command and is fully compatible with RDS MySQL.
 35. Connect to the database:
     ```bash
     mysql -h ravi-capstone-db.xxxx.us-east-1.rds.amazonaws.com -u admin -p
@@ -424,8 +425,8 @@ A Launch Template defines what EC2 instances look like when Auto Scaling creates
 
 ```bash
 #!/bin/bash
-yum update -y
-yum install -y httpd php mysql
+dnf update -y
+dnf install -y httpd php php-mysqlnd mariadb105
 systemctl start httpd
 cat > /var/www/html/index.html << 'EOF'
 <!DOCTYPE html>
@@ -640,10 +641,9 @@ Let's add audit logging for all API activity!
 5. **Storage location**:
    - Select **Create new S3 bucket**
    - **S3 bucket**: Type `ravi-capstone-audit-12345` (add random numbers)
-6. Check ✅ **Enable for all regions**
-7. Click **Create trail**
+6. Click **Create trail**
 
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> "CloudTrail is your black box recorder. If something goes wrong — unauthorized access, accidental deletion, strange behavior — CloudTrail tells you exactly what happened, who did it, and when. Never fly without it!"
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> "CloudTrail is your black box recorder. If something goes wrong — unauthorized access, accidental deletion, strange behavior — CloudTrail tells you exactly what happened, who did it, and when. Never fly without it!" (Console-created trails are multi-Region by default, so every region gets logged automatically.)
 
 📸 [Screenshot: CloudTrail trail created and showing Logging status]
 
@@ -751,7 +751,7 @@ Compute:
   - Launch Template: ravi-capstone-template
 
 Database:
-  - RDS MySQL: ravi-capstone-db (db.t2.micro, 20GB)
+  - RDS MySQL: ravi-capstone-db (db.t3.micro, 20GB)
 
 Load Balancing:
   - ALB: ravi-capstone-alb (HTTP:80)

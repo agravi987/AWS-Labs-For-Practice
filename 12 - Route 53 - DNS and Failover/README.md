@@ -102,9 +102,9 @@ Before you start, make sure you have:
 
 | Resource | Cost |
 |----------|------|
-| Route 53 Health Checks | ~$0.50/month per health check (Free Tier: 100 health checks/month) |
+| Route 53 Health Checks | ~$0.50/month per health check (not Free Tier eligible) |
 | Hosted Zone | $0.50/month per zone |
-| DNS Queries | ~$0.40 per million queries |
+| DNS Queries | ~$0.50 per million queries |
 | **Domain Registration** | **~$12/year** (if you register a new domain) |
 
 > ⚠️ **CRITICAL — Rithu says:** Domain registration costs ~$12 and **cannot be refunded or deleted** once registered. If you don't want to spend that, use **Option B** below. The learning is the same either way! Also, the $0.50 hosted zone fee is NOT covered by the Free Tier. Still cheap, but worth knowing.
@@ -172,7 +172,7 @@ You need **two EC2 instances** for failover routing — a primary and a secondar
 
 ```bash
 #!/bin/bash
-yum install -y httpd
+dnf install -y httpd
 systemctl start httpd
 echo "<h1>Hello from PRIMARY server!</h1><p>Instance: $(hostname)</p>" > /var/www/html/index.html
 ```
@@ -187,7 +187,7 @@ echo "<h1>Hello from PRIMARY server!</h1><p>Instance: $(hostname)</p>" > /var/ww
 
 ```bash
 #!/bin/bash
-yum install -y httpd
+dnf install -y httpd
 systemctl start httpd
 echo "<h1>Hello from BACKUP server!</h1><p>This is the failover instance.</p>" > /var/www/html/index.html
 ```
@@ -217,7 +217,8 @@ Route 53 uses health checks to know if your server is alive. Let's create one fo
 | Field | Value |
 |-------|-------|
 | Health check name | `ravi-primary-health-check` |
-| What to monitor | **IP address** |
+| What to monitor | **Endpoint** |
+| Specify endpoint by | **IP address** |
 | Protocol | **HTTP** |
 | Port | **80** |
 | IP address | Paste your **primary server's public IP** |
@@ -306,6 +307,7 @@ Now let's set up automatic failover. This is where Route 53 really shines!
 | TTL | **300** |
 | Routing policy | **Failover** |
 | Failover record type | **Primary** |
+| Record ID | `primary-www` |
 | Health check | Select `ravi-primary-health-check` |
 | Evaluate target health | **Yes** |
 
@@ -326,6 +328,7 @@ Now let's set up automatic failover. This is where Route 53 really shines!
 | TTL | **300** |
 | Routing policy | **Failover** |
 | Failover record type | **Secondary** |
+| Record ID | `backup-www` |
 | Health check | (Optional — leave empty or create a separate health check) |
 | Evaluate target health | **Yes** |
 
@@ -334,7 +337,7 @@ Now let's set up automatic failover. This is where Route 53 really shines!
 📸 **[Screenshot: Route 53 records page showing both Primary and Secondary failover records]**
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> Notice both records have the SAME name (`www`) but different failover types (Primary vs Secondary). Route 53 knows to check Primary first, and only use Secondary when Primary is unhealthy. It's like having a plan B that automatically kicks in! 🔄
+> Notice both records have the SAME name (`www`) but different failover types (Primary vs Secondary). The **Record ID** is what tells them apart — Route 53 needs it to uniquely identify each record in the failover pair. Route 53 knows to check Primary first, and only use Secondary when Primary is unhealthy. It's like having a plan B that automatically kicks in! 🔄
 
 ---
 

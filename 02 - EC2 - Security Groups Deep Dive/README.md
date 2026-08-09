@@ -198,8 +198,8 @@ ssh -i first-key-pair.pem ec2-user@<public-ip>
 Inside the instance:
 
 ```bash
-sudo yum update -y
-sudo yum install -y httpd
+sudo dnf update -y
+sudo dnf install -y httpd
 sudo systemctl start httpd
 sudo systemctl enable httpd
 echo '<h1>Security Groups Lab - Ravi rocks!</h1>' | sudo tee /var/www/html/index.html
@@ -337,7 +337,7 @@ Wait — the app instance doesn't have httpd running. Install and start it:
 
 ```bash
 # Inside app-instance
-sudo yum install -y httpd
+sudo dnf install -y httpd
 sudo systemctl start httpd
 echo "<h1>Backend App - Only reachable from web-server-sg</h1>" | sudo tee /var/www/html/index.html
 ```

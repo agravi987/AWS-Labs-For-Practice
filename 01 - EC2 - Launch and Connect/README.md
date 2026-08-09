@@ -338,12 +338,12 @@ You're inside your EC2 instance now. Let's install Apache:
 
 ```bash
 # Update all packages (always do this first!)
-sudo yum update -y
+sudo dnf update -y
 ```
 
 ```bash
 # Install the Apache web server
-sudo yum install -y httpd
+sudo dnf install -y httpd
 ```
 
 ```bash
@@ -545,7 +545,7 @@ It'll be like being a **cloud bouncer**. 🫡
 | PuTTY: `No supported auth algorithms` | `.pem` used directly | Convert to `.ppk` with PuTTYgen |
 | Website won't load | Missing HTTP rule in SG | Add inbound HTTP (80) from `0.0.0.0/0` |
 | Connection timeout | Wrong IP or instance down | Verify Public IP, check instance state |
-| `sudo: yum: command not found` | Amazon Linux 2023 uses dnf | Try `sudo dnf install -y httpd` |
+| `yum: command not found` (very unlikely on AL2023) | Old guides used yum; AL2023 uses **dnf** | Use `sudo dnf update -y` / `sudo dnf install -y httpd` |
 | Browser shows default Apache page | Custom index.html failed | Re-run the `echo \| sudo tee` command |
 
 ---

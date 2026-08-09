@@ -81,7 +81,7 @@ In this lab, you will learn how AWS Identity and Access Management (IAM) control
 
 ## 🧠 Prerequisites
 
-- [ ] Completed [Lab 15](../15%20-%20.../README.md)
+- [ ] Completed [Lab 15](../15%20-%20CloudWatch%20-%20Alarms%20and%20Dashboards/README.md)
 - [ ] AWS account with root access
 - [ ] AWS CLI configured (optional but helpful for Step 4)
 - [ ] Basic understanding of what IAM is (covered in lecture material)
@@ -132,7 +132,7 @@ IAM is a globally available AWS service that does **not** charge you anything. Y
 └─────────────────────────────────────────────┘
 ```
 
-> **Did You Know?** IAM policies can be up to 10,240 characters long. But shorter is better. The principle of least privilege means giving ONLY the permissions needed - nothing more.
+> **Did You Know?** IAM policies can be up to 6,144 characters long. But shorter is better. The principle of least privilege means giving ONLY the permissions needed - nothing more.
 
 ---
 
@@ -158,7 +158,7 @@ IAM is a globally available AWS service that does **not** charge you anything. Y
    - Check the box: ☑ **AdministratorAccess**
    - Click **Create group**
 8. The `Developers` group is now created and `ravi-developer` is added to it.
-9. Click **Next** → **Create user**.
+9. Click **Next** → **Review and create** → **Create user**.
 10. ⚠️ **IMPORTANT:** Click **Download .csv file** to save the sign-in credentials. You'll need the Console sign-in URL, username, and password.
 
 > 📸 [Screenshot: The user creation success page showing ravi-developer with the download CSV option]

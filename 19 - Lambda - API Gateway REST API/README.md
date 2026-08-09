@@ -264,16 +264,16 @@ def lambda_handler(event, context):
 #### Create /hello Resource:
 
 1. In your new API's **Resources** tree, click on the root `/`.
-2. Click **Actions → Create Resource**.
+2. Click the **Create resource** button (top-right of the Resources pane).
 3. **Resource Name:** `hello`
 4. **Resource Path:** `/hello` (should auto-fill)
 5. Check: ☑ **Enable API Gateway CORS** (we'll need this for browser access)
-6. Click **Create Resource**.
+6. Click **Create resource**.
 
 #### Create GET Method on /hello:
 
 1. Click on the newly created `/hello` resource.
-2. Click **Actions → Create Method**.
+2. Click the **Create method** button.
 3. Select **GET** from the dropdown → Click the checkmark ✅.
 4. **Integration type:** ⚫ Lambda Function
 5. Check: ☑ **Use Lambda Proxy integration**
@@ -292,15 +292,15 @@ def lambda_handler(event, context):
 > <img src="https://img.shields.io/badge/Step%204-Create%20/students%20Resource-27AE60?style=for-the-badge" />
 
 1. Click on the root `/` resource.
-2. Click **Actions → Create Resource**.
+2. Click the **Create resource** button.
 3. **Resource Name:** `students`
 4. **Resource Path:** `/students`
 5. Check: ☑ **Enable API Gateway CORS**
-6. Click **Create Resource**.
+6. Click **Create resource**.
 
 #### Create GET Method on /students:
 
-1. Click on `/students` → **Actions → Create Method**.
+1. Click on `/students` → Click **Create method**.
 2. Select **GET** → Checkmark ✅.
 3. **Integration type:** ⚫ Lambda Function
 4. Check: ☑ **Use Lambda Proxy integration**
@@ -309,7 +309,7 @@ def lambda_handler(event, context):
 
 #### Create POST Method on /students:
 
-1. Click on `/students` → **Actions → Create Method**.
+1. Click on `/students` → Click **Create method**.
 2. Select **POST** → Checkmark ✅.
 3. **Integration type:** ⚫ Lambda Function
 4. Check: ☑ **Use Lambda Proxy integration**
@@ -334,7 +334,7 @@ def lambda_handler(event, context):
 
 Your API is configured but it's not live yet. You need to **deploy** it!
 
-1. In the API Gateway console, click **Actions → Deploy API**.
+1. In the API Gateway console, click the **Deploy API** button (top-right of the Resources page).
 2. **Deployment stage:** ⚫ [New Stage]
 3. **Stage name:** `prod`
 4. **Stage description:** `Production stage`
@@ -478,13 +478,13 @@ curl https://abc123def4.execute-api.us-east-1.amazonaws.com/prod/anything
 If you're getting CORS errors when testing from a web browser or a frontend app:
 
 1. In API Gateway, click on the `/hello` resource.
-2. Click **Actions → Enable CORS**.
+2. Click the **Enable CORS** button (top-right of the Resources page).
 3. **Access-Control-Allow-Origin:** `*` (or your specific domain)
 4. **Access-Control-Allow-Headers:** `Content-Type,Authorization`
 5. **Access-Control-Allow-Methods:** `GET,POST,OPTIONS`
 6. Click **Enable CORS** → **Replace Access-Control-Allow-Origin header**.
 7. **Redeploy the API:**
-   - Click **Actions → Deploy API** → Select `prod` → **Deploy**.
+   - Click **Deploy API** → Select `prod` → **Deploy**.
 
 Repeat the same for the `/students` resource.
 
@@ -531,14 +531,14 @@ Repeat the same for the `/students` resource.
 **Delete all resources to avoid charges and security risks!**
 
 ### Delete API Gateway:
-1. Go to **API Gateway → APIs → ravi-student-api**.
-2. Click **Actions → Delete**.
+1. Go to **API Gateway → APIs**.
+2. Select `ravi-student-api` → Click **Actions → Delete**.
 3. Confirm by typing `ravi-student-api` → **Delete API**.
    - This automatically deletes the stage, deployment, resources, and methods.
 
 ### Delete Lambda Function:
 1. Go to **Lambda → Functions → ravi-rest-api**.
-2. Click **Actions → Delete**.
+2. Click **Actions → Delete function**.
 3. Type `delete` → **Delete**.
 
 ### Delete IAM Role:

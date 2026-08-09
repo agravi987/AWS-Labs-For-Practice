@@ -148,7 +148,7 @@
 | Q2 | Can the internet initiate a connection to a private instance behind NAT? | **No** — NAT allows **outbound only**; nobody can reach in |
 | Q3 | Cheaper for private S3 access: NAT Gateway or Gateway VPC Endpoint? | The **Gateway VPC Endpoint — it's free!** NAT Gateways cost per-hour + data |
 
-**🔥 Bonus Challenge:** Remove the NAT, run `sudo yum update` on a private instance (fails!), then recreate it.
+**🔥 Bonus Challenge:** Remove the NAT, run `sudo dnf update` on a private instance (fails!), then recreate it.
 
 ---
 
