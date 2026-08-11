@@ -161,6 +161,7 @@ A DB Subnet Group tells RDS which subnets (and therefore which Availability Zone
 > Just like with ASG, we're putting our database in 2 AZs for high availability. If one AZ has issues, RDS can failover to the other. Even for a lab, it's good practice! 🏗️
 
 📸 **[Screenshot: DB Subnet Group creation page showing 2 AZs selected]**
+![DB Subnet Group creation page showing 2 AZs selected](screenshots/01-db-subnet-group-2azs.png)
 
 ---
 
@@ -192,6 +193,7 @@ Your database needs its own security group. We'll allow MySQL access from anywhe
 > ⚠️ **Production Reality Check:** In the real world, you would NEVER open MySQL to the entire internet! You'd restrict it to specific security groups or IP ranges. But for learning, `0.0.0.0/0` lets us connect from our local machine without VPC peering headaches.
 
 📸 **[Screenshot: Security group with MySQL port 3306 open]**
+![Security group with MySQL port 3306 open](screenshots/02-rds-sg-mysql-3306-open.png)
 
 ---
 
@@ -267,7 +269,7 @@ This is the main event — let's launch a MySQL database!
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > Go grab a coffee while you wait! ☕ RDS is setting up MySQL, configuring networking, setting up the security group, and more. This is the "managed" part of a managed database — AWS does all the boring stuff for you.
 
-📸 **[Screenshot: RDS console showing the database with "Creating" status]**
+
 
 ---
 
@@ -285,6 +287,7 @@ This is the main event — let's launch a MySQL database!
    - Note the **Port**: `3306`
 
 📸 **[Screenshot: RDS database showing "Available" status and the endpoint]**
+![RDS database showing "Available" status and the endpoint](screenshots/04-rds-available-endpoint.png)
 
 ---
 
@@ -336,6 +339,7 @@ mysql>
 > If you get "Access denied", double-check your password. If you get "Can't connect", check that the security group allows port 3306 from your IP or the EC2 instance's private IP.
 
 📸 **[Screenshot: Terminal showing successful MySQL connection]**
+![Terminal showing successful MySQL connection](screenshots/05-terminal-mysql-connection.png)
 
 ---
 
@@ -386,6 +390,7 @@ You should see:
 🎉 **Your first cloud database records!**
 
 📸 **[Screenshot: MySQL terminal showing the SELECT query results]**
+![MySQL terminal showing the SELECT query results](screenshots/06-mysql-select-results.png)
 
 Let's do a few more operations:
 
@@ -427,6 +432,7 @@ RDS automatically sends metrics to CloudWatch. Let's check them out!
 4. Click **View all CloudWatch metrics** for more detail
 
 📸 **[Screenshot: RDS monitoring tab showing CPU and connection metrics]**
+![RDS monitoring tab showing CPU and connection metrics](screenshots/07-rds-cloudwatch-metrics.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > In production, you'd set up CloudWatch alarms on these metrics — like alerting when CPU goes above 80% or free storage drops below 1 GB. We'll cover that in Lab 15!
@@ -447,8 +453,6 @@ Let's confirm everything worked:
 - [ ] Created table `students` with 3 rows of data
 - [ ] SELECT query returned the expected results
 - [ ] RDS metrics visible in CloudWatch
-
-📸 **[Screenshot: RDS database details page showing all configurations]**
 
 ---
 

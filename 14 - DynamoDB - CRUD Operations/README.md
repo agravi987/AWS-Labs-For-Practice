@@ -156,6 +156,7 @@ Before you start, make sure you have:
 5. Wait for the table status to change from **Creating** to **Active** ⏱️ (about 30 seconds)
 
 📸 **[Screenshot: DynamoDB table creation page with Students table name and student_id partition key]**
+![DynamoDB table creation page with Students table name and student_id partition key](screenshots/01-dynamodb-table-creation.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > Notice the "Default settings" option uses **Provisioned** capacity with 5 Read Capacity Units (RCU) and 5 Write Capacity Units (WCU). This is well within the Free Tier and means DynamoDB will handle up to 5 reads and 5 writes per second. Plenty for this lab!
@@ -184,7 +185,6 @@ Let's add some data! We'll use both the Console and CLI.
 5. To add each attribute, click the **Add new attribute** dropdown and select the type (String, Number, etc.)
 6. Click **Create item**
 
-📸 **[Screenshot: DynamoDB item creation form showing all fields]**
 
 7. Create a second item:
 
@@ -211,8 +211,6 @@ aws dynamodb put-item \
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > Notice the CLI syntax! Each value needs a type descriptor: `"S"` for String, `"N"` for Number. DynamoDB is very strict about types — `"95"` (string) is different from `95` (number). This trips up beginners a lot!
 
-📸 **[Screenshot: Terminal showing the put-item command and no error output (success = no output)]**
-
 ---
 
 > <img src="https://img.shields.io/badge/Step%203-READ%20Query%20Items-27AE60?style=for-the-badge" />
@@ -229,6 +227,7 @@ Let's read back what we just inserted!
    - You'll see only Ravi's record
 
 📸 **[Screenshot: DynamoDB table showing all 3 items]**
+![DynamoDB table showing all 3 items](screenshots/02-dynamodb-table-items.png)
 
 **Method B: Using the AWS CLI**
 
@@ -249,8 +248,9 @@ You'll see all items in JSON format:
     ],
     "Count": 3,
     "ScannedCount": 3
-}
+} 
 ```
+![DynamoDB CLI scan result](screenshots/03-dynamodb-cli-scan-result.png)
 
 **Query a specific item:**
 
@@ -326,6 +326,7 @@ You should now see the updated score and the new `grade` attribute:
 > Notice that the `grade` attribute didn't exist before, but we just added it with an update! In SQL, you'd need to ALTER TABLE first. In DynamoDB, each item can have completely different attributes. This is the beauty (and danger) of NoSQL! 🎨
 
 📸 **[Screenshot: Terminal showing the update-item command and the updated query result]**
+![Terminal showing the update-item command and the updated query result](screenshots/04-dynamodb-update-command.png)
 
 ---
 
@@ -393,7 +394,7 @@ Let's add a **Global Secondary Index (GSI)** to query by `topic`!
 4. Click **Create index**
 5. Wait for it to become **Active** ⏱️
 
-📸 **[Screenshot: GSI creation page with topic as partition key]**
+
 
 **Query using the GSI:**
 
@@ -403,6 +404,8 @@ In the console:
 3. Change the index to `topic-index`
 4. In the **Partition key** field, enter `EC2` (the console uses `topic` as the key name from the index)
 5. Click **Run** — you'll see only Ravi's EC2 record!
+
+![query using index](screenshots/05-dynamodb-query-index.png)
 
 Via CLI:
 
@@ -428,6 +431,7 @@ aws dynamodb query \
 4. Click **Contributor insights** to see which items are accessed most
 
 📸 **[Screenshot: DynamoDB CloudWatch metrics showing read/write capacity]**
+![DynamoDB CloudWatch metrics showing read/write capacity](screenshots/06-dynamodb-cloudwatch-metrics.png)
 
 ---
 

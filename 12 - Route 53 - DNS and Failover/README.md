@@ -201,6 +201,7 @@ echo "<h1>Hello from BACKUP server!</h1><p>This is the failover instance.</p>" >
    - Backup IP: `________________`
 
 📸 **[Screenshot: Two EC2 instances running — primary and backup]**
+![Two EC2 instances running — primary and backup](screenshots/01-two-ec2-instances-running.png)
 
 ---
 
@@ -234,6 +235,7 @@ Route 53 uses health checks to know if your server is alive. Let's create one fo
 5. Wait about 1 minute, then check the health check status. It should show **Healthy** (green)
 
 📸 **[Screenshot: Health check showing "Healthy" status]**
+![Health check showing "Healthy" status](screenshots/02-health-check-healthy.png)
 
 ---
 
@@ -248,8 +250,6 @@ If you registered a domain in Step 1:
 1. Go to **Route 53** → **Hosted zones**
 2. Your domain should already have a hosted zone. Click on it.
 3. You'll see default NS and SOA records — those are normal
-
-📸 **[Screenshot: Hosted zone with default records]**
 
 ---
 
@@ -284,8 +284,6 @@ curl http://www.your-domain.com
 ```
 
 You should see the primary server's response! 🎉
-
-📸 **[Screenshot: nslookup showing the correct IP address]**
 
 ---
 
@@ -333,8 +331,6 @@ Now let's set up automatic failover. This is where Route 53 really shines!
 | Evaluate target health | **Yes** |
 
 2. Click **Create records**
-
-📸 **[Screenshot: Route 53 records page showing both Primary and Secondary failover records]**
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > Notice both records have the SAME name (`www`) but different failover types (Primary vs Secondary). The **Record ID** is what tells them apart — Route 53 needs it to uniquely identify each record in the failover pair. Route 53 knows to check Primary first, and only use Secondary when Primary is unhealthy. It's like having a plan B that automatically kicks in! 🔄
@@ -410,8 +406,6 @@ sudo systemctl start httpd
 5. Check Route 53 health check — it should show **Healthy** again
 6. Open `http://www.your-domain.com` — you should see **"Hello from PRIMARY server!"** again!
 
-📸 **[Screenshot: Health check back to "Healthy" and primary serving traffic]**
-
 ---
 
 ### Step 7: Verify Your Work
@@ -429,8 +423,6 @@ Let's make sure everything is set up correctly:
 - [ ] After health check fails, DNS returns backup IP
 - [ ] Restarting httpd on primary causes health check to recover
 - [ ] After health check recovers, DNS returns primary IP
-
-📸 **[Screenshot: Route 53 records overview showing both failover records]**
 
 ---
 
