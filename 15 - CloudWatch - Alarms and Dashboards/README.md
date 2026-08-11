@@ -188,20 +188,26 @@ systemctl enable httpd
 Let's examine how AWS publishes hypervisor metrics to CloudWatch in the modern console interface.
 
 1. Open the **CloudWatch Console**.
-2. In the left navigation menu under **Metrics**, click **All metrics**.
-3. In the main window, notice the top navigation tabs:
+2. In the left navigation menu under **Metrics**, observe the 4 available options:
+   - **Query studio**: Run Prometheus (PromQL) or SQL queries on AWS/OpenTelemetry metrics.
+   - **Classic metrics**: Browse standard metric namespaces by service (e.g., `AWS/EC2`). *(Note: In older AWS console versions, this was labeled "All metrics")*.
+   - **Explorer**: Create tag-based dynamic metric visualizations.
+   - **Streams**: Stream real-time metrics to Firehose or third-party destinations.
+3. Click **Classic metrics**.
+4. In the main window, notice the top navigation tabs:
    - **Browse**: Explore metrics grouped by AWS service namespaces (`AWS/EC2`, `AWS/RDS`, `AWS/DynamoDB`, etc.).
    - **Graphed metrics**: Adjust statistics (Average, Maximum, Sum), period (1m, 5m), color scheme, and Y-axis scales for currently selected metrics.
    - **Query**: Run SQL queries using **CloudWatch Metrics Insights**.
-4. Click the **Browse** tab → under **AWS namespaces**, select **EC2** → click **Per-Instance Metrics**.
-5. Locate `cloudwatch-test-ec2` in the table:
+5. Click the **Browse** tab → under **AWS namespaces**, select **EC2** → click **Per-Instance Metrics**.
+6. Locate `cloudwatch-test-ec2` in the table:
    - Check the box next to **CPUUtilization** (Percentage of allocated compute units in use).
    - Observe other hypervisor metrics: **NetworkIn**, **NetworkOut**, **DiskReadBytes**, **StatusCheckFailed**.
-6. Inspect the graph panel at the top:
+7. Inspect the graph panel at the top:
    - Use the time-range picker to view **1h** or **3h**.
    - Note that default hypervisor metrics publish every **5 minutes** for FREE (Basic Monitoring).
 
 📸 **[Screenshot: CloudWatch metrics page showing CPU utilization graph for the EC2 instance]**
+![CloudWatch metrics page showing CPU utilization graph for the EC2 instance](image-1.png)
 
 > <img src="https://img.shields.io/badge/Deep%20Dive-Hypervisor%20vs%20OS%20Metrics-2980B9?style=flat-square" />
 >
@@ -292,7 +298,7 @@ stress-ng --cpu 4 --timeout 600s
 > ```
 
 3. Observe metric updates in CloudWatch:
-   - Go to **CloudWatch Console** → **Metrics** → **All metrics** → **Browse** → **EC2** → **Per-Instance Metrics**.
+   - Go to **CloudWatch Console** → **Metrics** → **Classic metrics** → **Browse** → **EC2** → **Per-Instance Metrics**.
    - Check **CPUUtilization** for `cloudwatch-test-ec2`. You will see the line graph climb to 100%! 📈
 
 4. Track the Alarm State transition:
