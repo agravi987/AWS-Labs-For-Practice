@@ -179,7 +179,7 @@ systemctl enable httpd
 5. Wait until the instance state changes to **Running** and **2/2 status checks passed**.
 
 📸 **[Screenshot: EC2 instance cloudwatch-test-ec2 in running state]**
-![EC2 instance cloudwatch-test-ec2 in running state](image.png)
+![EC2 instance cloudwatch-test-ec2 in running state](screenshots/ec2-running-state.png)
 
 ---
 
@@ -207,7 +207,7 @@ Let's examine how AWS publishes hypervisor metrics to CloudWatch in the modern c
    - Note that default hypervisor metrics publish every **5 minutes** for FREE (Basic Monitoring).
 
 📸 **[Screenshot: CloudWatch metrics page showing CPU utilization graph for the EC2 instance]**
-![CloudWatch metrics page showing CPU utilization graph for the EC2 instance](image-1.png)
+![CloudWatch metrics page showing CPU utilization graph for the EC2 instance](screenshots/cloudwatch-cpu-graph.png)
 
 > <img src="https://img.shields.io/badge/Deep%20Dive-Hypervisor%20vs%20OS%20Metrics-2980B9?style=flat-square" />
 >
@@ -273,6 +273,7 @@ We will now configure a CloudWatch Alarm that triggers an email notification whe
 2. Click **Create alarm** at the bottom right.
 
 📸 **[Screenshot: Alarm creation page showing all configured settings]**
+![Alarm creation page showing all configured settings](screenshots/cloudwatch-alarm-creation.png)
 
 ---
 
@@ -307,6 +308,7 @@ stress-ng --cpu 4 --timeout 600s
    - After ~5–10 minutes, check your email inbox — you will receive an SNS alert email detailing the breach! 📧
 
 📸 **[Screenshot: Alarm showing "In alarm" state in the CloudWatch console]**
+![Alarm showing "In alarm" state in the CloudWatch console](screenshots/cloudwatch-alarm-in-alarm-state.png)
 
 5. Stop the stress generator once confirmed (Press `Ctrl + C` in your SSH terminal).
 
@@ -349,7 +351,7 @@ Let's build a multi-widget operational dashboard to monitor your infrastructure 
 5. Click **Save dashboard** at the top right corner!
 
 📸 **[Screenshot: Complete Ravi-Labs-Dashboard with all 4 widgets visible]**
-
+![Complete Ravi-Labs-Dashboard with all 4 widgets visible](screenshots/cloudwatch-dashboard-complete.png)
 ---
 
 ### Step 6: Centralize Logs, Use Logs Insights & Live Tail
@@ -389,6 +391,7 @@ aws logs put-log-events \
    - Select `ravi-app-logs` to stream incoming log events live to your browser.
 
 📸 **[Screenshot: CloudWatch Logs showing the test log message]**
+![CloudWatch Logs showing the test log message](screenshots/cloudwatch-log-message.png)
 
 ---
 

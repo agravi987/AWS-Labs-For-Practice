@@ -162,6 +162,7 @@ IAM is a globally available AWS service that does **not** charge you anything. Y
 10. ⚠️ **IMPORTANT:** Click **Download .csv file** to save the sign-in credentials. You'll need the Console sign-in URL, username, and password.
 
 > 📸 [Screenshot: The user creation success page showing ravi-developer with the download CSV option]
+> ![The user creation success page showing ravi-developer with the download CSV option](screenshots/iam-user-creation-success.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > In a real production environment, you would **NEVER** give AdministratorAccess to a developer! We're doing it here so you can explore freely. In production, use the principle of least privilege — give only what's needed.
@@ -188,7 +189,6 @@ Access Key ID:     AKIAIOSFODNN7EXAMPLE    ← looks like this
 Secret Access Key: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY  ← looks like this
 ```
 
-> 📸 [Screenshot: The access key creation success page for ravi-readonly]
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > Store those access keys in a password manager or a secure file. Never commit them to Git. Never. I mean it, Ravi. 🔒
@@ -206,6 +206,7 @@ Secret Access Key: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY  ← looks like this
 5. Click on **ReadOnlyUsers** group — same thing, you'll see `ReadOnlyAccess`.
 
 > 📸 [Screenshot: The Developers group permissions tab showing AdministratorAccess policy]
+> ![The Developers group permissions tab showing AdministratorAccess policy](screenshots/iam-developers-group-permissions.png)
 
 **Understanding Group Policies:**
 
@@ -248,7 +249,8 @@ Now let's create a **custom policy** using the visual editor — no JSON require
 8. **Description:** `Allows listing, getting, and putting objects in ravi-dev-bucket-* with IP restriction`
 9. Click **Create policy**.
 
-> 📸 [Screenshot: The visual policy editor showing S3 actions selected and the policy summary]
+> 📸 [Screenshot: S3DeveloperAccess custom policy visual editor]
+> ![The visual policy editor showing S3 actions selected and the policy summary](screenshots/iam-s3developer-policy.png)
 
 #### Attach the Custom Policy to Developers Group:
 
@@ -274,6 +276,8 @@ Now let's create a **custom policy** using the visual editor — no JSON require
 8. Click **Create role**.
 
 > 📸 [Screenshot: The role creation page showing EC2 as the trusted entity with S3ReadOnlyAccess policy]
+> ![The role creation page showing EC2 as the trusted entity with S3ReadOnlyAccess policy](screenshots/iam-ec2-role-creation.png)
+
 
 #### Attach the Role to an EC2 Instance:
 
@@ -313,6 +317,7 @@ Now let's create a **custom policy** using the visual editor — no JSON require
    ```
 
 > 📸 [Screenshot: Terminal showing the successful `aws s3 ls` and the failed `aws s3 mb` command]
+> ![Terminal showing the successful `aws s3 ls` and the failed `aws s3 mb` command](screenshots/iam-role-cli-test.png)
 
 🎉 **If you see "Access Denied" on the create command, your IAM role is working perfectly!** The role only allows reading, not writing.
 
@@ -361,6 +366,7 @@ Now let's test the different user permissions.
 8. Review the **Findings** — this will show you any resources that are publicly accessible or shared with external accounts.
 
 > 📸 [Screenshot: IAM Access Analyzer findings page]
+> ![IAM Access Analyzer findings page](screenshots/iam-access-analyzer-findings.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > Access Analyzer is like a security guard that watches your AWS account 24/7 and tells you if you've accidentally left the front door open. Run it periodically in production!
