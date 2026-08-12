@@ -195,6 +195,7 @@ You should see a visual showing:
 
 13. Click **Create VPC**
 
+
 **Wait for the VPC to be created**, then verify:
 14. Go to **Your VPCs** → You should see `ravi-capstone-vpc`
 15. Go to **Subnets** → You should see 4 subnets (2 public, 2 private)
