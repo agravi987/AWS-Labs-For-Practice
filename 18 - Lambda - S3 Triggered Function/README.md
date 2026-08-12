@@ -151,6 +151,7 @@ S3 Free Tier (12 months):
 8. Click **Create bucket**.
 
 > 📸 [Screenshot: The S3 bucket creation form with ravi-lambda-trigger-bucket-12345 entered]
+![ The S3 bucket creation form with ravi-lambda-trigger-bucket-12345 entered](screenshots/01-s3-bucket-created.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > Bucket names can only contain lowercase letters, numbers, hyphens, and periods. No spaces, no underscores, no capital letters. Think of it like a DNS name — it has to be globally unique!
@@ -163,14 +164,15 @@ S3 Free Tier (12 months):
 2. Click the orange **Create function** button.
 3. **Author from scratch** should be selected (it's the default).
 4. **Function name:** `s3-image-processor`
-5. **Runtime:** Select **Python 3.12** from the dropdown.
+5. **Runtime:** Select **Python 3.14** from the dropdown.
 6. **Architecture:** `x86_64`
 7. **Execution role:**
    - Select: ⚫ **Create a new role with basic Lambda permissions**
    - **Role name:** `lambda-s3-role`
 8. Click **Create function**.
 
-> 📸 [Screenshot: The Lambda function creation form showing Python 3.12 and the new role option]
+> 📸 [Screenshot: The Lambda function creation form showing Python 3.14 and the new role option]
+![The Lambda function creation form showing Python 3.14 and the new role option](screenshots/02-lambda-function-created.png)
 
 After creation, you'll be taken to the function configuration page. You should see a success message.
 
@@ -217,6 +219,7 @@ def lambda_handler(event, context):
 4. Click the **Deploy** button (orange button above the code editor).
 
 > 📸 [Screenshot: The Lambda code editor showing the Python code with the Deploy button highlighted]
+![The Lambda code editor showing the Python code with the Deploy button highlighted](screenshots/03-lambda-code-deploy.png)
 
 **What does this code do?**
 

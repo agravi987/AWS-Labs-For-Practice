@@ -145,6 +145,7 @@ In this lab, you will explore two of AWS's core messaging services: **Simple Not
 9. Click **Create topic**.
 
 > 📸 [Screenshot: The SNS topic creation form with ravi-notifications filled in]
+![The SNS topic creation form with ravi-notifications filled in](screenshots/01-sns-topic-created.png)
 
 You should see a success message: "Topic ravi-notifications created successfully."
 
@@ -163,6 +164,7 @@ You should see a success message: "Topic ravi-notifications created successfully
 5. Click **Create subscription**.
 
 > 📸 [Screenshot: The subscription creation form showing Email protocol with your email address]
+![The subscription creation form showing Email protocol with your email address](screenshots/02-sns-email-subscription.png)
 
 6. The subscription will appear with a **Pending confirmation** status.
 
@@ -178,6 +180,7 @@ You should see a success message: "Topic ravi-notifications created successfully
 5. Go back to the SNS console → **Subscriptions** → You should now see the status change to **Confirmed**.
 
 > 📸 [Screenshot: The confirmed subscription showing status "Confirmed" in the SNS console]
+![The confirmed subscription showing status "Confirmed" in the SNS console](screenshots/03-subscription-confirmed.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > SNS uses a "confirm the owner" pattern — this prevents people from subscribing random email addresses to topics. Think of it like a double opt-in for newsletters, but for AWS!
@@ -199,6 +202,7 @@ You should see a success message: "Topic ravi-notifications created successfully
 7. You should see a success message: "Your message has been published."
 
 > 📸 [Screenshot: The publish message form filled out with the test message]
+![The publish message form filled out with the test message](screenshots/04-publish-message.png)
 
 8. **Check your email inbox** — you should receive the notification within seconds!
 
@@ -223,6 +227,7 @@ You should see a success message: "Topic ravi-notifications created successfully
 6. Click **Create queue**.
 
 > 📸 [Screenshot: The SQS queue creation page showing ravi-message-queue with default settings]
+![The SQS queue creation page showing ravi-message-queue with default settings](screenshots/05-sqs-queue-created.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > Think of SQS like a To-Do list that persists. Messages sit in the queue until someone (or something) picks them up and processes them. Even if the consumer crashes, the message stays there and can be retried. Reliable!
@@ -241,6 +246,7 @@ This is where the magic happens! We'll make SNS automatically forward messages t
 5. Click **Create subscription**.
 
 > 📸 [Screenshot: The subscription form showing SQS protocol with ravi-message-queue selected]
+![The subscription form showing SQS protocol with ravi-message-queue selected](screenshots/06-sns-to-sqs-subscription.png)
 
 6. Wait a few seconds — the subscription status should change to **Confirmed** automatically.
    - SNS-to-SQS subscriptions confirm automatically (no email click needed!) because AWS handles the authentication internally.
@@ -295,6 +301,8 @@ Each subscriber gets a COPY of the same message!
 4. Wait a few seconds — you should see the message appear!
 
 > 📸 [Screenshot: SQS "Send and receive messages" page showing the message received from SNS]
+![ SQS "Send and receive messages" page showing the message received from SNS](screenshots/07-sqs-message-received.png)
+
 
 5. Click on the message to view its body. You'll see:
    - The original message body
@@ -325,6 +333,7 @@ SQS can also receive messages directly (without SNS).
 8. You should see **2 messages** in the queue (the SNS-forwarded one + this direct one).
 
 > 📸 [Screenshot: SQS showing 2 messages — one from SNS, one direct]
+![SQS showing 2 messages — one from SNS, one direct](screenshots/08-sqs-messages-sns-and-direct.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > In real applications, direct SQS messages are often used for task queues. For example, when you upload a video to YouTube, a message gets sent to SQS saying "process this video." A fleet of workers then picks up these messages and processes them in parallel.
@@ -375,6 +384,7 @@ aws sqs delete-message \
 ```
 
 > 📸 [Screenshot: Terminal showing all three SQS CLI commands and their output]
+![Terminal showing all three SQS CLI commands and their output](screenshots/09-sqs-cli-output.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > Always delete messages after processing them! If you don't, the message becomes visible again after the visibility timeout (30 seconds by default), and another worker might process it again. This is called "at-least-once delivery" — it means the message might be delivered more than once, so your code should be idempotent (handling the same message twice shouldn't cause problems).
