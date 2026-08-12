@@ -1,67 +1,33 @@
-# Complete AWS Hands-On Labs
+# agravi987/AWS-Labs-For-Practice
 
-> Build and deploy 25 hands-on AWS labs covering various services and scenarios.
+> Hands-on lab collection: agravi987/AWS-Labs-For-Practice
 
-**Category:** Cloud Computing · **Difficulty:** 3/5 · **Status:** not_started
+## Milestones (1/25 complete)
 
-## Milestones
+- [x] **EC2 - Launch and Connect** — `01 - EC2 - Launch and Connect`
+- [ ] **EC2 - Security Groups Deep Dive** — `02 - EC2 - Security Groups Deep Dive`
+- [ ] **EBS - Volumes and Snapshots** — `03 - EBS - Volumes and Snapshots`
+- [ ] **AMI - Create and Clone** — `04 - AMI - Create and Clone`
+- [ ] **S3 - Static Website Hosting** — `05 - S3 - Static Website Hosting`
+- [ ] **S3 - Versioning and Lifecycle Policies** — `06 - S3 - Versioning and Lifecycle Policies`
+- [ ] **S3 - Cross-Region Replication** — `07 - S3 - Cross-Region Replication`
+- [ ] **VPC - Build from Scratch** — `08 - VPC - Build from Scratch`
+- [ ] **VPC - NAT Gateway and VPC Endpoints** — `09 - VPC - NAT Gateway and VPC Endpoints`
+- [ ] **ELB - Application Load Balancer** — `10 - ELB - Application Load Balancer`
+- [ ] **ASG - Auto Scaling Group** — `11 - ASG - Auto Scaling Group`
+- [ ] **Route 53 - DNS and Failover** — `12 - Route 53 - DNS and Failover`
+- [ ] **RDS - MySQL on AWS** — `13 - RDS - MySQL on AWS`
+- [ ] **DynamoDB - CRUD Operations** — `14 - DynamoDB - CRUD Operations`
+- [ ] **CloudWatch - Alarms and Dashboards** — `15 - CloudWatch - Alarms and Dashboards`
+- [ ] **IAM - Users, Groups, Roles, Policies** — `16 - IAM - Users, Groups, Roles, Policies`
+- [ ] **SNS and SQS - Messaging** — `17 - SNS and SQS - Messaging`
+- [ ] **Lambda - S3 Triggered Function** — `18 - Lambda - S3 Triggered Function`
+- [ ] **Lambda - API Gateway REST API** — `19 - Lambda - API Gateway REST API`
+- [ ] **ECS - Deploy NGINX on Fargate** — `20 - ECS - Deploy NGINX on Fargate`
+- [ ] **CloudFormation - Deploy EC2** — `21 - CloudFormation - Deploy EC2`
+- [ ] **CloudTrail - Enable and Query** — `22 - CloudTrail - Enable and Query`
+- [ ] **KMS - Encrypt S3 and EBS** — `23 - KMS - Encrypt S3 and EBS`
+- [ ] **AWS Backup - Multi-Service Backup** — `24 - AWS Backup - Multi-Service Backup`
+- [ ] **Capstone - Full Stack on AWS** — `25 - Capstone - Full Stack on AWS`
 
-- [ ] **Setup** — 0/2 steps complete
-- [ ] **Build** — 0/2 steps complete
-- [ ] **Verify & polish** — 0/2 steps complete
-
-## Guide
-
-### Step 1 — Set up AWS Account and CLI
-
-- **Objective:** Configure AWS account and install AWS CLI
-- **Instructions:**
-  Follow the setup instructions in PREREQUISITES.md to create an AWS account, install AWS CLI, and configure it.
-- **Verification:** Verify that the AWS CLI is working by running 'aws --version' in the terminal.
-
-- [ ] Complete this step
-
-### Step 2 — Complete Lab 01 - EC2 Launch and Connect
-
-- **Objective:** Launch and connect to an EC2 instance
-- **Instructions:**
-  Follow the instructions in Lab 01 to launch and connect to an EC2 instance.
-- **Verification:** Verify that the EC2 instance is running and accessible via SSH.
-
-- [ ] Complete this step
-
-### Step 3 — Complete Lab 02 - EC2 Security Groups Deep Dive
-
-- **Objective:** Understand and configure EC2 security groups
-- **Instructions:**
-  Follow the instructions in Lab 02 to configure EC2 security groups.
-- **Verification:** Verify that the security groups are correctly configured and functioning as expected.
-
-- [ ] Complete this step
-
-### Step 4 — Complete Lab 03 - EBS Volumes and Snapshots
-
-- **Objective:** Create and manage EBS volumes and snapshots
-- **Instructions:**
-  Follow the instructions in Lab 03 to create and manage EBS volumes and snapshots.
-- **Verification:** Verify that the EBS volumes and snapshots are correctly created and functioning as expected.
-
-- [ ] Complete this step
-
-### Step 5 — Complete Remaining Labs
-
-- **Objective:** Complete the remaining 22 labs to gain comprehensive hands-on experience with AWS services
-- **Instructions:**
-  Follow the instructions in each lab to complete the hands-on exercises.
-- **Verification:** Verify that each lab is completed successfully and the expected outcomes are achieved.
-
-- [ ] Complete this step
-
-### Step 6 — Clean Up Resources
-
-- **Objective:** Clean up AWS resources to avoid unnecessary costs
-- **Instructions:**
-  Follow the cleanup instructions in each lab to delete created resources.
-- **Verification:** Verify that all resources are deleted and the AWS account is clean.
-
-- [ ] Complete this step
+_Progress synced by Rithu. Complete each folder's quiz in the app to tick it off._
