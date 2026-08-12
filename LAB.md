@@ -2,9 +2,9 @@
 
 > Hands-on lab collection: agravi987/AWS-Labs-For-Practice
 
-## Milestones (1/25 complete)
+## Milestones (0/25 complete)
 
-- [x] **EC2 - Launch and Connect** — `01 - EC2 - Launch and Connect`
+- [ ] **EC2 - Launch and Connect** — `01 - EC2 - Launch and Connect`
 - [ ] **EC2 - Security Groups Deep Dive** — `02 - EC2 - Security Groups Deep Dive`
 - [ ] **EBS - Volumes and Snapshots** — `03 - EBS - Volumes and Snapshots`
 - [ ] **AMI - Create and Clone** — `04 - AMI - Create and Clone`
