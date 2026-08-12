@@ -6,7 +6,7 @@
 
 ## Milestones
 
-- [ ] **Setup** — 0/2 steps complete
+- [ ] **Setup** — 1/2 steps complete
 - [ ] **Build** — 0/3 steps complete
 - [ ] **Verify & polish** — 0/2 steps complete
 
@@ -19,7 +19,7 @@
   Go to the AWS Management Console, search for EC2, click on it, then click the 'Launch instance' button. Follow the wizard to launch an instance with the Amazon Linux 2023 AMI and a t2.micro instance type.
 - **Verification:** Verify the instance is in a 'running' state and has passed 2/2 status checks.
 
-- [ ] Complete this step
+- [x] Complete this step
 
 ### Step 2 — Create and Manage SSH Key Pairs
 
