@@ -75,7 +75,7 @@ By the end of this lab, you will:
 - Run an on-demand backup and restore from it
 - View backup compliance reports
 
-AWS Backup is your **central backup dashboard** for AWS. Instead of manually snapshotting each service, you create one plan that covers EC2, RDS, S3, DynamoDB, and more. It's like setting one alarm clock for every morning instead of five.
+AWS Backup is your **central backup dashboard** — one plan covers EC2, RDS, S3, DynamoDB, and more.
 
 ---
 
@@ -94,11 +94,13 @@ AWS Backup charges for stored backups and storage:
 
 | What | Cost |
 |------|------|
-| EBS backup storage | $0.05/GB/month for first copy |
-| RDS backup storage | Included with RDS Free Tier (up to 20GB) |
+| Backup storage (EBS, RDS, S3, EFS) | ~$0.05/GB/month (warm) |
+| Cold storage (old backups) | ~$0.012/GB/month |
 | DynamoDB backup | $0.10/GB/month |
-| S3 backup (via AWS Backup) | Standard S3 pricing |
-| On-demand backups | Same as service-native backup pricing |
+| S3 backup | ~$0.05/GB/month + small S3 API/EventBridge fees |
+| On-demand backups | Same rates as scheduled backups |
+
+> ℹ️ The RDS Free Tier's 20 GB backup allowance covers RDS's own automated backups — AWS Backup snapshots are billed at backup storage rates.
 
 Estimated total lab cost: **< $2** if cleaned up within 1 hour.
 
@@ -130,7 +132,7 @@ Estimated total lab cost: **< $2** if cleaned up within 1 hour.
 └─────────────────────────────────────────────────────┘
 ```
 
-> **Did You Know?** AWS Backup supports EC2, EBS, RDS, DynamoDB, EFS, FSx, and Storage Gateway. One dashboard to protect them all.
+> **Did You Know?** AWS Backup supports EC2, EBS, S3, RDS, Aurora, DynamoDB, EFS, FSx, and Storage Gateway — one dashboard to protect them all.
 
 ---
 
@@ -147,9 +149,7 @@ Before we can back things up, we need something TO back up! Let's create a few r
 3. **AMI**: Amazon Linux 2023 (Free Tier eligible)
 4. **Instance type**: t2.micro
 5. **Key pair**: Select your existing key pair
-6. Under **Configure storage**:
-   - Click **Advanced details** (expand)
-   - **Size**: Change to `10` GiB (to have a meaningful volume to back up)
+6. Under **Configure storage**, change the root volume **Size** to `10` GiB (a meaningful volume to back up)
 7. Click **Launch instance** → **View all instances**
 
 Wait for the instance to be **Running**.
@@ -215,10 +215,8 @@ Let's see what AWS Backup already knows about your resources.
 
 **Understanding Protected Resources:**
 
-- Some services are automatically discovered by AWS Backup
-- Others need to be explicitly assigned to a backup plan
-- EBS volumes and RDS databases are commonly discovered
-- DynamoDB and S3 may need manual assignment
+- AWS Backup auto-discovers resources in your account — but being discovered isn't the same as being protected
+- Resources are only backed up once you assign them to a backup plan (we do that in Step 4)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > "AWS Backup auto-discovers some resources, but not all. Don't worry if you don't see everything yet — we'll assign them to our backup plan in the next steps."

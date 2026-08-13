@@ -73,7 +73,7 @@
 
 ## 🎯 Objective
 
-In this lab, you'll set up **Cross-Region Replication (CRR)** — a feature that automatically copies every object you upload in one S3 bucket to a bucket in a completely different AWS region. This is essential for disaster recovery, compliance, and reducing latency for users in different geographic locations.
+You'll set up **Cross-Region Replication (CRR)** — S3 automatically copies every object you upload in one bucket to a bucket in a different AWS region. It's essential for disaster recovery, compliance, and data locality.
 
 ---
 
@@ -174,7 +174,7 @@ In this lab, you'll set up **Cross-Region Replication (CRR)** — a feature that
 5. Click **Save changes**
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> Both buckets now have versioning enabled. This is a hard requirement for CRR — AWS won't let you replicate between non-versioned buckets. Why? Because replication needs to track which version of each object to copy!
+> Both buckets now have versioning enabled — a hard requirement for CRR. AWS won't let you replicate between non-versioned buckets because replication needs version IDs to track each copy.
 
 ---
 
@@ -194,7 +194,7 @@ Now we need to give S3 permission to read from one bucket and write to another. 
 
 7. On the "Add permissions" page, search for `AmazonS3FullAccess`
 8. Check the box next to **AmazonS3FullAccess**
-   - ⚠️ **Note:** In a real production environment, you would create a custom policy with ONLY the specific permissions needed. For this lab, we're using the managed policy for simplicity.
+   - ⚠️ **Note:** In production, use a custom policy with ONLY the needed permissions — the managed policy is just for lab simplicity.
 9. Click **Next**
 
 > 📸 [Screenshot: AmazonS3FullAccess policy selected]
@@ -207,7 +207,7 @@ Now we need to give S3 permission to read from one bucket and write to another. 
 ![Role created successfully](screenshots/04-role-created.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> IAM Roles are like giving someone a key card to your building. The role says "S3 service, you have permission to read from the source bucket and write to the destination bucket." Never give more permissions than needed in production!
+> IAM Roles are like key cards: this one tells S3 "read from the source bucket, write to the destination bucket." Never grant more permissions than needed in production!
 
 ---
 
@@ -284,7 +284,7 @@ Hello from the source bucket in N. Virginia!
 ![hello.txt appearing in the destination bucket in Oregon](screenshots/10-replication-verified.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> If you don't see the file immediately, wait a few more minutes. The first replication can take up to 15 minutes. Check the **Management** tab → **Replication rules** on the source bucket to see the rule status.
+> First replication can take up to 15 minutes. If you don't see the file yet, check the rule status on the source bucket's **Management** tab → **Replication rules**.
 
 ---
 

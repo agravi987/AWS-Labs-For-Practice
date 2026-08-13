@@ -50,6 +50,7 @@
 - [🎮 Test Yourself](#-test-yourself-no-peeking-)
 - [🆚 Pro Tip vs Noob Tip](#-pro-tip-vs-noob-tip)
 - [🔗 What's Next?](#-whats-next)
+- [❓ Troubleshooting](#-troubleshooting)
 
 ---
 
@@ -168,7 +169,7 @@ This is IMPORTANT:
 ![ami-source-instance showing state "stopped"](screenshots/01-source-instance-stopped.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> You CAN create an AMI from a running instance. It'll CREATE the AMI while stuff keeps running. But for CONSISTENCY, stop the instance first. This ensures the filesystem is in a clean state before the snapshot. Stopped pizza makes better frozen pizza.
+> You CAN create an AMI from a running instance, but for a CONSISTENT image, stop the instance first — it ensures the filesystem is clean before the snapshot. Stopped pizza makes better frozen pizza.
 
 > <img src="https://img.shields.io/badge/Step%204-Create%20the%20AMI-9B59B6?style=for-the-badge" />
 
@@ -313,7 +314,7 @@ Components of an AMI:
    - EC2 Console → **AMIs**.
    - Select `custom-web-server-ami`.
    - Actions → **Deregister AMI** → Confirm.
-   - AWS will warn: "This AMI is currently in use". That's fine — it just means someone COULD use it.
+   - AWS may warn that the AMI is in use — that's informational; you can still deregister.
 
 4. **Delete the EBS snapshots associated with the AMI:**
    - EC2 Console → **Snapshots** (make sure it's not filtered).
@@ -411,7 +412,7 @@ We'll host a full static website directly from an S3 bucket. No EC2 instance nee
 | Clone instance boots but httpd is NOT running | `systemctl enable httpd` was NOT run on source | SSH into source → `sudo systemctl enable httpd` → re-snapshot |
 | Clone instance boots, httpd running, wrong page | Custom index.html wasn't saved correctly | SSH source → `cat /var/www/html/index.html` → fix if needed |
 | AMI appears in list but says `pending` | AWS hasn't finished registering | Refresh after 1–2 minutes |
-| Cannot deregister AMI | AMI is being used by an active instance | Terminate the clone instance first |
+| Cannot deregister AMI | Console warns the AMI is in use | The warning is informational — deregistration doesn't affect running instances; confirm and proceed |
 | Snapshot deletion fails | Snapshot is still attached to the active AMI | Deregister AMI first, THEN delete snapshots |
 
 </details>

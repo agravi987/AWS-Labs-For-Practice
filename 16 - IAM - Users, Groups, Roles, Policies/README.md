@@ -68,7 +68,7 @@
 
 ## 🎯 Objective
 
-In this lab, you will learn how AWS Identity and Access Management (IAM) controls **who** can access **what** in your AWS account. You'll create users, groups, custom policies, and roles — the building blocks of AWS security. This is arguably the most important lab in the entire series, Ravi. Pay attention! 🎓
+In this lab, you'll learn how AWS Identity and Access Management (IAM) controls **who** can access **what** in your AWS account by creating users, groups, custom policies, and roles — the building blocks of AWS security. Pay attention, Ravi! 🎓
 
 **By the end of this lab you will be able to:**
 - Create IAM users with different access levels
@@ -149,17 +149,16 @@ IAM is a globally available AWS service that does **not** charge you anything. Y
 
 1. **User name:** `ravi-developer`
 2. Check the box: ☑ **Provide user access to the AWS Management Console**
-3. Select: ⚫ **Users must create a password with next sign-in** (set a custom password you'll remember, or let AWS auto-generate one)
-4. **Console password:** Type a strong password (e.g., `RaviLabs2024!`) — write this down somewhere safe!
+3. Select: ⚫ **I want to create an IAM user**
+4. **Console password:** Select ⚫ **Custom password** and type a strong password (e.g., `RaviLabs2024!`). Leave **Users must create a password with next sign-in** **unchecked** so this password still works in Step 5 — write it down somewhere safe!
 5. Click **Next**.
 6. On the "Set permissions" page, select: ⚫ **Add user to group**
 7. Click **Create group**:
    - Group name: `Developers`
    - Check the box: ☑ **AdministratorAccess**
    - Click **Create group**
-8. The `Developers` group is now created and `ravi-developer` is added to it.
-9. Click **Next** → **Review and create** → **Create user**.
-10. ⚠️ **IMPORTANT:** Click **Download .csv file** to save the sign-in credentials. You'll need the Console sign-in URL, username, and password.
+8. Click **Next** → **Review and create** → **Create user**.
+9. ⚠️ **IMPORTANT:** Click **Download .csv file** to save the sign-in credentials (console sign-in URL, username, password) — you'll need them in Step 5.
 
 > 📸 [Screenshot: The user creation success page showing ravi-developer with the download CSV option]
 > ![The user creation success page showing ravi-developer with the download CSV option](screenshots/iam-user-creation-success.png)
@@ -198,12 +197,8 @@ Secret Access Key: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY  ← looks like this
 > <img src="https://img.shields.io/badge/Step%202-Create%20IAM%20Groups-3498DB?style=for-the-badge" />
 
 1. In the left navigation pane, click **User groups**.
-2. You should see two groups already created:
-   - `Developers` — has `AdministratorAccess` attached
-   - `ReadOnlyUsers` — has `ReadOnlyAccess` attached
-3. Click on **Developers** group to see its details.
-4. Under the **Permissions** tab, you'll see the `AdministratorAccess` managed policy attached.
-5. Click on **ReadOnlyUsers** group — same thing, you'll see `ReadOnlyAccess`.
+2. You should see both groups: `Developers` (AdministratorAccess) and `ReadOnlyUsers` (ReadOnlyAccess).
+3. Open each group and check its **Permissions** tab — you'll see the attached managed policy.
 
 > 📸 [Screenshot: The Developers group permissions tab showing AdministratorAccess policy]
 > ![The Developers group permissions tab showing AdministratorAccess policy](screenshots/iam-developers-group-permissions.png)
@@ -232,8 +227,9 @@ Now let's create a **custom policy** using the visual editor — no JSON require
 
 1. **Service:** Search for and select **S3**.
 2. **Actions allowed:**
-   - Expand **Read** → check ☑ `ListBucket`
-   - Expand **Write** → check ☑ `GetObject` and ☑ `PutObject`
+   - Expand **List** → check ☑ `ListBucket`
+   - Expand **Read** → check ☑ `GetObject`
+   - Expand **Write** → check ☑ `PutObject`
 3. **Resources:**
    - For `ListBucket`: Click **Add ARN** → Bucket name: `ravi-dev-bucket-*` (use wildcard)
    - For `GetObject`: Click **Add ARN** → Bucket name: `ravi-dev-bucket-*`, Object name: `*`

@@ -181,7 +181,7 @@ Let's build the network foundation for our full-stack app!
 7. **Number of AZs**: Select **2**
 8. **Number of public subnets**: Select **2**
 9. **Number of private subnets**: Select **2**
-10. **NAT gateways**: Select **1 per AZ** (we only need 1 for this lab)
+10. **NAT gateways**: Select **None** — nothing in this lab needs outbound internet from a private subnet (the web servers live in public subnets, and RDS is fully managed). Skipping it also avoids a ~$32/month cost trap. (Want NAT practice? See Lab 09 and create one manually.)
 11. **VPC endpoints**: Select **None**
 12. **DNS hostnames**: Check ✅ (should be enabled by default)
 
@@ -190,7 +190,6 @@ You should see a visual showing:
 - Public subnets: `10.0.1.0/24` (us-east-1a), `10.0.2.0/24` (us-east-1b)
 - Private subnets: `10.0.3.0/24` (us-east-1a), `10.0.4.0/24` (us-east-1b)
 - Internet Gateway
-- NAT Gateway (in public subnet)
 - Route tables
 
 13. Click **Create VPC**
@@ -200,7 +199,7 @@ You should see a visual showing:
 14. Go to **Your VPCs** → You should see `ravi-capstone-vpc`
 15. Go to **Subnets** → You should see 4 subnets (2 public, 2 private)
 16. Go to **Internet Gateways** → You should see one attached to the VPC
-17. Go to **NAT Gateways** → You should see one in a public subnet
+17. Go to **NAT Gateways** → Confirm none exist (we chose None)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> "The VPC is your virtual data center. Everything we build from here lives inside this VPC. The public subnets can talk to the internet; the private subnets are isolated. This is how real production architectures work!"
 

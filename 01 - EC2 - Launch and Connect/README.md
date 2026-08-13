@@ -69,7 +69,7 @@
 
 ## 🤔 In Plain English
 
-> **What is this, really?** EC2 is just **renting a computer that lives in AWS's data center** instead of buying one. You pick the size (t2.micro = the small free one), the operating system, and where it lives — and it boots up in about a minute. It's *your* server: you can SSH in, install software, and host websites on it.
+> **What is this, really?** EC2 is just **renting a computer that lives in AWS's data center** instead of buying one. You pick the size (t2.micro = the Free Tier-eligible small one), the operating system, and where it lives — and it boots up in about a minute. It's *your* server: SSH in, install software, host websites.
 >
 > 🌍 **Why you should care:** Every company with a website, app, or API uses servers just like this one. Once you've launched one EC2, you've done the AWS rite of passage. Everything else builds on this.
 
@@ -291,7 +291,7 @@ You should see:
 <details>
 <summary><b>🪟 Option B: Windows — PuTTY</b></summary>
 
-PuTTY uses `.ppk` files, not `.pem`. Convert first:
+PuTTY needs a `.ppk` key. If you didn't download `.ppk` when creating the key pair (the console lets you pick `.pem` or `.ppk`), convert your `.pem`:
 
 1. Open **PuTTYgen** → click **Load** → select your `.pem` file
 2. Click **OK** → **Save private key** → **Yes** (no passphrase)
@@ -304,7 +304,7 @@ Now connect with PuTTY:
 | Host Name | `ec2-user@<YOUR-PUBLIC-IP>` |
 | Port | `22` |
 | Connection type | SSH |
-| Auth → Private key | `first-key-pair.ppk` |
+| Auth → Credentials (or "Auth → Private key" in older PuTTY) | `first-key-pair.ppk` |
 
 Click **Open** → **Accept** the fingerprint → You're in! 🎉
 
@@ -460,7 +460,7 @@ Stick these in your brain and they'll never leave. 🧲
 
 | 🧠 Memory Hook | Remember it like... |
 |---|---|
-| **t2.micro = Free Tier king** | Think "**t**iny **2**-slice **micro** sandwich" — the free lunch of compute. 🥪 |
+| **t2.micro = Free Tier** | t2.micro (plus t3.micro, t4g.micro) = the free lunch — 750 hrs/month. Think "**t**iny **2**-slice **micro** sandwich". 🥪 |
 | **`.pem` vs `.ppk`** | **PEM** stays on **P**enguins (**M**ac/Linux), **PPK** is **Pu**TTY's pet. Convert with PuTTYgen. 🐧 |
 | **Security Group = bouncer** | It has a guest list (rules). Only names on the list get in — stateful means it remembers who walked out. 🚪 |
 | **Install → Start → Enable** | Remember **ISE** — "**I**nstall, **S**tart, **E**nable". Enable = auto-start on reboot. 🔄 |
@@ -474,7 +474,7 @@ Stick these in your brain and they'll never leave. 🧲
 
 <table>
 <tr><th>Concept</th><th>Key Takeaway</th></tr>
-<tr><td>🖥️ EC2 Launch</td><td>t2.micro is the Free Tier king</td></tr>
+<tr><td>🖥️ EC2 Launch</td><td>t2.micro (also t3.micro, t4g.micro) is Free Tier eligible</td></tr>
 <tr><td>🔑 Key Pairs</td><td>RSA .pem for Mac/Linux, convert to .ppk for PuTTY</td></tr>
 <tr><td>🔥 Security Groups</td><td>Stateful firewall — allow only what's needed</td></tr>
 <tr><td>🔐 SSH Methods</td><td>Mac/Linux CLI, Windows PuTTY, EC2 Instance Connect</td></tr>
@@ -496,7 +496,7 @@ Stick these in your brain and they'll never leave. 🧲
 
 <details><summary>👀 Show answer</summary>
 
-**A:** `t2.micro` (or `t3.micro`) — the tiny workhorse that costs you nothing for 750 hours/month. 🐴
+**A:** `t2.micro` (also `t3.micro` and `t4g.micro`) — Free Tier gives you 750 hours/month of these tiny workhorses. 🐴
 
 </details>
 
@@ -545,7 +545,7 @@ It'll be like being a **cloud bouncer**. 🫡
 | PuTTY: `No supported auth algorithms` | `.pem` used directly | Convert to `.ppk` with PuTTYgen |
 | Website won't load | Missing HTTP rule in SG | Add inbound HTTP (80) from `0.0.0.0/0` |
 | Connection timeout | Wrong IP or instance down | Verify Public IP, check instance state |
-| `yum: command not found` (very unlikely on AL2023) | Old guides used yum; AL2023 uses **dnf** | Use `sudo dnf update -y` / `sudo dnf install -y httpd` |
+| `yum` errors on AL2023 | AL2023 uses **dnf** (`yum` is only a compatibility alias) | Use `sudo dnf update -y` / `sudo dnf install -y httpd` |
 | Browser shows default Apache page | Custom index.html failed | Re-run the `echo \| sudo tee` command |
 
 ---

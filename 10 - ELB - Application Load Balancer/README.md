@@ -216,14 +216,9 @@ Configure:
 > 📸 [Screenshot: Target group creation with HTTP port 80]
 ![Target group creation with HTTP port 80](screenshots/04-target-group-http80.png)
 
-4. **Health checks:**
-   - **Protocol:** HTTP
-   - **Path:** `/`
-
-5. **Advanced health check settings:** Leave as default
-6. Click **Next**
-7. On the "Register targets" page — **DON'T register any targets yet!** We'll do that after launching the instances.
-8. Click **Create target group**
+4. **Health checks:** Protocol HTTP, Path `/` (leave advanced settings as default)
+5. Click **Next** — on the "Register targets" page, **don't register anything yet** (we'll do that after launching the instances)
+6. Click **Create target group**
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > Health checks are how the ALB knows if your instances are healthy. It sends a request to `/` every few seconds. If the instance responds with a 200 OK, it's "healthy." If it times out or returns an error, the ALB marks it as "unhealthy" and stops sending traffic to it. Smart, right?
@@ -274,20 +269,11 @@ echo "<h1>Hello from Web Server 1! Hostname: $(hostname)</h1>" > /var/www/html/i
 
 > <img src="https://img.shields.io/badge/Step%205-Launch%20Web%20Server%202-1ABC9C?style=for-the-badge" />
 
-1. **Launch instance** again
-2. Configure:
-   - **Name:** `web-server-2`
-   - **AMI:** Amazon Linux 2023
-   - **Instance type:** t2.micro
-   - **Key pair:** Same as before
+Repeat Step 4 with three changes:
 
-3. **Network settings** → **Edit:**
-   - **VPC:** Same VPC
-   - **Subnet:** Select a **different** subnet if possible (e.g., `us-east-1b`)
-   - **Auto-assign public IP:** Enable
-   - **Security group:** Select existing → `ec2-from-alb-sg`
-
-4. **User data** — paste this:
+- **Name:** `web-server-2`
+- **Network settings** → **Subnet:** a **different** AZ if possible (e.g., `us-east-1b`)
+- **User data** — same script, different page text:
 
 ```bash
 #!/bin/bash
@@ -296,14 +282,13 @@ systemctl start httpd
 echo "<h1>Hello from Web Server 2! Hostname: $(hostname)</h1>" > /var/www/html/index.html
 ```
 
-5. Click **Launch instance**
-6. Wait for both instances to be **Running** and pass status checks (2/2)
+Click **Launch instance**, then wait for both instances to be **Running** with status checks 2/2.
 
 > 📸 [Screenshot: Both instances running with status checks passed]
 ![Both instances running with status checks passed](screenshots/07-both-instances-running.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> In production, you'd launch instances in different Availability Zones (AZs) for high availability. If one AZ goes down, the other keeps serving traffic. We're doing that by using us-east-1a and us-east-1b!
+> In production, spread instances across multiple AZs — if one AZ goes down, the other keeps serving. That's why we're using us-east-1a and us-east-1b!
 
 ---
 
@@ -346,7 +331,6 @@ Now for the main event! 🎉
 Configure:
 - **Load balancer name:** `ravi-alb`
 - **Scheme:** Internet-facing
-- **Type:** Application Load Balancer
 - **IP address type:** IPv4
 
 > 📸 [Screenshot: ALB basic configuration]
@@ -437,7 +421,7 @@ Configure:
 ![Target group showing both targets as healthy](screenshots/13-target-group-healthy.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> The ALB health checks every 30 seconds by default. If an instance fails 2 consecutive health checks, it's marked unhealthy and the ALB stops sending traffic to it. When it recovers, the ALB automatically adds it back. Self-healing infrastructure!
+> The ALB health checks targets every 30 seconds by default. After 3 consecutive failures a target is marked unhealthy and traffic stops; when it recovers, it's added back automatically. Self-healing infrastructure!
 
 ---
 
@@ -594,10 +578,10 @@ Stick these in your brain and they'll never leave. 🧲
 
 You've covered S3, VPC, and Load Balancing! Here are some ideas for your next labs:
 
-- 🔒 **Lab 11 — HTTPS with ALB** (add an SSL certificate with ACM)
-- 📊 **Lab 12 — Auto Scaling Groups** (automatically add/remove EC2 instances based on traffic)
+- ⚙️ **Lab 11 — Auto Scaling Groups** (automatically add/remove EC2 instances based on traffic)
+- 🌐 **Lab 12 — Route 53: DNS and Failover** (DNS and automatic failover)
 - 🗄️ **Lab 13 — RDS: Relational Database Service** (managed databases!)
-- 🐳 **Lab 14 — ECS: Containers on AWS** (Docker containers in the cloud)
+- 📊 **Lab 14 — DynamoDB: CRUD Operations** (NoSQL tables in the cloud)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > You've come a long way, Ravi! From creating your first S3 bucket to building a load-balanced web application. Keep going — you're building real cloud engineering skills! 🚀

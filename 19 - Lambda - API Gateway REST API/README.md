@@ -98,7 +98,7 @@ In this lab, you'll create a **REST API** using **Amazon API Gateway** that invo
 
 API Gateway Free Tier (12 months):
 - **1 million** REST API calls per month
-- **750,000** HTTP API calls per month
+- **1 million** HTTP API calls per month
 
 Lambda Free Tier (always free):
 - **1 million requests** per month
@@ -160,7 +160,7 @@ Lambda Free Tier (always free):
 3. Click **Create function**.
 4. **Author from scratch** (default).
 5. **Function name:** `ravi-rest-api`
-6. **Runtime:** Select **Python 3.12**.
+6. **Runtime:** Select **Python 3.14**.
 7. **Architecture:** `x86_64`
 8. **Execution role:**
    - Select: ⚫ **Create a new role with basic Lambda permissions**
@@ -182,7 +182,7 @@ def lambda_handler(event, context):
     if path == '/hello' and http_method == 'GET':
         return {
             'statusCode': 200,
-            'headers': {'Content-Type': 'application/json'},
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
             'body': json.dumps({
                 'message': 'Hello from Ravi\'s API!',
                 'method': http_method,
@@ -196,14 +196,14 @@ def lambda_handler(event, context):
         ]
         return {
             'statusCode': 200,
-            'headers': {'Content-Type': 'application/json'},
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
             'body': json.dumps({'students': students})
         }
     elif path == '/students' and http_method == 'POST':
         body = json.loads(event.get('body', '{}'))
         return {
             'statusCode': 201,
-            'headers': {'Content-Type': 'application/json'},
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
             'body': json.dumps({
                 'message': 'Student created!',
                 'data': body
@@ -212,6 +212,7 @@ def lambda_handler(event, context):
     else:
         return {
             'statusCode': 404,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
             'body': json.dumps({'message': 'Not found'})
         }
 ```
@@ -227,7 +228,9 @@ def lambda_handler(event, context):
 | `/hello` | GET | Returns a greeting message with method and path info |
 | `/students` | GET | Returns a list of students as JSON |
 | `/students` | POST | Accepts a JSON body and returns confirmation |
-| Any other path | Any method | Returns 404 Not Found |
+| Any other path | — | API Gateway rejects it with **403 Missing Authentication Token** before Lambda runs |
+
+> 💡 The `else` (404) branch only fires for requests that API Gateway actually routes to your function. A path with no matching resource/method never reaches Lambda — you'll see the 403 in Test 4.
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > Notice how Lambda receives the `event` parameter — when API Gateway invokes Lambda, it passes the entire HTTP request as a JSON object, including the method, path, headers, query parameters, and body. Your Lambda then routes the request based on these values. It's like a doorman checking your reservation before seating you!
@@ -277,7 +280,6 @@ def lambda_handler(event, context):
 3. Select **GET** from the dropdown → Click the checkmark ✅.
 4. **Integration type:** ⚫ Lambda Function
 5. Check: ☑ **Use Lambda Proxy integration**
-   - ⚠️ This is CRITICAL! Without this checkbox, Lambda won't receive the HTTP request details properly.
 6. **Lambda Function:** Type `ravi-rest-api` (it should auto-suggest)
 7. A warning appears: "You are about to give API Gateway permission to invoke your Lambda function." → Click **OK**.
 8. Click **Save**.
@@ -298,23 +300,9 @@ def lambda_handler(event, context):
 5. Check: ☑ **Enable API Gateway CORS**
 6. Click **Create resource**.
 
-#### Create GET Method on /students:
+#### Create GET and POST Methods on /students:
 
-1. Click on `/students` → Click **Create method**.
-2. Select **GET** → Checkmark ✅.
-3. **Integration type:** ⚫ Lambda Function
-4. Check: ☑ **Use Lambda Proxy integration**
-5. **Lambda Function:** `ravi-rest-api`
-6. Click **Save** → **OK** on the permission warning.
-
-#### Create POST Method on /students:
-
-1. Click on `/students` → Click **Create method**.
-2. Select **POST** → Checkmark ✅.
-3. **Integration type:** ⚫ Lambda Function
-4. Check: ☑ **Use Lambda Proxy integration**
-5. **Lambda Function:** `ravi-rest-api`
-6. Click **Save** → **OK** on the permission warning.
+Repeat the **Create method** flow from `/hello` twice — once with **GET**, once with **POST** — selecting **Integration type:** Lambda Function, ☑ **Use Lambda Proxy integration**, **Lambda Function:** `ravi-rest-api`, then **Save** → **OK** on the permission warning.
 
 > 📸 [Screenshot: The Resources tree showing /hello (GET) and /students (GET, POST)]
 
@@ -367,12 +355,8 @@ Now let's test all three endpoints!
 
 #### Test 1: GET /hello
 
-**Using a browser:**
-```
-https://abc123def4.execute-api.us-east-1.amazonaws.com/prod/hello
-```
+**Using a browser or curl:** open `https://abc123def4.execute-api.us-east-1.amazonaws.com/prod/hello` in a browser, or run:
 
-**Using curl:**
 ```bash
 curl https://abc123def4.execute-api.us-east-1.amazonaws.com/prod/hello
 ```
@@ -390,12 +374,8 @@ curl https://abc123def4.execute-api.us-east-1.amazonaws.com/prod/hello
 
 #### Test 2: GET /students
 
-**Using a browser:**
-```
-https://abc123def4.execute-api.us-east-1.amazonaws.com/prod/students
-```
+**Using a browser or curl:** open `https://abc123def4.execute-api.us-east-1.amazonaws.com/prod/students` in a browser, or run:
 
-**Using curl:**
 ```bash
 curl https://abc123def4.execute-api.us-east-1.amazonaws.com/prod/students
 ```
@@ -414,10 +394,7 @@ curl https://abc123def4.execute-api.us-east-1.amazonaws.com/prod/students
 
 **Using curl:**
 ```bash
-curl -X POST \
-  https://abc123def4.execute-api.us-east-1.amazonaws.com/prod/students \
-  -H "Content-Type: application/json" \
-  -d '{"name": "Ravi", "topic": "API Gateway"}'
+curl -X POST https://abc123def4.execute-api.us-east-1.amazonaws.com/prod/students -H "Content-Type: application/json" -d "{\"name\": \"Ravi\", \"topic\": \"API Gateway\"}"
 ```
 
 **Using Postman:**
@@ -444,7 +421,7 @@ curl -X POST \
 }
 ```
 
-#### Test 4: Unknown Path (404)
+#### Test 4: Unknown Path (403)
 
 **Using curl:**
 ```bash
@@ -453,10 +430,10 @@ curl https://abc123def4.execute-api.us-east-1.amazonaws.com/prod/anything
 
 **Expected response:**
 ```json
-{
-  "message": "Not found"
-}
+{"message": "Missing Authentication Token"}
 ```
+
+> 💡 This 403 comes from **API Gateway**, not your Lambda — there's no `/anything` resource, so the request never reaches the function. That's expected security behavior, not an error.
 
 > 📸 [Screenshot: Terminal showing all four curl commands and their responses]
 
@@ -475,21 +452,18 @@ curl https://abc123def4.execute-api.us-east-1.amazonaws.com/prod/anything
 
 > <img src="https://img.shields.io/badge/Step%207-Enable%20CORS%20(if%20needed)-1ABC9C?style=for-the-badge" />
 
-If you're getting CORS errors when testing from a web browser or a frontend app:
+We already enabled CORS when creating the resources, and the Lambda returns `Access-Control-Allow-Origin` headers on every response — so browser access should just work. CORS is browser-only; curl and Postman ignore it.
 
-1. In API Gateway, click on the `/hello` resource.
-2. Click the **Enable CORS** button (top-right of the Resources page).
-3. **Access-Control-Allow-Origin:** `*` (or your specific domain)
-4. **Access-Control-Allow-Headers:** `Content-Type,Authorization`
-5. **Access-Control-Allow-Methods:** `GET,POST,OPTIONS`
-6. Click **Enable CORS** → **Replace Access-Control-Allow-Origin header**.
-7. **Redeploy the API:**
-   - Click **Deploy API** → Select `prod` → **Deploy**.
+If you still see CORS errors in a browser:
 
-Repeat the same for the `/students` resource.
+1. In API Gateway, select the resource (`/hello` or `/students`).
+2. Click **Enable CORS** → keep **Access-Control-Allow-Origin:** `*` (or your specific domain) and **Access-Control-Allow-Methods:** `GET,POST,OPTIONS`.
+3. Click **Enable CORS** → **Replace** → then **Deploy API** → `prod` → **Deploy**.
+
+Remember: after any API change — CORS included — you must redeploy to the stage for it to take effect.
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> CORS (Cross-Origin Resource Sharing) is a browser security feature. It prevents a web page on `example.com` from making API calls to `api.another.com` unless the API explicitly allows it. For curl and Postman, CORS doesn't apply — it's a browser-only restriction.
+> CORS (Cross-Origin Resource Sharing) is a browser security feature. It prevents a web page on `example.com` from calling your API on another domain unless the API explicitly allows it. For curl and Postman, CORS doesn't apply. In production, use your real domain instead of `*`.
 
 ---
 
@@ -518,7 +492,7 @@ Repeat the same for the `/students` resource.
 | 7 | GET /hello returns `{"message": "Hello from Ravi's API!"}` | ☐ |
 | 8 | GET /students returns student list | ☐ |
 | 9 | POST /students returns `{"message": "Student created!"}` with 201 | ☐ |
-| 10 | Unknown paths return 404 | ☐ |
+| 10 | Unknown paths return 403 Missing Authentication Token | ☐ |
 
 ---
 
@@ -563,7 +537,7 @@ Stick these in your brain and they'll never leave. 🧲
 | **Proxy integration = pass-through** | The full HTTP request goes **straight to Lambda**, which builds the whole response. Full control. 🎛️ |
 | **CORS = cross-site permission slip** | Lets a browser on site A call your API on site B. No slip = blocked by the browser. 📄 |
 
-> 🗣️ **Rithu:** *"When your API returns 404 for a route you 'know exists' — you probably forgot to DEPLOY to the stage. We've all been there."
+> 🗣️ **Rithu:** *"If your API returns `Missing Authentication Token` for a route you 'know exists' — you probably forgot to DEPLOY to the stage. We've all been there."
 
 ---
 
@@ -577,7 +551,7 @@ In this lab, you learned:
 4. **API Stages** — Managing different environments (dev, staging, prod) with separate URLs.
 5. **CORS** — Understanding Cross-Origin Resource Sharing and how to enable it.
 6. **Request Routing** — How API Gateway routes requests to Lambda based on path and method.
-7. **HTTP Status Codes** — 200 (OK), 201 (Created), 404 (Not Found).
+7. **HTTP Status Codes** — 200 (OK), 201 (Created), 403 (Missing Authentication Token).
 
 ---
 
@@ -639,8 +613,8 @@ In the next lab, you'll deploy a containerized NGINX web server on AWS ECS with 
 <details>
 <summary><strong>502 Bad Gateway error</strong></summary>
 
-**Cause:** Lambda function returned an invalid response (not valid JSON, or missing `statusCode`).
-**Fix:** Check Lambda → Code → Make sure `lambda_handler` returns a dictionary with `statusCode` and `body` keys. Also check CloudWatch Logs for errors.
+**Cause:** Lambda returned a malformed proxy response. The `body` must be a **string** (use `json.dumps(...)`), not an object, and `statusCode` must be present.
+**Fix:** Check Lambda → Code → the handler returns a dict with `statusCode` and `body` keys. Also check CloudWatch Logs for errors.
 
 </details>
 
@@ -655,8 +629,8 @@ In the next lab, you'll deploy a containerized NGINX web server on AWS ECS with 
 <details>
 <summary><strong>CORS error in browser ("No 'Access-Control-Allow-Origin' header")</strong></summary>
 
-**Cause:** CORS is not enabled on the API Gateway resources.
-**Fix:** Enable CORS on each resource (Step 7), then REDEPLOY the API to the `prod` stage. Don't forget to redeploy!
+**Cause:** CORS headers missing on the response, or the API wasn't redeployed after enabling CORS.
+**Fix:** With Lambda proxy integration the Lambda must return the CORS headers itself (our code does). Make sure CORS is enabled on the resource (Step 7), then **redeploy** to `prod`.
 
 </details>
 
@@ -687,8 +661,8 @@ In the next lab, you'll deploy a containerized NGINX web server on AWS ECS with 
 <details>
 <summary><strong>API returns "Endpoint request timed out"</strong></summary>
 
-**Cause:** Lambda function took more than 29 seconds (API Gateway timeout).
-**Fix:** Optimize your Lambda code, or increase the API Gateway timeout (up to 29 minutes for REST APIs).
+**Cause:** The request exceeded the API Gateway integration timeout (29s default).
+**Fix:** Optimize your Lambda code (and raise its own timeout if needed). For Regional/private REST APIs the integration timeout can be raised up to 29 minutes.
 
 </details>
 

@@ -83,10 +83,8 @@ Create an S3 bucket, configure it for static website hosting, upload HTML files,
 
 ## 💰 Cost Warning
 
-- S3 offers 5 GB of standard storage FREE for the first 12 months.
-- This lab uses maybe 0.01 GB. You're fine.
-- **Public access buckets** mean anyone with the URL can access your objects.
-- S3 bucket policies are FREE but misconfiguration might accidentally expose sensitive data. This lab is intentionally public; real workloads need stricter controls.
+- S3 gives you 5 GB of standard storage FREE for the first 12 months; this lab uses ~0.01 GB.
+- **Public access buckets** mean anyone with the URL can read your objects. This lab is intentionally public — real workloads need stricter controls.
 
 **Still. DELETE THE BUCKET when done. Orphan buckets (especially public ones) are how breaches happen.**
 
@@ -138,15 +136,14 @@ Create an S3 bucket, configure it for static website hosting, upload HTML files,
 
 | Field | Value |
 |-------|-------|
+| Bucket type | **General purpose** (default) |
 | Bucket name | `ravi-static-website-12345` |
 | AWS Region | **US East (N. Virginia) us-east-1** |
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> The bucket name MUST be globally unique across ALL AWS accounts and ALL regions. Not just your account. ALL OF AWS. Pick something nobody else would think of. If `ravi-static-website-12345` is taken (unlikely), add more numbers: your birthday, favorite number, whatever.
+> The bucket name MUST be globally unique across **all** AWS accounts and regions — not just yours. If `ravi-static-website-12345` is taken (unlikely), add more numbers.
 
-4. **Object Ownership:**
-   - Leave default: **ACLs disabled**.
-   - Untick "ACLs enabled", leave "Object Ownership" as "Bucket Owner Enforced".
+4. **Object Ownership:** Leave the default — **ACLs disabled** (Bucket owner enforced).
 
 5. **Block Public Access settings for this bucket:**
 
@@ -161,7 +158,7 @@ Create an S3 bucket, configure it for static website hosting, upload HTML files,
 
 
    > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-   > Normally, you NEVER want a bucket public. We're making an exception because STATIC WEBSITES require PUBLIC access to deliver content to browsers. In real life, MOST buckets should stay private. Use CloudFront (covered much later) to serve S3 content securely.
+   > Normally you NEVER want a bucket public — but static websites need public access to reach browsers. In real life, most buckets stay private; use CloudFront (covered much later) to serve S3 content securely.
 
 6. **Bucket Versioning:** Leave **Disable**.
 
@@ -172,7 +169,7 @@ Create an S3 bucket, configure it for static website hosting, upload HTML files,
    | Name | `ravi-static-website` |
    | Project | `AWS-Hands-On-Labs` |
 
-8. **Default encryption:** Leave the default (**SSE-S3**). AWS has encrypted all new S3 buckets by default since January 2023 — there's no "Disable" option anymore, which is a good thing!
+8. **Default encryption:** Leave the default (**SSE-S3**). New S3 buckets are encrypted by default since January 2023 — there's no "Disable" option anymore, which is a good thing!
 
 9. Click **Create bucket** at the bottom.
 
@@ -277,7 +274,7 @@ p {
 ```
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> You can write these files in any text editor. Notepad (Windows) works. VS Code works. Heck, you can type them in a `README.md` and copy them out. Just make sure you save them as `.html` and not `.html.txt`.
+> Write them in any text editor (Notepad, VS Code, whatever). Just save them with a `.html` extension — not `.html.txt`.
 
 > <img src="https://img.shields.io/badge/Step%204-Upload%20the%20Website%20Files-9B59B6?style=for-the-badge" />
 
@@ -286,7 +283,7 @@ p {
 3. Click **Upload**.
 
 📸 [Screenshot: Upload page in S3 Objects tab]
-!Upload page in S3 Objects tab](screenshots/upload-page.png)
+![Upload page in S3 Objects tab](screenshots/upload-page.png)
 
 4. Click **Add files**.
 5. Select **both** `index.html` and `error.html`.
@@ -297,11 +294,11 @@ Alternative: drag and drop files from your computer onto the Upload panel.
 Once uploaded, you should see both files listed in the Objects tab.
 
 📸 [Screenshot: S3 Objects tab showing index.html and error.html listed, size ~300 bytes each]
-![ S3 Objects tab showing index.html and error.html listed, size ~300 bytes each](screenshots/uploaded-objects.png)
+![S3 Objects tab showing index.html and error.html listed, size ~300 bytes each](screenshots/uploaded-objects.png)
 
 > <img src="https://img.shields.io/badge/Step%205-Add%20Bucket%20Policy%20for%20Public%20Read-E74C3C?style=for-the-badge" />
 
-Even though the bucket is not fully blocked from public access, objects are STILL private by default. When a browser visits your website endpoint, S3 checks policy first.
+Objects are STILL private by default — unblocking public access doesn't make them readable. When a browser visits your website endpoint, S3 checks the bucket policy first.
 
 1. S3 Console → your bucket **ravi-static-website-12345**.
 2. Go to the **Permissions** tab.
@@ -325,18 +322,14 @@ Even though the bucket is not fully blocked from public access, objects are STIL
 ```
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> Let's decode this JSON:
-> - `"Principal": "*"` → Anyone in the world
-> - `"Action": "s3:GetObject"` → can read objects
-> - `"Resource": "arn:aws:s3:::`ravi-static-website-12345`/*"` → from my bucket
-> This gives anonymous internet users read access to EVERY object in the bucket. For a public static site, this is exactly what we want.
+> Decoding the JSON: `"Principal": "*"` means **anyone in the world**, `"Action": "s3:GetObject"` means **can read objects**, and the `/*` in the Resource means **every object in the bucket**. Exactly what a public static site needs.
 
 6. Click **Save changes**.
 
-You might see an error if there are conflicts with account-level block public access settings. Since we disabled block all public access earlier, this should save cleanly.
+> ⚠️ **Account-level Block Public Access:** Newer AWS accounts have "Block all public access" ON at the **account** level too — it silently overrides bucket settings. If saving fails, uncheck it under **S3 → Block Public Access settings** (account level), then save the policy again.
 
 📸 [Screenshot: Bucket policy editor showing the JSON pasted and saved]
-![ Bucket policy editor showing the JSON pasted and saved](screenshots/bucket-policy-editor.png)
+![Bucket policy editor showing the JSON pasted and saved](screenshots/bucket-policy-editor.png)
 
 > <img src="https://img.shields.io/badge/Step%206-Verify%20Your%20Work-1ABC9C?style=for-the-badge" />
 
@@ -344,16 +337,10 @@ You might see an error if there are conflicts with account-level block public ac
 2. Paste the **Bucket website endpoint** URL you copied earlier.
 3. Press Enter.
 
-You should see your custom HTML page with:
-
-> **Welcome to Ravi's S3 Website!**
->
-> Hosted on Amazon S3 - Built by Ravi with guidance from Rithu
->
-> This website runs entirely on S3. No servers. No maintenance. Just magic.
+You should see your custom HTML page — **"Welcome to Ravi's S3 Website!"**
 
 📸 [Screenshot: Browser showing the index.html page loaded from S3 website endpoint]
-![ Browser showing the index.html page loaded from S3 website endpoint](screenshots/website-homepage.png)
+![Browser showing the index.html page loaded from S3 website endpoint](screenshots/website-homepage.png)
 
 **Now test the error page:**
 
@@ -361,11 +348,7 @@ You should see your custom HTML page with:
    ```
    http://ravi-static-website-12345.s3-website-us-east-1.amazonaws.com/nonexistent-page
    ```
-2. You should see:
-
-> **404 - Page Not Found**
->
-> Ravi says: This page doesn't exist!
+2. You should see your custom **404 - Page Not Found** page.
 
 📸 [Screenshot: Browser showing the custom error page at a non-existent URL]
 ![Browser showing the custom error page at a non-existent URL](screenshots/error-page.png)
@@ -462,7 +445,7 @@ Stick these in your brain and they'll never leave. 🧲
 
 <details><summary>👀 Show answer</summary>
 
-**A:** The bucket policy is missing/wrong, or objects are still private. Check: **Block Public Access** unchecked + valid **bucket policy** with `/*` in the Resource. 🔧
+**A:** The bucket policy is missing/wrong, or objects are still private. Check: **Block Public Access** unchecked (at the **bucket AND account** level) + valid **bucket policy** with `/*` in the Resource. 🔧
 
 </details>
 
@@ -511,7 +494,7 @@ Or skip ahead. Whatever fuels your cloud engine. 🚀
 | Browser shows **404 Not Found** | index.html filename wrong, or URL path wrong | Upload file named `index.html` exactly. Check S3 listing |
 | Error.html appears as raw HTML | Error page URL doesn't match error document name | error.html must use `.html` or whatever you configured |
 | Bucket creation fails with "name already taken" | Someone else globally owns that bucket name | Add extra numbers/characters to bucket name |
-| Bucket policy has warning yellow/red | Policy conflicts with account-level public access settings | Go to Permissions → Block Public Access → verify ALL checkboxes are UNCHECKED |
+| Bucket policy has warning yellow/red or won't save | Block Public Access is still ON | Uncheck ALL Block Public Access boxes at the **bucket** level (Permissions → Block Public Access) AND the **account** level (S3 → Block Public Access settings) |
 | `Unable to Update, the S3 web endpoint always returns "The specified bucket does not have a website configuration"` | Static website hosting NOT enabled | Properties → Static website hosting → Enable |
 | Internet users still get Access Denied | Bucket Policy syntax error or resource ARN mismatch | Double-check `Resource` ends with `/*` (the wildcard covers all objects) |
 | Objects show ACLs disabled, bucket policy is wrong place | ACLs not needed for static sites | Bucket Owner Enforced + Bucket Policy = the way |

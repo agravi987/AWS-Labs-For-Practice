@@ -144,7 +144,7 @@ S3 Free Tier (12 months):
 2. In the search bar, type **S3** and click on **S3**.
 3. Click **Create bucket**.
 4. **Bucket name:** `ravi-lambda-trigger-bucket-12345`
-   - ⚠️ S3 bucket names are **globally unique** — no two buckets in the world can have the same name. Replace `12345` with random numbers to ensure uniqueness (e.g., `ravi-lambda-trigger-bucket-88421`).
+   - ⚠️ S3 bucket names are **globally unique** — no two buckets in the world can share a name. Replace `12345` with random numbers (e.g., `ravi-lambda-trigger-bucket-88421`).
 5. **Region:** `us-east-1` (N. Virginia)
 6. **Block Public Access settings:** Keep all options checked ✅ (public access blocked)
 7. Leave other settings as defaults.
@@ -229,14 +229,14 @@ def lambda_handler(event, context):
 | `s3 = boto3.client('s3')` | Create an S3 client to interact with S3 |
 | `for record in event['Records']` | Loop through each S3 event (one per file) |
 | `bucket = record['s3']['bucket']['name']` | Get the bucket name |
-| `key = record['s3']['object']['key']` | Get the file name (object key) |
+| `key = urllib.parse.unquote_plus(record['s3']['object']['key'])` | Get the file name (object key), URL-decoded |
 | `size = record['s3']['object']['size']` | Get the file size |
 | `s3.head_object(...)` | Get metadata (content type, etc.) |
 | `print(...)` | Write to CloudWatch Logs for debugging |
 | `return {...}` | Return a response (for Lambda logs) |
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> The `event` parameter is the star of the show here. When S3 triggers Lambda, it passes a JSON payload describing what happened — which bucket, which file, what action, what time, etc. This is the "event-driven" part of serverless!
+> The `event` parameter is the star of the show. When S3 triggers Lambda it passes a JSON payload describing what happened — which bucket, which file, what action, etc. S3 URL-encodes object keys, so we decode them with `unquote_plus()`: a space becomes `%20` and a `+` becomes `%2B` in the payload. Without decoding, the key wouldn't match the real filename!
 
 ---
 
@@ -246,23 +246,39 @@ def lambda_handler(event, context):
 2. Click **+ Add trigger** (under the "Function overview" diagram).
 3. **Source:** Select **S3** from the dropdown.
 4. **Bucket:** Select `ravi-lambda-trigger-bucket-12345` (the bucket you created in Step 1).
-5. **Event type:** ⚫ All object create events
-   - This means the Lambda fires whenever a file is created, overwritten, or copied into the bucket.
+5. **Event type:** ⚫ All object create events (`s3:ObjectCreated:*`)
+   - The Lambda fires whenever a file is created, overwritten, or copied into the bucket.
 6. **Suffix (optional filter):** `.jpg`
    - This ensures the Lambda only runs for `.jpg` files, not every file type.
 7. You'll see a warning box about **Recursive invocation**:
    - ⚠️ "This S3 bucket is configured to invoke this Lambda function. If this function writes to the same bucket, it could cause an infinite loop of invocations."
    - Check the acknowledgment box: ☑ **I acknowledge that using the same S3 bucket for input and output is not recommended.**
 8. Click **Add**.
+   - 💡 Adding the trigger here also creates the bucket's **event notification** and grants S3 **permission to invoke** your function — no manual IAM policy needed for the trigger itself.
 
 > 📸 [Screenshot: The S3 trigger configuration showing bucket, event type, suffix filter, and the recursive invocation warning]
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> That recursive invocation warning is no joke! If your Lambda writes a file back to the same bucket with the same suffix, it triggers itself again, which writes again, which triggers again... forever, until you hit the Lambda invocation limit and AWS sends you an angry bill. Always use separate input and output buckets in production!
+> That recursive invocation warning is no joke! If your Lambda writes a file back to the same bucket, it triggers itself again — forever, until AWS sends you an angry bill. Always use separate input and output buckets in production!
 
 ---
 
-> <img src="https://img.shields.io/badge/Step%205-Test-E74C3C?style=for-the-badge" />
+> <img src="https://img.shields.io/badge/Step%205-Add%20IAM%20Permission-9B59B6?style=for-the-badge" />
+
+Add S3 read access to the Lambda execution role so the function can read file metadata (`s3:GetObject`).
+
+1. Go to **IAM → Roles**.
+2. Search for `lambda-s3-role` and click on it.
+3. Click **Add permissions → Attach policies**.
+4. Search for `AmazonS3ReadOnlyAccess`.
+5. Check the box → **Add permissions**.
+
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> The basic Lambda role only includes CloudWatch Logs access — the `s3:GetObject` permission we just added is what lets the function read file metadata. In production, always grant the smallest policy needed.
+
+---
+
+> <img src="https://img.shields.io/badge/Step%206-Test-E74C3C?style=for-the-badge" />
 
 Now for the exciting part — let's test it!
 
@@ -280,8 +296,8 @@ Now for the exciting part — let's test it!
 1. Go back to **Lambda → Functions → s3-image-processor**.
 2. Click the **Monitor** tab.
 3. Click **Logs** → **Log groups**.
-4. You should see a log group called `/aws/lambda/s3-image-processor`. Click on it.
-5. Click on the **most recent log stream** (the one at the top with the latest timestamp).
+4. Open the log group `/aws/lambda/s3-image-processor`.
+5. Open the **most recent log stream** (topmost timestamp).
 6. Look for lines that say:
 
 ```
@@ -302,26 +318,11 @@ Content Type: image/jpeg
 #### Test with Another File:
 
 1. Upload another `.jpg` file to the S3 bucket.
-2. Go back to CloudWatch Logs → Click **Actions → Refresh** (or just go back and re-enter the log stream).
+2. Go back to CloudWatch Logs → click **Actions → Refresh** (or re-enter the log stream).
 3. A new log entry should appear for the second file!
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> CloudWatch Logs are your best friend when debugging Lambda functions. If something doesn't work, ALWAYS check the logs first. In the console, you can also use the **Test** tab to invoke the function manually with a sample event.
-
----
-
-> <img src="https://img.shields.io/badge/Step%206-Add%20IAM%20Permission-9B59B6?style=for-the-badge" />
-
-If your Lambda function can't read S3 metadata (you see an error in CloudWatch Logs), you need to add the `s3:GetObject` permission to the Lambda execution role.
-
-1. Go to **IAM → Roles**.
-2. Search for `lambda-s3-role` and click on it.
-3. Click **Add permissions → Attach policies**.
-4. Search for `AmazonS3ReadOnlyAccess`.
-5. Check the box → **Add permissions**.
-
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> The basic Lambda permissions role only includes CloudWatch Logs access — the `s3:GetObject` permission for reading file metadata is added in the step below. In production, always create the smallest policy possible.
+> CloudWatch Logs are your best friend when debugging Lambda. If something doesn't work, check the logs first. You can also use the **Test** tab to invoke the function manually with a sample event.
 
 ---
 
@@ -398,7 +399,7 @@ def lambda_handler(event, context):
 | # | Check | Status |
 |---|-------|--------|
 | 1 | S3 bucket `ravi-lambda-trigger-bucket-*` created | ☐ |
-| 2 | Lambda function `s3-image-processor` created with Python 3.12 | ☐ |
+| 2 | Lambda function `s3-image-processor` created with Python 3.14 | ☐ |
 | 3 | Lambda code deployed with S3 event processing logic | ☐ |
 | 4 | S3 trigger configured with `.jpg` suffix filter | ☐ |
 | 5 | Uploading a `.jpg` triggers the Lambda | ☐ |
@@ -426,34 +427,11 @@ def lambda_handler(event, context):
 
 ### Detailed Steps:
 
-1. **Delete the Lambda Function:**
-   - Go to **Lambda** → **Functions** → `s3-image-processor`
-   - Click **Actions** → **Delete**
-   - Type `delete` to confirm → **Delete**
-
-2. **Empty and Delete S3 Buckets:**
-   - Go to **S3** → **Buckets**
-   - Click on `ravi-lambda-trigger-bucket-12345`
-   - **Empty the bucket first:**
-     - Select all files → Click **Delete** → Type `permanently delete` → **Delete objects**
-   - Go back to the bucket list → Click on the bucket → **Delete** → Type the bucket name → **Delete bucket**
-   - Repeat for `ravi-lambda-processed-bucket-12345` if you created it
-
-3. **Delete the IAM Role:**
-   - Go to **IAM** → **Roles**
-   - Search for `lambda-s3-role`
-   - Click on it → **Delete** → Type the role name → **Delete role**
-
-4. **Delete CloudWatch Log Group:**
-   - Go to **CloudWatch** → **Logs** → **Log groups**
-   - Find `/aws/lambda/s3-image-processor`
-   - Select it → **Delete log group**
-   - ⚠️ CloudWatch logs can accumulate over time and cost money if not cleaned up
-
-5. **Remove S3 Trigger (if still attached):**
-   - Go to **Lambda** → `s3-image-processor` → **Configuration** → **Triggers**
-   - Select the S3 trigger → **Delete**
-   - ⚠️ This step may be automatic when you delete the function, but verify it's gone
+1. **Lambda Function:** **Lambda** → **Functions** → `s3-image-processor` → **Actions** → **Delete** → type `delete` → **Delete**.
+2. **S3 Buckets:** **S3** → **Buckets** → open `ravi-lambda-trigger-bucket-12345` → select all files → **Delete** → type `permanently delete` → **Delete objects**. Back in the bucket list → select the bucket → **Delete** → type the bucket name → **Delete bucket**. Repeat for `ravi-lambda-processed-bucket-12345` if you created it.
+3. **IAM Role:** **IAM** → **Roles** → `lambda-s3-role` → **Delete** → type the role name → **Delete role**.
+4. **CloudWatch Log Group:** **CloudWatch** → **Logs** → **Log groups** → select `/aws/lambda/s3-image-processor` → **Delete log group**. ⚠️ Logs accumulate quietly and cost money if left behind.
+5. **S3 Trigger (if still attached):** **Lambda** → `s3-image-processor` → **Configuration** → **Triggers** → select the trigger → **Delete**. Usually auto-deleted with the function — verify it's gone.
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > Always empty S3 buckets before deleting them — AWS won't let you delete a bucket that still has objects in it. It's like trying to throw away a box without taking out the stuff inside first! And don't forget CloudWatch logs — they're sneaky costs that accumulate quietly!

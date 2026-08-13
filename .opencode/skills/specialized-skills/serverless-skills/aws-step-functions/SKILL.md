@@ -1,0 +1,4 @@
+---
+name: aws-step-functions
+description: "Authors and edits AWS Step Functions state machines: writes Amazon States Language (ASL) in JSONata, and chooses and structures state types (Task, Choice, Map, Parallel, Pass, Wait, Succeed, Fail). Covers ASL syntax, JSONata data transformation and variables, Retry/Catch error handling, service integrations (.sync, waitForTaskToken callbacks), Distributed Map for large-scale S3/CSV processing, saga/compensation patterns, Standard vs Express workflow choice, TestState API unit testing, and migrating state machines from JSONPath to JSONata. Use when the user is building, authoring, debugging, or migrating a Step Functions state machine or ASL definition, or orchestrating multi-step workflows with branching, retries, or human-approval callbacks, even if they don't say 'Step Functions.' Do NOT use for general Lambda function code, API Gateway, EventBridge wiring, or SAM/CDK application packaging."
+---

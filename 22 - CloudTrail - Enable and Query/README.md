@@ -70,11 +70,9 @@
 
 By the end of this lab, you will:
 - Understand what CloudTrail is and why every AWS account needs it
-- Create a trail to log all management events to S3 and CloudWatch Logs
-- Query events using CloudWatch Logs Insights
+- Create a trail that logs all management events to S3 and CloudWatch Logs
+- Query events with CloudWatch Logs Insights
 - View the audit trail of every action taken in your AWS account
-
-CloudTrail is your **security camera for AWS**. It records who did what, when, and from where. Without it, you're flying blind. With it, you have a complete audit trail.
 
 ---
 
@@ -100,9 +98,11 @@ CloudTrail has a generous free tier:
 
 Estimated total lab cost: **< $1** if cleaned up within 1 hour.
 
+> 💡 **CloudTrail Lake vs trails:** This lab uses a **trail** (your first copy of management events is free). **CloudTrail Lake** (event data stores) is a *separate* feature billed per GB of ingestion — don't create one, you don't need it.
+
 > ⚠️ **IMPORTANT**: Delete your trail, S3 bucket, and CloudWatch log group before leaving! CloudTrail logs are small but can accumulate over time.
 
-> **Ravi's Mistake of the Day:** I enabled CloudTrail in one region only. Someone made changes in us-west-2, and I had no record of it. Enable CloudTrail for ALL regions.
+> **Ravi's Mistake of the Day:** I relied on CloudTrail Event History as my "audit trail" — but it only keeps 90 days. Once events rolled off, they were gone forever. A trail to S3 is the real long-term archive.
 
 ---
 
@@ -136,29 +136,30 @@ Estimated total lab cost: **< $1** if cleaned up within 1 hour.
 
 Let's set up CloudTrail to record everything happening in your account.
 
-1. Open the **AWS Console** in your browser
-2. Search for **CloudTrail** in the search bar and click on it
-3. You should see the CloudTrail dashboard
-4. Click **Trails** in the left sidebar
-5. Click the orange **Create trail** button (top right)
+1. Search for **CloudTrail** in the AWS Console and open it.
+2. Click **Trails** in the left sidebar → click the orange **Create trail** button (top right).
 
 **Configure your trail:**
 
-6. **Trail name**: Type `ravi-management-trail`
-7. **Enable for all accounts in my organization**: Leave unchecked (this is for AWS Organizations)
-8. Under **Management events**, make sure it's set to **Read/Write events** (both)
-9. Under **Storage location**:
-   - Select **CloudWatch Logs** (check the box)
-   - **Log group**: Click **Create new log group** → type `ravi-cloudtrail-logs` → click Create
-   - **IAM role**: Click **Create new role** → leave the default name → click Create
-10. Under **S3 bucket**:
-    - Select **Create new S3 bucket**
-    - **S3 bucket**: Type `ravi-cloudtrail-bucket-` followed by some random numbers (like `12345`) — bucket names must be globally unique
-    - Leave the rest as default
-11. Click **Create trail**
+3. **Trail name**: Type `ravi-management-trail`
+4. **Enable for all accounts in my organization**: Leave unchecked (this is for AWS Organizations)
+5. Under **Storage location** → **S3 bucket**, select **Create new S3 bucket**:
+   - **S3 bucket**: Type `ravi-cloudtrail-bucket-` followed by random numbers (like `12345`) — bucket names must be globally unique
+   - **Log file SSE-KMS encryption**: **Disabled** — keeps logs on free SSE-S3 encryption. (The default, Enabled, creates a paid KMS key.)
+   - In **Additional settings**, **Log file validation**: Leave **Enabled** — detects tampering, at no extra cost
+6. Under **CloudWatch Logs**, select **Enabled**:
+   - **Log group**: **Create new** → type `ravi-cloudtrail-logs`
+   - **IAM role**: **Create new** → leave the default name
+7. Click **Next** to reach **Choose log events**:
+   - **Management events** → **API activity**: **Read/Write** (log both). Management events are logged by default.
+   - **Data events**: **Leave off** — data events (S3 object access, Lambda invocations) are NOT logged by default and cost extra. We don't need them.
+   - **Insights events**: Leave off (extra cost).
+8. Click **Next** → review the settings → click **Create trail**
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> **Good news:** Every trail you create in the CloudTrail **console** is a **multi-Region trail** by default — it logs activity in all enabled Regions automatically, so there's no checkbox to worry about. (A single-Region trail can only be created with the AWS CLI.) Why does this matter? Attackers might try to create resources in a region you don't normally use. Logging everything means no blind spots!
+> **Good news:** Every console trail is a **multi-Region trail** by default — it logs activity in all enabled Regions, so there's no checkbox to worry about. (Single-Region trails can only be created with the AWS CLI.) Logging everything means no blind spots!
+>
+> CloudTrail also creates and applies the **S3 bucket policy** that grants itself write permission — no manual policy needed.
 
 📸 [Screenshot: CloudTrail "Create trail" page with all settings configured as described]
 
@@ -168,22 +169,17 @@ Let's set up CloudTrail to record everything happening in your account.
 
 CloudTrail is only useful if there's something to log! Let's create some activity.
 
-1. Go to **EC2** in the AWS Console
-2. Click **Launch instance** (top right)
-3. **Name**: Type `ravi-cloudtrail-test`
-4. **AMI**: Amazon Linux 2023 (Free Tier eligible)
-5. **Instance type**: t2.micro (Free Tier eligible)
-6. **Key pair**: Select your existing key pair
-7. Leave everything else as default
-8. Click **Launch instance** → **View all instances**
+1. Go to **EC2** → **Launch instance**.
+2. **Name**: `ravi-cloudtrail-test`
+3. **AMI**: Amazon Linux 2023 (Free Tier eligible)
+4. **Instance type**: `t2.micro` (Free Tier eligible)
+5. **Key pair**: Select your existing key pair
+6. Leave everything else default and click **Launch instance**.
 
-Wait for the instance to be in **Running** state, then:
+Wait for the instance to reach **Running**, then:
 
-9. Select the instance → Click **Instance state** → Click **Stop instance**
-10. Confirm the stop
-11. Wait for the instance to be in **Stopped** state
-12. Select the instance → Click **Instance state** → Click **Terminate instance**
-13. Confirm the termination
+7. Select the instance → **Instance state** → **Stop instance** → confirm → wait for **Stopped**.
+8. Select the instance → **Instance state** → **Terminate instance** → confirm.
 
 We just created three CloudTrail events:
 - `RunInstances` (launching the instance)
@@ -201,21 +197,16 @@ We just created three CloudTrail events:
 
 Now let's see what CloudTrail recorded!
 
-1. Go back to **CloudTrail** in the AWS Console
-2. Click **Event history** in the left sidebar
-3. You should see a list of recent events
+1. Go to **CloudTrail** → **Event history** in the left sidebar.
 
 **Filter the events:**
 
-4. Click the **Filter** dropdown (or search bar)
-5. Select **Event name** as the filter type
-6. Type `RunInstances` and press Enter
-7. You should see the event for when you launched the EC2 instance
+2. Click the **Filter** dropdown → select **Event name** → type `RunInstances` and press Enter.
+3. You should see the event for when you launched the instance.
 
 **Explore the event details:**
 
-8. Click on any event to expand it
-9. You'll see rich details like:
+4. Click any event to expand it. You'll see:
    - **Event time**: When the action happened (UTC)
    - **Event name**: RunInstances
    - **Event source**: ec2.amazonaws.com
@@ -224,10 +215,12 @@ Now let's see what CloudTrail recorded!
    - **Request parameters**: What was requested (instance type, AMI, etc.)
    - **Response elements**: What AWS returned (instance ID, etc.)
 
-10. Try filtering by `StopInstances` and `TerminateInstances` to see those events too
+5. Try filtering by `StopInstances` and `TerminateInstances` to see those events too.
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> "The Event History view shows the last 90 days of events. For longer retention, you need the S3 bucket we configured. Think of Event History as a 'recent calls' log on your phone."
+> "Event History shows the last 90 days of events. For longer retention, you need the S3 bucket we configured. Think of it as a 'recent calls' log on your phone."
+>
+> **CLI alternate:** `aws cloudtrail lookup-events --lookup-attributes AttributeKey=EventName,AttributeValue=RunInstances`
 
 📸 [Screenshot: CloudTrail Event History showing the RunInstances event with details expanded]
 
@@ -237,9 +230,8 @@ Now let's see what CloudTrail recorded!
 
 Your trail sends events to S3 as JSON files. Let's look at them!
 
-1. Go to **S3** in the AWS Console
-2. Click on the bucket you created (starts with `ravi-cloudtrail-bucket-`)
-3. Navigate through the folder structure:
+1. Go to **S3** and open the bucket you created (starts with `ravi-cloudtrail-bucket-`).
+2. Navigate to:
    ```
    AWSLogs/
    └── [your-account-id]/
@@ -249,10 +241,7 @@ Your trail sends events to S3 as JSON files. Let's look at them!
                    └── [month]/
                        └── [day]/
    ```
-4. You should see JSON log files (they end with `.json.gz` — compressed)
-5. Click on a file and **Download** it
-6. Extract the file (it's gzipped)
-7. Open it in a text editor
+3. You'll see `.json.gz` log files (compressed). Download one, unzip it, and open it in a text editor.
 
 **What you'll see:**
 
@@ -289,18 +278,12 @@ Your trail sends events to S3 as JSON files. Let's look at them!
 
 This is where CloudTrail gets powerful! Let's query our events using SQL-like syntax.
 
-1. Go to **CloudWatch** in the AWS Console
-2. Click **Logs** → **Logs Insights** in the left sidebar
-3. You should see a query editor
-
-**Select your log group:**
-
-4. In the **Select log group(s)** dropdown, find and select `ravi-cloudtrail-logs`
-5. The query editor should now be ready
+1. Go to **CloudWatch** → **Logs** → **Logs Insights**.
+2. In the **Select log group(s)** dropdown, select `ravi-cloudtrail-logs`.
 
 **Run your first query:**
 
-6. Copy and paste this query into the editor:
+3. Paste this into the editor and click **Run query** (or press Ctrl+Enter):
 
 ```
 fields eventTime, eventName, userIdentity.type, sourceIPAddress
@@ -309,12 +292,11 @@ fields eventTime, eventName, userIdentity.type, sourceIPAddress
 | limit 10
 ```
 
-7. Click **Run query** (or press Ctrl+Enter)
-8. You should see results showing your RunInstances events!
+4. You should see your RunInstances events!
 
 **Try a more advanced query:**
 
-9. Clear the editor and paste this:
+5. Clear the editor and run:
 
 ```
 fields eventTime, eventName, userIdentity.arn, sourceIPAddress, userAgent
@@ -322,12 +304,11 @@ fields eventTime, eventName, userIdentity.arn, sourceIPAddress, userAgent
 | limit 20
 ```
 
-10. Click **Run query**
-11. This shows ALL events (not just RunInstances) with who did what and from where
+6. This shows ALL events — who did what, and from where.
 
 **Try a security-focused query:**
 
-12. Paste this query:
+7. Run this to find destructive actions:
 
 ```
 fields eventTime, eventName, userIdentity.arn, sourceIPAddress
@@ -336,8 +317,7 @@ fields eventTime, eventName, userIdentity.arn, sourceIPAddress
 | limit 10
 ```
 
-13. Click **Run query**
-14. This finds all destructive actions — useful for security audits!
+8. Handy for security audits!
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > "CloudWatch Logs Insights is like Google for your CloudTrail logs. Instead of scrolling through thousands of events, you write a query and get instant answers. In a real job, you might be asked: 'Who stopped our production server at 3 AM last Tuesday?' — and this is how you'd find out!"
@@ -350,25 +330,15 @@ fields eventTime, eventName, userIdentity.arn, sourceIPAddress
 
 Want to get alerted when suspicious activity happens? Create a metric filter!
 
-1. Go to **CloudWatch** → **Logs** → **Log groups**
-2. Click on `ravi-cloudtrail-logs`
-3. Click **Metric filters** tab
-4. Click **Create metric filter**
-
-**Define pattern:**
-
-5. Enter this filter pattern:
+1. Go to **CloudWatch** → **Logs** → **Log groups** → `ravi-cloudtrail-logs` → **Metric filters** tab → **Create metric filter**.
+2. Enter this filter pattern and click **Next**:
    ```
    { ($.eventName = "ConsoleLogin") && ($.errorMessage = "Failed authentication") }
    ```
-6. Click **Next**
-7. Filter name: `FailedLoginAttempts`
-8. Metric namespace: `CloudTrailMetrics`
-9. Metric name: `FailedLogins`
-10. Metric value: `1`
-11. Click **Next** → **Create metric filter**
+3. **Filter name**: `FailedLoginAttempts` | **Metric namespace**: `CloudTrailMetrics` | **Metric name**: `FailedLogins` | **Metric value**: `1`
+4. Click **Next** → **Create metric filter**.
 
-Now you can create a CloudWatch Alarm on this metric to get notified of failed login attempts!
+Now you can alarm on this metric to get notified of failed login attempts!
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > "Metric filters are how you turn logs into actionable alerts. Failed logins, unauthorized API calls, root user activity — all of these can trigger alarms that notify your security team."
@@ -398,51 +368,30 @@ Before moving on, confirm all of these:
 
 CloudTrail is powerful but logs can accumulate. Clean up everything!
 
-**Delete the EC2 instance (if it's still running):**
+**Delete the EC2 instance (if still running):**
 
-1. Go to **EC2** → **Instances**
-2. If any test instances remain, select them → **Instance state** → **Terminate instance**
+1. Go to **EC2** → **Instances** → select any test instances → **Instance state** → **Terminate instance**.
 
 **Delete the CloudTrail trail:**
 
-3. Go to **CloudTrail** → **Trails**
-4. Select `ravi-management-trail`
-5. Click **Delete** (top right)
-6. Confirm the deletion
+2. Go to **CloudTrail** → **Trails** → select `ravi-management-trail` → **Delete** → confirm.
 
-**Delete the CloudWatch Logs log group:**
+**Delete the CloudWatch Logs log group** *(this also removes the metric filter if you created one)*:
 
-7. Go to **CloudWatch** → **Logs** → **Log groups**
-8. Find `ravi-cloudtrail-logs`
-9. Click the radio button next to it
-10. Click **Delete** (or Actions → Delete)
-11. Type `delete` to confirm
-12. Click **Delete**
+3. Go to **CloudWatch** → **Logs** → **Log groups** → select `ravi-cloudtrail-logs` → **Actions** → **Delete** → type `delete` → confirm.
+
+**Delete the IAM role CloudTrail created:**
+
+4. Go to **IAM** → **Roles** → select the `CloudTrail_CloudWatchLogs_Role` role → **Delete** → confirm.
 
 **Delete the S3 bucket:**
 
-13. Go to **S3** → **Buckets**
-14. Find `ravi-cloudtrail-bucket-...`
-15. Click the bucket name
-16. Click **Empty** (top right) to delete all objects
-17. Type `permanently delete` to confirm
-18. Click **Delete**
-19. Go back to the bucket list
-20. Select the bucket → Click **Delete**
-21. Type the bucket name to confirm
-22. Click **Delete bucket**
-
-**Delete the metric filter (if created):**
-
-23. Go to **CloudWatch** → **Logs** → **Log groups** → `ravi-cloudtrail-logs`
-24. Click **Metric filters** tab
-25. Select the filter → Click **Delete metric filter**
+5. Go to **S3** → **Buckets** → open `ravi-cloudtrail-bucket-...` → **Empty** → type `permanently delete` to confirm.
+6. Back on the bucket list, select the bucket → **Delete** → type the bucket name → **Delete bucket**.
 
 **Verify everything is gone:**
 
-26. Go to CloudTrail → confirm no trails exist
-27. Go to S3 → confirm the bucket is gone
-28. Go to CloudWatch → confirm the log group is gone
+7. CloudTrail: no trails. S3: bucket gone. CloudWatch: log group gone.
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > "In production, you'd NEVER delete your CloudTrail. But for this lab, we clean up to avoid any charges. In your real AWS account, always keep at least one trail enabled — it's your security lifeline!"
@@ -565,7 +514,7 @@ You now have eyes on everything happening in your AWS account! In the next lab, 
 <details>
 <summary><strong>"Access Denied" when creating the trail</strong></summary>
 
-**Fix**: Ensure your IAM user has the `AWSCloudTrail_FullAccess` policy. You can also attach the `CloudTrailFullAccess` managed policy.
+**Fix**: Ensure your IAM user has the AWS-managed `AWSCloudTrail_FullAccess` policy attached.
 </details>
 
 <details>

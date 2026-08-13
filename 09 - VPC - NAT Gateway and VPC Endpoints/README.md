@@ -90,7 +90,7 @@ In this lab, you'll extend your VPC from Lab 08 by adding a **private subnet**, 
 
 ## 💰 Cost Warning
 
-> ⚠️ **NAT Gateway costs approximately $0.045/hour (~$32/month) plus data processing charges.** This is the most expensive resource in this lab. **DELETE THE NAT GATEWAY IMMEDIATELY after the lab!** We're only using it for a few minutes, so the actual cost will be pennies. But forget to delete it, and you'll get a surprise bill at the end of the month. **Do NOT skip cleanup!**
+> ⚠️ **A NAT Gateway costs ~$0.045/hour (~$32/month) plus data processing charges** — the priciest resource in this lab. Used for a few minutes it's just pennies, but forget to delete it and you'll get a surprise bill. **DELETE IT IMMEDIATELY after the lab — do NOT skip cleanup!**
 
 ---
 
@@ -112,7 +112,7 @@ In this lab, you'll extend your VPC from Lab 08 by adding a **private subnet**, 
 │  │  ┌───────────────────┐       │  │  ┌─────────▼──────────┐  │  │
 │  │  │ NAT Gateway        │◄─────┼──┼──│ Private RT          │  │  │
 │  │  │ (Elastic IP)       │       │  │ │ 0.0.0.0/0 → NAT GW │  │  │
-│  │  └───────────────────┘       │  │ │ 0.0.0.0/0 → S3 EP   │  │  │
+│  │  └───────────────────┘       │  │  │ S3 prefix → S3 EP   │  │  │
 │  │                              │  │ └────────────────────┘  │  │
 │  │  ┌───────────────────┐       │  │                          │  │
 │  │  │ Internet Gateway   │       │  │  ┌────────────────────┐  │  │
@@ -145,9 +145,10 @@ If you still have `ravi-custom-vpc` from Lab 08, use it! If you deleted it, recr
 5. Create route table `ravi-public-rt` with `0.0.0.0/0 → ravi-igw`
 6. Associate with `ravi-public-subnet-1a`
 7. Enable auto-assign public IP on the public subnet
+8. Recreate the `ravi-vpc-sg` security group (SSH from **My IP**) from Lab 08 — Step 6 needs it later
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> This is the same setup from Lab 08. If you're recreating it, you can do it in about 5 minutes. If you still have it, skip to Step 1!
+> Same setup as Lab 08 — about 5 minutes to recreate. If you still have it, skip to Step 1!
 
 ---
 
@@ -171,7 +172,7 @@ A private subnet has NO direct internet access — instances here can't be reach
 4. Click **Create subnet**
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> Why `10.0.2.0/24`? Because our VPC is `10.0.0.0/16` (65,536 IPs). The public subnet uses `10.0.1.0/24` (256 IPs). The private subnet gets `10.0.2.0/24` (another 256 IPs). Each subnet must have a non-overlapping CIDR range!
+> Why `10.0.2.0/24`? Our VPC is `10.0.0.0/16` (65,536 IPs); the public subnet uses `10.0.1.0/24` (256 IPs), so the private subnet gets `10.0.2.0/24` (another 256). Subnet CIDRs must never overlap!
 
 5. **Important:** Make sure auto-assign public IP is **DISABLED** on this subnet:
    - Click on `ravi-private-subnet-1a`
@@ -215,7 +216,7 @@ The NAT Gateway lets instances in the private subnet access the internet (for up
 10. Wait for the NAT Gateway state to change to **Available** (this takes about 2-3 minutes)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> Why in the public subnet? Because the NAT Gateway needs to forward traffic to the internet via the Internet Gateway. It can only do that if it's in a subnet that has a route to the IGW. Think of the NAT Gateway as a receptionist — it sits in the lobby (public subnet) and relays messages to/from the internet on behalf of the private offices (private subnet)!
+> Why the public subnet? The NAT Gateway forwards traffic to the internet through the IGW, so it must sit in a subnet that routes to the IGW. Think of it as a receptionist — in the lobby (public subnet), relaying messages to/from the internet for the private offices (private subnet)!
 
 ---
 
@@ -378,7 +379,7 @@ curl http://checkip.amazonaws.com
 **Important:** The IP returned should be the **NAT Gateway's Elastic IP** — NOT the instance's IP (because the instance has no public IP!).
 
 You can verify: go to the NAT Gateway in the VPC console and check its Elastic IP — it should match!
-![verification ](screenshots/nat-gateway-verification.png)
+![NAT Gateway Elastic IP matches checkip output](screenshots/nat-gateway-verification.png)
 
 ```bash
 ping -c 4 8.8.8.8
@@ -388,7 +389,7 @@ This should work! The private EC2 can reach the internet through the NAT Gateway
 
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> This is the magic of NAT Gateways! The private EC2 has no public IP, yet it can access the internet. The NAT Gateway acts as a proxy — it forwards outbound traffic and routes the responses back. But nobody from the internet can initiate connections TO the private EC2. It's a one-way door!
+> This is the magic of NAT: no public IP, yet full outbound internet — the gateway forwards traffic out and routes replies back. And because it's outbound-only, nobody from the internet can initiate a connection TO the instance. One-way door!
 
 ---
 
@@ -405,7 +406,7 @@ VPC Endpoints let your private instances access AWS services (like S3) through t
    - **Service:** Search for `s3` and select `com.amazonaws.us-east-1.s3` (Type: Gateway)
      - ⚠️ Make sure you pick the **Gateway** type, not Interface
    - **VPC:** `ravi-custom-vpc`
-   - **Route tables:** Check `ravi-private-rt`
+   - **Route tables:** Check `ravi-private-rt` — AWS auto-adds the S3 route (prefix list) to it
    - **Policy:** Full Access (or leave as default)
 4. Click **Create endpoint**
 
@@ -415,11 +416,7 @@ VPC Endpoints let your private instances access AWS services (like S3) through t
 5. Wait for the endpoint to become **Available**
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> Why use a VPC Endpoint for S3?
-> - **FREE** — VPC Endpoints for S3 don't cost anything (Gateway type)
-> - **Faster** — Traffic stays within the AWS network
-> - **More secure** — No internet exposure
-> - **No NAT Gateway charges** — S3 traffic doesn't go through the NAT, saving you data processing fees
+> Why a VPC Endpoint for S3? **Free** (gateway type), **faster** (stays inside AWS's network), **more secure** (no internet exposure) — and S3 traffic skips the NAT Gateway, saving you data processing fees.
 
 ---
 
@@ -444,10 +441,12 @@ aws s3 ls
 
 This should list your S3 buckets (or return empty if you have none). The important thing is that it WORKS — and it's going through the VPC Endpoint, NOT the NAT Gateway!
 
-![verification ](screenshots/nat-gateway-verification.png)
+> **Heads up:** The instance has no IAM role by default, so `aws s3 ls` needs credentials. Run `aws configure` with your access keys, or relaunch the instance with an IAM role that allows S3 read access (e.g., `AmazonS3ReadOnlyAccess`).
+
+![S3 access via the VPC endpoint verified](screenshots/nat-gateway-verification.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> Without the VPC Endpoint, S3 traffic from the private EC2 would go: Private EC2 → NAT Gateway → Internet → S3. With the endpoint: Private EC2 → VPC Endpoint → S3. The second path is faster, cheaper, and more secure!
+> Without the endpoint: Private EC2 → NAT Gateway → Internet → S3. With it: Private EC2 → VPC Endpoint → S3. Faster, cheaper, more secure!
 
 ---
 
@@ -455,13 +454,7 @@ This should list your S3 buckets (or return empty if you have none). The importa
 
 > <img src="https://img.shields.io/badge/Step%2011-Verify%20Your%20Work-9B59B6?style=for-the-badge" />
 
-- [ ] Private subnet `ravi-private-subnet-1a` (10.0.2.0/24) exists with NO auto-assign public IP
-- [ ] NAT Gateway `ravi-nat-gw` is available in the public subnet
-- [ ] Private route table `ravi-private-rt` routes `0.0.0.0/0` to NAT Gateway
-- [ ] Private EC2 has no public IP but can reach the internet (curl/ping work)
-- [ ] Private EC2's outbound IP matches the NAT Gateway's Elastic IP
-- [ ] VPC Endpoint `ravi-s3-endpoint` for S3 is available
-- [ ] `aws s3 ls` works on private EC2 via the endpoint
+Everything's in place — work through the [Validation Checklist](#-validation-checklist) below to confirm each piece before cleanup.
 
 ---
 
@@ -482,7 +475,7 @@ This should list your S3 buckets (or return empty if you have none). The importa
 
 ## 🧹 Cleanup (IMPORTANT!)
 
-> ⚠️ **THE NAT GATEWAY COSTS ~$32/MONTH. DELETE IT FIRST! Do not forget!**
+> ⚠️ **Delete the NAT Gateway FIRST — it's the expensive one (~$32/month)! Do not forget!**
 
 ### Step 1: Delete the NAT Gateway (CRITICAL!)
 
@@ -496,8 +489,6 @@ This should list your S3 buckets (or return empty if you have none). The importa
 
 > 📸 [Screenshot: NAT Gateway deletion confirmed]
 ![NAT Gateway deletion confirmed](screenshots/nat-gateway-delete-confirmation.png)
-
-> ⚠️ **THIS IS THE MOST IMPORTANT STEP. Do not skip it!**
 
 ### Step 2: Release the Elastic IP
 
@@ -662,7 +653,7 @@ You've built a proper VPC with public and private subnets! Now let's learn how t
 </details>
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> The most expensive mistake in this lab is forgetting to delete the NAT Gateway. It costs $0.045/hour = $32.40/month. Set a timer on your phone if you need to! ⏰💰
+> The most expensive mistake in this lab is leaving the NAT Gateway running (~$0.045/hr ≈ $32/month). Set a timer if you need to! ⏰💰
 
 ---
 

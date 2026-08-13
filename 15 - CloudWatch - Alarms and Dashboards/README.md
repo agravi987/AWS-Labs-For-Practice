@@ -66,9 +66,9 @@
 
 ## 🤔 In Plain English
 
-> **What is this, really?** CloudWatch is the **heart monitor + security cameras + black box** of your AWS account. It automatically collects performance metrics (CPU usage, network traffic, status checks) from AWS services, triggers automated alarms ("CPU > 80%!"), displays metrics on central mission-control dashboards, and aggregates application logs for instant troubleshooting. 📊
+> **What is this, really?** CloudWatch is the **heart monitor + security cameras + black box** of your AWS account. It automatically collects performance metrics (CPU usage, network traffic, status checks) from AWS services, fires automated alarms ("CPU > 80%!"), shows metrics on mission-control dashboards, and aggregates application logs for instant troubleshooting. 📊
 >
-> 🌍 **Why you should care:** You can't fix what you can't see. CloudWatch ensures cloud engineers discover issues *before* customers notice downtime.
+> 🌍 **Why you should care:** You can't fix what you can't see. CloudWatch surfaces issues *before* customers notice downtime.
 
 ---
 
@@ -76,12 +76,12 @@
 
 In this lab, you will:
 
-- Navigate the **modern AWS CloudWatch Console layout** to explore metrics across namespaces.
-- Differentiate between **Basic Monitoring** (hypervisor level) and **Detailed / OS-level Monitoring** (CloudWatch Agent).
-- Create a **CloudWatch Alarm** using AWS's updated 4-step wizard to trigger email alerts via **Amazon SNS**.
-- Generate high CPU load on Amazon Linux 2023 using `stress-ng` (or a zero-dependency Python script).
-- Construct a **CloudWatch Dashboard** with 4 interactive widget types (**Line chart**, **Number widget**, **Alarm status**, and **Markdown Text**).
-- Set up a **CloudWatch Log Group**, stream test logs, and analyze them using **CloudWatch Logs Insights** and **Live Tail**.
+- Navigate the **modern CloudWatch Console** to explore metrics across namespaces.
+- Differentiate **Basic Monitoring** (hypervisor level, free) from **OS-level monitoring** (CloudWatch Agent).
+- Create a **CloudWatch Alarm** (4-step wizard) that emails alerts via **Amazon SNS**.
+- Generate high CPU load on Amazon Linux 2023 with `stress-ng` (or a zero-dependency Python script).
+- Build a **CloudWatch Dashboard** with 4 widget types: **Line**, **Number**, **Alarm status**, and **Markdown Text**.
+- Create a **Log Group**, stream test logs, and query them with **Logs Insights** and **Live Tail**.
 
 ---
 
@@ -100,14 +100,14 @@ Before starting, ensure you have:
 
 | Resource | Cost Model |
 |----------|------------|
-| CloudWatch Metrics (Basic) | **Free** (First 10 custom metrics free) |
-| CloudWatch Alarms | ~$0.10 per alarm / month |
-| CloudWatch Dashboards | ~$3.00 per dashboard / month |
+| EC2 Basic Monitoring metrics (5-min) | **Free** (automatic) |
+| CloudWatch Alarms | **10 free**; then ~$0.10 per alarm / month |
+| CloudWatch Dashboards | **3 free**; then ~$3.00 per dashboard / month |
 | CloudWatch Logs | First 5 GB ingested & stored free |
 | SNS Notifications | Free for email subscriptions |
-| **Estimated Total** | **< $0.15** for completing this lab |
+| **Estimated Total** | **~$0 (within Free Tier)** |
 
-> ⚠️ **Rithu's Cost Alert:** CloudWatch Dashboards cost ~$3/month if left active. Always follow the **Cleanup** section at the end of the lab to delete the dashboard and alarm! 🧹
+> ⚠️ **Rithu's Cost Alert:** Dashboards and alarms are free only within the Free Tier limits — delete them in the **Cleanup** section when you're done. 🧹
 
 > **Ravi's Mistake of the Day:** I created a CloudWatch alarm connected to SNS, but forgot to click "Confirm Subscription" in the email AWS sent me. The alarm went into alarm state... and notified nobody! Always confirm your SNS subscription! 📧
 
@@ -148,7 +148,7 @@ Before starting, ensure you have:
 
 ### Step 1: Launch a Test EC2 Instance
 
-If you don't currently have a test EC2 instance running, let's launch one using Amazon Linux 2023!
+If you don't have a test EC2 instance running, launch one using Amazon Linux 2023:
 
 1. Open the **EC2 Console** → click **Launch Instance**.
 2. Fill out the configuration fields:
@@ -185,18 +185,18 @@ systemctl enable httpd
 
 ### Step 2: Explore CloudWatch Metrics (Modern Console UI)
 
-Let's examine how AWS publishes hypervisor metrics to CloudWatch in the modern console interface.
+Let's see how AWS publishes hypervisor metrics to CloudWatch in the modern console.
 
 1. Open the **CloudWatch Console**.
-2. In the left navigation menu under **Metrics**, observe the 4 available options:
-   - **Query studio**: Run Prometheus (PromQL) or SQL queries on AWS/OpenTelemetry metrics.
-   - **Classic metrics**: Browse standard metric namespaces by service (e.g., `AWS/EC2`). *(Note: In older AWS console versions, this was labeled "All metrics")*.
-   - **Explorer**: Create tag-based dynamic metric visualizations.
-   - **Streams**: Stream real-time metrics to Firehose or third-party destinations.
+2. In the left navigation menu under **Metrics**, note the 4 options:
+   - **Query studio**: Run Prometheus (PromQL) or SQL queries on metrics.
+   - **Classic metrics**: Browse standard namespaces by service (e.g., `AWS/EC2`). *(Labeled "All metrics" in older consoles)*.
+   - **Explorer**: Create tag-based dynamic visualizations.
+   - **Streams**: Stream metrics to Firehose or third-party destinations.
 3. Click **Classic metrics**.
 4. In the main window, notice the top navigation tabs:
    - **Browse**: Explore metrics grouped by AWS service namespaces (`AWS/EC2`, `AWS/RDS`, `AWS/DynamoDB`, etc.).
-   - **Graphed metrics**: Adjust statistics (Average, Maximum, Sum), period (1m, 5m), color scheme, and Y-axis scales for currently selected metrics.
+   - **Graphed metrics**: Adjust the statistic (Average, Max, Sum), period, color, and Y-axis for selected metrics.
    - **Query**: Run SQL queries using **CloudWatch Metrics Insights**.
 5. Click the **Browse** tab → under **AWS namespaces**, select **EC2** → click **Per-Instance Metrics**.
 6. Locate `cloudwatch-test-ec2` in the table:
@@ -221,7 +221,7 @@ Let's examine how AWS publishes hypervisor metrics to CloudWatch in the modern c
 
 ### Step 3: Create a CloudWatch Alarm (4-Step Wizard)
 
-We will now configure a CloudWatch Alarm that triggers an email notification when CPU utilization exceeds 80%.
+We will now configure a CloudWatch Alarm that emails you when CPU utilization exceeds 80%.
 
 1. In the CloudWatch Console left menu under **Alarms**, click **All alarms**.
 2. Click the orange **Create alarm** button.
@@ -229,9 +229,7 @@ We will now configure a CloudWatch Alarm that triggers an email notification whe
 #### 🔹 Step 3a: Step 1 of Wizard — Specify Metric and Conditions
 1. Click **Select metric** → select **EC2** → **Per-Instance Metrics**.
 2. Find `cloudwatch-test-ec2`, select **CPUUtilization**, and click **Select metric**.
-3. Configure the metric evaluation settings:
-   - **Statistic**: `Average`
-   - **Period**: `5 minutes`
+3. Set **Statistic**: `Average` and **Period**: `5 minutes`.
 4. Configure threshold conditions:
 
 | Setting | Value | Explanation |
@@ -264,13 +262,11 @@ We will now configure a CloudWatch Alarm that triggers an email notification whe
 5. Click **Next**.
 
 #### 🔹 Step 3c: Step 3 of Wizard — Add Name and Description
-1. **Alarm name:** `ec2-cpu-alarm`
-2. **Alarm description:** `Triggers an email when EC2 CPU exceeds 80%`
-3. Click **Next**.
+1. **Alarm name:** `ec2-cpu-alarm` — **Alarm description:** `Triggers an email when EC2 CPU exceeds 80%`
+2. Click **Next**.
 
 #### 🔹 Step 3d: Step 4 of Wizard — Preview and Create
-1. Review all metric, condition, and notification parameters.
-2. Click **Create alarm** at the bottom right.
+1. Review all settings, then click **Create alarm** at the bottom right.
 
 📸 **[Screenshot: Alarm creation page showing all configured settings]**
 ![Alarm creation page showing all configured settings](screenshots/cloudwatch-alarm-creation.png)
@@ -279,7 +275,7 @@ We will now configure a CloudWatch Alarm that triggers an email notification whe
 
 ### Step 4: Stress CPU & Trigger the Alarm
 
-Let's simulate high workload on our server to push CPU usage to 100% and watch the alarm trigger!
+Let's push CPU usage to 100% and watch the alarm trigger!
 
 1. Connect to your EC2 instance via SSH:
 
@@ -300,12 +296,12 @@ stress-ng --cpu 4 --timeout 600s
 
 3. Observe metric updates in CloudWatch:
    - Go to **CloudWatch Console** → **Metrics** → **Classic metrics** → **Browse** → **EC2** → **Per-Instance Metrics**.
-   - Check **CPUUtilization** for `cloudwatch-test-ec2`. You will see the line graph climb to 100%! 📈
+   - Check **CPUUtilization** for `cloudwatch-test-ec2`. The line graph climbs to 100%! 📈
 
 4. Track the Alarm State transition:
    - Go to **CloudWatch** → **Alarms** → **All alarms**.
    - State transition sequence: 🟢 **OK** → 🟡 **Insufficient data** → 🔴 **In alarm**.
-   - After ~5–10 minutes, check your email inbox — you will receive an SNS alert email detailing the breach! 📧
+   - Within ~5–10 minutes, check your email inbox for the SNS alert detailing the breach. 📧
 
 📸 **[Screenshot: Alarm showing "In alarm" state in the CloudWatch console]**
 ![Alarm showing "In alarm" state in the CloudWatch console](screenshots/cloudwatch-alarm-in-alarm-state.png)
@@ -316,7 +312,7 @@ stress-ng --cpu 4 --timeout 600s
 
 ### Step 5: Build a Custom Dashboard (Modern Widget Picker)
 
-Let's build a multi-widget operational dashboard to monitor your infrastructure in real time.
+Let's build a multi-widget operational dashboard to monitor your infrastructure.
 
 1. In the CloudWatch Console left menu, click **Dashboards**.
 2. Click **Create dashboard** → Name: `Ravi-Labs-Dashboard` → Click **Create dashboard**.
@@ -347,8 +343,7 @@ Let's build a multi-widget operational dashboard to monitor your infrastructure 
   ```
 - Click **Create widget**.
 
-4. Drag and resize the widgets to customize your layout.
-5. Click **Save dashboard** at the top right corner!
+4. Drag and resize the widgets to arrange your layout, then click **Save dashboard** at the top right.
 
 📸 **[Screenshot: Complete Ravi-Labs-Dashboard with all 4 widgets visible]**
 ![Complete Ravi-Labs-Dashboard with all 4 widgets visible](screenshots/cloudwatch-dashboard-complete.png)
@@ -361,7 +356,7 @@ Applications generate logs locally on servers. CloudWatch Logs aggregates them i
 1. Go to **CloudWatch Console** → left menu: **Logs** → **Log groups**.
 2. Click **Create log group**:
    - **Log group name:** `ravi-app-logs`
-   - **Retention setting:** `7 days` *(Crucial: Avoid setting to "Never expire" to control storage costs)*
+   - **Retention setting:** `7 days` *(avoid "Never expire" to control storage costs)*
 3. Click **Create**.
 
 4. Open `ravi-app-logs` → click **Create log stream** → Name: `test-stream` → click **Create**.
@@ -377,18 +372,18 @@ aws logs put-log-events \
 
 6. **Analyze Logs with CloudWatch Logs Insights:**
    - In the left menu under **Logs**, click **Logs Insights**.
-   - In the log group selector dropdown, choose `ravi-app-logs`.
+   - In the log group selector, choose `ravi-app-logs`.
    - Run the default query:
      ```sql
      fields @timestamp, @message
      | sort @timestamp desc
      | limit 20
      ```
-   - Click **Run query** to display formatted log search results!
+   - Click **Run query** to see your log events.
 
 7. **Monitor Real-Time Logs with Live Tail:**
    - In the left menu under **Logs**, click **Live Tail**.
-   - Select `ravi-app-logs` to stream incoming log events live to your browser.
+   - Select `ravi-app-logs` to stream incoming events live to your browser.
 
 📸 **[Screenshot: CloudWatch Logs showing the test log message]**
 ![CloudWatch Logs showing the test log message](screenshots/cloudwatch-log-message.png)

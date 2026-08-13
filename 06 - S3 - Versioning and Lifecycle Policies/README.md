@@ -73,13 +73,13 @@
 
 ## 🎯 Objective
 
-In this lab, you'll learn how S3 Versioning protects your data from accidental deletion and overwrites, and how Lifecycle Policies automatically move your objects between storage classes to save money. You'll upload files, create versions, delete and restore objects, and set up a lifecycle policy that automates storage management.
+You'll enable versioning, upload multiple versions of a file, soft-delete and restore it, and add a lifecycle policy that auto-moves objects to cheaper storage classes.
 
 ---
 
 ## 🧠 Prerequisites
 
-- [x] Completed [Lab 05 — S3 Basics](../05%20-%20S3%20Basics/README.md)
+- [x] Completed [Lab 05 — S3: Static Website Hosting](../05%20-%20S3%20-%20Static%20Website%20Hosting/README.md)
 - [x] AWS account with console access
 - [x] Basic familiarity with the S3 console
 
@@ -87,7 +87,7 @@ In this lab, you'll learn how S3 Versioning protects your data from accidental d
 
 ## 💰 Cost Warning
 
-> ⚠️ **This lab costs less than $1.** You're using S3 Standard storage with a tiny test file. However, always remember: S3 charges per GB per month. A lifecycle policy that moves data to Glacier is cheap, but leaving tons of data in Standard-IA when you don't need it adds up. **Always clean up after yourself!**
+> ⚠️ **This lab costs less than $1.** But remember: S3 charges per GB per month, and transitions to Standard-IA/Glacier only save money if you actually need them. **Always clean up after yourself!**
 
 > **Ravi's Mistake of the Day:** I turned on versioning but never set up lifecycle policies. After 6 months, I had 10,000 versions of the same file and my S3 bill was... not happy.
 
@@ -151,25 +151,22 @@ In this lab, you'll learn how S3 Versioning protects your data from accidental d
 ![Bucket Versioning showing "Enabled"](screenshots/versioning-enabled.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> Once you enable versioning, you can NEVER go back to " suspended" — you can only suspend it, which stops new versions but doesn't delete old ones. Think of it like a one-way valve!
+> Once you enable versioning, you can never go back to "Unversioned" — you can only suspend it, which stops new versions but keeps the old ones. Think of it like a one-way valve!
 
 ---
 
 > <img src="https://img.shields.io/badge/Step%203-Upload%20Version%201-E67E22?style=for-the-badge" />
 
-1. Click on the **Objects** tab
-2. Click the orange **Upload** button
-3. Click **Add files**
-4. Open a text editor on your computer (Notepad, VS Code, whatever you like) and create a file called `index.html` with this content:
+1. Click the **Objects** tab, then the orange **Upload** button
+2. Create `index.html` on your computer with this content:
 
 ```html
 <h1>Hello from Version 1</h1>
 ```
 
-5. Save it as `index.html` somewhere you can find it (like your Desktop)
-6. Back in the S3 console, click **Add files** and select your `index.html` file
-7. Scroll down and click the orange **Upload** button
-8. You should see a green banner: "Upload succeeded"
+3. Save it somewhere easy to find (like your Desktop)
+4. Click **Add files**, select `index.html`, then click **Upload**
+5. You should see a green "Upload succeeded" banner
 
 > 📸 [Screenshot: Upload succeeded screen]
 ![Upload succeeded screen](screenshots/upload-succeeded.png)
@@ -178,18 +175,14 @@ In this lab, you'll learn how S3 Versioning protects your data from accidental d
 
 > <img src="https://img.shields.io/badge/Step%204-Upload%20Version%202-9B59B6?style=for-the-badge" />
 
-1. Click on your bucket name to go back to the Objects tab
-2. Click the orange **Upload** button
-3. Open the SAME `index.html` file on your computer and change the content to:
+1. Open the SAME `index.html` file and change the content to:
 
 ```html
 <h1>Hello from Version 2 — Updated!</h1>
 ```
 
-4. Save the file
-5. Click **Add files** and select the updated `index.html`
-6. Click the orange **Upload** button
-7. You should see "Upload succeeded" again
+2. Save it, then upload it again (**Objects** tab → **Upload** → **Add files**)
+3. You should see "Upload succeeded" again
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > Notice that S3 didn't complain about "overwriting" the file? That's because versioning is enabled — it creates a NEW version instead of replacing the old one!
@@ -198,15 +191,14 @@ In this lab, you'll learn how S3 Versioning protects your data from accidental d
 
 > <img src="https://img.shields.io/badge/Step%205-Upload%20Version%203-E74C3C?style=for-the-badge" />
 
-1. Go back to the Objects tab
-2. Click **Upload**
-3. Change `index.html` content to:
+1. Go back to the **Objects** tab
+2. Change `index.html` content to:
 
 ```html
 <h1>Hello from Version 3 — Final Version!</h1>
 ```
 
-4. Save, upload, and wait for success
+3. Save and upload again — wait for the success banner
 
 ---
 
@@ -253,14 +245,14 @@ In this lab, you'll learn how S3 Versioning protects your data from accidental d
 
 Now let's pretend we panicked and want our file back!
 
-1. You should still have **List versions** enabled
+1. Make sure **List versions** is still enabled
 2. Find the version you want to restore (let's pick v1 — "Hello from Version 1")
 3. Click the checkbox next to that specific version
-4. Click **Actions** → **Restore**
-   - OR: Click the **Download** button next to that version to download it
-   - OR: Click on the **Version ID** link to see the object details, then use **Open** or **Download**
-5. To make v1 the current version:
-   - Download v1, then re-upload it (S3 will create a NEW current version from it)
+4. Click **Actions** → **Download** (or click the **Version ID** to open the object, then **Download**)
+5. Re-upload the downloaded file — S3 creates a NEW current version containing v1's content
+
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> The console has no "make this version current" button — that requires the CLI (`aws s3api copy-object` with the version ID). Download + re-upload is the console-friendly way to restore.
 
 > 📸 [Screenshot: Downloading/restoring a previous version]
 ![Downloading/restoring a previous version](screenshots/restore-version.png)
@@ -324,14 +316,14 @@ Now for the really cool part — let S3 manage your storage automatically!
 4. Click **Create rule**
 
 > 📸 [Screenshot: Lifecycle rule configuration showing all three transitions]
-![ Lifecycle rule configuration showing all three transitions](screenshots/lifecycle-rule-config.png)
+![Lifecycle rule configuration showing all three transitions](screenshots/lifecycle-rule-config.png)
 
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > Why does this save money? Because different storage classes have different costs:
 > - **S3 Standard** — $0.023/GB/month (most accessible, most expensive)
 > - **S3 Standard-IA** — $0.0125/GB/month (half the price, but you pay to retrieve)
-> - **S3 Glacier** — $0.004/GB/month (cheap, but retrieval takes hours)
+> - **S3 Glacier Flexible Retrieval** — $0.004/GB/month (cheap, but retrieval takes hours)
 >
 > If you have old files you rarely access, letting S3 automatically move them to Glacier saves you 80%+!
 
@@ -390,7 +382,7 @@ Let's make sure everything is set up correctly:
 
 ### Step 2: Delete the Bucket
 
-1. Go back to the S3 bucket list (click **Breadcrumbs** → S3)
+1. Go back to the S3 bucket list (click **S3** in the breadcrumbs)
 2. Select your bucket `ravi-versioning-lab-12345`
 3. Click **Delete**
 4. Type `ravi-versioning-lab-12345` in the confirmation field
@@ -399,7 +391,7 @@ Let's make sure everything is set up correctly:
 ### Step 3: Delete the Lifecycle Rule (If Bucket Still Exists)
 
 If you want to delete the lifecycle rule before emptying the bucket:
-1. Go to **Properties** → **Lifecycle rules**
+1. Go to **Management** → **Lifecycle rules**
 2. Select the rule
 3. Click **Delete**
 

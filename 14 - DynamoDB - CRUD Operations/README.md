@@ -105,9 +105,9 @@ Before you start, make sure you have:
 | Read Capacity Units (25 RCU) | Free Tier |
 | **Estimated total** | **$0 — completely free!** |
 
-> 🎉 **Rithu says:** DynamoDB has one of the most generous Free Tier offerings in all of AWS! 25 GB of storage, 25 write capacity units, and 25 read capacity units — all free forever (not just 12 months). You'd have to be a pretty heavy user to exceed this. This lab will use approximately 0.001% of the free tier. 😄
+> 🎉 **Rithu says:** DynamoDB has one of the most generous Free Tier offerings in all of AWS! 25 GB of storage, 25 write capacity units, and 25 read capacity units — all free forever (not just 12 months). You'd have to be a heavy user to exceed this. 😄
 
-> ⚠️ **However:** If you switch to **On-Demand** mode or use features like DynamoDB Streams, charges may apply. Stick to **Provisioned** capacity with the default settings for this lab.
+> ⚠️ **Note:** **On-demand** (pay-per-request) is AWS's recommended mode for modern apps, but it isn't covered by the Free Tier. We'll use **Provisioned** (default settings) to stay free — on-demand would still cost fractions of a cent at this scale.
 
 ---
 
@@ -159,7 +159,7 @@ Before you start, make sure you have:
 ![DynamoDB table creation page with Students table name and student_id partition key](screenshots/01-dynamodb-table-creation.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> Notice the "Default settings" option uses **Provisioned** capacity with 5 Read Capacity Units (RCU) and 5 Write Capacity Units (WCU). This is well within the Free Tier and means DynamoDB will handle up to 5 reads and 5 writes per second. Plenty for this lab!
+> "Default settings" uses **Provisioned** capacity with 5 RCU and 5 WCU — well inside the Free Tier (up to 5 reads and 5 writes per second). Plenty for this lab!
 
 ---
 
@@ -184,7 +184,6 @@ Let's add some data! We'll use both the Console and CLI.
 
 5. To add each attribute, click the **Add new attribute** dropdown and select the type (String, Number, etc.)
 6. Click **Create item**
-
 
 7. Create a second item:
 
@@ -250,6 +249,7 @@ You'll see all items in JSON format:
     "ScannedCount": 3
 } 
 ```
+📸 **[Screenshot: CLI scan output showing all items]**
 ![DynamoDB CLI scan result](screenshots/03-dynamodb-cli-scan-result.png)
 
 **Query a specific item:**
@@ -273,8 +273,14 @@ You'll get only Ravi's record:
 }
 ```
 
+**Fetch one item directly (get-item):**
+
+```bash
+aws dynamodb get-item --table-name Students --key '{"student_id": {"S": "S001"}}'
+```
+
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> **Query vs Scan** — A Query is fast and efficient (it uses the partition key to find exactly what you need). A Scan reads EVERY item in the table — slow and expensive at scale. Always prefer Query when possible!
+> **Query vs Scan** — Query uses the partition key to find only what you need (fast, cheap). Scan reads EVERY item — slow and expensive at scale. Always prefer Query! Add `--projection-expression "name, score"` to return only the attributes you need.
 
 ---
 
@@ -288,7 +294,7 @@ Let's update Ravi's score and add a new attribute!
 2. Find the item with `student_id = "S001"`
 3. Click on the item to open it
 4. Change `score` from `95` to `98`
-5. Click **Add new attribute** → Number → add `grade` = `A+`
+5. Click **Add new attribute** → String → add `grade` = `A+`
 6. Click **Save changes**
 
 **Method B: Using the AWS CLI**
@@ -399,12 +405,12 @@ Let's add a **Global Secondary Index (GSI)** to query by `topic`!
 **Query using the GSI:**
 
 In the console:
-1. Go to **Students** table → **Explore table items**
-2. In the dropdown that says "Scan", switch to **Query**
-3. Change the index to `topic-index`
-4. In the **Partition key** field, enter `EC2` (the console uses `topic` as the key name from the index)
-5. Click **Run** — you'll see only Ravi's EC2 record!
+1. Go to **Students** → **Explore table items**
+2. Switch from Scan to **Query** and select index `topic-index`
+3. For **Partition key**, enter `EC2` (the console fills in `topic` from the index)
+4. Click **Run** — you'll see only Ravi's EC2 record!
 
+📸 **[Screenshot: Console query against the topic-index GSI]**
 ![query using index](screenshots/05-dynamodb-query-index.png)
 
 Via CLI:
@@ -420,6 +426,11 @@ aws dynamodb query \
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > GSIs are like having multiple "views" of your data. Without a GSI, you can only query by partition key (`student_id`). With a GSI on `topic`, you can efficiently query by topic too. Think of it as creating a shortcut to your data! 🗺️
 
+**Try TTL (free auto-delete):**
+
+1. Go to **Students** → **Additional settings** → **Time to Live (TTL)** → enable it on an attribute like `expires_at` (unix epoch in seconds)
+2. Expired items are deleted automatically, usually within ~48 hours — no code, no cost
+
 **View CloudWatch Metrics:**
 
 1. Go to **DynamoDB** → **Tables** → `Students`
@@ -428,7 +439,8 @@ aws dynamodb query \
    - Read/Write Capacity Units consumed
    - Throttled requests (should be 0)
    - Storage size
-4. Click **Contributor insights** to see which items are accessed most
+
+> 💡 **Contributor Insights** (which attributes are "hot") is a paid add-on — skip it for this lab.
 
 📸 **[Screenshot: DynamoDB CloudWatch metrics showing read/write capacity]**
 ![DynamoDB CloudWatch metrics showing read/write capacity](screenshots/06-dynamodb-cloudwatch-metrics.png)
@@ -477,7 +489,7 @@ DynamoDB's Free Tier is generous, but let's clean up anyway!
 2. Wait for the table to disappear from the list
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> Unlike RDS, DynamoDB doesn't charge you when there are no tables! But it's still good practice to delete resources you're not using. If you leave this table around, it'll consume Free Tier capacity that you might need for future labs.
+> Unlike RDS, DynamoDB doesn't charge you for empty tables — but it's still good practice to clean up so the Free Tier capacity stays available for future labs.
 
 📸 **[Screenshot: DynamoDB console with no tables listed]**
 

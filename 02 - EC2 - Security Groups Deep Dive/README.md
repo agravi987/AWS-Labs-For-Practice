@@ -87,7 +87,7 @@ Become a security group expert by creating, modifying, and chaining security gro
 
 > <img src="https://img.shields.io/badge/Warning-Important-E74C3C?style=flat-square" />
 
-Still Free Tier eligible as long as you stick to t2.micro. Each security group is free. Even in a real environment, security groups themselves cost nothing beyond what AWS allocates. That said: **terminate unused instances**. AWS charges for compute time, not firewall rules.
+Still Free Tier eligible as long as you stick to t2.micro. Security groups themselves are always free — AWS charges for compute time, not firewall rules. But **terminate unused instances** when done.
 
 > **Ravi's Mistake of the Day:** I opened SSH to 0.0.0.0/0 (the entire internet) during a lab. Within 10 minutes, my instance was compromised with crypto mining software. AWS sent me a very stern email. Lesson: LOCK. YOUR. PORTS.
 
@@ -130,7 +130,7 @@ Still Free Tier eligible as long as you stick to t2.micro. Each security group i
 Let's leave behind the auto-created groups from Lab 01.
 
 1. EC2 Console → **Security Groups** under Network & Security in the left panel.
-2. Click **Create security group** (blue button, top left).
+2. Click **Create security group** (top right of the page).
 3. Fill in:
 
    | Field               | Value                                   |
@@ -168,13 +168,13 @@ Let's leave behind the auto-created groups from Lab 01.
 
 4. **Instance type:** t2.micro.
 
-5. **Key pair:** Select `first-key-pair` from Lab 01. If you deleted it, create a new one (follow Lab 01 Step 5).
+5. **Key pair:** Select `first-key-pair` from Lab 01. If you deleted it, create a new one (see Lab 01 Step 1).
 
 6. **Network settings:**
    - VPC: default
    - Subnet: No preference (default)
    - **Auto-assign public IP:** Enable
-   - **Firewall (security group):** Select **Select existing security group**
+   - **Firewall (security group):** Choose **Select existing security group**
    - Check `web-server-sg`
 
 7. **Storage:** Default 8 GiB gp2/gp3.
@@ -262,7 +262,7 @@ To simulate:
 
 The page won't load. Why? Because HTTP traffic can't reach port 80. AWS is silently dropping those packets.
 
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> Security groups are **stateless-aware** (they track connection state), so existing HTTP keep-alive connections might linger. Open a fresh Incognito/Private browser tab for a definitive test.
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> Security groups are **stateful**, so an already-open HTTP keep-alive connection can linger after the rule is removed. Test from a fresh Incognito/Private window for a clean result.
 
 ---
 
@@ -540,9 +540,9 @@ _We'll add extra storage volumes, format them, take snapshots, and restore from 
 <summary><strong>🔍 Multiple SGs on one instance and still blocked</strong></summary>
 <br/>
 
-**Likely Cause:** Most restrictive rule applies
+**Likely Cause:** No rule in any assigned SG allows that traffic
 
-**Fix:** Check all assigned SGs for overlapping rules
+**Fix:** SG rules are **additive** (a union) — traffic flows if ANY assigned SG allows it. Check each SG for the missing rule.
 
 </details>
 

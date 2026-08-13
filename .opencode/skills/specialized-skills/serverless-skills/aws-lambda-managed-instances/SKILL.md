@@ -1,0 +1,4 @@
+---
+name: aws-lambda-managed-instances
+description: "Evaluates, configures, and migrates workloads to AWS Lambda Managed Instances (LMI). Runs Lambda functions on EC2 instances in the user's account while AWS manages provisioning, patching, scaling, routing, and load balancing. Triggers when queries mention Lambda Managed Instances, LMI, capacity providers, multi-concurrent execution environments, EC2-backed Lambda, persistent Lambda instances, PerExecutionEnvironmentMaxConcurrency, CapacityProviderConfig, cold start elimination via dedicated instances, migrating standard Lambda to managed instances, or cost comparison between standard Lambda and LMI with Savings Plans or Reserved Instances."
+---

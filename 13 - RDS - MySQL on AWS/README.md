@@ -107,10 +107,10 @@ Before you start, make sure you have:
 | Storage (20 GB gp3) | ~$2.30/month |
 | **Estimated total for this lab** | **< $3** (if cleaned up within an hour!) |
 
-> ⚠️ **CRITICAL — Rithu says:** RDS instances keep running and keep charging even after you close your browser! Unlike EC2 where you can stop an instance and stop paying, RDS **charges you even when stopped** (for the storage). You MUST **delete** the RDS instance after this lab. I cannot stress this enough! 💸
+> ⚠️ **CRITICAL — Rithu says:** RDS keeps charging even after you close your browser — and unlike EC2, you pay for storage even while stopped. You MUST **delete** the RDS instance after this lab! 💸
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> The Free Tier gives you 750 hours/month of `db.t3.micro` or `db.t4g.micro` for 12 months (legacy accounts). But storage and backups are NOT Free Tier eligible. Delete after the lab to avoid surprises!
+> The Free Tier covers a micro instance — 750 hrs/month for 12 months on legacy accounts, or up to $200 in credits on new accounts. Storage and backups beyond the free allowance still cost money, so delete the DB after the lab!
 
 ---
 
@@ -158,7 +158,7 @@ A DB Subnet Group tells RDS which subnets (and therefore which Availability Zone
 5. Click **Create**
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> Just like with ASG, we're putting our database in 2 AZs for high availability. If one AZ has issues, RDS can failover to the other. Even for a lab, it's good practice! 🏗️
+> We span 2 AZs so RDS can place the database where it wants. Automatic failover only kicks in with **Multi-AZ** enabled (the Free Tier template leaves it off) — still good practice to plan for. 🏗️
 
 📸 **[Screenshot: DB Subnet Group creation page showing 2 AZs selected]**
 ![DB Subnet Group creation page showing 2 AZs selected](screenshots/01-db-subnet-group-2azs.png)
@@ -190,7 +190,7 @@ Your database needs its own security group. We'll allow MySQL access from anywhe
 
 5. Click **Create security group**
 
-> ⚠️ **Production Reality Check:** In the real world, you would NEVER open MySQL to the entire internet! You'd restrict it to specific security groups or IP ranges. But for learning, `0.0.0.0/0` lets us connect from our local machine without VPC peering headaches.
+> ⚠️ **Production Reality Check:** Never open MySQL to the whole internet in production — lock it to specific security groups or IPs. For this lab, `0.0.0.0/0` lets us connect from anywhere.
 
 📸 **[Screenshot: Security group with MySQL port 3306 open]**
 ![Security group with MySQL port 3306 open](screenshots/02-rds-sg-mysql-3306-open.png)
@@ -211,7 +211,7 @@ This is the main event — let's launch a MySQL database!
 
 **Engine options:**
 - Select **MySQL**
-- Version: **MySQL 8.0.x** (latest available)
+- Version: **MySQL 8.4** (the current LTS — MySQL 8.0 and 5.7 are past standard support)
 - Template: **Free tier** ✅
 
 **Settings:**
@@ -223,7 +223,7 @@ This is the main event — let's launch a MySQL database!
 | Master password | **Use a strong password! Write it down!** |
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> Pick a password you'll remember but that's not "password123". I recommend something like `Ravi#MySQL2024!` — mix of uppercase, lowercase, numbers, and symbols. WRITE IT DOWN somewhere safe!
+> Pick a strong password you'll remember, like `Ravi#MySQLLab!` — mix uppercase, lowercase, numbers, and symbols. WRITE IT DOWN somewhere safe!
 
 **Instance configuration:**
 
@@ -233,6 +233,8 @@ This is the main event — let's launch a MySQL database!
 | Storage type | **General Purpose SSD (gp3)** |
 | Allocated storage | **20 GB** |
 | Storage autoscaling | ❌ Uncheck this (keep costs predictable) |
+
+> 💡 The Free Tier template leaves **Multi-AZ** off (no standby instance) — Multi-AZ isn't Free Tier eligible. Fine for a lab; in production you'd usually want it.
 
 **Connectivity:**
 
@@ -244,9 +246,9 @@ This is the main event — let's launch a MySQL database!
 | Security group | `rds-sg` |
 | Availability zone | Don't specify (let RDS choose) |
 
-> ⚠️ **Production Reality Check:** "Public access: Yes" means your database can be reached from the internet (protected by the security group). In production, this should almost ALWAYS be "No" — you'd connect through a VPN or from within the VPC. But for this lab, we need public access.
+> ⚠️ **Production Reality Check:** "Public access: Yes" means the DB is reachable from the internet (still protected by the security group). In production this should be **No** — connect via VPN or from inside the VPC. For this lab, we need it public.
 >
-> 💡 **Note:** Free Tier supports `db.t3.micro` and `db.t4g.micro`. The console lists `db.t3.micro` first. `gp3` is the current default storage type (cheaper and faster than the older `gp2`).
+> 💡 `gp3` is the current default storage type — cheaper and faster than the older `gp2`.
 
 **Database options:**
 
@@ -278,8 +280,7 @@ This is the main event — let's launch a MySQL database!
 > <img src="https://img.shields.io/badge/Step%204-Wait%20for%20DB-F39C12?style=for-the-badge" />
 
 1. In the **RDS Console** → **Databases** → click `ravi-mysql-db`
-2. Watch the **Status** column:
-   - 🔄 Creating → ⏳ Backing up → ✅ **Available**
+2. Watch the **Status** column go from 🔄 Creating → ✅ **Available** (with backups disabled, there's no "Backing up" stage)
 3. Once it says **Available**, you're ready to connect!
 
 4. Copy the **Endpoint** from the database details:
@@ -487,8 +488,8 @@ Let's confirm everything worked:
    - Select `ravi-mysql-db`
    - Click **Actions** → **Delete**
    - ⚠️ **UNCHECK** "Create final snapshot" (we don't need it for a lab)
-   - ⚠️ **UNCHECK** "Acknowledge..." confirmation
-   - Type `delete me` in the confirmation box
+   - **CHECK** the "I acknowledge..." confirmation box
+   - If prompted, type `delete me` in the confirmation box (only required when deletion protection is on)
    - Click **Delete**
 
    > ⏱️ Deletion takes 5-10 minutes
@@ -514,7 +515,7 @@ Let's confirm everything worked:
 📸 **[Screenshot: RDS console with instance deleted and subnet group removed]**
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> After deletion, your RDS charges stop immediately. Storage is released and you stop paying. Always double-check that the database is gone! You can verify by going to RDS → Databases and confirming the list is empty (or doesn't contain your lab DB). Also verify EC2 instances are terminated so you don't pay for compute you're not using!
+> After deletion, RDS charges stop immediately. Double-check RDS → Databases no longer shows `ravi-mysql-db`, and terminate any EC2 instance you launched so you don't pay for idle compute!
 
 ---
 

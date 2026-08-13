@@ -145,7 +145,7 @@ In this lab, you'll build a **Virtual Private Cloud (VPC)** completely from scra
 2. In the search bar, type **VPC** and click on **VPC** under Services
 3. In the left sidebar, make sure you're on the **Your VPCs** page
 4. Click the orange **Create VPC** button
-5. Choose **VPC settings** → **VPC only** (NOT "VPC and more")
+5. Under **Resources to create**, select **VPC only** (NOT **VPC and more**)
 
 ![VPC Create - VPC Only Selected](screenshots/01-vpc-create-vpc-only.png)
 
@@ -369,7 +369,7 @@ Once you're connected via SSH:
 curl http://checkip.amazonaws.com
 ```
 
-This should return your **instance's public IP** (which is the same as the Elastic IP/public IP shown in the console). ✅
+This should return your **instance's public IP** — the same address shown in the console. ✅
 
 ```bash
 ping -c 4 8.8.8.8
@@ -388,7 +388,7 @@ You should see replies! This confirms the instance has internet access through t
 
 ![VPC Resource Map](screenshots/14-vpc-resource-map.png)
 
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> Congratulations! You just built a VPC from scratch. In the real world, you'd have multiple subnets across multiple AZs, NAT gateways, NACLs, and more. But the fundamentals are exactly what you just did!
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> Congratulations — you just built a VPC from scratch! In the real world you'd add multiple subnets across AZs, NAT gateways, and NACLs, but the fundamentals are exactly what you did here.
 
 ---
 
@@ -416,53 +416,31 @@ You should see replies! This confirms the instance has internet access through t
 
 ### 1️⃣ Terminate the EC2 Instance
 
-1. Go to **EC2** → **Instances**
-2. Select `vpc-ec2-test`
-3. Click **Instance state** → **Terminate instance**
-4. Click **Terminate**
+**EC2** → **Instances** → select `vpc-ec2-test` → **Instance state** → **Terminate instance** → click **Terminate**.
 
 ### 2️⃣ Delete the Security Group
 
-1. Go to **VPC** → **Security Groups**
-2. Find `ravi-vpc-sg`
-3. Select it → click **Actions** → **Delete security groups**
-4. Type the security group name to confirm → click **Delete**
+**VPC** → **Security Groups** → select `ravi-vpc-sg` → **Actions** → **Delete security groups** → type the name to confirm → **Delete**.
 
 ### 3️⃣ Disassociate the Route Table
 
-1. Go to **VPC** → **Route Tables**
-2. Click on `ravi-public-rt`
-3. Click **Subnet associations** tab
-4. Click **Edit subnet associations**
-5. Uncheck `ravi-public-subnet-1a`
-6. Click **Save**
+**VPC** → **Route Tables** → click `ravi-public-rt` → **Subnet associations** tab → **Edit subnet associations** → uncheck `ravi-public-subnet-1a` → **Save**.
 
 ### 4️⃣ Delete the Route Table
 
-1. Still in **Route Tables**, select `ravi-public-rt`
-2. Click **Actions** → **Delete route table**
-3. Confirm and delete
+Select `ravi-public-rt` → **Actions** → **Delete route table** → confirm.
 
 ### 5️⃣ Detach and Delete the Internet Gateway
 
-1. Go to **VPC** → **Internet Gateways**
-2. Click on `ravi-igw`
-3. Click **Actions** → **Detach from VPC** → confirm
-4. Click **Actions** → **Delete internet gateway** → confirm
+**VPC** → **Internet Gateways** → select `ravi-igw` → **Actions** → **Detach from VPC** → confirm, then **Actions** → **Delete internet gateway** → confirm.
 
 ### 6️⃣ Delete the Subnet
 
-1. Go to **VPC** → **Subnets**
-2. Select `ravi-public-subnet-1a`
-3. Click **Actions** → **Delete subnet** → confirm
+**VPC** → **Subnets** → select `ravi-public-subnet-1a` → **Actions** → **Delete subnet** → confirm.
 
 ### 7️⃣ Delete the VPC
 
-1. Go to **VPC** → **Your VPCs**
-2. Select `ravi-custom-vpc`
-3. Click **Actions** → **Delete VPC**
-4. Type `ravi-custom-vpc` to confirm
-5. Click **Delete**
+**VPC** → **Your VPCs** → select `ravi-custom-vpc` → **Actions** → **Delete VPC** → type `ravi-custom-vpc` → **Delete**.
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> If you get an error deleting the VPC, something is still attached to it. Double-check: all subnets deleted, IGW detached, security groups deleted, route tables deleted. AWS won't let you delete a VPC that still has stuff in it!
 
@@ -559,7 +537,7 @@ Now that you have a working VPC with a public subnet, let's add a private subnet
 | "No subnets available" error | You may be looking at the wrong VPC. Make sure you selected `ravi-custom-vpc` in the subnet dropdown |
 | CIDR conflict error | The CIDR `10.0.0.0/16` may conflict with an existing VPC. Try `10.1.0.0/16` instead |
 
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> The #1 mistake in VPC labs is forgetting to enable auto-assign public IP on the subnet. If your instance has no public IP, you can't reach it from the internet. Check the subnet settings! 🔍
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> If your instance has no public IP, the subnet's **auto-assign public IP** setting is the usual culprit — check it first! 🔍
 
 ---
 

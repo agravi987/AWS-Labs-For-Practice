@@ -60,9 +60,9 @@
 
 ## 🤔 In Plain English
 
-> **What is this, really?** Containers are **apps + everything they need, packed into a box** that runs anywhere. ECS is AWS's container *orchestrator* — it decides where boxes run and keeps the right number alive. **Fargate** is the serverless mode: AWS runs your boxes on hidden servers so **you never touch a single EC2 instance**. It's like ordering delivery instead of cooking. 🍕
+> **What is this, really?** Containers are **apps + everything they need, packed into a box** that runs anywhere. ECS is AWS's container *orchestrator* — it decides where boxes run and keeps the right number alive. **Fargate** is the serverless mode: AWS runs your boxes on hidden servers so **you never touch an EC2 instance**. Like ordering delivery instead of cooking. 🍕
 >
-> 🌍 **Why you should care:** Containers are how modern companies ship apps — consistent from your laptop to production. Fargate removes the server-hassle from that equation.
+> 🌍 **Why you should care:** Containers are how modern companies ship apps — consistent from laptop to production. Fargate removes the server-hassle from that equation.
 
 ---
 
@@ -94,13 +94,15 @@ In this lab, you'll deploy a **containerized NGINX web server** on **Amazon ECS 
 
 ## 💰 Cost Warning
 
-**⚠️ THIS LAB COSTS APPROXIMATELY $1-$2!**
+**⚠️ THE METER RUNS FROM THE FIRST SECOND — CLEAN UP WHEN YOU'RE DONE!**
 
-Fargate pricing:
-- **0.25 vCPU:** ~$0.0233/hour
-- **0.5 GB Memory:** ~$0.0031/hour
-- **2 tasks running for ~45 min:** ~$0.05 total
-- **Public IP:** Included in Fargate pricing
+Fargate bills **per second** (1-minute minimum) for provisioned vCPU + memory. At the smallest size (us-east-1):
+
+- **0.25 vCPU:** ~$0.010/hour
+- **0.5 GB memory:** ~$0.002/hour
+- **2 tasks running for ~45 min:** ≈ **$0.02 total**
+
+So this lab costs only **cents** — if you delete everything right after. Unlike EC2, Fargate has no free tier: compute bills from the moment the image pull starts.
 
 **To avoid extra charges:**
 - ⚠️ **DELETE ALL RESOURCES IMMEDIATELY after the lab** (cluster, service, task definition, security group)
@@ -143,12 +145,12 @@ Fargate pricing:
 │   │  └──────────────┘  └──────────────┘    │    │
 │   └─────────────────────────────────────────┘    │
 │                                                   │
-│   Each task has: Public IP → port 80 → NGINX     │
-│   Load Balancer routes traffic across tasks        │
+│   Each task has: Public IP → port 80 → NGINX      │
+│   No load balancer — access tasks directly        │
 └──────────────────────────────────────────────────┘
 ```
 
-> **Did You Know?** Fargate is serverless containers. You don't manage any servers, patch any OS, or handle any cluster scaling. Just define your container and AWS runs it. Magic.
+> **Did You Know?** Fargate is serverless containers — no servers to manage, patch, or scale. Each task gets its own network interface (`awsvpc` mode) with its own private IP, plus the public IP you assigned. Just define the container and AWS runs it. Magic.
 
 ---
 
@@ -178,11 +180,10 @@ Fargate pricing:
 Wait for the cluster to be created. You should see a green success banner: "Cluster ravi-fargate-cluster created successfully."
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> What's the difference between ECS with EC2 and Fargate?
-> - **EC2 mode:** You manage the EC2 instances that run your containers. More control, more work.
-> - **Fargate mode:** AWS manages the underlying infrastructure. You just specify CPU/memory and deploy. Less control, less work.
+> - **EC2 mode:** You manage the instances that run your containers. More control, more work.
+> - **Fargate mode:** AWS manages the infrastructure. You just set CPU/memory and deploy. Less control, less work.
 >
-> Think of it like building a house (EC2) vs. renting an apartment (Fargate). The apartment comes pre-built with plumbing and electricity — you just move in!
+> Like building a house (EC2) vs. renting an apartment (Fargate) — the apartment comes pre-built, you just move in!
 
 ---
 
@@ -220,7 +221,7 @@ A task definition is like a blueprint for your container — it specifies which 
 6. Scroll down and click **Create**.
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> The `nginx:latest` image is one of the most popular Docker images in the world. NGINX is a web server that serves static content (HTML, CSS, images) extremely fast. When you visit `http://<your-task-ip>`, NGINX will return its default welcome page. In production, you'd use a custom image with your application code.
+> `nginx:latest` is one of the most popular Docker images — a web server that serves static content fast. Visit `http://<your-task-ip>` and it returns the default welcome page. In production, you'd use a custom image with your app code.
 
 ---
 
@@ -246,7 +247,7 @@ Before creating the service, let's create a security group that allows HTTP traf
 > 📸 [Screenshot: The security group creation form showing HTTP inbound rule from anywhere]
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> In production, you'd never allow HTTP from anywhere without a load balancer in front. For this lab, it's fine — we're just testing. In real life, the security group would only allow traffic from the load balancer's security group.
+> In production, this rule would only allow traffic from a load balancer's security group. For this lab, testing from anywhere is fine.
 
 ---
 
@@ -289,7 +290,7 @@ Now let's deploy the task definition as a running service!
 
 #### Load Balancing:
 1. **Load balancer type:** ⚫ **None**
-   - ⚠️ For this lab, we'll access tasks directly via their public IPs. In production, you'd use an Application Load Balancer.
+   - ⚠️ We'll access tasks directly via their public IPs. In production, you'd put an Application Load Balancer in front.
 
 #### Review and Create:
 1. Review all settings.
@@ -297,10 +298,10 @@ Now let's deploy the task definition as a running service!
 3. Wait for the success banner.
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> The service configuration is where most of the magic happens. Key settings:
-> - **Desired count = 2:** ECS will always try to keep 2 tasks running. If one crashes, another starts automatically.
-> - **Public IP = Yes:** Without this, your tasks can't access the internet (can't pull images, can't be accessed externally).
-> - **2 subnets in different AZs:** This provides high availability — if one AZ goes down, the tasks in the other AZ keep running.
+> Why these three settings matter:
+> - **Public IP = Yes:** Without it, tasks can't pull images from Docker Hub and you can't reach the web server.
+> - **2 subnets in different AZs:** If one AZ goes down, the other AZ's tasks keep running.
+> - **Desired count = 2:** ECS always keeps 2 tasks running — crashes are replaced automatically.
 
 ---
 
@@ -309,9 +310,8 @@ Now let's deploy the task definition as a running service!
 1. Go to **ECS → Clusters → ravi-fargate-cluster**.
 2. In the **Services** tab, click on `nginx-service`.
 3. You'll see the **Tasks** tab — it should show 2 tasks in a **PROVISIONING** or **PENDING** state.
-4. **Wait 2-5 minutes** for the tasks to reach **RUNNING** state.
-   - Fargate needs to download the container image and start the container. This takes a bit of time on the first run.
-5. Click the **refresh** button (↻) periodically to check the status.
+4. **Wait 2-5 minutes** for tasks to reach **RUNNING** — the first run has to download and start the container image.
+5. Click the **refresh** button (↻) periodically to check status.
 
 **Task Status Progression:**
 ```
@@ -326,11 +326,7 @@ PROVISIONING → PENDING → RUNNING ✅
 > 📸 [Screenshot: The ECS service page showing 2 tasks in RUNNING state]
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> If tasks stay in PENDING for more than 5 minutes, check:
-> - Did you assign a public IP?
-> - Are the subnets public (have a route to an Internet Gateway)?
-> - Is the security group allowing outbound traffic?
-> - Did you select the correct region?
+> Tasks stuck in PENDING? Check the public IP, public subnets, outbound traffic, and region — see Troubleshooting below.
 
 ---
 
@@ -353,17 +349,16 @@ working. Further configuration is required.
 
 > 📸 [Screenshot: Browser showing the NGINX welcome page from the Fargate task's public IP]
 
-#### Test Round-Robin (Load Balancing):
+#### Check the Other Task:
 
 1. Get the public IP of the **other task**.
 2. Open it in a different browser tab: `http://<task-2-public-ip>`
-3. You should see the same NGINX welcome page.
-4. Both tasks serve the same content because they're both running `nginx:latest`.
+3. You should see the same NGINX welcome page — both tasks run the same `nginx:latest` image.
 
 🎉 **CONGRATULATIONS!** You just deployed a containerized application on AWS ECS Fargate!
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> In a real production setup, you'd put an Application Load Balancer (ALB) in front of these tasks. The ALB would distribute incoming traffic across all tasks automatically, so users don't need to know individual task IPs. The ALB also handles SSL/TLS termination, health checks, and more. But that's a lab for another day!
+> In production, an Application Load Balancer (ALB) sits in front of these tasks — it spreads traffic across tasks so users never need to know individual IPs, and it handles SSL/TLS and health checks. That's a lab for another day!
 
 ---
 
@@ -386,7 +381,7 @@ Let's see how easy it is to scale with ECS!
 |--------|-------|
 | 2 tasks running | 4 tasks running |
 | Can handle moderate traffic | Can handle double the traffic |
-| ~$0.02/hour | ~$0.04/hour |
+| ~$0.03/hour | ~$0.05/hour |
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > With traditional servers, scaling means: 1) Buy a new server, 2) Install the OS, 3) Install the application, 4) Configure networking, 5) Hope it works. With Fargate, scaling means: change a number and click Update. That's the power of containers + serverless! 🚀
@@ -413,7 +408,7 @@ Every Fargate task automatically sends logs to CloudWatch.
 > 📸 [Screenshot: CloudWatch Logs showing NGINX container output]
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> CloudWatch Logs are your window into what's happening inside containers. Since you can't SSH into a Fargate task (there's no OS to SSH into), logs are your primary debugging tool. Always check logs first when something isn't working!
+> You can't SSH into a Fargate task — there's no OS to SSH into. Logs are your window inside the container, so check them first when something isn't working!
 
 ---
 
@@ -500,7 +495,7 @@ Fargate tasks cost money every minute they're running. Delete everything now!
 4. Go to **CloudWatch → Log groups** → `/ecs/nginx-task` can be deleted too (optional, logs are very cheap).
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> The cleanup order matters! Scale to 0 → Delete service → Delete task definition → Delete cluster. If you try to delete the cluster first with a running service, AWS will complain. Think of it like undocking a boat — you tie it up, then lower the sails, then turn off the engine, then finally walk away!
+> The order matters — scale to 0, then delete service → task definition → cluster. Delete the cluster first with a running service and AWS will complain.
 
 ---
 
@@ -587,7 +582,7 @@ You've completed Labs 16-20! You now have a solid foundation in:
 - **Lambda + API Gateway** (Lab 19) — Serverless REST APIs
 - **ECS Fargate** (Lab 20) — Containerized applications
 
-👉 **[Lab 21 — ...](../21%20-%20.../README.md)**
+👉 **[Lab 21 — CloudFormation: Deploy EC2](../21%20-%20CloudFormation%20-%20Deploy%20EC2/README.md)**
 
 Continue to the next lab in the series to keep building your AWS skills!
 
@@ -631,9 +626,10 @@ Continue to the next lab in the series to keep building your AWS skills!
 
 **Cause:** Fargate can't reach Docker Hub to pull the image.
 **Fix:**
-- Verify the task has a public IP and the subnet has internet access.
-- Try the image URI without `latest`: just `nginx` (Docker Hub assumes `:latest` by default).
-- Check if Docker Hub is experiencing outages (rare, but possible).
+- Verify the task has a public IP and the subnet has internet access (route to an Internet Gateway).
+- Verify the security group allows outbound traffic.
+- Check the image name is spelled exactly: `nginx:latest`.
+- Docker Hub rate limits (`toomanyrequests`) can block pulls — wait a few minutes and retry.
 </details>
 
 <details>

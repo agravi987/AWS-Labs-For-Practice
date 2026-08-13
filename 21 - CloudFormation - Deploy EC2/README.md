@@ -74,16 +74,14 @@ By the end of this lab, you will:
 - Create, update, and delete a CloudFormation stack using the console and CLI
 - Experience the magic of one-click infrastructure teardown
 
-CloudFormation is **FREE** — you only pay for the AWS resources it creates. Think of CloudFormation as your personal AWS architect that never forgets, never makes typos, and works while you sleep. ☁️
+CloudFormation is **FREE** — you only pay for the resources it creates. Think of CloudFormation as an architect that never forgets, never makes typos, and works while you sleep. ☁️
 
 ---
 
 ## 🧠 Prerequisites
 
-- [ ] Completed Lab 20 (EC2)
-- [ ] An EC2 key pair exists (from previous labs)
+- [ ] Completed Lab 01 (EC2) — you'll reuse its `first-key-pair` key pair
 - [ ] AWS Console access with appropriate permissions
-- [ ] Basic familiarity with the AWS Console
 
 ---
 
@@ -134,14 +132,12 @@ Estimated total lab cost: **< $1** if cleaned up within 1 hour.
 
 ### <img src="https://img.shields.io/badge/Step%201-Understand%20CloudFormation-FF6B6B?style=for-the-badge" />
 
-Before writing any code, let's understand what we're doing.
+**Infrastructure as Code (IaC)** means defining AWS resources in a text file (YAML or JSON) instead of clicking around the console:
 
-**Infrastructure as Code (IaC)** means defining your AWS resources in a text file (YAML or JSON) instead of clicking around the console. Think of it like a recipe:
-
-- **Console clicking** = cooking without a recipe (works, but messy and hard to repeat)
+- **Console clicking** = cooking without a recipe (messy, hard to repeat)
 - **CloudFormation** = following a precise recipe (repeatable, shareable, version-controlled)
 
-**Why should you care?**
+**Why it matters:**
 - **Repeatable**: Deploy the same stack in 10 regions with one command
 - **Version-controlled**: Store your template in Git — see who changed what
 - **Automated**: Deploy entire environments with a single API call
@@ -275,7 +271,7 @@ Time to deploy! Let's use the AWS Console first.
 
 **Review:**
 
-14. Scroll down and check **"I acknowledge that AWS CloudFormation might create IAM resources with custom names"**
+14. Scroll to the bottom — no "acknowledge IAM" checkbox appears (this template creates no IAM resources)
 15. Click **Create stack** (orange button, bottom right)
 
 📸 [Screenshot: The "Create stack" page showing the template uploaded and parameters filled in]
@@ -333,7 +329,7 @@ Time to check that everything was created correctly!
 
 **Compare with previous labs:**
 
-- In Lab 04, you launched an EC2 instance by clicking around the console
+- In Lab 01, you launched an EC2 instance by clicking around the console
 - In this lab, you defined it in a YAML file and CloudFormation built it for you
 - Same result, but the CloudFormation approach is **repeatable, shareable, and deletable**!
 
@@ -369,20 +365,19 @@ CloudFormation doesn't just create — it also manages updates! Let's change the
 10. Upload your updated `ec2-stack.yaml` file
 11. Click **Next** (parameters stay the same)
 12. Click **Next** again
-13. Check the acknowledgment checkbox
-14. Click **Update stack**
+13. Click **Update stack**
 
 **Watch the update:**
 
-15. Click the **Events** tab
-16. You'll see CloudFormation update the stack — it may **replace** the EC2 instance (delete old, create new)
-17. Wait for `UPDATE_COMPLETE` status
+14. A **change set preview** appears — CloudFormation shows exactly what it will change. Click **Submit** to apply it
+15. Click the **Events** tab — the instance is **restarted** (not replaced) to apply the new UserData
+16. Wait for `UPDATE_COMPLETE` status
 
 **Verify the change:**
 
-18. Go to the **Outputs** tab
-19. Click the **WebsiteURL** link
-20. You should now see: **"Updated by CloudFormation!"**
+17. Go to the **Outputs** tab
+18. Click the **WebsiteURL** link
+19. You should now see: **"Updated by CloudFormation!"**
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > "CloudFormation is smart — it figures out which resources need to be replaced vs updated in place. Some changes require replacement (like changing an AMI), while others can be updated in place (like changing security group rules)."
@@ -398,18 +393,17 @@ Want to feel like a real cloud engineer? Use the command line! 🖥️
 Open your terminal (Command Prompt or PowerShell) and run:
 
 ```bash
-aws cloudformation create-stack \
-  --stack-name ravi-ec2-stack-cli \
-  --template-body file://ec2-stack.yaml \
-  --parameters ParameterKey=KeyPairName,ParameterValue=first-key-pair \
-  --capabilities CAPABILITY_IAM
+aws cloudformation validate-template --template-body file://ec2-stack.yaml
+
+aws cloudformation create-stack --stack-name ravi-ec2-stack-cli --template-body file://ec2-stack.yaml --parameters "ParameterKey=KeyPairName,ParameterValue=first-key-pair"
 ```
 
 **What each flag means:**
+- `validate-template` — Checks the YAML for syntax and schema errors before you deploy (run this first)
 - `--stack-name` — Name for your new stack
 - `--template-body` — Path to your YAML file (`file://` means local file)
-- `--parameters` — Passing the KeyPairName parameter (InstanceType and LatestAmiId use defaults)
-- `--capabilities` — Acknowledges IAM resource creation (needed even though our template doesn't create IAM)
+- `--parameters` — Passes the KeyPairName value (InstanceType and LatestAmiId use their defaults)
+- No `--capabilities` flag — only required for templates that create IAM resources (ours doesn't)
 
 **Wait for creation:**
 
@@ -417,7 +411,7 @@ aws cloudformation create-stack \
 aws cloudformation wait stack-create-complete --stack-name ravi-ec2-stack-cli
 ```
 
-This command waits until the stack is fully created (may take 2-3 minutes).
+This command waits until the stack is fully created (2-3 minutes).
 
 **Check the stack:**
 

@@ -102,12 +102,12 @@ Before you start, make sure you have:
 
 | Resource | Cost |
 |----------|------|
-| Route 53 Health Checks | ~$0.50/month per health check (not Free Tier eligible) |
+| Route 53 Health Checks | **Free** for up to 50 checks on your own AWS endpoints (e.g., your EC2 instance) |
 | Hosted Zone | $0.50/month per zone |
 | DNS Queries | ~$0.50 per million queries |
 | **Domain Registration** | **~$12/year** (if you register a new domain) |
 
-> ⚠️ **CRITICAL — Rithu says:** Domain registration costs ~$12 and **cannot be refunded or deleted** once registered. If you don't want to spend that, use **Option B** below. The learning is the same either way! Also, the $0.50 hosted zone fee is NOT covered by the Free Tier. Still cheap, but worth knowing.
+> ⚠️ **CRITICAL — Rithu says:** Domain registration costs ~$12 and **cannot be refunded or deleted** once registered. If you don't want to spend that, use **Option B** below — the learning is the same either way! A hosted zone costs $0.50/month (not Free Tier), and the 10-second "fast" health check interval is a paid add-on, so we use the standard 30-second interval — free on your own EC2 endpoints.
 
 ### Choose Your Path:
 
@@ -181,9 +181,7 @@ echo "<h1>Hello from PRIMARY server!</h1><p>Instance: $(hostname)</p>" > /var/ww
 
 **Launch Instance 2 (Secondary/Backup):**
 
-1. Repeat the same steps but name it `ravi-backup-server`
-2. Same AMI, same instance type, same security group
-3. Use the same user data but change the message:
+Repeat the same steps, name it `ravi-backup-server`, and change the user data page text:
 
 ```bash
 #!/bin/bash
@@ -192,7 +190,7 @@ systemctl start httpd
 echo "<h1>Hello from BACKUP server!</h1><p>This is the failover instance.</p>" > /var/www/html/index.html
 ```
 
-4. Click **Launch Instance**
+Click **Launch Instance**.
 
 5. Wait for both instances to be **Running** and **2/2 status checks passed**
 
@@ -224,13 +222,13 @@ Route 53 uses health checks to know if your server is alive. Let's create one fo
 | Port | **80** |
 | IP address | Paste your **primary server's public IP** |
 | Path | `/` |
-| Request interval | **Fast (10 seconds)** |
+| Request interval | **Standard (30 seconds)** |
 | Failure threshold | **3** |
 
 4. Click **Create health check**
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> "Fast" interval means Route 53 checks your server every 10 seconds. "Failure threshold 3" means it must fail 3 consecutive checks before marking the server as unhealthy. This prevents false alarms from one slow response!
+> Route 53 checks the server every 30 seconds (the fast 10-second interval is a paid add-on). "Failure threshold 3" means it must fail 3 checks in a row before being marked unhealthy — that prevents false alarms from a single slow response.
 
 5. Wait about 1 minute, then check the health check status. It should show **Healthy** (green)
 
@@ -293,9 +291,13 @@ You should see the primary server's response! 🎉
 
 Now let's set up automatic failover. This is where Route 53 really shines!
 
-**Step 5a: Create the PRIMARY Failover Record**
+**Step 5a: Delete the Simple Record**
 
-1. Go to your hosted zone → **Create record**
+Route 53 won't let the failover records share the name and type (`www`, A) of the simple record from Step 4 — a simple record must be unique in the zone. In the hosted zone, select the `www` A record and click **Delete records**, then confirm.
+
+**Step 5b: Create the PRIMARY Failover Record**
+
+1. Click **Create record**
 
 | Field | Value |
 |-------|-------|
@@ -307,14 +309,13 @@ Now let's set up automatic failover. This is where Route 53 really shines!
 | Failover record type | **Primary** |
 | Record ID | `primary-www` |
 | Health check | Select `ravi-primary-health-check` |
-| Evaluate target health | **Yes** |
 
 2. Click **Create records**
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> The "Evaluate target health" option is crucial! It tells Route 53 to actually check if the primary server is healthy before sending traffic to it.
+> The health check on the PRIMARY record is what triggers failover — without it, Route 53 treats the primary as always healthy and never fails over.
 
-**Step 5b: Create the SECONDARY Failover Record**
+**Step 5c: Create the SECONDARY Failover Record**
 
 1. Click **Create record** again
 
@@ -327,13 +328,14 @@ Now let's set up automatic failover. This is where Route 53 really shines!
 | Routing policy | **Failover** |
 | Failover record type | **Secondary** |
 | Record ID | `backup-www` |
-| Health check | (Optional — leave empty or create a separate health check) |
-| Evaluate target health | **Yes** |
+| Health check | **Leave empty** (recommended — the backup is used whenever the primary is unhealthy) |
 
 2. Click **Create records**
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> Notice both records have the SAME name (`www`) but different failover types (Primary vs Secondary). The **Record ID** is what tells them apart — Route 53 needs it to uniquely identify each record in the failover pair. Route 53 knows to check Primary first, and only use Secondary when Primary is unhealthy. It's like having a plan B that automatically kicks in! 🔄
+> Both records share the name `www` but differ by failover type (Primary vs Secondary); the **Record ID** is what distinguishes them. Route 53 answers with the Primary while it's healthy and only returns the Secondary when the Primary's health check fails — an automatic plan B! 🔄
+>
+> Real-world twist: if your targets were AWS resources like an ALB, you'd use an **alias record** pointed at the ALB's DNS name (with "Evaluate target health" on) instead of typing an IP. Aliases are also the only way to put a record at the zone apex — a CNAME can't live there.
 
 ---
 
@@ -376,13 +378,16 @@ You should get an error — no response from the web server!
 
 1. Go to **Route 53** → **Health checks**
 2. Watch `ravi-primary-health-check` status change:
-   - It will go from **Healthy** → **Unhealthy** (after ~30 seconds = 3 checks × 10 seconds)
+   - It will go from **Healthy** → **Unhealthy** (after ~90 seconds = 3 checks × 30 seconds)
 3. 📸 **[Screenshot: Health check showing "Unhealthy" status]**
 
 **Step 6d: Test Failover**
 
 1. Open a fresh browser tab: `http://www.your-domain.com`
 2. You should now see: **"Hello from BACKUP server!"** 🎉
+
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> Failover takes effect once the health check fails **and** cached DNS answers expire. With a 300-second TTL, give it a few minutes (or flush your DNS cache — see Troubleshooting) before the browser shows the backup. 🦇
 
 > 🎉 **Ravi, this is HUGE!** Your DNS automatically redirected traffic to the backup server without any manual intervention. In production, this means your users barely notice an outage!
 
@@ -431,7 +436,7 @@ Let's make sure everything is set up correctly:
 - [ ] Two EC2 instances running with different web pages (primary vs backup)
 - [ ] Security group allows HTTP (80) and SSH (22)
 - [ ] Health check created and monitoring primary server on port 80
-- [ ] Simple routing record working (if you have a domain)
+- [ ] Simple routing record tested in Step 4 (if you have a domain)
 - [ ] Primary failover record created with health check attached
 - [ ] Secondary failover record created pointing to backup server
 - [ ] Stopping httpd on primary → health check fails → traffic goes to backup
@@ -501,6 +506,7 @@ Stick these in your brain and they'll never leave. 🧲
 | **Failover Routing** | How to set up automatic DNS failover when a server goes down |
 | **Primary/Secondary** | How Route 53 prioritizes records and switches between them |
 | **Failback** | How traffic returns to the primary server after it recovers |
+| **Alias Records** | Point a name at an AWS resource (like an ALB) instead of a fixed IP — the DNS name tracks the resource automatically |
 
 ---
 
@@ -586,9 +592,9 @@ Now that you can direct traffic to instances, let's learn about managing databas
 ### Failover doesn't switch — both records return Primary
 
 - Check that the health check is actually attached to the Primary record
-- Verify "Evaluate target health" is set to "Yes" on both records
+- Confirm the health check is still enabled and shows **Healthy** when the primary is running
 - Make sure you stopped httpd (not just the instance) — `sudo systemctl stop httpd`
-- The health check needs to fail 3 consecutive times (30 seconds with Fast interval)
+- The health check must fail 3 consecutive times (~90 seconds with the standard 30s interval)
 
 ### My secondary server doesn't show the backup page
 

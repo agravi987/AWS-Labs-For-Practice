@@ -139,7 +139,7 @@ Before you start, make sure you have:
 
 > <img src="https://img.shields.io/badge/Step%201-Create%20Launch%20Template-3498DB?style=for-the-badge" />
 
-A Launch Template is like a recipe card — it tells the ASG exactly what kind of EC2 instance to create every time it needs a new one.
+A Launch Template is the modern recipe card for instances (the older launch configurations are deprecated) — it tells the ASG exactly what kind of EC2 instance to create every time it needs a new one.
 
 1. Go to the **EC2 Console** → left sidebar → click **Launch Templates**
 2. Click the orange **Create launch template** button
@@ -224,6 +224,9 @@ Now the fun part — let's build the ASG!
 | Health check type | EC2 |
 | Health check grace period | 300 seconds |
 
+> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
+> We're not attaching a load balancer, so the health check type stays **EC2** — the ASG tracks health with EC2 status checks (2/2) and replaces any instance that fails them. Gotcha: if you ever attach a load balancer, switch this to **ELB**. Otherwise the ASG ignores the load balancer's health checks and never replaces instances the LB has flagged unhealthy!
+
 5. Click **Next**
 
 **Configure group size and scaling:**
@@ -264,10 +267,6 @@ Now the fun part — let's build the ASG!
 3. Wait for both to reach **Running** state and pass **2/2 status checks**
 
 > ⏱️ This usually takes 2-3 minutes. Grab a snack! 🍿
-
-4. Go to **EC2 Console** → **Target Groups** (under Load Balancing)
-   - If your ASG created a target group automatically, click on it
-   - Check the **Targets** tab — you should see both instances registered
 
 📸 **[Screenshot: EC2 instances page showing 2 ASG-managed instances running]**
 ![ EC2 instances page showing 2 ASG-managed instances running](screenshots/03-asg-instances-running.png)
@@ -536,12 +535,9 @@ You've mastered auto scaling! Time to learn how to direct traffic to your instan
 
 ### The stress test didn't trigger scaling
 
-- **Did you stress BOTH instances?** The target-tracking policy uses the **average** CPU across the whole group. Stressing only one of two instances keeps the average at ~50% — right at the target — so scaling may never trigger. Open two terminals and stress both! 🎯
-- Wait at least 5-10 minutes — target tracking needs time to evaluate the metric before it launches anything
+- **Did you stress BOTH instances?** The policy watches the **average** CPU across the group. Stressing only one of two keeps the average near the 50% target, so scaling may never trigger — see the Step 5 tip. 🎯
+- Wait 5-10 minutes — target tracking only scales after CPU stays above the target for the full evaluation period
 - Check that the stress is actually running: `top` or `htop` in the SSH session
-- Check CloudWatch metrics to verify CPU is actually above 50%
-- **t2.micro is burstable:** it runs at 100% only until its CPU credits are exhausted, then throttles to ~10% baseline. If you see the CPU dip, restart `stress --cpu 4` in both terminals before it throttles back down
-- The ASG needs CPU to stay above 50% for the full evaluation period (usually 5 minutes)
 
 ### My security group won't delete
 

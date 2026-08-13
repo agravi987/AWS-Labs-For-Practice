@@ -1,0 +1,4 @@
+---
+name: amazon-ses
+description: "Configures Amazon SES V2 for production email sending — including domain identity creation, DKIM/SPF/DMARC authentication, one-shot DNS record presentation, and Route 53 automation — for developers setting up or troubleshooting SES domain verification and deliverability. Applicable when developers need to send emails from their domain via SES, verify a domain identity, configure email authentication, troubleshoot DKIM verification issues, or ensure their sending setup follows best practices. Not for email-address-only verification, Mail Manager inbound routing, SNS, Pinpoint, or WorkMail."
+---

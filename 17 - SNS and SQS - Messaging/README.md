@@ -95,12 +95,12 @@ In this lab, you will explore two of AWS's core messaging services: **Simple Not
 
 **This lab costs less than $1!** 💸
 
-- **SNS:** Free Tier includes 1 million publishes, 100,000 HTTP deliveries, and 1,000 email deliveries per month.
+- **SNS:** Free Tier includes 1 million requests (publishes), 100,000 HTTP/S deliveries, and 1,000 email deliveries per month.
 - **SQS:** Free Tier includes 1 million requests per month.
 
-⚠️ **IMPORTANT:** Delete all resources (topic, subscriptions, queue) after the lab to avoid any unexpected charges. A forgotten SQS queue receiving test messages can add up over months!
+⚠️ **IMPORTANT:** Delete all resources (topic, subscriptions, queue) after the lab — a forgotten queue receiving test messages adds up over months!
 
-> **Ravi's Mistake of the Day:** I published a message to an SNS topic with 10,000 subscribers and tested it 50 times. SNS charges $0.50 per 100,000 notifications. My "quick test" cost more than my lunch.
+> **Ravi's Mistake of the Day:** I published to a topic with 10,000 subscribers 50 times — 500,000 notifications. At $0.50 per million that's pocket change, but at real-world scale those "quick tests" add up fast.
 
 ---
 
@@ -209,7 +209,7 @@ You should see a success message: "Topic ravi-notifications created successfully
 > 🎉 If you received the email, 恭喜! (That means "congratulations" in Chinese!) Your SNS topic and subscription are working!
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> In the real world, SNS is used for everything from alerting on-call engineers when a server goes down, to sending SMS notifications to customers, to triggering Lambda functions. It's a Swiss Army knife of notifications!
+> In the real world, SNS alerts on-call engineers, sends SMS to customers, and triggers Lambdas — the Swiss Army knife of notifications!
 
 ---
 
@@ -220,8 +220,8 @@ You should see a success message: "Topic ravi-notifications created successfully
 3. **Type:** ⚫ Standard (not FIFO)
 4. **Name:** `ravi-message-queue`
 5. Leave all other configuration settings as **defaults** (these are fine for the lab).
-   - Visibility timeout: 30 seconds ✅
-   - Message retention period: 4 days ✅
+   - Visibility timeout: 30 seconds (max 12 hours) ✅
+   - Message retention period: 4 days (max 14 days) ✅
    - Maximum message size: 256 KB ✅
    - Delivery delay: 0 seconds ✅
 6. Click **Create queue**.
@@ -230,7 +230,8 @@ You should see a success message: "Topic ravi-notifications created successfully
 ![The SQS queue creation page showing ravi-message-queue with default settings](screenshots/05-sqs-queue-created.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> Think of SQS like a To-Do list that persists. Messages sit in the queue until someone (or something) picks them up and processes them. Even if the consumer crashes, the message stays there and can be retried. Reliable!
+> SQS is a To-Do list that never forgets. Messages wait until a worker picks them up — even if the consumer crashes, the message stays and can be retried.
+> In production, queues usually pair with a **dead-letter queue (DLQ)**: after a message fails too many times (maxReceiveCount), it moves to the DLQ for inspection instead of being lost.
 
 ---
 
@@ -268,13 +269,7 @@ Each subscriber gets a COPY of the same message!
 ```
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> The fan-out pattern is incredibly powerful. Imagine you publish one event — "New user signed up" — and SNS simultaneously:
-> - Sends a welcome email (email subscription)
-> - Adds the user to a processing queue (SQS subscription)
-> - Triggers a Lambda to create their profile (Lambda subscription)
-> - Notifies a webhook for analytics (HTTP subscription)
->
-> All from ONE publish. That's the power of decoupled architecture!
+> The fan-out pattern is powerful. Publish one event — "New user signed up" — and SNS simultaneously sends a welcome email (email), queues the user for processing (SQS), triggers a Lambda to build their profile, and pings an analytics webhook (HTTP). All from ONE publish!
 
 ---
 
@@ -297,8 +292,8 @@ Each subscriber gets a COPY of the same message!
 #### Check SQS:
 1. Go to **SQS → Queues → ravi-message-queue**.
 2. Click **Send and receive messages**.
-3. Click **Poll for messages** (bottom of the page).
-4. Wait a few seconds — you should see the message appear!
+3. Click **Poll for messages** (bottom of the page) — it uses long polling, waiting up to 20 seconds for a message.
+4. Wait a few seconds — the message should appear!
 
 > 📸 [Screenshot: SQS "Send and receive messages" page showing the message received from SNS]
 ![ SQS "Send and receive messages" page showing the message received from SNS](screenshots/07-sqs-message-received.png)
@@ -312,7 +307,7 @@ Each subscriber gets a COPY of the same message!
 🎉 **The fan-out pattern is working!** One message published to SNS arrived at BOTH the email subscription AND the SQS queue!
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> Notice how the SQS message has extra metadata from SNS? That's how you know the message came through the fan-out pattern vs. being sent directly to SQS. In a real application, you can use this metadata to trace the message origin.
+> The SQS message carries SNS metadata (topic ARN, subscription ARN) — that's how you can tell it arrived via fan-out vs. a direct send. In real apps, use it to trace message origin.
 
 ---
 
@@ -336,7 +331,7 @@ SQS can also receive messages directly (without SNS).
 ![SQS showing 2 messages — one from SNS, one direct](screenshots/08-sqs-messages-sns-and-direct.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> In real applications, direct SQS messages are often used for task queues. For example, when you upload a video to YouTube, a message gets sent to SQS saying "process this video." A fleet of workers then picks up these messages and processes them in parallel.
+> In real apps, direct SQS messages power task queues — upload a video, SQS gets a "process this video" message, and a fleet of workers processes them in parallel.
 
 ---
 
@@ -387,7 +382,7 @@ aws sqs delete-message \
 ![Terminal showing all three SQS CLI commands and their output](screenshots/09-sqs-cli-output.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> Always delete messages after processing them! If you don't, the message becomes visible again after the visibility timeout (30 seconds by default), and another worker might process it again. This is called "at-least-once delivery" — it means the message might be delivered more than once, so your code should be idempotent (handling the same message twice shouldn't cause problems).
+> Always delete messages after processing! Otherwise the message becomes visible again after the visibility timeout (30s default) and another worker may process it — that's "at-least-once delivery." Make your handlers idempotent so handling the same message twice causes no problems.
 
 ---
 
@@ -551,8 +546,8 @@ In the next lab, you'll write a Lambda function in Python that automatically pro
 <details>
 <summary><strong>SQS "Poll for messages" shows nothing</strong></summary>
 
-**Cause:** The message might have already been received by another poll, or the visibility timeout hasn't expired.
-**Fix:** Wait 30 seconds (the default visibility timeout) and try polling again. Also check that you're polling the correct queue.
+**Cause:** The message was already received by another poll, or it's still hidden by the visibility timeout.
+**Fix:** Wait 30 seconds (the default visibility timeout) and poll again. To wipe the queue, use the **Purge** action (or just delete and recreate it).
 
 </details>
 

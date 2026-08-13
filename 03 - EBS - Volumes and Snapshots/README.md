@@ -13,10 +13,6 @@
 
 ---
 
-> **"EBS volumes are like USB drives for your EC2 instance, except they never get lost in the couch cushions and you can take photo-perfect snapshots of them."** - Rithu
-
-
-
 > *"EBS volumes are like USB drives for your EC2 instance, except they never get lost in the couch cushions and you can take photo-perfect snapshots of them."* — Rithu
 
 ---
@@ -90,9 +86,7 @@ Create and attach an Elastic Block Store (EBS) volume to an EC2 instance, format
 - 10 GB additional gp3 volume – could incur a few cents if left running
 - **Snapshots** cost ~$0.05 per GB-month in standard tier — negligible for this lab, but DELETE them afterward
 
-> *Ravi learned the hard way that EBS snapshots survive instance termination. Donation: $2 worth of orphaned snapshots over a month. Be like Ravi-but-wiser: clean up.*
-
-> **Ravi's Mistake of the Day:** I created a 500 GB EBS snapshot and forgot about it. Three months later: $75 in surprise charges. Snapshots survive instance termination. ALWAYS delete them.
+> **Ravi's Mistake of the Day:** I created a 500 GB EBS snapshot and forgot about it. Three months later: $75 in surprise charges. Snapshots survive instance termination — and volume deletion. ALWAYS delete them.
 
 ## 🏗️ Architecture
 
@@ -261,7 +255,7 @@ Format it as ext4:
 sudo mkfs -t ext4 /dev/xvdf
 ```
 
-You'll be prompted about a superblock. Type `y` and press Enter.
+If prompted about an existing superblock, type `y` and press Enter.
 
 Now create the mount point:
 
@@ -367,10 +361,10 @@ You should see `xvdg`:
 
 ```bash
 xvdf    202:80   0   10G  0 disk /mnt/data
-xvdg    202:80   0    8G  0 disk
+xvdg    202:96   0    8G  0 disk
 ```
 
-Wait, where's the partition? The snapshot was taken of the root volume which had partitions (xvda1). Since we're attaching as xvdg, and the snapshot INCLUDES the partition table, let's see if partitions exist:
+The snapshot includes the partition table, so the restored volume should have partitions too. Let's check:
 
 ```bash
 sudo fdisk -l /dev/xvdg
@@ -542,14 +536,10 @@ We'll snapshot a running instance WITH apps pre-installed, then launch duplicate
 
 ---
 
-*Written after accidentally leaving a 500 GB snapshot for three months — Rithu*
-
----
-
 <div align="center">
 
 <img src="https://img.shields.io/badge/✅-Lab%2003%20COMPLETE!-2ECC71?style=for-the-badge" />
 
-*Written after accidentally leaving a 500 GB snapshot for three months - Rithu*
+*Written after accidentally leaving a 500 GB snapshot for three months — Rithu*
 
 </div>
