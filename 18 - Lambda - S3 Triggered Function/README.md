@@ -256,7 +256,7 @@ def lambda_handler(event, context):
 8. Click **Add**.
    - 💡 Adding the trigger here also creates the bucket's **event notification** and grants S3 **permission to invoke** your function — no manual IAM policy needed for the trigger itself.
 
-> 📸 [Screenshot: The S3 trigger configuration showing bucket, event type, suffix filter, and the recursive invocation warning]
+
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > That recursive invocation warning is no joke! If your Lambda writes a file back to the same bucket, it triggers itself again — forever, until AWS sends you an angry bill. Always use separate input and output buckets in production!
@@ -265,7 +265,7 @@ def lambda_handler(event, context):
 
 > <img src="https://img.shields.io/badge/Step%205-Add%20IAM%20Permission-9B59B6?style=for-the-badge" />
 
-Add S3 read access to the Lambda execution role so the function can read file metadata (`s3:GetObject`).
+The default Lambda role created in Step 2 is not enough for S3. It includes CloudWatch Logs access only. To read object metadata from the source bucket, add S3 read access to the Lambda execution role.
 
 1. Go to **IAM → Roles**.
 2. Search for `lambda-s3-role` and click on it.
@@ -273,8 +273,10 @@ Add S3 read access to the Lambda execution role so the function can read file me
 4. Search for `AmazonS3ReadOnlyAccess`.
 5. Check the box → **Add permissions**.
 
+> ⚠️ **Important role note:** this lab uses the default Lambda role plus an S3 policy for learning. In real projects, use a least-privilege policy that is scoped to the specific bucket and only the actions you need.
+
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> The basic Lambda role only includes CloudWatch Logs access — the `s3:GetObject` permission we just added is what lets the function read file metadata. In production, always grant the smallest policy needed.
+> The basic Lambda role only includes CloudWatch Logs access. The `s3:GetObject` permission we just added allows the function to read the uploaded file's metadata. If you do the bonus copy step later, the role also needs `s3:PutObject` on the destination bucket.
 
 ---
 
@@ -309,6 +311,7 @@ Content Type: image/jpeg
 ```
 
 > 📸 [Screenshot: CloudWatch Logs showing the Lambda function output with the S3 file details]
+![CloudWatch Logs showing the Lambda function output with the S3 file details](screenshots/04-cloudwatch-logs-output.png)
 
 🎉 **CONGRATULATIONS!** Your Lambda function successfully:
 - Detected the file upload to S3
@@ -334,6 +337,20 @@ Want to take it further? Let's modify the Lambda to **copy the uploaded file to 
 1. Go to **S3 → Create bucket**.
 2. **Bucket name:** `ravi-lambda-processed-bucket-12345` (use a unique name).
 3. Keep all defaults → **Create bucket**.
+
+#### Update the Lambda Role for Write Access:
+The copy step uses `s3.copy_object()` to write to a second bucket. In addition to the `AmazonS3ReadOnlyAccess` policy already attached, the function role must also allow `s3:PutObject` on the destination bucket.
+
+For a lab-friendly setup:
+1. Go to **IAM → Roles → lambda-s3-role**.
+2. Click **Add permissions → Attach policies**.
+3. Search for **AmazonS3FullAccess** and attach it.
+4. If you want to stay closer to best practice, create a custom inline policy with:
+   - `s3:GetObject` on the source bucket
+   - `s3:PutObject` on the destination bucket
+   - `s3:PutObjectAcl` only if needed by your design
+
+> This is a good place to practice least privilege: restrict the policy to the exact bucket names you use, instead of granting unrestricted S3 access.
 
 #### Update the Lambda Code:
 1. Go to **Lambda → s3-image-processor → Code**.
@@ -378,6 +395,7 @@ def lambda_handler(event, context):
 5. Check the `ravi-lambda-processed-bucket-12345` — the file should appear in a `processed/` folder!
 
 > 📸 [Screenshot: The destination bucket showing the copied file in the processed/ folder]
+![The destination bucket showing the copied file in the processed/ folder](screenshots/05-destination-bucket-processed.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > This pattern — copy file, process it, save to another location — is exactly how real-world data pipelines work. Think about Instagram: you upload a photo, Lambda resizes it into multiple sizes (thumbnail, medium, large), and stores them all. That's Lambda + S3 in production!
@@ -548,8 +566,8 @@ In the next lab, you'll create a REST API with API Gateway that invokes Lambda f
 <details>
 <summary><strong>Lambda fails with "Access Denied" or "AccessDeniedException"</strong></summary>
 
-**Cause:** The Lambda execution role doesn't have permission to access S3.
-**Fix:** Go to IAM → Roles → `lambda-s3-role` → Add the `AmazonS3ReadOnlyAccess` policy.
+**Cause:** The Lambda execution role doesn't have permission to access S3, or it is missing write access for the destination bucket.
+**Fix:** Go to IAM → Roles → `lambda-s3-role` → attach `AmazonS3ReadOnlyAccess` for the source bucket and add `s3:PutObject` permission for the destination bucket when using the copy step. For the lab, `AmazonS3FullAccess` is acceptable for quick testing, but least privilege is recommended in production.
 
 </details>
 
@@ -572,8 +590,8 @@ In the next lab, you'll create a REST API with API Gateway that invokes Lambda f
 <details>
 <summary><strong>File doesn't appear in destination bucket (Step 7)</strong></summary>
 
-**Cause:** The destination bucket name is wrong, or the Lambda role doesn't have write permissions.
-**Fix:** Check the `DESTINATION_BUCKET` variable in your code matches the actual bucket name. Ensure the Lambda role has `AmazonS3FullAccess` (for lab purposes).
+**Cause:** The destination bucket name is wrong, or the Lambda role lacks write permissions to that bucket.
+**Fix:** Check the `DESTINATION_BUCKET` variable in your code matches the actual bucket name. Ensure the Lambda role has `s3:PutObject` permission on the destination bucket; for a quick lab fix, attach `AmazonS3FullAccess` temporarily.
 
 </details>
 
