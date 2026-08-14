@@ -219,7 +219,7 @@ def lambda_handler(event, context):
 
 3. Click **Deploy**.
 
-> 📸 [Screenshot: The Lambda code editor with the REST API code]
+![Lambda code editor showing the Python code for the REST API](screenshots/01-lambda-code-editor.png)
 
 **What does this code do?**
 
@@ -250,7 +250,7 @@ def lambda_handler(event, context):
 8. **Endpoint Type:** Regional
 9. Click **Create API**.
 
-> 📸 [Screenshot: The API Gateway creation form showing REST API type selected with the name ravi-student-api]
+![API Gateway creation form showing the REST API type selected with the name ravi-student-api](screenshots/02-api-gateway-rest-api-creation.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > API Gateway offers three API types:
@@ -284,7 +284,6 @@ def lambda_handler(event, context):
 7. A warning appears: "You are about to give API Gateway permission to invoke your Lambda function." → Click **OK**.
 8. Click **Save**.
 
-> 📸 [Screenshot: The method configuration showing Lambda Proxy Integration enabled]
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > What's "Lambda Proxy Integration"? It means API Gateway passes the ENTIRE HTTP request to Lambda as-is (method, path, headers, body, everything). Without it, you'd have to manually map request/response templates — and that's a headache. Always use Lambda Proxy Integration unless you have a specific reason not to.
@@ -304,7 +303,7 @@ def lambda_handler(event, context):
 
 Repeat the **Create method** flow from `/hello` twice — once with **GET**, once with **POST** — selecting **Integration type:** Lambda Function, ☑ **Use Lambda Proxy integration**, **Lambda Function:** `ravi-rest-api`, then **Save** → **OK** on the permission warning.
 
-> 📸 [Screenshot: The Resources tree showing /hello (GET) and /students (GET, POST)]
+![Resources tree showing the /hello GET method and /students GET and POST methods](screenshots/03-api-resources-tree.png)
 
 **Your final API structure should look like:**
 ```
@@ -329,7 +328,7 @@ Your API is configured but it's not live yet. You need to **deploy** it!
 5. **Deployment description:** `Initial deployment`
 6. Click **Deploy**.
 
-> 📸 [Screenshot: The Deploy API dialog with prod stage selected]
+![Deploy API dialog showing the prod stage selected for deployment](screenshots/04-deploy-api-prod-stage.png)
 
 After deployment, you'll be taken to the **Stage Editor**. At the top of the page, you'll see the **Invoke URL** — this is your live API endpoint!
 
@@ -370,7 +369,7 @@ curl https://abc123def4.execute-api.us-east-1.amazonaws.com/prod/hello
 }
 ```
 
-> 📸 [Screenshot: Browser showing the JSON response from the /hello endpoint]
+![Browser response from the /hello endpoint showing the greeting JSON](screenshots/05-hello-endpoint-response.png)
 
 #### Test 2: GET /students
 
@@ -389,6 +388,8 @@ curl https://abc123def4.execute-api.us-east-1.amazonaws.com/prod/students
   ]
 }
 ```
+
+![GET /students response showing the student list JSON](screenshots/06-students-endpoint-response.png)
 
 #### Test 3: POST /students
 
@@ -435,7 +436,7 @@ curl https://abc123def4.execute-api.us-east-1.amazonaws.com/prod/anything
 
 > 💡 This 403 comes from **API Gateway**, not your Lambda — there's no `/anything` resource, so the request never reaches the function. That's expected security behavior, not an error.
 
-> 📸 [Screenshot: Terminal showing all four curl commands and their responses]
+
 
 🎉 **Your API is live and working!** Anyone in the world with this URL can now call your API!
 
