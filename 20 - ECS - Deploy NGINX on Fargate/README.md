@@ -176,6 +176,7 @@ So this lab costs only **cents** — if you delete everything right after. Unlik
 5. Click **Create**.
 
 > 📸 [Screenshot: The ECS cluster creation form showing Fargate selected with name ravi-fargate-cluster]
+![The ECS cluster creation form showing Fargate selected with name ravi-fargate-cluster](screenshots/01-ecs-cluster-creation-fargate.png)
 
 Wait for the cluster to be created. You should see a green success banner: "Cluster ravi-fargate-cluster created successfully."
 
@@ -217,6 +218,7 @@ A task definition is like a blueprint for your container — it specifies which 
 5. Leave other settings as defaults (memory limits, environment variables, etc.).
 
 > 📸 [Screenshot: The task definition page showing nginx:latest as the container image with port 80 mapped]
+![The task definition page showing nginx:latest as the container image with port 80 mapped](screenshots/02-ecs-task-definition-nginx.png)
 
 6. Scroll down and click **Create**.
 
@@ -245,6 +247,7 @@ Before creating the service, let's create a security group that allows HTTP traf
 9. Click **Create security group**.
 
 > 📸 [Screenshot: The security group creation form showing HTTP inbound rule from anywhere]
+![The security group creation form showing HTTP inbound rule from anywhere](screenshots/03-ecs-sg-http-inbound.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > In production, this rule would only allow traffic from a load balancer's security group. For this lab, testing from anywhere is fine.
@@ -287,6 +290,8 @@ Now let's deploy the task definition as a running service!
    - ⚠️ This is REQUIRED for Fargate tasks to pull images from Docker Hub and for you to access the NGINX web server.
 
 > 📸 [Screenshot: The networking configuration showing 2 public subnets selected, ecs-sg security group, and public IP enabled]
+![The networking configuration showing 2 public subnets selected, ecs-sg security group, and public IP enabled](screenshots/04-ecs-networking-config.png)
+
 
 #### Load Balancing:
 1. **Load balancer type:** ⚫ **None**
@@ -324,6 +329,7 @@ PROVISIONING → PENDING → RUNNING ✅
 ```
 
 > 📸 [Screenshot: The ECS service page showing 2 tasks in RUNNING state]
+![The ECS service page showing 2 tasks in RUNNING state](screenshots/05-ecs-service-2-running-tasks.png)
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > Tasks stuck in PENDING? Check the public IP, public subnets, outbound traffic, and region — see Troubleshooting below.
@@ -348,6 +354,7 @@ working. Further configuration is required.
 ```
 
 > 📸 [Screenshot: Browser showing the NGINX welcome page from the Fargate task's public IP]
+![Browser showing the NGINX welcome page from the Fargate task's public IP](screenshots/06-nginx-welcome-page.png)
 
 #### Check the Other Task:
 
@@ -374,6 +381,7 @@ Let's see how easy it is to scale with ECS!
 6. Click the **Tasks** tab → You should now see **4 tasks** in RUNNING state!
 
 > 📸 [Screenshot: The ECS service showing 4 running tasks after scaling]
+![The ECS service showing 4 running tasks after scaling](screenshots/07-ecs-service-4-scaled-tasks.png)
 
 **Scaling Comparison:**
 
@@ -406,6 +414,8 @@ Every Fargate task automatically sends logs to CloudWatch.
 ```
 
 > 📸 [Screenshot: CloudWatch Logs showing NGINX container output]
+![CloudWatch Logs showing NGINX container output](screenshots/08-ecs-cleanup-verification.png)
+
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > You can't SSH into a Fargate task — there's no OS to SSH into. Logs are your window inside the container, so check them first when something isn't working!
