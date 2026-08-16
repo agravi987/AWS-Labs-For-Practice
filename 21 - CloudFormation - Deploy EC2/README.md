@@ -161,19 +161,22 @@ Now let's write our first CloudFormation template!
 
 ```yaml
 AWSTemplateFormatVersion: '2010-09-09'
-Description: CloudFormation Lab - Launch an EC2 Instance
+Description: CloudFormation Lab - Launch an EC2 Instance with Apache
 
 Parameters:
   InstanceType:
     Type: String
-    Default: t2.micro
+    Default: t3.micro
     AllowedValues:
+      - t3.micro
+      - t3.small
       - t2.micro
-      - t2.small
     Description: EC2 instance type
+
   KeyPairName:
     Type: AWS::EC2::KeyPair::KeyName
     Description: Name of an existing EC2 key pair
+
   LatestAmiId:
     Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
     Default: /aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64
@@ -185,12 +188,12 @@ Resources:
       GroupDescription: Enable HTTP and SSH access
       SecurityGroupIngress:
         - IpProtocol: tcp
-          FromPort: 80
-          ToPort: 80
-          CidrIp: 0.0.0.0/0
-        - IpProtocol: tcp
           FromPort: 22
           ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
           CidrIp: 0.0.0.0/0
 
   WebServerInstance:
@@ -199,25 +202,30 @@ Resources:
       InstanceType: !Ref InstanceType
       KeyName: !Ref KeyPairName
       ImageId: !Ref LatestAmiId
-      SecurityGroups:
+      SecurityGroupIds:
         - !Ref WebServerSecurityGroup
       Tags:
         - Key: Name
           Value: CloudFormation-WebServer
       UserData:
         Fn::Base64: |
-          #!/bin/bash
+          #!/bin/bash -xe
+          dnf update -y
           dnf install -y httpd
-          systemctl start httpd
-          echo "<h1>Deployed by CloudFormation!</h1>" > /var/www/html/index.html
+          systemctl enable --now httpd
+          cat > /var/www/html/index.html <<'HTML'
+          <h1>Deployed by CloudFormation!</h1>
+          HTML
 
 Outputs:
   InstanceId:
     Description: Instance ID
     Value: !Ref WebServerInstance
+
   PublicIP:
     Description: Public IP of the instance
     Value: !GetAtt WebServerInstance.PublicIp
+
   WebsiteURL:
     Description: Website URL
     Value: !Sub "http://${WebServerInstance.PublicIp}"
@@ -235,7 +243,8 @@ Let's break down what each section does:
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > "The `LatestAmiId` parameter uses SSM Parameter Store to automatically fetch the latest Amazon Linux 2023 AMI. No more hardcoding AMI IDs!"
 
-📸 [Screenshot: Screenshot of your ec2-stack.yaml file in your text editor]
+📸 [Screenshot: The `ec2-stack.yaml` file saved in a text editor before upload]
+![The `ec2-stack.yaml` file saved in a text editor before upload](screenshots/01-ec2-stack-template-file.png)
 
 ---
 
@@ -274,7 +283,9 @@ Time to deploy! Let's use the AWS Console first.
 14. Scroll to the bottom — no "acknowledge IAM" checkbox appears (this template creates no IAM resources)
 15. Click **Create stack** (orange button, bottom right)
 
-📸 [Screenshot: The "Create stack" page showing the template uploaded and parameters filled in]
+📸 [Screenshot: The CloudFormation create stack page with the template uploaded and parameters filled in]
+![The CloudFormation create stack page with the template uploaded and parameters filled in](screenshots/02-cloudformation-create-stack-form.png)
+
 
 ---
 
@@ -299,7 +310,8 @@ Now watch the magic happen! 🪄
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > "If you see `CREATE_FAILED`, don't panic! Read the error message — CloudFormation gives you detailed reasons. Common issues: wrong key pair name, missing permissions, or resource limits."
 
-📸 [Screenshot: Events tab showing all resources created with CREATE_COMPLETE status]
+📸 [Screenshot: CloudFormation Events showing the stack resources created with CREATE_COMPLETE status]
+![CloudFormation Events showing the stack resources created with CREATE_COMPLETE status](screenshots/03-cloudformation-events-create-complete.png)
 
 ---
 
@@ -336,51 +348,54 @@ Time to check that everything was created correctly!
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > "The `UserData` script in the template automatically installed Apache and created a web page. This is called 'bootstrapping' — your instance is ready to serve traffic the moment it launches!"
 
-📸 [Screenshot: Browser showing "Deployed by CloudFormation!" and the EC2 console showing the running instance]
+📸 [Screenshot: Browser showing the deployed page with the CloudFormation message]
+![Browser showing the deployed page with the CloudFormation message](screenshots/04-cloudformation-website-deployed.png)
 
 ---
 
 ### <img src="https://img.shields.io/badge/Step%206-Update%20the%20Stack-E74C3C?style=for-the-badge" />
 
-CloudFormation doesn't just create — it also manages updates! Let's change the web page.
+CloudFormation can update resources, but the important detail is this: **changing the EC2 instance's `UserData` is what triggers the instance to restart and rerun the bootstrap script**. This is why the original lab sometimes looked like it was "not working" — because the manual `systemctl` commands were not the same as an actual CloudFormation update.
 
-1. Go back to your `ec2-stack.yaml` file in your text editor
-2. Find this line:
-   ```yaml
-   echo "<h1>Deployed by CloudFormation!</h1>" > /var/www/html/index.html
+> ✅ Correct mental model: `UserData` runs when an EC2 instance launches or is restarted after an update. It does not magically run again just because you typed `systemctl enable httpd` on a running machine.
+
+1. Go back to your `ec2-stack.yaml` file in your text editor.
+2. Change the HTML in the `UserData` script from:
+   ```bash
+   <h1>Deployed by CloudFormation!</h1>
    ```
-3. Change it to:
-   ```yaml
-   echo "<h1>Updated by CloudFormation!</h1>" > /var/www/html/index.html
+   to:
+   ```bash
+   <h1>Updated by CloudFormation!</h1>
    ```
-4. **Save** the file
+3. Save the file.
 
 **Now update the stack in AWS:**
 
-5. Go back to the CloudFormation console
-6. Select your stack `ravi-ec2-stack`
-7. Click the **Update** button (top right)
-8. Select **Replace current template**
-9. Click **Next**
-10. Upload your updated `ec2-stack.yaml` file
-11. Click **Next** (parameters stay the same)
-12. Click **Next** again
-13. Click **Update stack**
+4. Go back to the CloudFormation console.
+5. Select your stack `ravi-ec2-stack`.
+6. Click the **Update** button (top right).
+7. Select **Replace current template**.
+8. Click **Next**.
+9. Upload the updated `ec2-stack.yaml` file.
+10. Click **Next**.
+11. Click **Next** again.
+12. Click **Update stack**.
 
 **Watch the update:**
 
-14. A **change set preview** appears — CloudFormation shows exactly what it will change. Click **Submit** to apply it
-15. Click the **Events** tab — the instance is **restarted** (not replaced) to apply the new UserData
-16. Wait for `UPDATE_COMPLETE` status
+13. CloudFormation will show a change set preview first. Click **Submit** to apply it.
+14. The EC2 instance will be restarted because the `UserData` content changed.
+15. Wait until the status changes to `UPDATE_COMPLETE`.
 
 **Verify the change:**
 
-17. Go to the **Outputs** tab
-18. Click the **WebsiteURL** link
-19. You should now see: **"Updated by CloudFormation!"**
+16. Click the **Outputs** tab.
+17. Open the **WebsiteURL** again.
+18. You should now see: **"Updated by CloudFormation!"**
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> "CloudFormation is smart — it figures out which resources need to be replaced vs updated in place. Some changes require replacement (like changing an AMI), while others can be updated in place (like changing security group rules)."
+> "If you only run `systemctl enable httpd` manually, that helps with boot-time startup but does not actually re-run the CloudFormation bootstrap logic. The reliable pattern is: update the template, then update the stack."
 
 📸 [Screenshot: Updated website showing "Updated by CloudFormation!" message]
 
