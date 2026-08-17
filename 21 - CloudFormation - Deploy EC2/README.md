@@ -185,7 +185,7 @@ Resources:
   WebServerSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: Enable HTTP and SSH access
+      GroupDescription: Enable HTTP, HTTPS, and SSH access
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 22
@@ -194,6 +194,10 @@ Resources:
         - IpProtocol: tcp
           FromPort: 80
           ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
           CidrIp: 0.0.0.0/0
 
   WebServerInstance:
@@ -206,7 +210,7 @@ Resources:
         - !Ref WebServerSecurityGroup
       Tags:
         - Key: Name
-          Value: CloudFormation-WebServer
+          Value: WebServerInstance
       UserData:
         Fn::Base64: |
           #!/bin/bash -xe
@@ -336,7 +340,7 @@ Time to check that everything was created correctly!
 6. Open a new browser tab
 7. Search for **EC2** in the AWS Console
 8. Click **Instances** in the left sidebar
-9. You should see an instance named **`CloudFormation-WebServer`**
+9. You should see an instance named **`WebServerInstance`**
 10. Check that its state is **Running**
 
 **Compare with previous labs:**
@@ -355,49 +359,57 @@ Time to check that everything was created correctly!
 
 ### <img src="https://img.shields.io/badge/Step%206-Update%20the%20Stack-E74C3C?style=for-the-badge" />
 
-CloudFormation can update resources, but the important detail is this: **changing the EC2 instance's `UserData` is what triggers the instance to restart and rerun the bootstrap script**. This is why the original lab sometimes looked like it was "not working" — because the manual `systemctl` commands were not the same as an actual CloudFormation update.
+CloudFormation updates can be triggered by changing template properties such as the EC2 instance tag or the security group rules. In this lab, we are going to update the template itself instead of changing the `UserData` script.
 
-> ✅ Correct mental model: `UserData` runs when an EC2 instance launches or is restarted after an update. It does not magically run again just because you typed `systemctl enable httpd` on a running machine.
+> ✅ Correct mental model: `UserData` is for bootstrap actions when a new instance starts. If you want to practice a normal CloudFormation update, change the template definition itself — for example, the instance name tag or an inbound rule like port 443.
 
 1. Go back to your `ec2-stack.yaml` file in your text editor.
-2. Change the HTML in the `UserData` script from:
-   ```bash
-   <h1>Deployed by CloudFormation!</h1>
+2. Change the EC2 instance tag from:
+   ```yaml
+   - Key: Name
+     Value: WebServerInstance
    ```
-   to:
-   ```bash
-   <h1>Updated by CloudFormation!</h1>
+   to a new value such as:
+   ```yaml
+   - Key: Name
+     Value: UpdatedWebServerInstance
    ```
-3. Save the file.
+3. Add a new HTTPS inbound rule to the security group:
+   ```yaml
+   - IpProtocol: tcp
+     FromPort: 443
+     ToPort: 443
+     CidrIp: 0.0.0.0/0
+   ```
+4. Save the file.
 
 **Now update the stack in AWS:**
 
-4. Go back to the CloudFormation console.
-5. Select your stack `ravi-ec2-stack`.
-6. Click the **Update** button (top right).
-7. Select **Replace current template**.
-8. Click **Next**.
-9. Upload the updated `ec2-stack.yaml` file.
-10. Click **Next**.
-11. Click **Next** again.
-12. Click **Update stack**.
+5. Go back to the CloudFormation console.
+6. Select your stack `ravi-ec2-stack`.
+7. Click the **Update** button (top right).
+8. Select **Replace current template**.
+9. Click **Next**.
+10. Upload the updated `ec2-stack.yaml` file.
+11. Click **Next**.
+12. Click **Next** again.
+13. Click **Update stack**.
 
 **Watch the update:**
 
-13. CloudFormation will show a change set preview first. Click **Submit** to apply it.
-14. The EC2 instance will be restarted because the `UserData` content changed.
+14. CloudFormation will show a change set preview first. Click **Submit** to apply it.
 15. Wait until the status changes to `UPDATE_COMPLETE`.
 
 **Verify the change:**
 
-16. Click the **Outputs** tab.
-17. Open the **WebsiteURL** again.
-18. You should now see: **"Updated by CloudFormation!"**
+16. Open the EC2 console.
+17. Confirm the instance name is now **`UpdatedWebServerInstance`**.
+18. Confirm the security group includes HTTPS on port **443**.
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> "If you only run `systemctl enable httpd` manually, that helps with boot-time startup but does not actually re-run the CloudFormation bootstrap logic. The reliable pattern is: update the template, then update the stack."
+> "A real CloudFormation update is usually about changing template properties, not editing the bootstrap script. The stack update is what reconciles the live environment with the YAML definition."
 
-📸 [Screenshot: Updated website showing "Updated by CloudFormation!" message]
+📸 [Screenshot: EC2 instance showing the updated name and security group with port 443 enabled]
 
 ---
 
