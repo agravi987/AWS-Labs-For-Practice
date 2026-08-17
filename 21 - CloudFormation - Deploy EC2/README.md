@@ -409,7 +409,8 @@ CloudFormation updates can be triggered by changing template properties such as 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > "A real CloudFormation update is usually about changing template properties, not editing the bootstrap script. The stack update is what reconciles the live environment with the YAML definition."
 
-📸 [Screenshot: EC2 instance showing the updated name and security group with port 443 enabled]
+📸 [Screenshot: security group with port 443 enabled]
+![security group with port 443 enabled](screenshots/05-cloudformation-security-group-443.png)
 
 ---
 
@@ -458,6 +459,7 @@ You should see the InstanceId, PublicIP, and WebsiteURL!
 > "The CLI is powerful for automation. Imagine running this in a script at 3 AM to deploy infrastructure automatically. That's the power of IaC!"
 
 📸 [Screenshot: Terminal showing the CLI commands and their output]
+![Terminal showing the CLI commands and their output](screenshots/06-cloudformation-cli-commands.png)
 
 ---
 
