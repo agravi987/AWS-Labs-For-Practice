@@ -161,7 +161,8 @@ Let's set up CloudTrail to record everything happening in your account.
 >
 > CloudTrail also creates and applies the **S3 bucket policy** that grants itself write permission — no manual policy needed.
 
-📸 [Screenshot: CloudTrail "Create trail" page with all settings configured as described]
+📸 [Screenshot: CloudTrail page with all settings configured as described]
+![CloudTrail page with all settings configured as described](screenshots/01-cloudtrail-trail-configuration.png)
 
 ---
 
@@ -190,6 +191,7 @@ We just created three CloudTrail events:
 > "Every click in the AWS Console generates an API call, and CloudTrail records every one of them. Launching, stopping, terminating — each action has a timestamp, user, and source IP."
 
 📸 [Screenshot: EC2 console showing the instance being terminated]
+![EC2 console showing the instance being terminated](screenshots/02-ec2-instance-termination.png)
 
 ---
 
@@ -223,6 +225,7 @@ Now let's see what CloudTrail recorded!
 > **CLI alternate:** `aws cloudtrail lookup-events --lookup-attributes AttributeKey=EventName,AttributeValue=RunInstances`
 
 📸 [Screenshot: CloudTrail Event History showing the RunInstances event with details expanded]
+![CloudTrail Event History showing the RunInstances event with details expanded](screenshots/03-cloudtrail-event-history.png)
 
 ---
 
@@ -270,7 +273,7 @@ Your trail sends events to S3 as JSON files. Let's look at them!
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > "These S3 log files are your permanent audit trail. In a real company, you'd keep these for years for compliance (HIPAA, PCI-DSS, SOC 2). Security teams and auditors love CloudTrail!"
 
-📸 [Screenshot: S3 bucket showing the folder structure and a downloaded log file]
+![cloudtrail logs in s3](screenshots/06-cloudtrail-logs-s3.png)
 
 ---
 
@@ -323,7 +326,7 @@ fields eventTime, eventName, userIdentity.arn, sourceIPAddress
 > "CloudWatch Logs Insights is like Google for your CloudTrail logs. Instead of scrolling through thousands of events, you write a query and get instant answers. In a real job, you might be asked: 'Who stopped our production server at 3 AM last Tuesday?' — and this is how you'd find out!"
 
 📸 [Screenshot: CloudWatch Logs Insights showing the query and results]
-
+![CloudWatch Logs Insights showing the query and results](screenshots/04-cloudwatch-logs-insights.png)
 ---
 
 ### <img src="https://img.shields.io/badge/Step%206-Create%20Metric%20Filter-E74C3C?style=for-the-badge" />
@@ -344,6 +347,7 @@ Now you can alarm on this metric to get notified of failed login attempts!
 > "Metric filters are how you turn logs into actionable alerts. Failed logins, unauthorized API calls, root user activity — all of these can trigger alarms that notify your security team."
 
 📸 [Screenshot: Metric filter creation page with the filter pattern entered]
+![Metric filter creation page with the filter pattern entered](screenshots/05-cloudwatch-metric-filter.png)
 
 ---
 
@@ -397,7 +401,7 @@ CloudTrail is powerful but logs can accumulate. Clean up everything!
 > "In production, you'd NEVER delete your CloudTrail. But for this lab, we clean up to avoid any charges. In your real AWS account, always keep at least one trail enabled — it's your security lifeline!"
 
 📸 [Screenshot: CloudTrail console showing no trails remaining]
-
+![CloudTrail console showing no trails remaining](screenshots/07-cloudtrail-no-trails.png)
 ---
 
 ## 🧠 Memory Tips
