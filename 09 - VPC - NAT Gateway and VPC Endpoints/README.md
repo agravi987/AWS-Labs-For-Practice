@@ -460,16 +460,16 @@ Everything's in place — work through the [Validation Checklist](#-validation-c
 
 ## ✅ Validation Checklist
 
-| # | Check | Status |
+| # | ✅ Check | Status |
 |---|-------|--------|
-| 1 | Private subnet created with CIDR `10.0.2.0/24` | ☐ |
-| 2 | NAT Gateway `ravi-nat-gw` available with Elastic IP | ☐ |
-| 3 | Private route table routes through NAT | ☐ |
-| 4 | Private EC2 has no public IP | ☐ |
-| 5 | Private EC2 can reach internet via NAT | ☐ |
-| 6 | VPC Endpoint for S3 created | ☐ |
-| 7 | `aws s3 ls` works on private EC2 | ☐ |
-| 8 | Bastion host allows SSH access to private EC2 | ☐ |
+| 1 | Private subnet created with CIDR `10.0.2.0/24` | ☐ ✅ |
+| 2 | NAT Gateway `ravi-nat-gw` available with Elastic IP | ☐ ✅ |
+| 3 | Private route table routes through NAT | ☐ ✅ |
+| 4 | Private EC2 has no public IP | ☐ ✅ |
+| 5 | Private EC2 can reach internet via NAT | ☐ ✅ |
+| 6 | VPC Endpoint for S3 created | ☐ ✅ |
+| 7 | `aws s3 ls` works on private EC2 | ☐ ✅ |
+| 8 | Bastion host allows SSH access to private EC2 | ☐ ✅ |
 
 ---
 
@@ -477,7 +477,7 @@ Everything's in place — work through the [Validation Checklist](#-validation-c
 
 > ⚠️ **Delete the NAT Gateway FIRST — it's the expensive one (~$32/month)! Do not forget!**
 
-### Step 1: Delete the NAT Gateway (CRITICAL!)
+### 🗑️ Step 1: Delete the NAT Gateway (CRITICAL!)
 
 > <img src="https://img.shields.io/badge/Step%201-Delete%20NAT%20Gateway-E74C3C?style=for-the-badge" />
 
@@ -490,7 +490,7 @@ Everything's in place — work through the [Validation Checklist](#-validation-c
 > 📸 [Screenshot: NAT Gateway deletion confirmed]
 ![NAT Gateway deletion confirmed](screenshots/nat-gateway-delete-confirmation.png)
 
-### Step 2: Release the Elastic IP
+### 🗑️ Step 2: Release the Elastic IP
 
 > <img src="https://img.shields.io/badge/Step%202-Release%20Elastic%20IP-F39C12?style=for-the-badge" />
 
@@ -499,7 +499,7 @@ Everything's in place — work through the [Validation Checklist](#-validation-c
 3. Click **Actions** → **Release Elastic IP addresses**
 4. Confirm
 
-### Step 3: Delete the VPC Endpoint
+### 🗑️ Step 3: Delete the VPC Endpoint
 
 > <img src="https://img.shields.io/badge/Step%203-Delete%20VPC%20Endpoint-2ECC71?style=for-the-badge" />
 
@@ -508,7 +508,7 @@ Everything's in place — work through the [Validation Checklist](#-validation-c
 3. Click **Actions** → **Delete endpoints**
 4. Confirm
 
-### Step 4: Terminate Both EC2 Instances
+### 🗑️ Step 4: Terminate Both EC2 Instances
 
 > <img src="https://img.shields.io/badge/Step%204-Terminate%20EC2%20Instances-9B59B6?style=for-the-badge" />
 
@@ -516,7 +516,7 @@ Everything's in place — work through the [Validation Checklist](#-validation-c
 2. Select `bastion-ec2` → **Instance state** → **Terminate instance**
 3. Select `private-ec2-test` → **Instance state** → **Terminate instance**
 
-### Step 5: Delete Security Groups
+### 🗑️ Step 5: Delete Security Groups
 
 > <img src="https://img.shields.io/badge/Step%205-Delete%20Security%20Groups-3498DB?style=for-the-badge" />
 
@@ -524,7 +524,7 @@ Everything's in place — work through the [Validation Checklist](#-validation-c
 2. Delete `ravi-private-sg`
 3. Delete `ravi-vpc-sg` (if not needed for future labs)
 
-### Step 6: Delete Route Tables
+### 🗑️ Step 6: Delete Route Tables
 
 > <img src="https://img.shields.io/badge/Step%206-Delete%20Route%20Tables-E67E22?style=for-the-badge" />
 
@@ -532,20 +532,20 @@ Everything's in place — work through the [Validation Checklist](#-validation-c
 2. Disassociate and delete `ravi-private-rt`
 3. Disassociate and delete `ravi-public-rt`
 
-### Step 7: Detach and Delete Internet Gateway
+### 🗑️ Step 7: Detach and Delete Internet Gateway
 
 > <img src="https://img.shields.io/badge/Step%207-Delete%20Internet%20Gateway-1ABC9C?style=for-the-badge" />
 
 1. **Internet Gateways** → select `ravi-igw` → **Detach** → **Delete**
 
-### Step 8: Delete Subnets
+### 🗑️ Step 8: Delete Subnets
 
 > <img src="https://img.shields.io/badge/Step%208-Delete%20Subnets-27AE60?style=for-the-badge" />
 
 1. Delete `ravi-private-subnet-1a`
 2. Delete `ravi-public-subnet-1a`
 
-### Step 9: Delete the VPC
+### 🗑️ Step 9: Delete the VPC
 
 > <img src="https://img.shields.io/badge/Step%209-Delete%20VPC-C0392B?style=for-the-badge" />
 
@@ -639,16 +639,16 @@ You've built a proper VPC with public and private subnets! Now let's learn how t
 <details>
 <summary><strong>Click to expand Troubleshooting Table</strong></summary>
 
-| Problem | Solution |
+| 🔍 Problem | 💡 Solution |
 |---------|----------|
-| Private EC2 can't reach internet | Check: (1) NAT Gateway is Available, (2) Private route table has `0.0.0.0/0 → NAT GW`, (3) Route table is associated with private subnet |
-| `curl checkip.amazonaws.com` times out | NAT Gateway may still be initializing (wait 2-3 min). Also check the NAT's subnet has a route to the IGW |
-| Can't SSH to private EC2 from bastion | Make sure: (1) Private SG allows SSH from public subnet CIDR `10.0.1.0/24`, (2) Bastion and private EC2 are in the same VPC, (3) You're using the correct key pair |
-| `aws s3 ls` fails on private EC2 | Check: (1) VPC Endpoint is Available, (2) Endpoint is associated with `ravi-private-rt`, (3) AWS CLI is installed and configured |
-| "Too many NAT Gateways" error | You may have hit the limit (5 per Availability Zone). Delete unused NAT Gateways first |
-| Can't delete NAT Gateway | Make sure no resources are actively using it. Wait a moment and try again |
-| Elastic IP won't release | Disassociate it from any resource first (NAT Gateway should be deleted by now) |
-| VPC Endpoint creation fails | Make sure you selected the **Gateway** type (not Interface) for S3 |
+| 🔧 Private EC2 can't reach internet | Check: (1) NAT Gateway is Available, (2) Private route table has `0.0.0.0/0 → NAT GW`, (3) Route table is associated with private subnet |
+| 🔧 `curl checkip.amazonaws.com` times out | NAT Gateway may still be initializing (wait 2-3 min). Also check the NAT's subnet has a route to the IGW |
+| 🔧 Can't SSH to private EC2 from bastion | Make sure: (1) Private SG allows SSH from public subnet CIDR `10.0.1.0/24`, (2) Bastion and private EC2 are in the same VPC, (3) You're using the correct key pair |
+| 🔧 `aws s3 ls` fails on private EC2 | Check: (1) VPC Endpoint is Available, (2) Endpoint is associated with `ravi-private-rt`, (3) AWS CLI is installed and configured |
+| 🔧 "Too many NAT Gateways" error | You may have hit the limit (5 per Availability Zone). Delete unused NAT Gateways first |
+| 🔧 Can't delete NAT Gateway | Make sure no resources are actively using it. Wait a moment and try again |
+| 🔧 Elastic IP won't release | Disassociate it from any resource first (NAT Gateway should be deleted by now) |
+| 🔧 VPC Endpoint creation fails | Make sure you selected the **Gateway** type (not Interface) for S3 |
 
 </details>
 

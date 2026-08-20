@@ -395,16 +395,16 @@ Let's confirm everything was set up correctly:
 
 | # | Check | Status |
 |---|-------|--------|
-| 1 | `ravi-developer` user exists with console access | ☐ |
-| 2 | `ravi-readonly` user exists with programmatic access | ☐ |
-| 3 | `Developers` group has `AdministratorAccess` | ☐ |
-| 4 | `ReadOnlyUsers` group has `ReadOnlyAccess` | ☐ |
-| 5 | `S3DeveloperAccess` custom policy exists | ☐ |
-| 6 | `EC2-S3-ReadOnly-Role` role exists | ☐ |
-| 7 | EC2 instance launched with the IAM role attached | ☐ |
-| 8 | `aws s3 ls` succeeded from EC2 | ☐ |
-| 9 | `aws s3 mb` failed from EC2 (AccessDenied) | ☐ |
-| 10 | Access Analyzer created and findings reviewed | ☐ |
+| 1 | `ravi-developer` user exists with console access | ☐ ✅ |
+| 2 | `ravi-readonly` user exists with programmatic access | ☐ ✅ |
+| 3 | `Developers` group has `AdministratorAccess` | ☐ ✅ |
+| 4 | `ReadOnlyUsers` group has `ReadOnlyAccess` | ☐ ✅ |
+| 5 | `S3DeveloperAccess` custom policy exists | ☐ ✅ |
+| 6 | `EC2-S3-ReadOnly-Role` role exists | ☐ ✅ |
+| 7 | EC2 instance launched with the IAM role attached | ☐ ✅ |
+| 8 | `aws s3 ls` succeeded from EC2 | ☐ ✅ |
+| 9 | `aws s3 mb` failed from EC2 (AccessDenied) | ☐ ✅ |
+| 10 | Access Analyzer created and findings reviewed | ☐ ✅ |
 
 ---
 
@@ -416,30 +416,30 @@ Let's confirm everything was set up correctly:
 
 **Even though IAM is free, you should clean up to keep your account tidy and avoid confusion in future labs!**
 
-### Delete IAM Users:
+### 🗑️ Delete IAM Users:
 1. Go to **IAM → Users**.
 2. Click on `ravi-developer` → **Delete** → Type the username to confirm → **Delete user**.
 3. Click on `ravi-readonly` → **Delete** → Type the username to confirm → **Delete user**.
 
-### Delete IAM Groups:
+### 🛑 Delete IAM Groups:
 1. Go to **IAM → User groups**.
 2. Click on `Developers` → **Delete** → Confirm → **Delete**.
 3. Click on `ReadOnlyUsers` → **Delete** → Confirm → **Delete**.
 
-### Delete Custom Policy:
+### 🧹 Delete Custom Policy:
 1. Go to **IAM → Policies**.
 2. Search for `S3DeveloperAccess`.
 3. Click on it → **Delete** → Type the policy name to confirm → **Delete policy**.
 
-### Delete IAM Role:
+### 💾 Delete IAM Role:
 1. Go to **IAM → Roles**.
 2. Click on `EC2-S3-ReadOnly-Role` → **Delete** → Confirm → **Delete role**.
 
-### Terminate EC2 Instance:
+### 🔄 Terminate EC2 Instance:
 1. Go to **EC2 → Instances**.
 2. Select `ravi-iam-test` → **Instance state → Terminate instance** → **Terminate**.
 
-### Delete Access Analyzer:
+### 📸 Delete Access Analyzer:
 1. Go to **IAM → Access analyzer** → Delete the analyzer.
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
@@ -533,42 +533,42 @@ In the next lab, you'll create pub/sub notifications with SNS and message queues
 ## ❓ Troubleshooting
 
 <details>
-<summary><strong>"Access Denied" when trying to create IAM users/groups</strong></summary>
+<summary><strong>🔍 "Access Denied" when trying to create IAM users/groups</strong></summary>
 
 **Cause:** You're signed in as a user without IAM permissions.
-**Fix:** Sign in as root or an IAM user with `AdministratorAccess`.
+**💡 Fix:** Sign in as root or an IAM user with `AdministratorAccess`.
 
 </details>
 
 <details>
-<summary><strong>"Entity already exists" when creating a user or group</strong></summary>
+<summary><strong>🔍 "Entity already exists" when creating a user or group</strong></summary>
 
 **Cause:** The name is already taken (IAM names are global across your account).
-**Fix:** Use a different name or delete the existing entity first.
+**💡 Fix:** Use a different name or delete the existing entity first.
 
 </details>
 
 <details>
-<summary><strong>EC2 cannot assume the IAM role</strong></summary>
+<summary><strong>🔍 EC2 cannot assume the IAM role</strong></summary>
 
 **Cause:** The role wasn't attached during launch, or the trust policy is wrong.
-**Fix:** You can't attach a role to a running instance. Terminate it and launch a new one with the correct IAM instance profile.
+**🔧 Fix:** You can't attach a role to a running instance. Terminate it and launch a new one with the correct IAM instance profile.
 
 </details>
 
 <details>
-<summary><strong>Access keys show "pending" or don't appear</strong></summary>
+<summary><strong>🔍 Access keys show "pending" or don't appear</strong></summary>
 
 **Cause:** Access keys are only available immediately after creation.
-**Fix:** If you lost them, delete the old access key and create a new one from the Security credentials tab.
+**💡 Fix:** If you lost them, delete the old access key and create a new one from the Security credentials tab.
 
 </details>
 
 <details>
-<summary><strong>`aws s3 ls` fails from EC2</strong></summary>
+<summary><strong>🔍 `aws s3 ls` fails from EC2</strong></summary>
 
 **Cause:** The instance doesn't have an IAM role attached, or the role doesn't have S3 permissions.
-**Fix:** Check the instance's IAM profile in EC2 console. If missing, terminate and relaunch with the correct role.
+**🔧 Fix:** Check the instance's IAM profile in EC2 console. If missing, terminate and relaunch with the correct role.
 
 </details>
 

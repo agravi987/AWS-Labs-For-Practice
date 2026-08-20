@@ -288,13 +288,13 @@ Components of an AMI:
 
 ## ✅ Validation Checklist
 
-- [ ] Source instance `ami-source-instance` launched and stopped
-- [ ] httpd installed, enabled, and serving custom page on source
-- [ ] AMI `custom-web-server-ami` created with status `available`
-- [ ] Clone instance `ami-clone-instance` launched from custom AMI
-- [ ] Clone serves the same custom page at `http://<clone-ip>` without additional setup
-- [ ] httpd is auto-started on the clone (verified via `sudo systemctl status httpd`)
-- [ ] AMI block device mapping viewed; understands AMI-to-snapshot relationship
+- [ ] 🖥️ Source instance `ami-source-instance` launched and stopped ✅
+- [ ] 🌐 httpd installed, enabled, and serving custom page on source ✅
+- [ ] 📸 AMI `custom-web-server-ami` created with status `available` ✅
+- [ ] 🔄 Clone instance `ami-clone-instance` launched from custom AMI ✅
+- [ ] 🌐 Clone serves the same custom page at `http://<clone-ip>` without additional setup ✅
+- [ ] ⚡ httpd is auto-started on the clone (verified via `sudo systemctl status httpd`) ✅
+- [ ] 🔍 AMI block device mapping viewed; understands AMI-to-snapshot relationship ✅
 
 <div align="center">
 
@@ -304,19 +304,21 @@ Components of an AMI:
 
 ## 🧹 Cleanup (IMPORTANT!)
 
-1. **Terminate `ami-clone-instance`:**
+> 🛑 **Don't skip cleanup!** These resources will cost you money if left running.
+
+1. 🖥️ **Terminate `ami-clone-instance`:**
    - Select → Instance state → **Terminate** → Confirm.
 
-2. **Terminate `ami-source-instance`:**
+2. 🖥️ **Terminate `ami-source-instance`:**
    - Select → Instance state → **Terminate** → Confirm.
 
-3. **Deregister the AMI:**
+3. 📸 **Deregister the AMI:**
    - EC2 Console → **AMIs**.
    - Select `custom-web-server-ami`.
    - Actions → **Deregister AMI** → Confirm.
    - AWS may warn that the AMI is in use — that's informational; you can still deregister.
 
-4. **Delete the EBS snapshots associated with the AMI:**
+4. 💾 **Delete the EBS snapshots associated with the AMI:**
    - EC2 Console → **Snapshots** (make sure it's not filtered).
    - Find the snapshot named or tagged with your AMI name.
    - Select it → Actions → **Delete snapshot** → Confirm.
@@ -406,14 +408,14 @@ We'll host a full static website directly from an S3 bucket. No EC2 instance nee
 <details>
 <summary><strong>❓ Troubleshooting</strong></summary>
 
-| Problem | Likely Cause | Fix |
+| 🔍 Problem | 💡 Likely Cause | 🔧 Fix |
 |---------|-------------|------|
-| AMI creation stuck on `pending` | Large volume copying initial blocks | Wait. Small root (8 GB) shouldn't take more than 5 minutes |
-| Clone instance boots but httpd is NOT running | `systemctl enable httpd` was NOT run on source | SSH into source → `sudo systemctl enable httpd` → re-snapshot |
-| Clone instance boots, httpd running, wrong page | Custom index.html wasn't saved correctly | SSH source → `cat /var/www/html/index.html` → fix if needed |
-| AMI appears in list but says `pending` | AWS hasn't finished registering | Refresh after 1–2 minutes |
-| Cannot deregister AMI | Console warns the AMI is in use | The warning is informational — deregistration doesn't affect running instances; confirm and proceed |
-| Snapshot deletion fails | Snapshot is still attached to the active AMI | Deregister AMI first, THEN delete snapshots |
+| ⏳ AMI creation stuck on `pending` | Large volume copying initial blocks | Wait. Small root (8 GB) shouldn't take more than 5 minutes |
+| 🚫 Clone instance boots but httpd is NOT running | `systemctl enable httpd` was NOT run on source | SSH into source → `sudo systemctl enable httpd` → re-snapshot |
+| 🌐 Clone instance boots, httpd running, wrong page | Custom index.html wasn't saved correctly | SSH source → `cat /var/www/html/index.html` → fix if needed |
+| 🔄 AMI appears in list but says `pending` | AWS hasn't finished registering | Refresh after 1–2 minutes |
+| ⚠️ Cannot deregister AMI | Console warns the AMI is in use | The warning is informational — deregistration doesn't affect running instances; confirm and proceed |
+| ❌ Snapshot deletion fails | Snapshot is still attached to the active AMI | Deregister AMI first, THEN delete snapshots
 
 </details>
 

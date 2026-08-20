@@ -355,12 +355,12 @@ Now you can alarm on this metric to get notified of failed login attempts!
 
 Before moving on, confirm all of these:
 
-- [ ] Trail `ravi-management-trail` exists and is enabled
-- [ ] Trail is logging to S3 bucket and CloudWatch Logs
-- [ ] Event history shows your EC2 launch, stop, and terminate events
-- [ ] S3 bucket contains JSON log files in the correct folder structure
-- [ ] CloudWatch Logs Insights query returns results
-- [ ] (Optional) Metric filter for failed logins is created
+- [ ] Trail `ravi-management-trail` exists and is enabled ✅
+- [ ] Trail is logging to S3 bucket and CloudWatch Logs ✅
+- [ ] Event history shows your EC2 launch, stop, and terminate events ✅
+- [ ] S3 bucket contains JSON log files in the correct folder structure ✅
+- [ ] CloudWatch Logs Insights query returns results ✅
+- [ ] (Optional) Metric filter for failed logins is created ✅
 
 ---
 
@@ -372,30 +372,30 @@ Before moving on, confirm all of these:
 
 CloudTrail is powerful but logs can accumulate. Clean up everything!
 
-**Delete the EC2 instance (if still running):**
+**🗑️ Delete the EC2 instance (if still running):**
 
-1. Go to **EC2** → **Instances** → select any test instances → **Instance state** → **Terminate instance**.
+1. 🛑 Go to **EC2** → **Instances** → select any test instances → **Instance state** → **Terminate instance**.
 
-**Delete the CloudTrail trail:**
+**🗑️ Delete the CloudTrail trail:**
 
-2. Go to **CloudTrail** → **Trails** → select `ravi-management-trail` → **Delete** → confirm.
+2. 🧹 Go to **CloudTrail** → **Trails** → select `ravi-management-trail` → **Delete** → confirm.
 
-**Delete the CloudWatch Logs log group** *(this also removes the metric filter if you created one)*:
+**🗑️ Delete the CloudWatch Logs log group** *(this also removes the metric filter if you created one)*:
 
-3. Go to **CloudWatch** → **Logs** → **Log groups** → select `ravi-cloudtrail-logs` → **Actions** → **Delete** → type `delete` → confirm.
+3. 🔄 Go to **CloudWatch** → **Logs** → **Log groups** → select `ravi-cloudtrail-logs` → **Actions** → **Delete** → type `delete` → confirm.
 
-**Delete the IAM role CloudTrail created:**
+**🗑️ Delete the IAM role CloudTrail created:**
 
-4. Go to **IAM** → **Roles** → select the `CloudTrail_CloudWatchLogs_Role` role → **Delete** → confirm.
+4. 🔍 Go to **IAM** → **Roles** → select the `CloudTrail_CloudWatchLogs_Role` role → **Delete** → confirm.
 
-**Delete the S3 bucket:**
+**🗑️ Delete the S3 bucket:**
 
-5. Go to **S3** → **Buckets** → open `ravi-cloudtrail-bucket-...` → **Empty** → type `permanently delete` to confirm.
-6. Back on the bucket list, select the bucket → **Delete** → type the bucket name → **Delete bucket**.
+5. 💾 Go to **S3** → **Buckets** → open `ravi-cloudtrail-bucket-...` → **Empty** → type `permanently delete` to confirm.
+6. 🗑️ Back on the bucket list, select the bucket → **Delete** → type the bucket name → **Delete bucket**.
 
-**Verify everything is gone:**
+**✅ Verify everything is gone:**
 
-7. CloudTrail: no trails. S3: bucket gone. CloudWatch: log group gone.
+7. 🔍 CloudTrail: no trails. S3: bucket gone. CloudWatch: log group gone.
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > "In production, you'd NEVER delete your CloudTrail. But for this lab, we clean up to avoid any charges. In your real AWS account, always keep at least one trail enabled — it's your security lifeline!"
@@ -492,45 +492,45 @@ You now have eyes on everything happening in your AWS account! In the next lab, 
 ## ❓ Troubleshooting
 
 <details>
-<summary><strong>No events showing in Event History</strong></summary>
+<summary>🔍 <strong>No events showing in Event History</strong></summary>
 
-**Fix**: Wait 5-10 minutes after creating the trail — it can take time for events to appear. Also make sure you're looking in the correct region.
+💡 **Fix**: Wait 5-10 minutes after creating the trail — it can take time for events to appear. Also make sure you're looking in the correct region.
 </details>
 
 <details>
-<summary><strong>Trail shows "Logging" but no CloudWatch Logs</strong></summary>
+<summary>🔍 <strong>Trail shows "Logging" but no CloudWatch Logs</strong></summary>
 
-**Fix**: The IAM role might not have permissions. Go to the trail settings and verify the CloudWatch Logs IAM role was created correctly.
+💡 **Fix**: The IAM role might not have permissions. Go to the trail settings and verify the CloudWatch Logs IAM role was created correctly.
 </details>
 
 <details>
-<summary><strong>CloudWatch Logs Insights query returns no results</strong></summary>
+<summary>🔍 <strong>CloudWatch Logs Insights query returns no results</strong></summary>
 
-**Fix**: Make sure you selected the correct log group (`ravi-cloudtrail-logs`). Also verify that events have been delivered (can take 5-15 minutes for new trails).
+💡 **Fix**: Make sure you selected the correct log group (`ravi-cloudtrail-logs`). Also verify that events have been delivered (can take 5-15 minutes for new trails).
 </details>
 
 <details>
-<summary><strong>S3 bucket is empty</strong></summary>
+<summary>🔍 <strong>S3 bucket is empty</strong></summary>
 
-**Fix**: CloudTrail delivers logs within 15 minutes. If the bucket is empty after 30 minutes, check the trail status in CloudTrail console.
+💡 **Fix**: CloudTrail delivers logs within 15 minutes. If the bucket is empty after 30 minutes, check the trail status in CloudTrail console.
 </details>
 
 <details>
-<summary><strong>"Access Denied" when creating the trail</strong></summary>
+<summary>🔍 <strong>"Access Denied" when creating the trail</strong></summary>
 
-**Fix**: Ensure your IAM user has the AWS-managed `AWSCloudTrail_FullAccess` policy attached.
+🔧 **Fix**: Ensure your IAM user has the AWS-managed `AWSCloudTrail_FullAccess` policy attached.
 </details>
 
 <details>
-<summary><strong>Can't delete the S3 bucket</strong></summary>
+<summary>🔍 <strong>Can't delete the S3 bucket</strong></summary>
 
-**Fix**: You must EMPTY the bucket first (delete all objects), then delete the bucket. S3 buckets cannot be deleted if they contain objects.
+🔧 **Fix**: You must EMPTY the bucket first (delete all objects), then delete the bucket. S3 buckets cannot be deleted if they contain objects.
 </details>
 
 <details>
-<summary><strong>Metric filter doesn't seem to work</strong></summary>
+<summary>🔍 <strong>Metric filter doesn't seem to work</strong></summary>
 
-**Fix**: After creating the filter, wait 5-10 minutes for it to start processing new log events. The filter only applies to NEW events, not historical ones.
+💡 **Fix**: After creating the filter, wait 5-10 minutes for it to start processing new log events. The filter only applies to NEW events, not historical ones.
 </details>
 
 ---

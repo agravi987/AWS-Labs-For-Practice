@@ -433,14 +433,14 @@ Let's make sure everything is set up correctly:
 
 ## ✅ Validation Checklist
 
-- [ ] Two EC2 instances running with different web pages (primary vs backup)
-- [ ] Security group allows HTTP (80) and SSH (22)
-- [ ] Health check created and monitoring primary server on port 80
-- [ ] Simple routing record tested in Step 4 (if you have a domain)
-- [ ] Primary failover record created with health check attached
-- [ ] Secondary failover record created pointing to backup server
-- [ ] Stopping httpd on primary → health check fails → traffic goes to backup
-- [ ] Restarting httpd on primary → health check recovers → traffic returns to primary
+- [ ] Two EC2 instances running with different web pages (primary vs backup) ✅
+- [ ] Security group allows HTTP (80) and SSH (22) ✅
+- [ ] Health check created and monitoring primary server on port 80 ✅
+- [ ] Simple routing record tested in Step 4 (if you have a domain) ✅
+- [ ] Primary failover record created with health check attached ✅
+- [ ] Secondary failover record created pointing to backup server ✅
+- [ ] Stopping httpd on primary → health check fails → traffic goes to backup ✅
+- [ ] Restarting httpd on primary → health check recovers → traffic returns to primary ✅
 
 ---
 
@@ -448,29 +448,29 @@ Let's make sure everything is set up correctly:
 
 > ⚠️ **Domain registrations cannot be deleted!** They expire after 1 year. If you registered a domain, just let it expire or disable auto-renew.
 
-1. **Delete Route 53 Records:**
+1. 🗑️ **Delete Route 53 Records:**
    - Go to **Route 53** → **Hosted zones** → click your domain
    - Select the `www` record(s) → **Delete**
    - Type `delete` to confirm
    - Delete ALL records you created (keep the default NS and SOA if the domain is registered)
 
-2. **Delete Health Check:**
+2. 🛑 **Delete Health Check:**
    - Go to **Route 53** → **Health checks**
    - Select `ravi-primary-health-check`
    - Click **Delete** → Confirm
 
-3. **Delete Hosted Zone (if you created one separately):**
+3. 🗑️ **Delete Hosted Zone (if you created one separately):**
    - Go to **Route 53** → **Hosted zones**
    - Select the zone → **Delete hosted zone**
    - Type the domain name to confirm
 
-4. **Terminate EC2 Instances:**
+4. 💻 **Terminate EC2 Instances:**
    - Go to **EC2** → **Instances**
    - Select `ravi-primary-server` and `ravi-backup-server`
    - Click **Instance state** → **Terminate instance**
    - Confirm
 
-5. **Delete Security Group:**
+5. 🔐 **Delete Security Group:**
    - Go to **EC2** → **Security Groups**
    - Select `route53-sg` → **Actions** → **Delete security group**
    - Confirm
@@ -566,41 +566,41 @@ Now that you can direct traffic to instances, let's learn about managing databas
 <details>
 <summary><strong>Click to expand Troubleshooting Section</strong></summary>
 
-### My health check stays "Unhealthy" even though the server is running
+### 🔍 My health check stays "Unhealthy" even though the server is running
 
-- Verify the security group allows inbound HTTP (port 80) from anywhere (`0.0.0.0/0`)
-- Check that Apache is actually running: SSH in and run `sudo systemctl status httpd`
-- Make sure the health check IP matches the primary server's public IP exactly
-- Try changing the health check path to something simpler like `/`
-- Wait at least 1 minute for the status to update
+- 🔍 Verify the security group allows inbound HTTP (port 80) from anywhere (`0.0.0.0/0`)
+- 🔧 Check that Apache is actually running: SSH in and run `sudo systemctl status httpd`
+- 🔍 Make sure the health check IP matches the primary server's public IP exactly
+- 💡 Try changing the health check path to something simpler like `/`
+- ⏱️ Wait at least 1 minute for the status to update
 
-### DNS resolution is not changing after failover
+### 🔍 DNS resolution is not changing after failover
 
-- DNS caching! Your computer may be caching the old IP
-- Flush your DNS cache:
+- 🔍 DNS caching! Your computer may be caching the old IP
+- 🧹 Flush your DNS cache:
   - Windows: `ipconfig /flushdns`
   - Mac: `sudo dscacheutil -flushcache`
-- Try using `nslookup` or `dig` instead of browser (browsers cache more aggressively)
-- The TTL is set to 300 seconds — wait that long for caches to expire
+- 🔧 Try using `nslookup` or `dig` instead of browser (browsers cache more aggressively)
+- ⏱️ The TTL is set to 300 seconds — wait that long for caches to expire
 
-### I can't delete my hosted zone
+### 🔍 I can't delete my hosted zone
 
-- Make sure all non-default records are deleted first (NS and SOA are default for registered domains)
-- You cannot delete the hosted zone for a registered domain — it's automatically managed
-- For manually created hosted zones, delete all custom records first, then delete the zone
+- 🔍 Make sure all non-default records are deleted first (NS and SOA are default for registered domains)
+- 💡 You cannot delete the hosted zone for a registered domain — it's automatically managed
+- 🔧 For manually created hosted zones, delete all custom records first, then delete the zone
 
-### Failover doesn't switch — both records return Primary
+### 🔍 Failover doesn't switch — both records return Primary
 
-- Check that the health check is actually attached to the Primary record
-- Confirm the health check is still enabled and shows **Healthy** when the primary is running
-- Make sure you stopped httpd (not just the instance) — `sudo systemctl stop httpd`
-- The health check must fail 3 consecutive times (~90 seconds with the standard 30s interval)
+- 🔍 Check that the health check is actually attached to the Primary record
+- 🔍 Confirm the health check is still enabled and shows **Healthy** when the primary is running
+- 🔧 Make sure you stopped httpd (not just the instance) — `sudo systemctl stop httpd`
+- ⏱️ The health check must fail 3 consecutive times (~90 seconds with the standard 30s interval)
 
-### My secondary server doesn't show the backup page
+### 🔍 My secondary server doesn't show the backup page
 
-- Make sure you used the correct user data when launching the backup instance
-- SSH into the backup and check: `curl http://localhost`
-- If it shows the default page, restart httpd: `sudo systemctl restart httpd`
+- 🔍 Make sure you used the correct user data when launching the backup instance
+- 🔧 SSH into the backup and check: `curl http://localhost`
+- 🔧 If it shows the default page, restart httpd: `sudo systemctl restart httpd`
 
 </details>
 

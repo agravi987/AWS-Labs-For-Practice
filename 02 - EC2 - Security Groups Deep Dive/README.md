@@ -356,31 +356,31 @@ You should see the response! The `app-sg` is configured to trust traffic only if
 
 <img src="https://img.shields.io/badge/Step%2010-Verify-16A085?style=for-the-badge" />
 
-| ✅  | Check                                                                       |
+| ✅  | 🔍 Check                                                                       |
 | --- | --------------------------------------------------------------------------- |
-| ☐   | `web-server-sg` has SSH from My IP, HTTP from anywhere, HTTPS from anywhere |
-| ☐   | SSH works from your laptop                                                  |
-| ☐   | Browser loads `http://<public-ip>` → sees the Security Groups Lab page      |
-| ☐   | Removing HTTP rule kills the site                                           |
-| ☐   | Re-adding HTTP restores the site                                            |
-| ☐   | `app-sg` references `web-server-sg` as source                               |
-| ☐   | Web server can curl the app instance's HTTP endpoint via private IP         |
+| ☐   | 🌐 `web-server-sg` has SSH from My IP, HTTP from anywhere, HTTPS from anywhere |
+| ☐   | 🔐 SSH works from your laptop                                                  |
+| ☐   | 🖥️ Browser loads `http://<public-ip>` → sees the Security Groups Lab page      |
+| ☐   | 🚫 Removing HTTP rule kills the site                                           |
+| ☐   | ✨ Re-adding HTTP restores the site                                            |
+| ☐   | 🔗 `app-sg` references `web-server-sg` as source                               |
+| ☐   | 🌐 Web server can curl the app instance's HTTP endpoint via private IP         |
 
 ---
 
 ## ✅ Validation Checklist
 
-| ✅  | Validation Item                                                      | Status |
+| ✅  | 🔍 Validation Item                                                      | Status |
 | --- | -------------------------------------------------------------------- | ------ |
-| ☐   | Security group `web-server-sg` created with SSH + HTTP inbound rules | ⬜     |
-| ☐   | EC2 instance launched and serving custom index.html via httpd        | ⬜     |
-| ☐   | HTTP access verified from browser                                    | ⬜     |
-| ☐   | Temporary SSH restriction by changing source to 1.2.3.4/32           | ⬜     |
-| ☐   | HTTP rule removed → site goes down → verified                        | ⬜     |
-| ☐   | HTTP rule re-added → site comes back → verified                      | ⬜     |
-| ☐   | HTTPS rule added (placeholder)                                       | ⬜     |
-| ☐   | Security group `app-sg` created referencing `web-server-sg`          | ⬜     |
-| ☐   | Cross-SG HTTP access verified via curl on private IP                 | ⬜     |
+| ☐   | 🛡️ Security group `web-server-sg` created with SSH + HTTP inbound rules | ⬜     |
+| ☐   | 🖥️ EC2 instance launched and serving custom index.html via httpd        | ⬜     |
+| ☐   | 🌐 HTTP access verified from browser                                    | ⬜     |
+| ☐   | 🔐 Temporary SSH restriction by changing source to 1.2.3.4/32           | ⬜     |
+| ☐   | 🚫 HTTP rule removed → site goes down → verified                        | ⬜     |
+| ☐   | ✨ HTTP rule re-added → site comes back → verified                      | ⬜     |
+| ☐   | 🔒 HTTPS rule added (placeholder)                                       | ⬜     |
+| ☐   | 🔗 Security group `app-sg` created referencing `web-server-sg`          | ⬜     |
+| ☐   | 🌐 Cross-SG HTTP access verified via curl on private IP                 | ⬜     |
 
 > **POV:** You just removed the HTTP rule and now your website shows "connection refused" - exactly as planned.
 
@@ -497,62 +497,62 @@ _We'll add extra storage volumes, format them, take snapshots, and restore from 
 ## ❓ Troubleshooting
 
 <details>
-<summary><strong>🔍 SSH times out after changing source IP</strong></summary>
+<summary><strong>🔐 SSH times out after changing source IP</strong></summary>
 <br/>
 
-**Likely Cause:** SSH rule source changed to a non-matching IP
+**🔍 Likely Cause:** SSH rule source changed to a non-matching IP
 
-**Fix:** Set source back to **My IP** immediately
+**🔧 Fix:** Set source back to **My IP** immediately
 
 </details>
 
 <details>
-<summary><strong>🔍 Browser times out after removing HTTP</strong></summary>
+<summary><strong>🌐 Browser times out after removing HTTP</strong></summary>
 <br/>
 
-**Likely Cause:** HTTP rule deleted; traffic blocked
+**🔍 Likely Cause:** HTTP rule deleted; traffic blocked
 
-**Fix:** Re-add HTTP (80) inbound rule
+**🔧 Fix:** Re-add HTTP (80) inbound rule
 
 </details>
 
 <details>
-<summary><strong>🔍 <code>app-instance</code> curl gets <code>Connection refused</code></strong></summary>
+<summary><strong>🚫 <code>app-instance</code> curl gets <code>Connection refused</code></strong></summary>
 <br/>
 
-**Likely Cause:** httpd not installed/running on app instance
+**🔍 Likely Cause:** httpd not installed/running on app instance
 
-**Fix:** Run `sudo systemctl status httpd`; install if needed
+**🔧 Fix:** Run `sudo systemctl status httpd`; install if needed
 
 </details>
 
 <details>
-<summary><strong>🔍 <code>operation not permitted</code> on security group deletion</strong></summary>
+<summary><strong>⚠️ <code>operation not permitted</code> on security group deletion</strong></summary>
 <br/>
 
-**Likely Cause:** Instances still running
+**🔍 Likely Cause:** Instances still running
 
-**Fix:** Terminate associated instances first, wait 2–3 min
+**🔧 Fix:** Terminate associated instances first, wait 2–3 min
 
 </details>
 
 <details>
-<summary><strong>🔍 Multiple SGs on one instance and still blocked</strong></summary>
+<summary><strong>🔒 Multiple SGs on one instance and still blocked</strong></summary>
 <br/>
 
-**Likely Cause:** No rule in any assigned SG allows that traffic
+**🔍 Likely Cause:** No rule in any assigned SG allows that traffic
 
-**Fix:** SG rules are **additive** (a union) — traffic flows if ANY assigned SG allows it. Check each SG for the missing rule.
+**🔧 Fix:** SG rules are **additive** (a union) — traffic flows if ANY assigned SG allows it. Check each SG for the missing rule.
 
 </details>
 
 <details>
-<summary><strong>🔍 SG-to-SG referencing doesn't work</strong></summary>
+<summary><strong>🔗 SG-to-SG referencing doesn't work</strong></summary>
 <br/>
 
-**Likely Cause:** Cross-account or cross-region referencing not allowed
+**🔍 Likely Cause:** Cross-account or cross-region referencing not allowed
 
-**Fix:** Both SGs must be in the same VPC and region
+**🔧 Fix:** Both SGs must be in the same VPC and region
 
 </details>
 

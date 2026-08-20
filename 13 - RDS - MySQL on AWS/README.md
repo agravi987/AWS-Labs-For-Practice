@@ -459,14 +459,14 @@ Let's confirm everything worked:
 
 ## ✅ Validation Checklist
 
-- [ ] DB Subnet Group spans 2 Availability Zones
-- [ ] Security group allows MySQL (3306) inbound
-- [ ] RDS instance is running and shows "Available"
-- [ ] Endpoint and port noted down
-- [ ] Successfully connected using `mysql` client
-- [ ] Database `ravilabs` created with `students` table
-- [ ] Data inserted and queryable
-- [ ] CloudWatch metrics visible for the RDS instance
+- [ ] DB Subnet Group spans 2 Availability Zones ✅
+- [ ] Security group allows MySQL (3306) inbound ✅
+- [ ] RDS instance is running and shows "Available" ✅
+- [ ] Endpoint and port noted down ✅
+- [ ] Successfully connected using `mysql` client ✅
+- [ ] Database `ravilabs` created with `students` table ✅
+- [ ] Data inserted and queryable ✅
+- [ ] CloudWatch metrics visible for the RDS instance ✅
 
 ---
 
@@ -483,7 +483,7 @@ Let's confirm everything worked:
 
 ### Detailed Steps:
 
-1. **Delete the RDS Instance:**
+1. 🗑️ **Delete the RDS Instance:**
    - Go to **RDS Console** → **Databases**
    - Select `ravi-mysql-db`
    - Click **Actions** → **Delete**
@@ -494,18 +494,18 @@ Let's confirm everything worked:
 
    > ⏱️ Deletion takes 5-10 minutes
 
-2. **Delete the DB Subnet Group:**
+2. 🗑️ **Delete the DB Subnet Group:**
    - Go to **RDS** → **Subnet groups**
    - Select `ravi-db-subnet-group`
    - Click **Delete**
 
-3. **Delete the Security Group:**
+3. 🔐 **Delete the Security Group:**
    - Go to **EC2** → **Security Groups**
    - Find `rds-sg`
    - Click **Actions** → **Delete security group**
    - Confirm
 
-4. **Terminate any EC2 instance you launched for this lab:**
+4. 💻 **Terminate any EC2 instance you launched for this lab:**
    - Go to **EC2** → **Instances**
    - Select any instance you launched for this lab (e.g., for MySQL client access)
    - Click **Instance state** → **Terminate instance**
@@ -605,37 +605,37 @@ You've mastered relational databases in the cloud. Now let's explore the NoSQL w
 <details>
 <summary><strong>Click to expand Troubleshooting Section</strong></summary>
 
-### "Can't connect to MySQL server" error
+### 🔍 "Can't connect to MySQL server" error
 
-- Verify the RDS instance status is **Available** (not "Backing up" or "Creating")
-- Check that `rds-sg` security group allows inbound on port 3306
-- If connecting from your local machine, your home IP must be in the security group (or use `0.0.0.0/0`)
-- Make sure you're using the full endpoint (not just the identifier)
-- Check that "Public access" is set to **Yes**
+- 🔍 Verify the RDS instance status is **Available** (not "Backing up" or "Creating")
+- 🔧 Check that `rds-sg` security group allows inbound on port 3306
+- 🔍 If connecting from your local machine, your home IP must be in the security group (or use `0.0.0.0/0`)
+- 🔍 Make sure you're using the full endpoint (not just the identifier)
+- 🔧 Check that "Public access" is set to **Yes**
 
-### "Access denied for user 'admin'" error
+### 🔍 "Access denied for user 'admin'" error
 
-- Double-check your master password (it's case-sensitive!)
-- If you forgot the password, you can modify the RDS instance and set a new master password
-- Make sure you're connecting as `admin`, not `root` or `mysql`
+- 🔍 Double-check your master password (it's case-sensitive!)
+- 🔧 If you forgot the password, you can modify the RDS instance and set a new master password
+- 🔍 Make sure you're connecting as `admin`, not `root` or `mysql`
 
-### RDS instance is stuck in "Creating" for more than 15 minutes
+### 🔍 RDS instance is stuck in "Creating" for more than 15 minutes
 
-- This is unusual — check the **Events** tab for error messages
-- You may have hit a limit (check Service Quotas → RDS)
-- Try deleting and recreating with a different identifier
-- Make sure your default VPC has subnets in at least 2 AZs
+- 🔍 This is unusual — check the **Events** tab for error messages
+- 💡 You may have hit a limit (check Service Quotas → RDS)
+- 🔧 Try deleting and recreating with a different identifier
+- 🔍 Make sure your default VPC has subnets in at least 2 AZs
 
-### "Public access" option is greyed out
+### 🔍 "Public access" option is greyed out
 
-- This happens when the subnet group only has private subnets
-- Make sure your DB Subnet Group includes subnets that are in the default VPC (which should have public subnets)
+- 💡 This happens when the subnet group only has private subnets
+- 🔧 Make sure your DB Subnet Group includes subnets that are in the default VPC (which should have public subnets)
 
-### Storage is filling up quickly
+### 🔍 Storage is filling up quickly
 
-- RDS doesn't auto-delete data — you need to manage storage manually
-- For this lab, 20 GB should be more than enough
-- In production, enable storage autoscaling with a maximum limit
+- 💡 RDS doesn't auto-delete data — you need to manage storage manually
+- 💡 For this lab, 20 GB should be more than enough
+- 🔧 In production, enable storage autoscaling with a maximum limit
 
 </details>
 

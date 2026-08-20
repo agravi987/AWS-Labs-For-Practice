@@ -440,17 +440,17 @@ Configure:
 
 ## ✅ Validation Checklist
 
-| # | Check | Status |
+| # | ✅ Check | Status |
 |---|-------|--------|
-| 1 | Security group `alb-sg` with HTTP from 0.0.0.0/0 | ☐ |
-| 2 | Security group `ec2-from-alb-sg` with HTTP from alb-sg only | ☐ |
-| 3 | Target group `ravi-target-group` created with health checks | ☐ |
-| 4 | `web-server-1` running with Apache in public subnet | ☐ |
-| 5 | `web-server-2` running with Apache in different AZ | ☐ |
-| 6 | Both instances registered and healthy in target group | ☐ |
-| 7 | ALB `ravi-alb` active and internet-facing | ☐ |
-| 8 | ALB DNS name loads the webpage in browser | ☐ |
-| 9 | Page alternates between Server 1 and Server 2 on refresh | ☐ |
+| 1 | Security group `alb-sg` with HTTP from 0.0.0.0/0 | ☐ ✅ |
+| 2 | Security group `ec2-from-alb-sg` with HTTP from alb-sg only | ☐ ✅ |
+| 3 | Target group `ravi-target-group` created with health checks | ☐ ✅ |
+| 4 | `web-server-1` running with Apache in public subnet | ☐ ✅ |
+| 5 | `web-server-2` running with Apache in different AZ | ☐ ✅ |
+| 6 | Both instances registered and healthy in target group | ☐ ✅ |
+| 7 | ALB `ravi-alb` active and internet-facing | ☐ ✅ |
+| 8 | ALB DNS name loads the webpage in browser | ☐ ✅ |
+| 9 | Page alternates between Server 1 and Server 2 on refresh | ☐ ✅ |
 
 ---
 
@@ -458,7 +458,7 @@ Configure:
 
 > ⚠️ **Delete everything to stop all charges!** The ALB and EC2 instances will keep running (and costing) until you delete them.
 
-### Step 1: Delete the Application Load Balancer
+### 🗑️ Step 1: Delete the Application Load Balancer
 
 > <img src="https://img.shields.io/badge/Step%201-Delete%20ALB-E74C3C?style=for-the-badge" />
 
@@ -472,7 +472,7 @@ Configure:
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > Delete the ALB first — it has dependencies. If you try to delete the target group first, AWS will complain that it's still in use by the load balancer!
 
-### Step 2: Delete the Target Group
+### 🗑️ Step 2: Delete the Target Group
 
 > <img src="https://img.shields.io/badge/Step%202-Delete%20Target%20Group-F39C12?style=for-the-badge" />
 
@@ -481,7 +481,7 @@ Configure:
 3. Click **Actions** → **Delete**
 4. Confirm
 
-### Step 3: Terminate Both EC2 Instances
+### 🗑️ Step 3: Terminate Both EC2 Instances
 
 > <img src="https://img.shields.io/badge/Step%203-Terminate%20EC2%20Instances-2ECC71?style=for-the-badge" />
 
@@ -490,7 +490,7 @@ Configure:
 3. Click **Instance state** → **Terminate instance**
 4. Click **Terminate**
 
-### Step 4: Delete Both Security Groups
+### 🗑️ Step 4: Delete Both Security Groups
 
 > <img src="https://img.shields.io/badge/Step%204-Delete%20Security%20Groups-9B59B6?style=for-the-badge" />
 
@@ -593,17 +593,17 @@ You've covered S3, VPC, and Load Balancing! Here are some ideas for your next la
 <details>
 <summary><strong>Click to expand Troubleshooting Table</strong></summary>
 
-| Problem | Solution |
+| 🔍 Problem | 💡 Solution |
 |---------|----------|
-| ALB shows "Provisioning" for a long time | This is normal — ALBs take 2-5 minutes to provision. Be patient! |
-| Browser shows "This site can't be reached" | Check: (1) ALB state is Active, (2) You're using HTTP (not HTTPS), (3) You copied the full DNS name |
-| Page loads but shows one server only | Refresh multiple times. If still one server, check the other instance's health status |
-| Target shows "unhealthy" | Check: (1) Apache is running (user data script worked), (2) EC2 security group allows port 80 FROM alb-sg, (3) Wait 60 seconds for re-check |
-| "No instances registered" in target group | Go to Target Group → Targets tab → Register targets manually |
-| "Invalid security group" error during ALB creation | Make sure alb-sg and ec2-from-alb-sg are in the same VPC as the ALB |
-| User data didn't install Apache | SSH into the instance and check: `systemctl status httpd`. If not running, try running the commands manually |
-| Can't delete target group | Make sure the ALB is deleted first — the target group is still attached |
-| Security group won't delete | Make sure it's not attached to any instances or the ALB |
+| 🔧 ALB shows "Provisioning" for a long time | This is normal — ALBs take 2-5 minutes to provision. Be patient! |
+| 🔧 Browser shows "This site can't be reached" | Check: (1) ALB state is Active, (2) You're using HTTP (not HTTPS), (3) You copied the full DNS name |
+| 🔧 Page loads but shows one server only | Refresh multiple times. If still one server, check the other instance's health status |
+| 🔧 Target shows "unhealthy" | Check: (1) Apache is running (user data script worked), (2) EC2 security group allows port 80 FROM alb-sg, (3) Wait 60 seconds for re-check |
+| 🔧 "No instances registered" in target group | Go to Target Group → Targets tab → Register targets manually |
+| 🔧 "Invalid security group" error during ALB creation | Make sure alb-sg and ec2-from-alb-sg are in the same VPC as the ALB |
+| 🔧 User data didn't install Apache | SSH into the instance and check: `systemctl status httpd`. If not running, try running the commands manually |
+| 🔧 Can't delete target group | Make sure the ALB is deleted first — the target group is still attached |
+| 🔧 Security group won't delete | Make sure it's not attached to any instances or the ALB |
 
 </details>
 

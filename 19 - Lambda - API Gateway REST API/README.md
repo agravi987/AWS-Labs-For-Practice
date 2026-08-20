@@ -484,16 +484,16 @@ Remember: after any API change — CORS included — you must redeploy to the st
 
 | # | Check | Status |
 |---|-------|--------|
-| 1 | Lambda function `ravi-rest-api` created with correct code | ☐ |
-| 2 | API Gateway `ravi-student-api` created (REST API) | ☐ |
-| 3 | `/hello` resource with GET method exists | ☐ |
-| 4 | `/students` resource with GET and POST methods exists | ☐ |
-| 5 | All methods use Lambda Proxy Integration | ☐ |
-| 6 | API deployed to `prod` stage | ☐ |
-| 7 | GET /hello returns `{"message": "Hello from Ravi's API!"}` | ☐ |
-| 8 | GET /students returns student list | ☐ |
-| 9 | POST /students returns `{"message": "Student created!"}` with 201 | ☐ |
-| 10 | Unknown paths return 403 Missing Authentication Token | ☐ |
+| 1 | Lambda function `ravi-rest-api` created with correct code | ☐ ✅ |
+| 2 | API Gateway `ravi-student-api` created (REST API) | ☐ ✅ |
+| 3 | `/hello` resource with GET method exists | ☐ ✅ |
+| 4 | `/students` resource with GET and POST methods exists | ☐ ✅ |
+| 5 | All methods use Lambda Proxy Integration | ☐ ✅ |
+| 6 | API deployed to `prod` stage | ☐ ✅ |
+| 7 | GET /hello returns `{"message": "Hello from Ravi's API!"}` | ☐ ✅ |
+| 8 | GET /students returns student list | ☐ ✅ |
+| 9 | POST /students returns `{"message": "Student created!"}` with 201 | ☐ ✅ |
+| 10 | Unknown paths return 403 Missing Authentication Token | ☐ ✅ |
 
 ---
 
@@ -505,18 +505,18 @@ Remember: after any API change — CORS included — you must redeploy to the st
 
 **Delete all resources to avoid charges and security risks!**
 
-### Delete API Gateway:
+### 🗑️ Delete API Gateway:
 1. Go to **API Gateway → APIs**.
 2. Select `ravi-student-api` → Click **Actions → Delete**.
 3. Confirm by typing `ravi-student-api` → **Delete API**.
    - This automatically deletes the stage, deployment, resources, and methods.
 
-### Delete Lambda Function:
+### 🛑 Delete Lambda Function:
 1. Go to **Lambda → Functions → ravi-rest-api**.
 2. Click **Actions → Delete function**.
 3. Type `delete` → **Delete**.
 
-### Delete IAM Role:
+### 🧹 Delete IAM Role:
 1. Go to **IAM → Roles**.
 2. Search for `api-lambda-role`.
 3. Click on it → **Delete** → Type the role name → **Delete role**.
@@ -612,58 +612,58 @@ In the next lab, you'll deploy a containerized NGINX web server on AWS ECS with 
 ## ❓ Troubleshooting
 
 <details>
-<summary><strong>502 Bad Gateway error</strong></summary>
+<summary><strong>🔍 502 Bad Gateway error</strong></summary>
 
 **Cause:** Lambda returned a malformed proxy response. The `body` must be a **string** (use `json.dumps(...)`), not an object, and `statusCode` must be present.
-**Fix:** Check Lambda → Code → the handler returns a dict with `statusCode` and `body` keys. Also check CloudWatch Logs for errors.
+**🔧 Fix:** Check Lambda → Code → the handler returns a dict with `statusCode` and `body` keys. Also check CloudWatch Logs for errors.
 
 </details>
 
 <details>
-<summary><strong>500 Internal Server Error</strong></summary>
+<summary><strong>🔍 500 Internal Server Error</strong></summary>
 
 **Cause:** Lambda function crashed (runtime error, syntax error, import error).
-**Fix:** Go to Lambda → Monitor → Logs → Check the most recent log stream for the error message.
+**💡 Fix:** Go to Lambda → Monitor → Logs → Check the most recent log stream for the error message.
 
 </details>
 
 <details>
-<summary><strong>CORS error in browser ("No 'Access-Control-Allow-Origin' header")</strong></summary>
+<summary><strong>🔍 CORS error in browser ("No 'Access-Control-Allow-Origin' header")</strong></summary>
 
 **Cause:** CORS headers missing on the response, or the API wasn't redeployed after enabling CORS.
-**Fix:** With Lambda proxy integration the Lambda must return the CORS headers itself (our code does). Make sure CORS is enabled on the resource (Step 7), then **redeploy** to `prod`.
+**🔧 Fix:** With Lambda proxy integration the Lambda must return the CORS headers itself (our code does). Make sure CORS is enabled on the resource (Step 7), then **redeploy** to `prod`.
 
 </details>
 
 <details>
-<summary><strong>"Missing Authentication Token" error</strong></summary>
+<summary><strong>🔍 "Missing Authentication Token" error</strong></summary>
 
 **Cause:** The method doesn't exist at that path, or the API isn't deployed.
-**Fix:** Make sure the method exists in API Gateway (check the Resources tree). Deploy the API again after making changes.
+**💡 Fix:** Make sure the method exists in API Gateway (check the Resources tree). Deploy the API again after making changes.
 
 </details>
 
 <details>
-<summary><strong>POST request returns "Unsupported Media Type"</strong></summary>
+<summary><strong>🔍 POST request returns "Unsupported Media Type"</strong></summary>
 
 **Cause:** The `Content-Type` header is missing or wrong.
-**Fix:** Make sure you're sending `Content-Type: application/json` in your request headers.
+**💡 Fix:** Make sure you're sending `Content-Type: application/json` in your request headers.
 
 </details>
 
 <details>
-<summary><strong>POST body is empty in Lambda</strong></summary>
+<summary><strong>🔍 POST body is empty in Lambda</strong></summary>
 
 **Cause:** The body isn't being parsed correctly.
-**Fix:** Make sure Lambda Proxy Integration is enabled. The body comes as a string in `event['body']`, so you need to parse it with `json.loads(event['body'])`.
+**🔧 Fix:** Make sure Lambda Proxy Integration is enabled. The body comes as a string in `event['body']`, so you need to parse it with `json.loads(event['body'])`.
 
 </details>
 
 <details>
-<summary><strong>API returns "Endpoint request timed out"</strong></summary>
+<summary><strong>🔍 API returns "Endpoint request timed out"</strong></summary>
 
 **Cause:** The request exceeded the API Gateway integration timeout (29s default).
-**Fix:** Optimize your Lambda code (and raise its own timeout if needed). For Regional/private REST APIs the integration timeout can be raised up to 29 minutes.
+**🔧 Fix:** Optimize your Lambda code (and raise its own timeout if needed). For Regional/private REST APIs the integration timeout can be raised up to 29 minutes.
 
 </details>
 

@@ -393,14 +393,14 @@ Let's confirm everything worked as expected:
 
 ## ✅ Validation Checklist
 
-- [ ] Launch Template `ravi-web-template` exists with correct AMI, instance type, and user data
-- [ ] Security group `asg-sg` has HTTP (80) open to the world and SSH (22) from My IP
-- [ ] Auto Scaling Group `ravi-asg` is running with 2 instances across 2 AZs
-- [ ] Both instances are passing health checks
-- [ ] Web page is accessible via browser showing "Hello from Auto Scaling Group!"
-- [ ] After stress test, ASG scaled out (more instances launched)
-- [ ] After stress stopped, ASG scaled in (extra instance terminated)
-- [ ] ASG Activity tab shows successful scaling events
+- [ ] Launch Template `ravi-web-template` exists with correct AMI, instance type, and user data ✅
+- [ ] Security group `asg-sg` has HTTP (80) open to the world and SSH (22) from My IP ✅
+- [ ] Auto Scaling Group `ravi-asg` is running with 2 instances across 2 AZs ✅
+- [ ] Both instances are passing health checks ✅
+- [ ] Web page is accessible via browser showing "Hello from Auto Scaling Group!" ✅
+- [ ] After stress test, ASG scaled out (more instances launched) ✅
+- [ ] After stress stopped, ASG scaled in (extra instance terminated) ✅
+- [ ] ASG Activity tab shows successful scaling events ✅
 
 ---
 
@@ -408,7 +408,7 @@ Let's confirm everything worked as expected:
 
 **ASG can keep launching instances if misconfigured. Let's clean up everything!**
 
-1. **Delete the Auto Scaling Group:**
+1. 🗑️ **Delete the Auto Scaling Group:**
    - Go to **EC2** → **Auto Scaling Groups**
    - Select `ravi-asg`
    - Click **Delete**
@@ -417,13 +417,13 @@ Let's confirm everything worked as expected:
 
    > ⏱️ Wait for all instances to terminate before proceeding
 
-2. **Delete the Launch Template:**
+2. 🗑️ **Delete the Launch Template:**
    - Go to **EC2** → **Launch Templates**
    - Select `ravi-web-template`
    - Click **Actions** → **Delete launch template**
    - Confirm deletion
 
-3. **Delete the Security Group:**
+3. 🔐 **Delete the Security Group:**
    - Go to **EC2** → **Security Groups**
    - Find `asg-sg`
    - Click **Actions** → **Delete security group**
@@ -521,35 +521,35 @@ You've mastered auto scaling! Time to learn how to direct traffic to your instan
 <details>
 <summary><strong>Click to expand Troubleshooting Section</strong></summary>
 
-### My ASG didn't launch any instances
+### 🔍 My ASG didn't launch any instances
 
-- Check that your Launch Template is valid and the AMI exists
-- Make sure the subnets you selected have available IP addresses
-- Check the ASG **Activity** tab for error messages
-- Verify your instance quota hasn't been reached (check Service Quotas in the console)
+- 🔍 Check that your Launch Template is valid and the AMI exists
+- 🔍 Make sure the subnets you selected have available IP addresses
+- 🔧 Check the ASG **Activity** tab for error messages
+- 💡 Verify your instance quota hasn't been reached (check Service Quotas in the console)
 
-### Both instances show the same hostname
+### 🔍 Both instances show the same hostname
 
-- That's expected! Each instance will show its own hostname, but you need to open each IP in a separate browser tab to see the difference
-- If you have a Load Balancer, refresh the page and watch the hostname change
+- 💡 That's expected! Each instance will show its own hostname, but you need to open each IP in a separate browser tab to see the difference
+- 🔍 If you have a Load Balancer, refresh the page and watch the hostname change
 
-### The stress test didn't trigger scaling
+### 🔍 The stress test didn't trigger scaling
 
-- **Did you stress BOTH instances?** The policy watches the **average** CPU across the group. Stressing only one of two keeps the average near the 50% target, so scaling may never trigger — see the Step 5 tip. 🎯
-- Wait 5-10 minutes — target tracking only scales after CPU stays above the target for the full evaluation period
-- Check that the stress is actually running: `top` or `htop` in the SSH session
+- 🎯 **Did you stress BOTH instances?** The policy watches the **average** CPU across the group. Stressing only one of two keeps the average near the 50% target, so scaling may never trigger — see the Step 5 tip.
+- ⏱️ Wait 5-10 minutes — target tracking only scales after CPU stays above the target for the full evaluation period
+- 🔍 Check that the stress is actually running: `top` or `htop` in the SSH session
 
-### My security group won't delete
+### 🔍 My security group won't delete
 
-- Make sure no instances are still using it
-- Wait for the ASG to fully terminate all instances first
-- Check if there are any other resources (like ENIs) still attached
+- 🔧 Make sure no instances are still using it
+- ⏱️ Wait for the ASG to fully terminate all instances first
+- 🔍 Check if there are any other resources (like ENIs) still attached
 
-### Error: "No capacity" when ASG tries to launch
+### 🔍 Error: "No capacity" when ASG tries to launch
 
-- You may have hit your EC2 instance limit
-- Check your limits at: **Service Quotas** → **EC2** → **Running On-Demand Standard instances**
-- Request a limit increase if needed (but for t2.micro Free Tier, you should be fine)
+- 💡 You may have hit your EC2 instance limit
+- 🔧 Check your limits at: **Service Quotas** → **EC2** → **Running On-Demand Standard instances**
+- 🔧 Request a limit increase if needed (but for t2.micro Free Tier, you should be fine)
 
 </details>
 

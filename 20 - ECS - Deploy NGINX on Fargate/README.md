@@ -437,15 +437,15 @@ Every Fargate task automatically sends logs to CloudWatch.
 
 | # | Check | Status |
 |---|-------|--------|
-| 1 | ECS cluster `ravi-fargate-cluster` created (Fargate) | ☐ |
-| 2 | Task definition `nginx-task` created with `nginx:latest` | ☐ |
-| 3 | Security group `ecs-sg` allows HTTP (80) inbound | ☐ |
-| 4 | Service `nginx-service` created with desired count = 2 | ☐ |
-| 5 | Both tasks reached RUNNING state | ☐ |
-| 6 | NGINX welcome page accessible via task public IP | ☐ |
-| 7 | Service scaled to 4 tasks | ☐ |
-| 8 | All 4 tasks running after scaling | ☐ |
-| 9 | CloudWatch Logs show NGINX output | ☐ |
+| 1 | ECS cluster `ravi-fargate-cluster` created (Fargate) | ☐ ✅ |
+| 2 | Task definition `nginx-task` created with `nginx:latest` | ☐ ✅ |
+| 3 | Security group `ecs-sg` allows HTTP (80) inbound | ☐ ✅ |
+| 4 | Service `nginx-service` created with desired count = 2 | ☐ ✅ |
+| 5 | Both tasks reached RUNNING state | ☐ ✅ |
+| 6 | NGINX welcome page accessible via task public IP | ☐ ✅ |
+| 7 | Service scaled to 4 tasks | ☐ ✅ |
+| 8 | All 4 tasks running after scaling | ☐ ✅ |
+| 9 | CloudWatch Logs show NGINX output | ☐ ✅ |
 
 ---
 
@@ -459,7 +459,7 @@ Every Fargate task automatically sends logs to CloudWatch.
 
 Fargate tasks cost money every minute they're running. Delete everything now!
 
-### Step A: Scale Service to 0 Tasks
+### 🔄 Step A: Scale Service to 0 Tasks
 
 1. Go to **ECS → Clusters → ravi-fargate-cluster → nginx-service**.
 2. Click **Update**.
@@ -469,7 +469,7 @@ Fargate tasks cost money every minute they're running. Delete everything now!
 
 > ⚠️ **DO NOT skip this step!** If you try to delete a service with running tasks, it can get stuck.
 
-### Step B: Delete the Service
+### 🗑️ Step B: Delete the Service
 
 1. Go to **ECS → Clusters → ravi-fargate-cluster**.
 2. In the **Services** tab, select `nginx-service`.
@@ -477,27 +477,27 @@ Fargate tasks cost money every minute they're running. Delete everything now!
 4. Type `delete` to confirm → **Delete**.
 5. Wait for the service to be deleted.
 
-### Step C: Deregister Task Definition
+### 🛑 Step C: Deregister Task Definition
 
 1. Go to **ECS → Task definitions**.
 2. Select `nginx-task`.
 3. Click **Deregister** on the active revision.
 4. Confirm → **Deregister**.
 
-### Step D: Delete the Cluster
+### 🧹 Step D: Delete the Cluster
 
 1. Go to **ECS → Clusters → ravi-fargate-cluster**.
 2. Click **Delete cluster**.
 3. Type the cluster name to confirm → **Delete**.
 
-### Step E: Delete the Security Group
+### 💾 Step E: Delete the Security Group
 
 1. Go to **EC2 → Security Groups**.
 2. Find `ecs-sg`.
 3. Select it → **Actions → Delete security groups**.
 4. Confirm → **Delete**.
 
-### Step F: Verify Cleanup
+### 📸 Step F: Verify Cleanup
 
 1. Go to **ECS → Clusters** → should show no clusters (or only the default).
 2. Go to **ECS → Task definitions** → `nginx-task` should show as "INACTIVE".
@@ -601,10 +601,10 @@ Continue to the next lab in the series to keep building your AWS skills!
 ## ❓ Troubleshooting
 
 <details>
-<summary><strong>Tasks stuck in PROVISIONING or PENDING state</strong></summary>
+<summary><strong>🔍 Tasks stuck in PROVISIONING or PENDING state</strong></summary>
 
 **Cause:** Fargate can't launch tasks due to networking issues or insufficient capacity.
-**Fix:**
+**💡 Fix:**
 - Verify tasks are assigned **public IPs** (required for pulling images).
 - Make sure subnets are **public** (have a route to an Internet Gateway).
 - Check that the security group allows **outbound** traffic (to pull the image from Docker Hub).
@@ -612,30 +612,30 @@ Continue to the next lab in the series to keep building your AWS skills!
 </details>
 
 <details>
-<summary><strong>Tasks fail immediately and restart</strong></summary>
+<summary><strong>🔍 Tasks fail immediately and restart</strong></summary>
 
 **Cause:** The container crashes on startup, or the image can't be pulled.
-**Fix:**
+**🔧 Fix:**
 - Check CloudWatch Logs → `/ecs/nginx-task` for error messages.
 - Verify the image URI is correct: `nginx:latest` (no typos!).
 - Check if your VPC has DNS resolution enabled (it should be by default).
 </details>
 
 <details>
-<summary><strong>Cannot access NGINX via public IP</strong></summary>
+<summary><strong>🔍 Cannot access NGINX via public IP</strong></summary>
 
 **Cause:** Security group doesn't allow inbound HTTP traffic, or the task has no public IP.
-**Fix:**
+**🔧 Fix:**
 - Verify the security group `ecs-sg` has an inbound rule for port 80 (HTTP) from 0.0.0.0/0.
 - Verify the task has a public IP assigned (check task details → Network section).
 - Make sure you're using `http://` (not `https://`).
 </details>
 
 <details>
-<summary><strong>"CannotPullContainerError" or image pull failures</strong></summary>
+<summary><strong>🔍 "CannotPullContainerError" or image pull failures</strong></summary>
 
 **Cause:** Fargate can't reach Docker Hub to pull the image.
-**Fix:**
+**💡 Fix:**
 - Verify the task has a public IP and the subnet has internet access (route to an Internet Gateway).
 - Verify the security group allows outbound traffic.
 - Check the image name is spelled exactly: `nginx:latest`.
@@ -643,27 +643,27 @@ Continue to the next lab in the series to keep building your AWS skills!
 </details>
 
 <details>
-<summary><strong>Service scaling takes a long time</strong></summary>
+<summary><strong>🔍 Service scaling takes a long time</strong></summary>
 
 **Cause:** Fargate needs to provision new infrastructure for each task.
-**Fix:** This is normal! Fargate tasks take 1-3 minutes to start. Be patient. The first deployment is slowest because the image needs to be pulled. Subsequent tasks are faster because the image is cached.
+**💡 Fix:** This is normal! Fargate tasks take 1-3 minutes to start. Be patient. The first deployment is slowest because the image needs to be pulled. Subsequent tasks are faster because the image is cached.
 </details>
 
 <details>
-<summary><strong>CloudWatch Logs are empty</strong></summary>
+<summary><strong>🔍 CloudWatch Logs are empty</strong></summary>
 
 **Cause:** The log group might be in a different region, or the task hasn't been running long enough.
-**Fix:**
+**🔧 Fix:**
 - Make sure you're looking in the same region as your ECS cluster.
 - Wait at least 1 minute after the task starts for logs to appear.
 - Check that the task execution role has the `AmazonECSTaskExecutionRolePolicy` attached.
 </details>
 
 <details>
-<summary><strong>Cleanup fails — "Service has running tasks"</strong></summary>
+<summary><strong>🔍 Cleanup fails — "Service has running tasks"</strong></summary>
 
 **Cause:** You tried to delete the service before scaling to 0 tasks.
-**Fix:** Go back to the service → Update → Set desired count to 0 → Wait for tasks to stop → Then delete the service.
+**💡 Fix:** Go back to the service → Update → Set desired count to 0 → Wait for tasks to stop → Then delete the service.
 </details>
 
 ---

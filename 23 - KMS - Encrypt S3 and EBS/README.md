@@ -441,14 +441,14 @@ The key policy is a JSON document that controls:
 
 Before moving on, confirm all of these:
 
-- [ ] KMS key `ravi-lab-key` exists and is Enabled
-- [ ] S3 bucket `ravi-encrypted-bucket-12345` exists with KMS default encryption
-- [ ] Uploaded file shows KMS encryption in Properties
-- [ ] CLI `head-object` shows `SSEKMSKeyId`
-- [ ] EBS volume `ravi-encrypted-volume` is encrypted with `ravi-lab-key`
-- [ ] Encrypted volume is attached to EC2 and data is readable
-- [ ] Default EBS encryption is enabled with `ravi-lab-key`
-- [ ] CloudTrail shows KMS API calls
+- [ ] KMS key `ravi-lab-key` exists and is Enabled ✅
+- [ ] S3 bucket `ravi-encrypted-bucket-12345` exists with KMS default encryption ✅
+- [ ] Uploaded file shows KMS encryption in Properties ✅
+- [ ] CLI `head-object` shows `SSEKMSKeyId` ✅
+- [ ] EBS volume `ravi-encrypted-volume` is encrypted with `ravi-lab-key` ✅
+- [ ] Encrypted volume is attached to EC2 and data is readable ✅
+- [ ] Default EBS encryption is enabled with `ravi-lab-key` ✅
+- [ ] CloudTrail shows KMS API calls ✅
 
 ---
 
@@ -460,52 +460,52 @@ Before moving on, confirm all of these:
 
 KMS keys cost $1/month. Delete everything carefully!
 
-**Detach and delete the EBS volume:**
+**🗑️ Detach and delete the EBS volume:**
 
-1. Go to **EC2** → **Volumes**
-2. Select your encrypted volume
-3. Click **Actions** → **Detach volume** (if attached)
-4. Wait for it to show **Available** status
-5. Select it again → Click **Actions** → **Delete volume**
-6. Confirm deletion
+1. 🔄 Go to **EC2** → **Volumes**
+2. 🔍 Select your encrypted volume
+3. 🛑 Click **Actions** → **Detach volume** (if attached)
+4. ⏳ Wait for it to show **Available** status
+5. 🗑️ Select it again → Click **Actions** → **Delete volume**
+6. 🧹 Confirm deletion
 
-**Terminate the EC2 instance:**
+**🗑️ Terminate the EC2 instance:**
 
-7. Go to **EC2** → **Instances**
-8. Select `ravi-kms-test`
-9. Click **Instance state** → **Terminate instance**
-10. Confirm termination
+7. 🛑 Go to **EC2** → **Instances**
+8. 🔍 Select `ravi-kms-test`
+9. 🗑️ Click **Instance state** → **Terminate instance**
+10. 🧹 Confirm termination
 
-**Empty and delete the S3 bucket:**
+**🗑️ Empty and delete the S3 bucket:**
 
-11. Go to **S3** → **Buckets**
-12. Click on `ravi-encrypted-bucket-12345`
-13. Click **Empty** → Type `permanently delete` → Click **Delete**
-14. Go back to bucket list → Select the bucket → Click **Delete**
-15. Type the bucket name → Click **Delete bucket**
+11. 💾 Go to **S3** → **Buckets**
+12. 🔍 Click on `ravi-encrypted-bucket-12345`
+13. 🗑️ Click **Empty** → Type `permanently delete` → Click **Delete**
+14. 🔄 Go back to bucket list → Select the bucket → Click **Delete**
+15. 🧹 Type the bucket name → Click **Delete bucket**
 
-**Disable default EBS encryption (optional):**
+**🔄 Disable default EBS encryption (optional):**
 
-16. Go to **EC2** → **EBS encryption** → **Manage encryption defaults**
-17. Uncheck **Enable encryption by default**
-18. Click **Save changes**
+16. 🔄 Go to **EC2** → **EBS encryption** → **Manage encryption defaults**
+17. 🛑 Uncheck **Enable encryption by default**
+18. 💾 Click **Save changes**
 
-**Schedule KMS key deletion:**
+**🗑️ Schedule KMS key deletion:**
 
-19. Go to **KMS** → **Customer managed keys**
-20. Click on `ravi-lab-key`
-21. Click **Key deletion** (in the top right, under Actions)
-22. Check ✅ **I understand the following: key will be scheduled for deletion in 7 days**
-23. Type `ravi-lab-key` to confirm
-24. Click **Schedule deletion**
+19. ⏳ Go to **KMS** → **Customer managed keys**
+20. 🔍 Click on `ravi-lab-key`
+21. 🗑️ Click **Key deletion** (in the top right, under Actions)
+22. ✅ Check **I understand the following: key will be scheduled for deletion in 7 days**
+23. 🧹 Type `ravi-lab-key` to confirm
+24. 🛑 Click **Schedule deletion**
 
 > ⚠️ **IMPORTANT**: KMS keys have a mandatory 7-day waiting period before deletion. You cannot cancel the deletion once scheduled! Make sure you're done with the key before scheduling.
 
-**Verify cleanup:**
+**🔍 Verify cleanup:**
 
-25. Go to KMS → confirm the key shows "Pending deletion" status
-26. Go to S3 → confirm the bucket is gone
-27. Go to EC2 → confirm the volume is gone
+25. ✅ Go to KMS → confirm the key shows "Pending deletion" status
+26. ✅ Go to S3 → confirm the bucket is gone
+27. ✅ Go to EC2 → confirm the volume is gone
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > "The 7-day waiting period for KMS key deletion is intentional — it's a safety net. If you accidentally schedule a key for deletion, you have 7 days to cancel it. In production, never delete a key that's encrypting important data!"
@@ -600,51 +600,51 @@ Your data is now encrypted! In the next lab, we'll learn about **AWS Backup** �
 ## ❓ Troubleshooting
 
 <details>
-<summary><strong>Can't find `ravi-lab-key` in the KMS dropdown</strong></summary>
+<summary>🔍 <strong>Can't find `ravi-lab-key` in the KMS dropdown</strong></summary>
 
-**Fix**: Make sure you're in the same region where you created the key. KMS keys are regional. Also verify your IAM user has `kms:DescribeKey` permission.
+💡 **Fix**: Make sure you're in the same region where you created the key. KMS keys are regional. Also verify your IAM user has `kms:DescribeKey` permission.
 </details>
 
 <details>
-<summary><strong>S3 bucket doesn't show encryption option</strong></summary>
+<summary>🔍 <strong>S3 bucket doesn't show encryption option</strong></summary>
 
-**Fix**: When creating the bucket, scroll down to "Default encryption" section. If you missed it, go to the bucket Properties tab after creation and edit the encryption settings.
+💡 **Fix**: When creating the bucket, scroll down to "Default encryption" section. If you missed it, go to the bucket Properties tab after creation and edit the encryption settings.
 </details>
 
 <details>
-<summary><strong>EBS volume shows "Encryption not enabled"</strong></summary>
+<summary>🔍 <strong>EBS volume shows "Encryption not enabled"</strong></summary>
 
-**Fix**: Make sure you checked the "Enable" box during volume creation. You cannot enable encryption on an existing unencrypted volume — you must create a new encrypted volume.
+💡 **Fix**: Make sure you checked the "Enable" box during volume creation. You cannot enable encryption on an existing unencrypted volume — you must create a new encrypted volume.
 </details>
 
 <details>
-<summary><strong>Can't attach the encrypted volume</strong></summary>
+<summary>🔍 <strong>Can't attach the encrypted volume</strong></summary>
 
-**Fix**: Ensure the EC2 instance is in the same Availability Zone as the volume. EBS volumes are AZ-specific — you can only attach them to instances in the same AZ.
+🔧 **Fix**: Ensure the EC2 instance is in the same Availability Zone as the volume. EBS volumes are AZ-specific — you can only attach them to instances in the same AZ.
 </details>
 
 <details>
-<summary><strong>SSH fails after mounting the volume</strong></summary>
+<summary>🔍 <strong>SSH fails after mounting the volume</strong></summary>
 
-**Fix**: This shouldn't be related to the volume. Check your security group allows SSH (port 22). Make sure you're using the correct key pair and public IP.
+💡 **Fix**: This shouldn't be related to the volume. Check your security group allows SSH (port 22). Make sure you're using the correct key pair and public IP.
 </details>
 
 <details>
-<summary><strong>"Access Denied" when trying to use the KMS key</strong></summary>
+<summary>🔍 <strong>"Access Denied" when trying to use the KMS key</strong></summary>
 
-**Fix**: Your IAM user needs `kms:Encrypt`, `kms:Decrypt`, and `kms:GenerateDataKey` permissions. Check the key policy to ensure your user is listed under Key users.
+🔧 **Fix**: Your IAM user needs `kms:Encrypt`, `kms:Decrypt`, and `kms:GenerateDataKey` permissions. Check the key policy to ensure your user is listed under Key users.
 </details>
 
 <details>
-<summary><strong>Can't delete the KMS key</strong></summary>
+<summary>🔍 <strong>Can't delete the KMS key</strong></summary>
 
-**Fix**: You cannot immediately delete a KMS key. You must schedule deletion with a minimum 7-day waiting period. Go to the key → Actions → Key deletion to schedule it.
+💡 **Fix**: You cannot immediately delete a KMS key. You must schedule deletion with a minimum 7-day waiting period. Go to the key → Actions → Key deletion to schedule it.
 </details>
 
 <details>
-<summary><strong>Default EBS encryption change doesn't affect existing volumes</strong></summary>
+<summary>🔍 <strong>Default EBS encryption change doesn't affect existing volumes</strong></summary>
 
-**Fix**: Default encryption only applies to NEW volumes. Existing unencrypted volumes remain unencrypted. You'd need to create snapshots and copy them with encryption to convert existing volumes.
+💡 **Fix**: Default encryption only applies to NEW volumes. Existing unencrypted volumes remain unencrypted. You'd need to create snapshots and copy them with encryption to convert existing volumes.
 </details>
 
 ---

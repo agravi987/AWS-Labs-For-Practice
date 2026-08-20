@@ -345,16 +345,16 @@ Let's make sure everything is set up correctly:
 
 ## ✅ Validation Checklist
 
-| # | Check | Status |
+| # | ✅ Check | Status |
 |---|-------|--------|
-| 1 | Bucket `ravi-versioning-lab-12345` created | ☐ |
-| 2 | Versioning enabled on bucket | ☐ |
-| 3 | `index.html` uploaded with 3 different versions | ☐ |
-| 4 | All 3 versions visible when listing versions | ☐ |
-| 5 | Delete marker created and file "soft deleted" | ☐ |
-| 6 | Previous version restored successfully | ☐ |
-| 7 | Lifecycle rule created with correct transitions | ☐ |
-| 8 | Lifecycle rule applies to all objects in bucket | ☐ |
+| 1 | Bucket `ravi-versioning-lab-12345` created | ☐ ✅ |
+| 2 | Versioning enabled on bucket | ☐ ✅ |
+| 3 | `index.html` uploaded with 3 different versions | ☐ ✅ |
+| 4 | All 3 versions visible when listing versions | ☐ ✅ |
+| 5 | Delete marker created and file "soft deleted" | ☐ ✅ |
+| 6 | Previous version restored successfully | ☐ ✅ |
+| 7 | Lifecycle rule created with correct transitions | ☐ ✅ |
+| 8 | Lifecycle rule applies to all objects in bucket | ☐ ✅ |
 
 <div align="center">
 
@@ -368,7 +368,7 @@ Let's make sure everything is set up correctly:
 
 > ⚠️ **Don't skip this!** Even though the cost is tiny, it's good practice to always clean up. Let's build that habit now!
 
-### Step 1: Empty the Bucket (Delete All Versions)
+### 🗑️ Step 1: Empty the Bucket (Delete All Versions)
 
 1. Go to the **Objects** tab of your bucket
 2. Click **List versions** to show all versions
@@ -380,7 +380,7 @@ Let's make sure everything is set up correctly:
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > With versioning enabled, you can't just "delete" objects — you have to delete ALL versions. S3 makes you type `permanently delete` to make sure you really mean it. Double-check!
 
-### Step 2: Delete the Bucket
+### 🗑️ Step 2: Delete the Bucket
 
 1. Go back to the S3 bucket list (click **S3** in the breadcrumbs)
 2. Select your bucket `ravi-versioning-lab-12345`
@@ -388,7 +388,7 @@ Let's make sure everything is set up correctly:
 4. Type `ravi-versioning-lab-12345` in the confirmation field
 5. Click **Delete bucket**
 
-### Step 3: Delete the Lifecycle Rule (If Bucket Still Exists)
+### 🗑️ Step 3: Delete the Lifecycle Rule (If Bucket Still Exists)
 
 If you want to delete the lifecycle rule before emptying the bucket:
 1. Go to **Management** → **Lifecycle rules**
@@ -479,15 +479,15 @@ Now that you know how to protect your data within a single region, let's learn h
 <details>
 <summary><strong>❓ Troubleshooting</strong></summary>
 
-| Problem | Solution |
+| 🔍 Problem | 💡 Solution |
 |---------|----------|
-| Can't create bucket with name `ravi-versioning-lab-12345` | The name is taken! Change the number suffix (e.g., `ravi-versioning-lab-67890`) |
-| Versioning toggle is greyed out | Make sure you're on the **Properties** tab, not Objects |
-| Can't see "List versions" toggle | Look carefully above the file list — it's a small button/link |
-| Lifecycle rule not saving | Make sure you filled in all required fields (days, storage class) |
-| Upload keeps failing | Check file size — it should be tiny. Also check your internet connection |
-| Can't delete bucket | Make sure the bucket is EMPTY first — including all versions. Turn on "List versions" and delete everything |
-| "Access Denied" when creating lifecycle rule | You need S3 full permissions. Check your IAM user/role has `s3:PutLifecycleConfiguration` |
+| 🔧 Can't create bucket with name `ravi-versioning-lab-12345` | The name is taken! Change the number suffix (e.g., `ravi-versioning-lab-67890`) |
+| 🔧 Versioning toggle is greyed out | Make sure you're on the **Properties** tab, not Objects |
+| 🔧 Can't see "List versions" toggle | Look carefully above the file list — it's a small button/link |
+| 🔧 Lifecycle rule not saving | Make sure you filled in all required fields (days, storage class) |
+| 🔧 Upload keeps failing | Check file size — it should be tiny. Also check your internet connection |
+| 🔧 Can't delete bucket | Make sure the bucket is EMPTY first — including all versions. Turn on "List versions" and delete everything |
+| 🔧 "Access Denied" when creating lifecycle rule | You need S3 full permissions. Check your IAM user/role has `s3:PutLifecycleConfiguration` |
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > Stuck? Take a screenshot and check the AWS console error message carefully. 90% of S3 errors are about permissions or the bucket not being empty. You've got this, Ravi! 💪

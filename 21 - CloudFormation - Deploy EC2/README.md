@@ -467,12 +467,12 @@ You should see the InstanceId, PublicIP, and WebsiteURL!
 
 Before moving on, confirm all of these:
 
-- [ ] `ec2-stack.yaml` file exists on your computer
-- [ ] Stack `ravi-ec2-stack` shows status `CREATE_COMPLETE`
-- [ ] Outputs tab shows InstanceId, PublicIP, and WebsiteURL
-- [ ] WebsiteURL loads a page saying "Updated by CloudFormation!"
-- [ ] EC2 console shows `CloudFormation-WebServer` instance running
-- [ ] If you did the CLI bonus: stack `ravi-ec2-stack-cli` also exists and is complete
+- [ ] `ec2-stack.yaml` file exists on your computer ✅
+- [ ] Stack `ravi-ec2-stack` shows status `CREATE_COMPLETE` ✅
+- [ ] Outputs tab shows InstanceId, PublicIP, and WebsiteURL ✅
+- [ ] WebsiteURL loads a page saying "Updated by CloudFormation!" ✅
+- [ ] EC2 console shows `CloudFormation-WebServer` instance running ✅
+- [ ] If you did the CLI bonus: stack `ravi-ec2-stack-cli` also exists and is complete ✅
 
 ---
 
@@ -484,28 +484,28 @@ Before moving on, confirm all of these:
 
 CloudFormation's **best feature**: deleting the stack deletes EVERYTHING it created! No manual cleanup needed.
 
-**Delete the console stack:**
+**🗑️ Delete the console stack:**
 
-1. Go to **CloudFormation** → **Stacks**
-2. Select `ravi-ec2-stack`
-3. Click **Delete** (top right)
-4. Confirm by typing `delete` in the confirmation box
-5. Click **Delete stack**
-6. Watch the events — resources are deleted in reverse order
-7. Wait for the stack to disappear from the list (status: `DELETE_COMPLETE`)
+1. 🔄 Go to **CloudFormation** → **Stacks**
+2. 🔍 Select `ravi-ec2-stack`
+3. 🛑 Click **Delete** (top right)
+4. 🧹 Confirm by typing `delete` in the confirmation box
+5. 🗑️ Click **Delete stack**
+6. 👀 Watch the events — resources are deleted in reverse order
+7. ⏳ Wait for the stack to disappear from the list (status: `DELETE_COMPLETE`)
 
-**Delete the CLI stack (if you created it):**
+**🗑️ Delete the CLI stack (if you created it):**
 
 ```bash
 aws cloudformation delete-stack --stack-name ravi-ec2-stack-cli
 aws cloudformation wait stack-delete-complete --stack-name ravi-ec2-stack-cli
 ```
 
-**Verify everything is gone:**
+**🔍 Verify everything is gone:**
 
-8. Go to **EC2** → **Instances**
-9. Confirm `CloudFormation-WebServer` is terminated
-10. Go to **CloudFormation** → confirm no stacks remain
+8. ✅ Go to **EC2** → **Instances**
+9. ✅ Confirm `CloudFormation-WebServer` is terminated
+10. ✅ Go to **CloudFormation** → confirm no stacks remain
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > "This is why I love CloudFormation. One click and EVERYTHING is cleaned up. No orphaned resources, no surprise bills. Compare this to manually creating resources — you'd have to remember to delete each one individually!"
@@ -601,39 +601,39 @@ You've mastered CloudFormation! In the next lab, we'll explore **CloudTrail** �
 ## ❓ Troubleshooting
 
 <details>
-<summary><strong>Stack creation fails with "The key pair does not exist"</strong></summary>
+<summary>🔍 <strong>Stack creation fails with "The key pair does not exist"</strong></summary>
 
-**Fix**: Go to EC2 → Key Pairs and verify your key pair name. Make sure you typed it exactly (case-sensitive).
+💡 **Fix**: Go to EC2 → Key Pairs and verify your key pair name. Make sure you typed it exactly (case-sensitive).
 </details>
 
 <details>
-<summary><strong>Stack creation fails with "AMI not found"</strong></summary>
+<summary>🔍 <strong>Stack creation fails with "AMI not found"</strong></summary>
 
-**Fix**: The SSM parameter should auto-resolve. If it fails, manually replace the LatestAmiId parameter with a specific AMI ID for your region.
+💡 **Fix**: The SSM parameter should auto-resolve. If it fails, manually replace the LatestAmiId parameter with a specific AMI ID for your region.
 </details>
 
 <details>
-<summary><strong>Website shows "This site can't be reached"</strong></summary>
+<summary>🔍 <strong>Website shows "This site can't be reached"</strong></summary>
 
-**Fix**: Check that the EC2 instance is running. Check the Security Group allows inbound HTTP (port 80). Wait 1-2 minutes for the UserData script to finish.
+💡 **Fix**: Check that the EC2 instance is running. Check the Security Group allows inbound HTTP (port 80). Wait 1-2 minutes for the UserData script to finish.
 </details>
 
 <details>
-<summary><strong>"Permission denied" when creating the stack</strong></summary>
+<summary>🔍 <strong>"Permission denied" when creating the stack</strong></summary>
 
-**Fix**: Make sure your IAM user/role has permissions for CloudFormation, EC2, and Security Groups. If using a root account, ensure MFA is enabled.
+💡 **Fix**: Make sure your IAM user/role has permissions for CloudFormation, EC2, and Security Groups. If using a root account, ensure MFA is enabled.
 </details>
 
 <details>
-<summary><strong>Stack update fails</strong></summary>
+<summary>🔍 <strong>Stack update fails</strong></summary>
 
-**Fix**: Check the Events tab for the specific error. Some changes require resource replacement — CloudFormation will tell you which ones.
+💡 **Fix**: Check the Events tab for the specific error. Some changes require resource replacement — CloudFormation will tell you which ones.
 </details>
 
 <details>
-<summary><strong>Stack won't delete because of dependencies</strong></summary>
+<summary>🔍 <strong>Stack won't delete because of dependencies</strong></summary>
 
-**Fix**: Check if you manually created resources that reference stack resources. Delete those first, then try again.
+🔧 **Fix**: Check if you manually created resources that reference stack resources. Delete those first, then try again.
 </details>
 
 ---

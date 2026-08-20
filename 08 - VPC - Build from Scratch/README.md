@@ -394,19 +394,19 @@ You should see replies! This confirms the instance has internet access through t
 
 ## ✅ Validation Checklist
 
-| # | Check | Status |
+| # | ✅ Check | Status |
 |---|-------|--------|
-| 1 | VPC `ravi-custom-vpc` created with CIDR `10.0.0.0/16` | ☐ |
-| 2 | Public subnet `ravi-public-subnet-1a` in us-east-1a (`10.0.1.0/24`) | ☐ |
-| 3 | Internet Gateway `ravi-igw` created and attached to VPC | ☐ |
-| 4 | Route table `ravi-public-rt` with `0.0.0.0/0 → ravi-igw` | ☐ |
-| 5 | Route table associated with public subnet | ☐ |
-| 6 | Auto-assign public IP enabled on subnet | ☐ |
-| 7 | Security group `ravi-vpc-sg` with SSH (22) from My IP | ☐ |
-| 8 | EC2 instance `vpc-ec2-test` running in public subnet | ☐ |
-| 9 | Can SSH into instance | ☐ |
-| 10 | `curl checkip.amazonaws.com` returns public IP | ☐ |
-| 11 | `ping 8.8.8.8` succeeds (internet access) | ☐ |
+| 1 | VPC `ravi-custom-vpc` created with CIDR `10.0.0.0/16` | ☐ ✅ |
+| 2 | Public subnet `ravi-public-subnet-1a` in us-east-1a (`10.0.1.0/24`) | ☐ ✅ |
+| 3 | Internet Gateway `ravi-igw` created and attached to VPC | ☐ ✅ |
+| 4 | Route table `ravi-public-rt` with `0.0.0.0/0 → ravi-igw` | ☐ ✅ |
+| 5 | Route table associated with public subnet | ☐ ✅ |
+| 6 | Auto-assign public IP enabled on subnet | ☐ ✅ |
+| 7 | Security group `ravi-vpc-sg` with SSH (22) from My IP | ☐ ✅ |
+| 8 | EC2 instance `vpc-ec2-test` running in public subnet | ☐ ✅ |
+| 9 | Can SSH into instance | ☐ ✅ |
+| 10 | `curl checkip.amazonaws.com` returns public IP | ☐ ✅ |
+| 11 | `ping 8.8.8.8` succeeds (internet access) | ☐ ✅ |
 
 ---
 
@@ -414,31 +414,31 @@ You should see replies! This confirms the instance has internet access through t
 
 > ⚠️ **Delete everything in the right order!** Resources have dependencies — delete them in the correct order to avoid errors.
 
-### 1️⃣ Terminate the EC2 Instance
+### 🗑️ 1️⃣ Terminate the EC2 Instance
 
 **EC2** → **Instances** → select `vpc-ec2-test` → **Instance state** → **Terminate instance** → click **Terminate**.
 
-### 2️⃣ Delete the Security Group
+### 🗑️ 2️⃣ Delete the Security Group
 
 **VPC** → **Security Groups** → select `ravi-vpc-sg` → **Actions** → **Delete security groups** → type the name to confirm → **Delete**.
 
-### 3️⃣ Disassociate the Route Table
+### 🗑️ 3️⃣ Disassociate the Route Table
 
 **VPC** → **Route Tables** → click `ravi-public-rt` → **Subnet associations** tab → **Edit subnet associations** → uncheck `ravi-public-subnet-1a` → **Save**.
 
-### 4️⃣ Delete the Route Table
+### 🗑️ 4️⃣ Delete the Route Table
 
 Select `ravi-public-rt` → **Actions** → **Delete route table** → confirm.
 
-### 5️⃣ Detach and Delete the Internet Gateway
+### 🗑️ 5️⃣ Detach and Delete the Internet Gateway
 
 **VPC** → **Internet Gateways** → select `ravi-igw` → **Actions** → **Detach from VPC** → confirm, then **Actions** → **Delete internet gateway** → confirm.
 
-### 6️⃣ Delete the Subnet
+### 🗑️ 6️⃣ Delete the Subnet
 
 **VPC** → **Subnets** → select `ravi-public-subnet-1a` → **Actions** → **Delete subnet** → confirm.
 
-### 7️⃣ Delete the VPC
+### 🗑️ 7️⃣ Delete the VPC
 
 **VPC** → **Your VPCs** → select `ravi-custom-vpc` → **Actions** → **Delete VPC** → type `ravi-custom-vpc` → **Delete**.
 
@@ -527,15 +527,15 @@ Now that you have a working VPC with a public subnet, let's add a private subnet
 
 ## ❓ Troubleshooting
 
-| Problem | Solution |
+| 🔍 Problem | 💡 Solution |
 |---------|----------|
-| Can't SSH — "Connection timed out" | Check: (1) Security group allows SSH from YOUR IP, (2) Instance has public IP, (3) You're using the correct key pair |
-| "Permission denied (publickey)" | Make sure you're using the correct `.pem` file and the username is `ec2-user` |
-| `ping 8.8.8.8` fails | Check route table: `0.0.0.0/0` → IGW must be set. Check IGW is attached to VPC |
-| Can't delete VPC | Something is still attached. Delete all subnets, IGWs, security groups, and route tables first |
-| EC2 launch fails | Make sure you selected the correct VPC and subnet. Also check the subnet has auto-assign public IP enabled |
-| "No subnets available" error | You may be looking at the wrong VPC. Make sure you selected `ravi-custom-vpc` in the subnet dropdown |
-| CIDR conflict error | The CIDR `10.0.0.0/16` may conflict with an existing VPC. Try `10.1.0.0/16` instead |
+| 🔧 Can't SSH — "Connection timed out" | Check: (1) Security group allows SSH from YOUR IP, (2) Instance has public IP, (3) You're using the correct key pair |
+| 🔧 "Permission denied (publickey)" | Make sure you're using the correct `.pem` file and the username is `ec2-user` |
+| 🔧 `ping 8.8.8.8` fails | Check route table: `0.0.0.0/0` → IGW must be set. Check IGW is attached to VPC |
+| 🔧 Can't delete VPC | Something is still attached. Delete all subnets, IGWs, security groups, and route tables first |
+| 🔧 EC2 launch fails | Make sure you selected the correct VPC and subnet. Also check the subnet has auto-assign public IP enabled |
+| 🔧 "No subnets available" error | You may be looking at the wrong VPC. Make sure you selected `ravi-custom-vpc` in the subnet dropdown |
+| 🔧 CIDR conflict error | The CIDR `10.0.0.0/16` may conflict with an existing VPC. Try `10.1.0.0/16` instead |
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> If your instance has no public IP, the subnet's **auto-assign public IP** setting is the usual culprit — check it first! 🔍
 

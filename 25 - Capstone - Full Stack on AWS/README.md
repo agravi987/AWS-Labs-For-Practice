@@ -791,35 +791,35 @@ Before cleaning up, confirm ALL of these:
 </tr>
 <tr>
 <td>- [ ]</td>
-<td>ALB DNS name loads the capstone web page in browser</td>
+<td>ALB DNS name loads the capstone web page in browser ✅</td>
 </tr>
 <tr>
 <td>- [ ]</td>
-<td>2 EC2 instances are running (Auto Scaling Group)</td>
+<td>2 EC2 instances are running (Auto Scaling Group) ✅</td>
 </tr>
 <tr>
 <td>- [ ]</td>
-<td>RDS instance is Available</td>
+<td>RDS instance is Available ✅</td>
 </tr>
 <tr>
 <td>- [ ]</td>
-<td>S3 bucket has the style.css file</td>
+<td>S3 bucket has the style.css file ✅</td>
 </tr>
 <tr>
 <td>- [ ]</td>
-<td>CloudWatch dashboard shows metrics</td>
+<td>CloudWatch dashboard shows metrics ✅</td>
 </tr>
 <tr>
 <td>- [ ]</td>
-<td>CloudTrail is logging events</td>
+<td>CloudTrail is logging events ✅</td>
 </tr>
 <tr>
 <td>- [ ]</td>
-<td>VPC has 4 subnets, IGW, and NAT Gateway</td>
+<td>VPC has 4 subnets, IGW, and NAT Gateway ✅</td>
 </tr>
 <tr>
 <td>- [ ]</td>
-<td>Security groups are chained: ALB → EC2 → RDS</td>
+<td>Security groups are chained: ALB → EC2 → RDS ✅</td>
 </tr>
 </table>
 
@@ -839,93 +839,93 @@ Follow this EXACT order to avoid dependency issues and ensure everything is dele
 
 > <img src="https://img.shields.io/badge/Warning-Cleanup-E74C3C?style=flat-square" /> **Do NOT skip any step. Missing cleanup = ongoing charges!**
 
-**Step 1: Route 53 (if you created records)**
+**🗑️ Step 1: Route 53 (if you created records)**
 
-1. Go to **Route 53** → **Hosted zones**
-2. Select any records you created → **Delete**
-3. If you created health checks, delete them too
+1. 🔄 Go to **Route 53** → **Hosted zones**
+2. 🗑️ Select any records you created → **Delete**
+3. 🧹 If you created health checks, delete them too
 
-**Step 2: CloudWatch**
+**🗑️ Step 2: CloudWatch**
 
-4. Go to **CloudWatch** → **Dashboards**
-5. Select `Capstone-Dashboard` → **Delete dashboard**
-6. Go to **Alarms** → Select your alarm → **Delete**
-7. Go to **SNS** → **Topics** → Select `ravi-capstone-alerts` → **Delete topic**
+4. 🛑 Go to **CloudWatch** → **Dashboards**
+5. 🗑️ Select `Capstone-Dashboard` → **Delete dashboard**
+6. 🧹 Go to **Alarms** → Select your alarm → **Delete**
+7. 🗑️ Go to **SNS** → **Topics** → Select `ravi-capstone-alerts` → **Delete topic**
 
-**Step 3: CloudTrail**
+**🗑️ Step 3: CloudTrail**
 
-8. Go to **CloudTrail** → **Trails**
-9. Select `ravi-capstone-trail` → **Delete**
-10. Go to **S3** → Find the audit bucket → **Empty** → **Delete bucket**
+8. 🔄 Go to **CloudTrail** → **Trails**
+9. 🗑️ Select `ravi-capstone-trail` → **Delete**
+10. 💾 Go to **S3** → Find the audit bucket → **Empty** → **Delete bucket**
 
-**Step 4: Application Load Balancer**
+**🗑️ Step 4: Application Load Balancer**
 
-11. Go to **EC2** → **Load Balancers**
-12. Select `ravi-capstone-alb` → **Delete**
-13. Go to **Target Groups** → Select `ravi-capstone-tg` → **Delete**
+11. 🛑 Go to **EC2** → **Load Balancers**
+12. 🗑️ Select `ravi-capstone-alb` → **Delete**
+13. 🧹 Go to **Target Groups** → Select `ravi-capstone-tg` → **Delete**
 
-**Step 5: Auto Scaling Group**
+**🗑️ Step 5: Auto Scaling Group**
 
-14. Go to **EC2** → **Auto Scaling Groups**
-15. Select `ravi-capstone-asg` → **Edit**
-16. Change **Desired capacity** to `0` → **Update**
-17. Wait for instances to terminate
-18. Select the ASG → **Delete**
+14. 🔄 Go to **EC2** → **Auto Scaling Groups**
+15. 🔍 Select `ravi-capstone-asg` → **Edit**
+16. 🛑 Change **Desired capacity** to `0` → **Update**
+17. ⏳ Wait for instances to terminate
+18. 🗑️ Select the ASG → **Delete**
 
-**Step 6: Launch Template**
+**🗑️ Step 6: Launch Template**
 
-19. Go to **EC2** → **Launch Templates**
-20. Select `ravi-capstone-template` → **Delete**
+19. 🧹 Go to **EC2** → **Launch Templates**
+20. 🗑️ Select `ravi-capstone-template` → **Delete**
 
-**Step 7: EC2 Instances**
+**🗑️ Step 7: EC2 Instances**
 
-21. Go to **EC2** → **Instances**
-22. Select any remaining instances → **Terminate**
+21. 🛑 Go to **EC2** → **Instances**
+22. 🗑️ Select any remaining instances → **Terminate**
 
-**Step 8: RDS Database**
+**🗑️ Step 8: RDS Database**
 
-23. Go to **RDS** → **Databases**
-24. Select `ravi-capstone-db` → **Actions** → **Delete**
-25. Uncheck **Create final snapshot**
-26. Check ✅ **Acknowledge**
-27. Type `delete me` to confirm
-28. Click **Delete**
-29. Wait 5-10 minutes for deletion to complete
+23. 🔄 Go to **RDS** → **Databases**
+24. 🗑️ Select `ravi-capstone-db` → **Actions** → **Delete**
+25. 🛑 Uncheck **Create final snapshot**
+26. ✅ Check **Acknowledge**
+27. 🧹 Type `delete me` to confirm
+28. 🗑️ Click **Delete**
+29. ⏳ Wait 5-10 minutes for deletion to complete
 
-**Step 9: S3 Bucket**
+**🗑️ Step 9: S3 Bucket**
 
-30. Go to **S3** → **Buckets**
-31. Find `ravi-capstone-assets-12345`
-32. Click → **Empty** → Type `permanently delete` → **Delete**
-33. Go back → Select bucket → **Delete** → Type name → **Delete bucket**
+30. 💾 Go to **S3** → **Buckets**
+31. 🔍 Find `ravi-capstone-assets-12345`
+32. 🗑️ Click → **Empty** → Type `permanently delete` → **Delete**
+33. 🧹 Go back → Select bucket → **Delete** → Type name → **Delete bucket**
 
-**Step 10: NAT Gateway (CRITICAL!)**
+**🛑 Step 10: NAT Gateway (CRITICAL!)**
 
-34. Go to **VPC** → **NAT Gateways**
-35. Select the NAT Gateway → **Delete**
-36. Confirm deletion
+34. 🛑 Go to **VPC** → **NAT Gateways**
+35. 🗑️ Select the NAT Gateway → **Delete**
+36. 🧹 Confirm deletion
 
 > <img src="https://img.shields.io/badge/Warning-NAT%20Gateway-E74C3C?style=flat-square" /> NAT Gateway costs ~$0.045/hr = ~$32/month! Do NOT skip this!
 
-**Step 11: VPC Resources**
+**🗑️ Step 11: VPC Resources**
 
-37. Go to **VPC** → **Subnets** → Delete private subnets first, then public subnets
-38. Go to **VPC** → **Route tables** → Delete custom route tables (keep the main one)
-39. Go to **VPC** → **Internet Gateways** → Detach from VPC → Delete
-40. Go to **VPC** → **Your VPCs** → Select `ravi-capstone-vpc` → **Delete**
+37. 🔄 Go to **VPC** → **Subnets** → Delete private subnets first, then public subnets
+38. 🧹 Go to **VPC** → **Route tables** → Delete custom route tables (keep the main one)
+39. 🗑️ Go to **VPC** → **Internet Gateways** → Detach from VPC → Delete
+40. 🛑 Go to **VPC** → **Your VPCs** → Select `ravi-capstone-vpc` → **Delete**
 
-**Step 12: Security Groups**
+**🗑️ Step 12: Security Groups**
 
-41. Go to **EC2** → **Security Groups**
-42. Delete `ravi-alb-sg`, `ravi-ec2-sg`, `ravi-rds-sg` (one by one — can't delete the default)
+41. 🔄 Go to **EC2** → **Security Groups**
+42. 🗑️ Delete `ravi-alb-sg`, `ravi-ec2-sg`, `ravi-rds-sg` (one by one — can't delete the default)
 
-**Step 13: RDS Subnet Group**
+**🗑️ Step 13: RDS Subnet Group**
 
-43. Go to **RDS** → **Subnet groups** → Delete `ravi-capstone-subnet-group`
+43. 🧹 Go to **RDS** → **Subnet groups** → Delete `ravi-capstone-subnet-group`
 
-**Step 14: Final Verification**
+**🔍 Step 14: Final Verification**
 
-44. Go through each service one more time:
+44. ✅ Go through each service one more time:
 
 <table>
 <tr>
@@ -933,36 +933,36 @@ Follow this EXACT order to avoid dependency issues and ensure everything is dele
 <th>Expected State</th>
 </tr>
 <tr>
-<td>EC2</td>
-<td>No instances</td>
+<td>🖥️ EC2</td>
+<td>✅ No instances</td>
 </tr>
 <tr>
-<td>RDS</td>
-<td>No databases</td>
+<td>🗄️ RDS</td>
+<td>✅ No databases</td>
 </tr>
 <tr>
-<td>S3</td>
-<td>No buckets</td>
+<td>🪣 S3</td>
+<td>✅ No buckets</td>
 </tr>
 <tr>
-<td>VPC</td>
-<td>No VPCs (except default)</td>
+<td>🌐 VPC</td>
+<td>✅ No VPCs (except default)</td>
 </tr>
 <tr>
-<td>CloudTrail</td>
-<td>No trails</td>
+<td>🕵️ CloudTrail</td>
+<td>✅ No trails</td>
 </tr>
 <tr>
-<td>CloudWatch</td>
-<td>No dashboards</td>
+<td>📊 CloudWatch</td>
+<td>✅ No dashboards</td>
 </tr>
 <tr>
-<td>ALB</td>
-<td>No load balancers</td>
+<td>⚖️ ALB</td>
+<td>✅ No load balancers</td>
 </tr>
 <tr>
-<td>NAT Gateway</td>
-<td>None active</td>
+<td>🔗 NAT Gateway</td>
+<td>✅ None active</td>
 </tr>
 </table>
 
@@ -1091,90 +1091,90 @@ In this capstone lab, you brought together EVERY skill from Labs 01-24:
 ---
 
 <details>
-<summary><img src="https://img.shields.io/badge/FAQ-Troubleshooting-3498DB?style=flat-square" /> <b>Problem: VPC creation fails or times out</b></summary>
+<summary>🔍 <img src="https://img.shields.io/badge/FAQ-Troubleshooting-3498DB?style=flat-square" /> <b>Problem: VPC creation fails or times out</b></summary>
 <br/>
 
-- **Fix**: Try creating with fewer subnets first, then add more. Make sure you have enough IP addresses in your CIDR block. Try a different region if us-east-1 is having issues.
+💡 **Fix**: Try creating with fewer subnets first, then add more. Make sure you have enough IP addresses in your CIDR block. Try a different region if us-east-1 is having issues.
 
 </details>
 
 <details>
-<summary><img src="https://img.shields.io/badge/FAQ-Troubleshooting-3498DB?style=flat-square" /> <b>Problem: RDS instance won't create</b></summary>
+<summary>🔍 <img src="https://img.shields.io/badge/FAQ-Troubleshooting-3498DB?style=flat-square" /> <b>Problem: RDS instance won't create</b></summary>
 <br/>
 
-- **Fix**: Check that you're using the Free Tier template. Ensure the subnet group selects private subnets. If you hit a quota limit, go to Service Quotas and request an increase for RDS instances.
+💡 **Fix**: Check that you're using the Free Tier template. Ensure the subnet group selects private subnets. If you hit a quota limit, go to Service Quotas and request an increase for RDS instances.
 
 </details>
 
 <details>
-<summary><img src="https://img.shields.io/badge/FAQ-Troubleshooting-3498DB?style=flat-square" /> <b>Problem: EC2 instances show as "Unhealthy" in ALB</b></summary>
+<summary>🔍 <img src="https://img.shields.io/badge/FAQ-Troubleshooting-3498DB?style=flat-square" /> <b>Problem: EC2 instances show as "Unhealthy" in ALB</b></summary>
 <br/>
 
-- **Fix**: Wait 2-3 minutes after launch for the UserData script to complete. Check that the security group allows traffic from the ALB security group. Verify the health check path `/` returns HTTP 200.
+💡 **Fix**: Wait 2-3 minutes after launch for the UserData script to complete. Check that the security group allows traffic from the ALB security group. Verify the health check path `/` returns HTTP 200.
 
 </details>
 
 <details>
-<summary><img src="https://img.shields.io/badge/FAQ-Troubleshooting-3498DB?style=flat-square" /> <b>Problem: Can't SSH into EC2 instances</b></summary>
+<summary>🔍 <img src="https://img.shields.io/badge/FAQ-Troubleshooting-3498DB?style=flat-square" /> <b>Problem: Can't SSH into EC2 instances</b></summary>
 <br/>
 
-- **Fix**: Ensure your security group allows SSH (port 22) from "My IP". Make sure you're using the correct key pair. Check that the instance has a public IP (it should, since it's in a public subnet).
+🔧 **Fix**: Ensure your security group allows SSH (port 22) from "My IP". Make sure you're using the correct key pair. Check that the instance has a public IP (it should, since it's in a public subnet).
 
 </details>
 
 <details>
-<summary><img src="https://img.shields.io/badge/FAQ-Troubleshooting-3498DB?style=flat-square" /> <b>Problem: ALB returns 502 Bad Gateway</b></summary>
+<summary>🔍 <img src="https://img.shields.io/badge/FAQ-Troubleshooting-3498DB?style=flat-square" /> <b>Problem: ALB returns 502 Bad Gateway</b></summary>
 <br/>
 
-- **Fix**: The target group health checks are failing. Check that EC2 instances are running and Apache is started. Verify security groups allow traffic from ALB → EC2 on port 80.
+💡 **Fix**: The target group health checks are failing. Check that EC2 instances are running and Apache is started. Verify security groups allow traffic from ALB → EC2 on port 80.
 
 </details>
 
 <details>
-<summary><img src="https://img.shields.io/badge/FAQ-Troubleshooting-3498DB?style=flat-square" /> <b>Problem: RDS connection refused from EC2</b></summary>
+<summary>🔍 <img src="https://img.shields.io/badge/FAQ-Troubleshooting-3498DB?style=flat-square" /> <b>Problem: RDS connection refused from EC2</b></summary>
 <br/>
 
-- **Fix**: Verify the RDS security group allows MySQL (3306) from the EC2 security group. Make sure you're using the correct endpoint. Check that the RDS instance is in the same VPC as the EC2 instances.
+🔧 **Fix**: Verify the RDS security group allows MySQL (3306) from the EC2 security group. Make sure you're using the correct endpoint. Check that the RDS instance is in the same VPC as the EC2 instances.
 
 </details>
 
 <details>
-<summary><img src="https://img.shields.io/badge/FAQ-Troubleshooting-3498DB?style=flat-square" /> <b>Problem: Auto Scaling won't launch new instances</b></summary>
+<summary>🔍 <img src="https://img.shields.io/badge/FAQ-Troubleshooting-3498DB?style=flat-square" /> <b>Problem: Auto Scaling won't launch new instances</b></summary>
 <br/>
 
-- **Fix**: Check that the launch template is valid. Ensure you haven't hit EC2 instance limits (check Service Quotas). Verify the subnets have available IP addresses.
+💡 **Fix**: Check that the launch template is valid. Ensure you haven't hit EC2 instance limits (check Service Quotas). Verify the subnets have available IP addresses.
 
 </details>
 
 <details>
-<summary><img src="https://img.shields.io/badge/FAQ-Troubleshooting-3498DB?style=flat-square" /> <b>Problem: CloudWatch dashboard shows no data</b></summary>
+<summary>🔍 <img src="https://img.shields.io/badge/FAQ-Troubleshooting-3498DB?style=flat-square" /> <b>Problem: CloudWatch dashboard shows no data</b></summary>
 <br/>
 
-- **Fix**: Wait 5-10 minutes for metrics to appear. CloudWatch metrics can take up to 15 minutes to populate. Ensure the correct region is selected in the CloudWatch console.
+💡 **Fix**: Wait 5-10 minutes for metrics to appear. CloudWatch metrics can take up to 15 minutes to populate. Ensure the correct region is selected in the CloudWatch console.
 
 </details>
 
 <details>
-<summary><img src="https://img.shields.io/badge/FAQ-Troubleshooting-3498DB?style=flat-square" /> <b>Problem: Can't delete VPC</b></summary>
+<summary>🔍 <img src="https://img.shields.io/badge/FAQ-Troubleshooting-3498DB?style=flat-square" /> <b>Problem: Can't delete VPC</b></summary>
 <br/>
 
-- **Fix**: This is usually because resources still exist in the VPC. Delete NAT Gateway, subnets, route tables, and security groups first. Then try deleting the VPC again.
+🔧 **Fix**: This is usually because resources still exist in the VPC. Delete NAT Gateway, subnets, route tables, and security groups first. Then try deleting the VPC again.
 
 </details>
 
 <details>
-<summary><img src="https://img.shields.io/badge/FAQ-Troubleshooting-3498DB?style=flat-square" /> <b>Problem: NAT Gateway won't delete</b></summary>
+<summary>🔍 <img src="https://img.shields.io/badge/FAQ-Troubleshooting-3498DB?style=flat-square" /> <b>Problem: NAT Gateway won't delete</b></summary>
 <br/>
 
-- **Fix**: Make sure all resources using it (EC2 instances, etc.) are terminated first. The NAT Gateway must be detached from the subnet before deletion.
+🔧 **Fix**: Make sure all resources using it (EC2 instances, etc.) are terminated first. The NAT Gateway must be detached from the subnet before deletion.
 
 </details>
 
 <details>
-<summary><img src="https://img.shields.io/badge/FAQ-Troubleshooting-3498DB?style=flat-square" /> <b>Problem: S3 bucket won't delete</b></summary>
+<summary>🔍 <img src="https://img.shields.io/badge/FAQ-Troubleshooting-3498DB?style=flat-square" /> <b>Problem: S3 bucket won't delete</b></summary>
 <br/>
 
-- **Fix**: You must EMPTY the bucket first (delete all objects), then delete the bucket itself. S3 buckets cannot be deleted if they contain any objects.
+💡 **Fix**: You must EMPTY the bucket first (delete all objects), then delete the bucket itself. S3 buckets cannot be deleted if they contain any objects.
 
 </details>
 

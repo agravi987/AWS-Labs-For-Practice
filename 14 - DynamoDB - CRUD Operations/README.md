@@ -464,14 +464,14 @@ aws dynamodb query \
 
 ## ✅ Validation Checklist
 
-- [ ] Students table created with `student_id` as partition key
-- [ ] 3 items successfully inserted (Console and CLI)
-- [ ] Query by partition key returns correct item
-- [ ] Scan returns all items
-- [ ] Update modifies existing item and adds new attribute
-- [ ] Delete removes the correct item
-- [ ] GSI on `topic` attribute created and queryable
-- [ ] CloudWatch metrics visible
+- [ ] Students table created with `student_id` as partition key ✅
+- [ ] 3 items successfully inserted (Console and CLI) ✅
+- [ ] Query by partition key returns correct item ✅
+- [ ] Scan returns all items ✅
+- [ ] Update modifies existing item and adds new attribute ✅
+- [ ] Delete removes the correct item ✅
+- [ ] GSI on `topic` attribute created and queryable ✅
+- [ ] CloudWatch metrics visible ✅
 
 ---
 
@@ -479,14 +479,14 @@ aws dynamodb query \
 
 DynamoDB's Free Tier is generous, but let's clean up anyway!
 
-1. **Delete the Table:**
+1. 🗑️ **Delete the Table:**
    - Go to **DynamoDB Console** → **Tables**
    - Select `Students`
    - Click **Delete**
    - Type `delete` to confirm
    - Click **Delete table**
 
-2. Wait for the table to disappear from the list
+2. 🧹 Wait for the table to disappear from the list
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > Unlike RDS, DynamoDB doesn't charge you for empty tables — but it's still good practice to clean up so the Free Tier capacity stays available for future labs.
@@ -580,58 +580,58 @@ You've covered compute, networking, DNS, and databases. Now let's learn how to m
 ## ❓ Troubleshooting
 
 <details>
-<summary><strong>ResourceNotFoundException: Requested table not found</strong></summary>
+<summary><strong>🔍 ResourceNotFoundException: Requested table not found</strong></summary>
 
-- Make sure you're in the correct AWS region (check the URL — it should end with `us-east-1` or wherever you created the table)
-- Verify the table name is exactly `Students` (case-sensitive!)
-- Wait a few seconds after creation — tables take a moment to become active
-
-</details>
-
-<details>
-<summary><strong>ProvisionedThroughputExceededException</strong></summary>
-
-- You've exceeded the read or write capacity
-- For this lab, you shouldn't hit this with 5 WCU/5 RCU
-- If you see this, wait a few seconds and retry
-- Solution: Use the default provisioned capacity or switch to On-Demand mode
+- 🔍 Make sure you're in the correct AWS region (check the URL — it should end with `us-east-1` or wherever you created the table)
+- 🔍 Verify the table name is exactly `Students` (case-sensitive!)
+- ⏱️ Wait a few seconds after creation — tables take a moment to become active
 
 </details>
 
 <details>
-<summary><strong>ValidationException: The provided key element does not match the schema</strong></summary>
+<summary><strong>🔍 ProvisionedThroughputExceededException</strong></summary>
 
-- DynamoDB requires ALL key attributes in every operation
-- For put-item, query, and delete, you must provide `student_id`
-- Check the type — `"S"` for String, `"N"` for Number
-
-</details>
-
-<details>
-<summary><strong>CLI command returns "Unknown option"</strong></summary>
-
-- Make sure JSON values are properly quoted
-- Use single quotes around the entire JSON on Linux/Mac
-- On Windows PowerShell, use double quotes and escape inner quotes: `\"` 
-- Or save the JSON to a file and use `--cli-input-json file://params.json`
+- 🔍 You've exceeded the read or write capacity
+- 💡 For this lab, you shouldn't hit this with 5 WCU/5 RCU
+- ⏱️ If you see this, wait a few seconds and retry
+- 🔧 Solution: Use the default provisioned capacity or switch to On-Demand mode
 
 </details>
 
 <details>
-<summary><strong>GSI query returns empty results</strong></summary>
+<summary><strong>🔍 ValidationException: The provided key element does not match the schema</strong></summary>
 
-- Make sure the GSI is **Active** (not "Updating")
-- Verify you're querying with the correct attribute name and type
-- Check that the items actually have the `topic` attribute
+- 🔍 DynamoDB requires ALL key attributes in every operation
+- 🔍 For put-item, query, and delete, you must provide `student_id`
+- 🔧 Check the type — `"S"` for String, `"N"` for Number
 
 </details>
 
 <details>
-<summary><strong>Items have different attributes — is that okay?</strong></summary>
+<summary><strong>🔍 CLI command returns "Unknown option"</strong></summary>
 
-- Yes! That's the beauty of DynamoDB — each item can have different attributes
-- Unlike SQL tables where every row must have the same columns
-- This flexibility is why DynamoDB is great for applications with evolving data models
+- 🔍 Make sure JSON values are properly quoted
+- 🔍 Use single quotes around the entire JSON on Linux/Mac
+- 💡 On Windows PowerShell, use double quotes and escape inner quotes: `\"` 
+- 🔧 Or save the JSON to a file and use `--cli-input-json file://params.json`
+
+</details>
+
+<details>
+<summary><strong>🔍 GSI query returns empty results</strong></summary>
+
+- 🔍 Make sure the GSI is **Active** (not "Updating")
+- 🔍 Verify you're querying with the correct attribute name and type
+- 🔍 Check that the items actually have the `topic` attribute
+
+</details>
+
+<details>
+<summary><strong>🔍 Items have different attributes — is that okay?</strong></summary>
+
+- ✅ Yes! That's the beauty of DynamoDB — each item can have different attributes
+- 💡 Unlike SQL tables where every row must have the same columns
+- 🎉 This flexibility is why DynamoDB is great for applications with evolving data models
 
 </details>
 

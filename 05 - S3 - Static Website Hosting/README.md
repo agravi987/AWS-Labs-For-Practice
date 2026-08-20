@@ -366,15 +366,15 @@ curl http://ravi-static-website-12345.s3-website-us-east-1.amazonaws.com
 
 ## ✅ Validation Checklist
 
-- [ ] S3 bucket named `ravi-static-website-12345` created in us-east-1
-- [ ] Block all public access UNCHECKED and acknowledged
-- [ ] Static website hosting ENABLED with index.html and error.html
-- [ ] index.html uploaded to bucket
-- [ ] error.html uploaded to bucket
-- [ ] Bucket policy granting `s3:GetObject` to `Principal: "*"` applied
-- [ ] index.html loads in browser at S3 website endpoint
-- [ ] error.html loads when visiting a non-existent path
-- [ ] Website endpoint URL works for anyone on the internet
+- [ ] 🪣 S3 bucket named `ravi-static-website-12345` created in us-east-1 ✅
+- [ ] 🔓 Block all public access UNCHECKED and acknowledged ✅
+- [ ] 🌐 Static website hosting ENABLED with index.html and error.html ✅
+- [ ] 📄 index.html uploaded to bucket ✅
+- [ ] ❌ error.html uploaded to bucket ✅
+- [ ] 📜 Bucket policy granting `s3:GetObject` to `Principal: "*"` applied ✅
+- [ ] 🖥️ index.html loads in browser at S3 website endpoint ✅
+- [ ] ❌ error.html loads when visiting a non-existent path ✅
+- [ ] 🌍 Website endpoint URL works for anyone on the internet ✅
 
 > **POV:** Your S3 website is live and you tell everyone you're "basically a web developer now."
 
@@ -386,14 +386,14 @@ curl http://ravi-static-website-12345.s3-website-us-east-1.amazonaws.com
 
 ## 🧹 Cleanup (IMPORTANT!)
 
-Public buckets left running = potential bill and security risk.
+> 🛑 **Don't skip cleanup!** Public buckets left running = potential bill and security risk.
 
-1. **Delete objects:**
+1. 🗑️ **Delete objects:**
    - S3 Console → your bucket → **Objects** tab.
    - Select both `index.html` and `error.html`.
    - Click **Delete** → enter `permanently delete` in the confirmation → Click **Delete objects**.
 
-2. **Delete the bucket:**
+2. 🪣 **Delete the bucket:**
    - Go back to bucket listing (S3 Console → Buckets).
    - Select `ravi-static-website-12345`.
    - Click **Delete**.
@@ -488,16 +488,16 @@ Or skip ahead. Whatever fuels your cloud engine. 🚀
 <details>
 <summary><strong>❓ Troubleshooting</strong></summary>
 
-| Problem | Likely Cause | Fix |
+| 🔍 Problem | 💡 Likely Cause | 🔧 Fix |
 |---------|-------------|------|
-| Browser shows **403 Forbidden** | Bucket policy missing or objects still private | Paste the Bucket Policy JSON exactly; verify object permissions |
-| Browser shows **404 Not Found** | index.html filename wrong, or URL path wrong | Upload file named `index.html` exactly. Check S3 listing |
-| Error.html appears as raw HTML | Error page URL doesn't match error document name | error.html must use `.html` or whatever you configured |
-| Bucket creation fails with "name already taken" | Someone else globally owns that bucket name | Add extra numbers/characters to bucket name |
-| Bucket policy has warning yellow/red or won't save | Block Public Access is still ON | Uncheck ALL Block Public Access boxes at the **bucket** level (Permissions → Block Public Access) AND the **account** level (S3 → Block Public Access settings) |
-| `Unable to Update, the S3 web endpoint always returns "The specified bucket does not have a website configuration"` | Static website hosting NOT enabled | Properties → Static website hosting → Enable |
-| Internet users still get Access Denied | Bucket Policy syntax error or resource ARN mismatch | Double-check `Resource` ends with `/*` (the wildcard covers all objects) |
-| Objects show ACLs disabled, bucket policy is wrong place | ACLs not needed for static sites | Bucket Owner Enforced + Bucket Policy = the way |
+| 🚫 Browser shows **403 Forbidden** | Bucket policy missing or objects still private | Paste the Bucket Policy JSON exactly; verify object permissions |
+| ❌ Browser shows **404 Not Found** | index.html filename wrong, or URL path wrong | Upload file named `index.html` exactly. Check S3 listing |
+| 📄 Error.html appears as raw HTML | Error page URL doesn't match error document name | error.html must use `.html` or whatever you configured |
+| 🌐 Bucket creation fails with "name already taken" | Someone else globally owns that bucket name | Add extra numbers/characters to bucket name |
+| ⚠️ Bucket policy has warning yellow/red or won't save | Block Public Access is still ON | Uncheck ALL Block Public Access boxes at the **bucket** level (Permissions → Block Public Access) AND the **account** level (S3 → Block Public Access settings) |
+| 🔄 `Unable to Update, the S3 web endpoint always returns "The specified bucket does not have a website configuration"` | Static website hosting NOT enabled | Properties → Static website hosting → Enable |
+| 🔒 Internet users still get Access Denied | Bucket Policy syntax error or resource ARN mismatch | Double-check `Resource` ends with `/*` (the wildcard covers all objects) |
+| 🛡️ Objects show ACLs disabled, bucket policy is wrong place | ACLs not needed for static sites | Bucket Owner Enforced + Bucket Policy = the way
 
 </details>
 

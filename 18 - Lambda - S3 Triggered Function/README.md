@@ -416,14 +416,14 @@ def lambda_handler(event, context):
 
 | # | Check | Status |
 |---|-------|--------|
-| 1 | S3 bucket `ravi-lambda-trigger-bucket-*` created | ☐ |
-| 2 | Lambda function `s3-image-processor` created with Python 3.14 | ☐ |
-| 3 | Lambda code deployed with S3 event processing logic | ☐ |
-| 4 | S3 trigger configured with `.jpg` suffix filter | ☐ |
-| 5 | Uploading a `.jpg` triggers the Lambda | ☐ |
-| 6 | CloudWatch Logs show file metadata (bucket, key, size, content type) | ☐ |
-| 7 | IAM role `lambda-s3-role` has S3 permissions | ☐ |
-| 8 | (Optional) Processed file copied to destination bucket | ☐ |
+| 1 | S3 bucket `ravi-lambda-trigger-bucket-*` created | ☐ ✅ |
+| 2 | Lambda function `s3-image-processor` created with Python 3.14 | ☐ ✅ |
+| 3 | Lambda code deployed with S3 event processing logic | ☐ ✅ |
+| 4 | S3 trigger configured with `.jpg` suffix filter | ☐ ✅ |
+| 5 | Uploading a `.jpg` triggers the Lambda | ☐ ✅ |
+| 6 | CloudWatch Logs show file metadata (bucket, key, size, content type) | ☐ ✅ |
+| 7 | IAM role `lambda-s3-role` has S3 permissions | ☐ ✅ |
+| 8 | (Optional) Processed file copied to destination bucket | ☐ ✅ |
 
 ---
 
@@ -437,11 +437,11 @@ def lambda_handler(event, context):
 
 | Step | Action | How |
 |:-----|:-------|:----|
-| 1 | Delete Lambda function | Lambda → Functions → `s3-image-processor` → Actions → Delete |
-| 2 | Empty & delete S3 buckets | S3 → empty each bucket first, then delete |
-| 3 | Delete IAM role | IAM → Roles → `lambda-s3-role` → Delete |
-| 4 | Delete CloudWatch log group | CloudWatch → Logs → Log groups → `/aws/lambda/s3-image-processor` → Delete |
-| 5 | Remove S3 trigger (if not auto-deleted) | Lambda → Triggers → remove S3 trigger |
+| 🗑️ 1 | Delete Lambda function | Lambda → Functions → `s3-image-processor` → Actions → Delete |
+| 🧹 2 | Empty & delete S3 buckets | S3 → empty each bucket first, then delete |
+| 🛑 3 | Delete IAM role | IAM → Roles → `lambda-s3-role` → Delete |
+| 💾 4 | Delete CloudWatch log group | CloudWatch → Logs → Log groups → `/aws/lambda/s3-image-processor` → Delete |
+| 🔄 5 | Remove S3 trigger (if not auto-deleted) | Lambda → Triggers → remove S3 trigger |
 
 ### Detailed Steps:
 
@@ -542,10 +542,10 @@ In the next lab, you'll create a REST API with API Gateway that invokes Lambda f
 ## ❓ Troubleshooting
 
 <details>
-<summary><strong>Lambda doesn't trigger when I upload a file</strong></summary>
+<summary><strong>🔍 Lambda doesn't trigger when I upload a file</strong></summary>
 
 **Cause:** The S3 trigger isn't configured correctly, or the suffix filter doesn't match your file type.
-**Fix:** 
+**💡 Fix:** 
 - Go to Lambda → Configuration → Triggers → verify the S3 trigger exists.
 - Make sure you're uploading a `.jpg` file (if you set the suffix filter).
 - Check the S3 bucket event notification settings.
@@ -553,10 +553,10 @@ In the next lab, you'll create a REST API with API Gateway that invokes Lambda f
 </details>
 
 <details>
-<summary><strong>CloudWatch Logs are empty</strong></summary>
+<summary><strong>🔍 CloudWatch Logs are empty</strong></summary>
 
 **Cause:** The Lambda function hasn't been invoked, or the log stream is in a different region.
-**Fix:**
+**🔧 Fix:**
 - Make sure you're looking in the same region as the Lambda function.
 - Check CloudWatch Logs → Log groups → `/aws/lambda/s3-image-processor`.
 - Verify the S3 trigger is configured.
@@ -564,34 +564,34 @@ In the next lab, you'll create a REST API with API Gateway that invokes Lambda f
 </details>
 
 <details>
-<summary><strong>Lambda fails with "Access Denied" or "AccessDeniedException"</strong></summary>
+<summary><strong>🔍 Lambda fails with "Access Denied" or "AccessDeniedException"</strong></summary>
 
 **Cause:** The Lambda execution role doesn't have permission to access S3, or it is missing write access for the destination bucket.
-**Fix:** Go to IAM → Roles → `lambda-s3-role` → attach `AmazonS3ReadOnlyAccess` for the source bucket and add `s3:PutObject` permission for the destination bucket when using the copy step. For the lab, `AmazonS3FullAccess` is acceptable for quick testing, but least privilege is recommended in production.
+**🔧 Fix:** Go to IAM → Roles → `lambda-s3-role` → attach `AmazonS3ReadOnlyAccess` for the source bucket and add `s3:PutObject` permission for the destination bucket when using the copy step. For the lab, `AmazonS3FullAccess` is acceptable for quick testing, but least privilege is recommended in production.
 
 </details>
 
 <details>
-<summary><strong>Lambda fails with "Unable to import module 'lambda_function'"</strong></summary>
+<summary><strong>🔍 Lambda fails with "Unable to import module 'lambda_function'"</strong></summary>
 
 **Cause:** There's a syntax error in your Python code.
-**Fix:** Go to Lambda → Code → check for typos. Common issues: missing colons, wrong indentation, unmatched parentheses.
+**💡 Fix:** Go to Lambda → Code → check for typos. Common issues: missing colons, wrong indentation, unmatched parentheses.
 
 </details>
 
 <details>
-<summary><strong>Recursive invocation warning / Lambda keeps running</strong></summary>
+<summary><strong>🔍 Recursive invocation warning / Lambda keeps running</strong></summary>
 
 **Cause:** Your Lambda is writing to the same bucket it's reading from.
-**Fix:** Use a different destination bucket, or remove the file copy logic. If your Lambda is already stuck in a loop, go to Lambda → Configuration → Triggers → disable the S3 trigger immediately!
+**🔧 Fix:** Use a different destination bucket, or remove the file copy logic. If your Lambda is already stuck in a loop, go to Lambda → Configuration → Triggers → disable the S3 trigger immediately!
 
 </details>
 
 <details>
-<summary><strong>File doesn't appear in destination bucket (Step 7)</strong></summary>
+<summary><strong>🔍 File doesn't appear in destination bucket (Step 7)</strong></summary>
 
 **Cause:** The destination bucket name is wrong, or the Lambda role lacks write permissions to that bucket.
-**Fix:** Check the `DESTINATION_BUCKET` variable in your code matches the actual bucket name. Ensure the Lambda role has `s3:PutObject` permission on the destination bucket; for a quick lab fix, attach `AmazonS3FullAccess` temporarily.
+**💡 Fix:** Check the `DESTINATION_BUCKET` variable in your code matches the actual bucket name. Ensure the Lambda role has `s3:PutObject` permission on the destination bucket; for a quick lab fix, attach `AmazonS3FullAccess` temporarily.
 
 </details>
 

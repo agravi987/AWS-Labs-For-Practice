@@ -402,14 +402,14 @@ Let's confirm everything is working:
 
 | # | Check | Status |
 |---|-------|--------|
-| 1 | SNS topic `ravi-notifications` created | ☐ |
-| 2 | Email subscription created and confirmed | ☐ |
-| 3 | Test email received after publishing to SNS | ☐ |
-| 4 | SQS queue `ravi-message-queue` created | ☐ |
-| 5 | SNS-to-SQS subscription created and auto-confirmed | ☐ |
-| 6 | Fan-out message appeared in both email AND SQS | ☐ |
-| 7 | Direct message sent to SQS and received via polling | ☐ |
-| 8 | CLI send/receive/delete worked (Step 8) | ☐ |
+| 1 | SNS topic `ravi-notifications` created | ☐ ✅ |
+| 2 | Email subscription created and confirmed | ☐ ✅ |
+| 3 | Test email received after publishing to SNS | ☐ ✅ |
+| 4 | SQS queue `ravi-message-queue` created | ☐ ✅ |
+| 5 | SNS-to-SQS subscription created and auto-confirmed | ☐ ✅ |
+| 6 | Fan-out message appeared in both email AND SQS | ☐ ✅ |
+| 7 | Direct message sent to SQS and received via polling | ☐ ✅ |
+| 8 | CLI send/receive/delete worked (Step 8) | ☐ ✅ |
 
 ---
 
@@ -421,18 +421,18 @@ Let's confirm everything is working:
 
 **Clean up all SNS and SQS resources to avoid ongoing charges!**
 
-### Delete SQS Queue:
+### 🗑️ Delete SQS Queue:
 1. Go to **SQS → Queues**.
 2. Select `ravi-message-queue`.
 3. Click **Delete** → Type `ravi-message-queue` to confirm → **Delete**.
 
-### Delete SNS Subscriptions:
+### 🛑 Delete SNS Subscriptions:
 1. Go to **SNS → Subscriptions**.
 2. Select both subscriptions (Email and SQS).
 3. Click **Delete** → Confirm → **Delete**.
    - ⚠️ You must delete subscriptions BEFORE you can delete the topic!
 
-### Delete SNS Topic:
+### 🧹 Delete SNS Topic:
 1. Go to **SNS → Topics**.
 2. Select `ravi-notifications`.
 3. Click **Delete** → Type `ravi-notifications` to confirm → **Delete**.
@@ -528,42 +528,42 @@ In the next lab, you'll write a Lambda function in Python that automatically pro
 ## ❓ Troubleshooting
 
 <details>
-<summary><strong>"Subscription confirmation" email never arrives</strong></summary>
+<summary><strong>🔍 "Subscription confirmation" email never arrives</strong></summary>
 
 **Cause:** AWS notification emails sometimes go to spam.
-**Fix:** Check your spam/junk folder. If still not there, wait 5 minutes and try creating the subscription again. Make sure the email address is correct.
+**💡 Fix:** Check your spam/junk folder. If still not there, wait 5 minutes and try creating the subscription again. Make sure the email address is correct.
 
 </details>
 
 <details>
-<summary><strong>SNS-to-SQS subscription shows "Pending" and never confirms</strong></summary>
+<summary><strong>🔍 SNS-to-SQS subscription shows "Pending" and never confirms</strong></summary>
 
 **Cause:** The SQS queue ARN might be incorrect, or the queue policy doesn't allow SNS.
-**Fix:** Check the queue policy. Go to SQS → ravi-message-queue → Permissions → make sure SNS is allowed. AWS usually auto-configures this, but if it fails, you can add a policy allowing the SNS topic to send messages.
+**🔧 Fix:** Check the queue policy. Go to SQS → ravi-message-queue → Permissions → make sure SNS is allowed. AWS usually auto-configures this, but if it fails, you can add a policy allowing the SNS topic to send messages.
 
 </details>
 
 <details>
-<summary><strong>SQS "Poll for messages" shows nothing</strong></summary>
+<summary><strong>🔍 SQS "Poll for messages" shows nothing</strong></summary>
 
 **Cause:** The message was already received by another poll, or it's still hidden by the visibility timeout.
-**Fix:** Wait 30 seconds (the default visibility timeout) and poll again. To wipe the queue, use the **Purge** action (or just delete and recreate it).
+**💡 Fix:** Wait 30 seconds (the default visibility timeout) and poll again. To wipe the queue, use the **Purge** action (or just delete and recreate it).
 
 </details>
 
 <details>
-<summary><strong>CLI commands fail with "queue does not exist"</strong></summary>
+<summary><strong>🔍 CLI commands fail with "queue does not exist"</strong></summary>
 
 **Cause:** The queue URL is wrong or the region is different.
-**Fix:** Use `aws sqs get-queue-url --queue-name ravi-message-queue --region us-east-1` to get the correct URL.
+**🔧 Fix:** Use `aws sqs get-queue-url --queue-name ravi-message-queue --region us-east-1` to get the correct URL.
 
 </details>
 
 <details>
-<summary><strong>"AccessDenied" on CLI commands</strong></summary>
+<summary><strong>🔍 "AccessDenied" on CLI commands</strong></summary>
 
 **Cause:** Your IAM user/role doesn't have SQS permissions.
-**Fix:** Attach the `AmazonSQSFullAccess` policy to your IAM user/role (for lab purposes only — in production, use least-privilege policies).
+**💡 Fix:** Attach the `AmazonSQSFullAccess` policy to your IAM user/role (for lab purposes only — in production, use least-privilege policies).
 
 </details>
 

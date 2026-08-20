@@ -397,22 +397,22 @@ You'll see the full Linux directory structure — it's your original 8 GB root a
 
 ### Step 10: Verify Your Work
 
-- [ ] EBS root volume size matches what you launched (8 GB)
-- [ ] Secondary EBS volume (10 GB gp3) created and attached
-- [ ] Volume formatted with ext4
-- [ ] Volume mounted at `/mnt/data`
-- [ ] File `test.txt` created with content `EBS Lab by Ravi` verified via `cat`
-- [ ] Snapshot of root volume created and reached `completed` status
-- [ ] New volume restored from snapshot and attached
-- [ ] Able to browse the restored filesystem on `/mnt/restored`
+- [ ] 💾 EBS root volume size matches what you launched (8 GB) ✅
+- [ ] 📦 Secondary EBS volume (10 GB gp3) created and attached ✅
+- [ ] 🔧 Volume formatted with ext4 ✅
+- [ ] 📁 Volume mounted at `/mnt/data` ✅
+- [ ] 📄 File `test.txt` created with content `EBS Lab by Ravi` verified via `cat` ✅
+- [ ] 📸 Snapshot of root volume created and reached `completed` status ✅
+- [ ] 🔄 New volume restored from snapshot and attached ✅
+- [ ] 🔍 Able to browse the restored filesystem on `/mnt/restored` ✅
 
 ## ✅ Validation Checklist
 
-- [ ] `lsblk` shows root + extra disk
-- [ ] `df -h` shows `/mnt/data` with ~9.6 GB available
-- [ ] `cat /mnt/data/test.txt` → `EBS Lab by Ravi`
-- [ ] Snapshot listed in EBS Snapshots with `completed` status
-- [ ] Restored volume mountable and browsable
+- [ ] 💾 `lsblk` shows root + extra disk ✅
+- [ ] 📊 `df -h` shows `/mnt/data` with ~9.6 GB available ✅
+- [ ] 📄 `cat /mnt/data/test.txt` → `EBS Lab by Ravi` ✅
+- [ ] 📸 Snapshot listed in EBS Snapshots with `completed` status ✅
+- [ ] 🔄 Restored volume mountable and browsable ✅
 
 > **POV:** You see the EBS snapshot is still "pending" and keep clicking refresh like it's a tracking page.
 
@@ -424,20 +424,22 @@ You'll see the full Linux directory structure — it's your original 8 GB root a
 
 ## 🧹 Cleanup (IMPORTANT!)
 
-1. **Terminate the instance:**
+> 🛑 **Don't skip cleanup!** These resources will cost you money if left running.
+
+1. 🖥️ **Terminate the instance:**
    - Select `ebs-lab-instance` → Instance state → **Terminate** → Confirm.
    - Terminating the instance DOES NOT delete attached EBS volumes unless you specifically enabled "Delete on termination" (which is enabled for root volumes by default).
 
-2. **Detach and delete the extra EBS volume:**
+2. 💾 **Detach and delete the extra EBS volume:**
    - EC2 Console → Volumes.
    - Select the 10 GB extra volume → Actions → **Detach** → Confirm detach.
    - Once detached (Available status), select it → Actions → **Delete volume** → Confirm.
 
-3. **Delete the restored volume:**
+3. 🔄 **Delete the restored volume:**
    - Select the 8 GB restored volume → Actions → **Detach** → Confirm.
    - Once Available, Actions → **Delete** → Confirm.
 
-4. **Delete the snapshot:**
+4. 📸 **Delete the snapshot:**
    - EC2 Console → Snapshots.
    - Select `ebs-lab-root-snapshot`.
    - Actions → **Delete snapshot** → Confirm.
@@ -524,15 +526,15 @@ We'll snapshot a running instance WITH apps pre-installed, then launch duplicate
 
 ## ❓ Troubleshooting
 
-| Problem | Likely Cause | Fix |
+| 🔍 Problem | 💡 Likely Cause | 🔧 Fix |
 |---------|-------------|------|
-| Cannot attach volume: wrong AZ | Instance and volume are in different AZs | Create the volume in the same AZ as the instance |
-| `mkfs: /dev/xvdf: device or resource busy` | Volume already formatted/mounted | Check `lsblk` and `df -h`; unmount with `sudo umount /dev/xvdf` |
-| `mount: /mnt/data: /dev/xvdf already mounted` | Mount target already used | Check with `df -h`. Unmount: `sudo umount /mnt/data` |
-| Snapshot stuck on `pending` | First-time snapshot copying all blocks | Wait. Can take 2–10 minutes depending on size |
-| `file -s /dev/xvdg` shows no signature | Volume is raw/unformatted | `sudo mkfs -t ext4 /dev/xvdg` and retry |
-| `mount: /mnt/restored: special device /dev/xvdg1 does not exist` | No partition on that device | Mount the whole device: `sudo mount /dev/xvdg /mnt/restored` |
-| Root volume still billed after termination | Root volumes set NOT to delete on termination are orphaned | Go to Volumes → look for orphaned Available 8 GB, delete |
+| 🚫 Cannot attach volume: wrong AZ | Instance and volume are in different AZs | Create the volume in the same AZ as the instance |
+| 🔧 `mkfs: /dev/xvdf: device or resource busy` | Volume already formatted/mounted | Check `lsblk` and `df -h`; unmount with `sudo umount /dev/xvdf` |
+| 📁 `mount: /mnt/data: /dev/xvdf already mounted` | Mount target already used | Check with `df -h`. Unmount: `sudo umount /mnt/data` |
+| ⏳ Snapshot stuck on `pending` | First-time snapshot copying all blocks | Wait. Can take 2–10 minutes depending on size |
+| 🔍 `file -s /dev/xvdg` shows no signature | Volume is raw/unformatted | `sudo mkfs -t ext4 /dev/xvdg` and retry |
+| ❌ `mount: /mnt/restored: special device /dev/xvdg1 does not exist` | No partition on that device | Mount the whole device: `sudo mount /dev/xvdg /mnt/restored` |
+| 💸 Root volume still billed after termination | Root volumes set NOT to delete on termination are orphaned | Go to Volumes → look for orphaned Available 8 GB, delete |
 
 ---
 

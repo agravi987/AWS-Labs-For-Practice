@@ -392,14 +392,14 @@ aws logs put-log-events \
 
 ## ✅ Validation Checklist
 
-- [ ] EC2 instance `cloudwatch-test-ec2` launched and running
-- [ ] CloudWatch Metrics explored under the **Browse** tab
-- [ ] Alarm `ec2-cpu-alarm` created using the 4-step wizard
-- [ ] SNS Topic `ec2-cpu-alerts` created & email subscription confirmed
-- [ ] CPU stress test executed and alarm state transitioned to 🔴 **In alarm**
-- [ ] Email notification received in your inbox
-- [ ] Dashboard `Ravi-Labs-Dashboard` created with Line, Number, Alarm Status, and Text widgets
-- [ ] Log Group `ravi-app-logs` created with 7-day retention & queried in Logs Insights
+- [ ] EC2 instance `cloudwatch-test-ec2` launched and running ✅
+- [ ] CloudWatch Metrics explored under the **Browse** tab ✅
+- [ ] Alarm `ec2-cpu-alarm` created using the 4-step wizard ✅
+- [ ] SNS Topic `ec2-cpu-alerts` created & email subscription confirmed ✅
+- [ ] CPU stress test executed and alarm state transitioned to 🔴 **In alarm** ✅
+- [ ] Email notification received in your inbox ✅
+- [ ] Dashboard `Ravi-Labs-Dashboard` created with Line, Number, Alarm Status, and Text widgets ✅
+- [ ] Log Group `ravi-app-logs` created with 7-day retention & queried in Logs Insights ✅
 
 ---
 
@@ -407,17 +407,17 @@ aws logs put-log-events \
 
 Avoid unwanted charges by cleaning up CloudWatch resources after testing:
 
-1. **Delete Dashboard:**
+1. 🗑️ **Delete Dashboard:**
    - CloudWatch → **Dashboards** → select `Ravi-Labs-Dashboard` → click **Delete** → confirm.
-2. **Delete Alarm:**
+2. 🛑 **Delete Alarm:**
    - CloudWatch → **Alarms** → **All alarms** → select `ec2-cpu-alarm` → click **Actions** → **Delete** → confirm.
-3. **Delete SNS Topic:**
+3. 📧 **Delete SNS Topic:**
    - Search **SNS** in the top bar → **Topics** → select `ec2-cpu-alerts` → click **Delete** → type `delete` → confirm.
-4. **Delete Log Group:**
+4. 📝 **Delete Log Group:**
    - CloudWatch → **Logs** → **Log groups** → select `ravi-app-logs` → click **Actions** → **Delete log group** → confirm.
-5. **Terminate EC2 Instance:**
+5. 💻 **Terminate EC2 Instance:**
    - EC2 Console → **Instances** → select `cloudwatch-test-ec2` → click **Instance state** → **Terminate instance**.
-6. **Delete Security Group:**
+6. 🔐 **Delete Security Group:**
    - EC2 Console → **Security Groups** → select `cloudwatch-sg` → click **Actions** → **Delete security group**.
 
 ---
@@ -492,25 +492,25 @@ Avoid unwanted charges by cleaning up CloudWatch resources after testing:
 ## ❓ Troubleshooting
 
 <details>
-<summary><strong>"dnf install stress" fails on Amazon Linux 2023</strong></summary>
+<summary><strong>🔍 "dnf install stress" fails on Amazon Linux 2023</strong></summary>
 
-- Amazon Linux 2023 repositories package `stress-ng` instead of `stress`. Run `sudo dnf install -y stress-ng`.
-- Alternatively, run the zero-dependency Python script provided in Step 4.
-
-</details>
-
-<details>
-<summary><strong>Alarm remains in "Insufficient Data"</strong></summary>
-
-- CloudWatch needs at least 1 evaluation period (5 minutes) of data points before evaluating status.
+- 💡 Amazon Linux 2023 repositories package `stress-ng` instead of `stress`. Run `sudo dnf install -y stress-ng`.
+- 🔧 Alternatively, run the zero-dependency Python script provided in Step 4.
 
 </details>
 
 <details>
-<summary><strong>No email notification received</strong></summary>
+<summary><strong>🔍 Alarm remains in "Insufficient Data"</strong></summary>
 
-- Check your spam folder.
-- Ensure you opened the email from `no-reply@sns.amazonaws.com` and clicked **Confirm subscription**.
+- ⏱️ CloudWatch needs at least 1 evaluation period (5 minutes) of data points before evaluating status.
+
+</details>
+
+<details>
+<summary><strong>🔍 No email notification received</strong></summary>
+
+- 🔍 Check your spam folder.
+- 🔧 Ensure you opened the email from `no-reply@sns.amazonaws.com` and clicked **Confirm subscription**.
 
 </details>
 

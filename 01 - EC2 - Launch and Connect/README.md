@@ -411,12 +411,12 @@ echo "<h1>Hello from Ravi's first EC2 instance!</h1>" | sudo tee /var/www/html/i
 
 Before moving on, confirm ALL of these:
 
-- [ ] 🖥️ EC2 instance launched from Amazon Linux 2023 AMI
-- [ ] 🔑 Key pair `first-key-pair` created and downloaded
-- [ ] 🔐 SSH connection established to the instance
-- [ ] 🌐 Apache httpd installed and running (`active (running)`)
-- [ ] 📄 Custom `index.html` visible at `http://<public-ip>`
-- [ ] 🔥 HTTP inbound rule added to security group
+- [ ] 🖥️ EC2 instance launched from Amazon Linux 2023 AMI ✅
+- [ ] 🔑 Key pair `first-key-pair` created and downloaded ✅
+- [ ] 🔐 SSH connection established to the instance ✅
+- [ ] 🌐 Apache httpd installed and running (`active (running)`) ✅
+- [ ] 📄 Custom `index.html` visible at `http://<public-ip>` ✅
+- [ ] 🔥 HTTP inbound rule added to security group ✅
 
 > **POV:** You launched your first EC2 instance and keep refreshing the page to see if it's still running.
 
@@ -434,17 +434,17 @@ Before moving on, confirm ALL of these:
 
 Don't skip this. **Future Ravi will thank you.**
 
-### 1. Terminate the Instance
+### 🛑 1. Terminate the Instance
 
 EC2 Console → Instances → `first-ec2-instance` → **Instance state** → **Terminate**
 
-### 2. Delete the Key Pair
+### 🗑️ 2. Delete the Key Pair
 
 EC2 Console → Network & Security → **Key Pairs** → `first-key-pair` → **Delete**
 
 Also delete the `.pem` / `.ppk` file from your computer.
 
-### 3. Clean Up Security Group
+### 🧹 3. Clean Up Security Group
 
 EC2 Console → **Security Groups** → select your SG → **Delete security groups**
 
@@ -539,14 +539,14 @@ It'll be like being a **cloud bouncer**. 🫡
 
 ## ❓ Troubleshooting
 
-| Problem | Likely Cause | Fix |
+| 🔍 Problem | 💡 Likely Cause | 🔧 Fix |
 |---------|-------------|-----|
-| `Permission denied (publickey)` | Wrong key or permissions | `chmod 400` on `.pem`, verify key name |
-| PuTTY: `No supported auth algorithms` | `.pem` used directly | Convert to `.ppk` with PuTTYgen |
-| Website won't load | Missing HTTP rule in SG | Add inbound HTTP (80) from `0.0.0.0/0` |
-| Connection timeout | Wrong IP or instance down | Verify Public IP, check instance state |
-| `yum` errors on AL2023 | AL2023 uses **dnf** (`yum` is only a compatibility alias) | Use `sudo dnf update -y` / `sudo dnf install -y httpd` |
-| Browser shows default Apache page | Custom index.html failed | Re-run the `echo \| sudo tee` command |
+| 🔐 `Permission denied (publickey)` | Wrong key or permissions | `chmod 400` on `.pem`, verify key name |
+| 🪟 PuTTY: `No supported auth algorithms` | `.pem` used directly | Convert to `.ppk` with PuTTYgen |
+| 🌐 Website won't load | Missing HTTP rule in SG | Add inbound HTTP (80) from `0.0.0.0/0` |
+| ⏱️ Connection timeout | Wrong IP or instance down | Verify Public IP, check instance state |
+| 📦 `yum` errors on AL2023 | AL2023 uses **dnf** (`yum` is only a compatibility alias) | Use `sudo dnf update -y` / `sudo dnf install -y httpd` |
+| 🖥️ Browser shows default Apache page | Custom index.html failed | Re-run the `echo \| sudo tee` command |
 
 ---
 

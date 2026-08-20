@@ -346,14 +346,14 @@ Here's something interesting: **deleting from the source does NOT delete from th
 
 ## ✅ Validation Checklist
 
-| # | Check | Status |
+| # | ✅ Check | Status |
 |---|-------|--------|
-| 1 | Source bucket in us-east-1 with versioning | ☐ |
-| 2 | Destination bucket in us-west-2 with versioning | ☐ |
-| 3 | IAM Role `s3-replication-role` created | ☐ |
-| 4 | Replication rule `replicate-to-west` active | ☐ |
-| 5 | Files replicate from source to destination | ☐ |
-| 6 | Deletion from source doesn't affect destination | ☐ |
+| 1 | Source bucket in us-east-1 with versioning | ☐ ✅ |
+| 2 | Destination bucket in us-west-2 with versioning | ☐ ✅ |
+| 3 | IAM Role `s3-replication-role` created | ☐ ✅ |
+| 4 | Replication rule `replicate-to-west` active | ☐ ✅ |
+| 5 | Files replicate from source to destination | ☐ ✅ |
+| 6 | Deletion from source doesn't affect destination | ☐ ✅ |
 
 <div align="center">
 
@@ -367,7 +367,7 @@ Here's something interesting: **deleting from the source does NOT delete from th
 
 > ⚠️ **This is critical!** You're paying for storage in TWO regions. Delete everything!
 
-### Step 1: Delete All Objects from BOTH Buckets
+### 🗑️ Step 1: Delete All Objects from BOTH Buckets
 
 **Source bucket:**
 1. Go to `ravi-source-replication-12345` → **Objects** tab
@@ -379,19 +379,19 @@ Here's something interesting: **deleting from the source does NOT delete from th
 5. Select all files → **Delete** → type `permanently delete` → confirm
 6. Delete ALL versions if versioning is on
 
-### Step 2: Delete the Replication Rule
+### 🗑️ Step 2: Delete the Replication Rule
 
 1. Go to `ravi-source-replication-12345` → **Management** tab
 2. Under **Replication rules**, select `replicate-to-west`
 3. Click **Delete** → confirm
 
-### Step 3: Delete Both Buckets
+### 🗑️ Step 3: Delete Both Buckets
 
 1. Go to S3 bucket list
 2. Select `ravi-source-replication-12345` → **Delete** → type the bucket name → confirm
 3. Select `ravi-dest-replication-12345` → **Delete** → type the bucket name → confirm
 
-### Step 4: Delete the IAM Role
+### 🗑️ Step 4: Delete the IAM Role
 
 1. Go to **IAM** console → **Roles**
 2. Search for `s3-replication-role`
@@ -484,15 +484,15 @@ Now that you understand S3 storage and data protection, let's dive into networki
 <details>
 <summary><strong>❓ Troubleshooting</strong></summary>
 
-| Problem | Solution |
+| 🔍 Problem | 💡 Solution |
 |---------|----------|
-| "Replication rule failed" | Make sure Versioning is enabled on BOTH buckets. This is the #1 cause of failure! |
-| Files aren't replicating | Wait 5-15 minutes. First-time replication can be slow. Check the rule status in the Management tab |
-| "Access Denied" when creating replication role | Make sure you selected `AmazonS3FullAccess` policy and the trusted entity is S3 |
-| Can't select destination bucket | Make sure the destination bucket has Versioning enabled. AWS won't show non-versioned buckets as valid destinations |
-| Destination bucket not listed | Ensure you're looking in the right region — the destination is in us-west-2 |
-| Replication rule shows "Pending" | This is normal! It takes a few minutes to initialize. Give it 5-10 minutes |
-| Can't delete bucket | Empty ALL versions first. Turn on "List versions" and delete everything, including delete markers |
+| 🔧 "Replication rule failed" | Make sure Versioning is enabled on BOTH buckets. This is the #1 cause of failure! |
+| 🔧 Files aren't replicating | Wait 5-15 minutes. First-time replication can be slow. Check the rule status in the Management tab |
+| 🔧 "Access Denied" when creating replication role | Make sure you selected `AmazonS3FullAccess` policy and the trusted entity is S3 |
+| 🔧 Can't select destination bucket | Make sure the destination bucket has Versioning enabled. AWS won't show non-versioned buckets as valid destinations |
+| 🔧 Destination bucket not listed | Ensure you're looking in the right region — the destination is in us-west-2 |
+| 🔧 Replication rule shows "Pending" | This is normal! It takes a few minutes to initialize. Give it 5-10 minutes |
+| 🔧 Can't delete bucket | Empty ALL versions first. Turn on "List versions" and delete everything, including delete markers |
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > The most common mistake is forgetting to enable versioning on one of the buckets. If something seems stuck, that's the first thing to check. You've got this! 🎯

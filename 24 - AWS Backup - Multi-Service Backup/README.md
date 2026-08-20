@@ -107,6 +107,8 @@ graph TD
 
 </details>
 
+> 📸 **📸 Screenshot Proof:** Capture the EC2 Volumes console showing your new volume with `Lab=24` and `Name=ravi-backup-lab` tags, status **Available**.
+
 > 💡 **The volume can stay unattached!** No EC2 instance needed for this lab.
 
 ---
@@ -124,6 +126,8 @@ graph TD
 </details>
 
 > ⚠️ **Discovery ≠ Protection** — A resource is only protected after assignment + completed backup job.
+
+> 📸 **📸 Screenshot Proof:** Capture AWS Backup Settings showing **Amazon EBS** is **Enabled** in the Service opt-in section.
 
 ---
 
@@ -146,6 +150,8 @@ graph TD
 
 </details>
 
+> 📸 **📸 Screenshot Proof:** Capture the Backup Plan overview showing `ravi-backup-plan` with the `daily-ebs-backup` rule, schedule, and 7-day retention.
+
 > 🕐 **Schedule Note:** Use console picker. If cron expression needed, verify timezone and `cron(...)` wrapper. This schedules FUTURE runs — we'll use on-demand for validation.
 
 ---
@@ -165,6 +171,8 @@ graph TD
 8. ✅ **Submit**
 
 </details>
+
+> 📸 **📸 Screenshot Proof:** Capture the Resource Assignment screen showing `ravi-backup-assignment` targeting **EBS** with tag selection `Lab=24`.
 
 > 🎯 **Tag vs ID:** Tag selection (`Lab=24`) is safer — avoids accidentally picking wrong volume.
 
@@ -186,6 +194,8 @@ graph TD
 
 </details>
 
+> 📸 **📸 Screenshot Proof:** Capture the Backup Jobs console showing the on-demand backup job with status **Completed** and your volume ID.
+
 > 🛑 **STOP HERE** until job shows **Completed**! Running job = no usable recovery point.
 
 ---
@@ -204,6 +214,8 @@ graph TD
    - Expiry date (7 days from now)
 
 </details>
+
+> 📸 **📸 Screenshot Proof:** Capture the Recovery Point details showing Resource ID, Status **Completed**, and Expiry date.
 
 > 📌 **Evidence:** Recovery point = proof of backup. Original volume existing ≠ backed up!
 
@@ -228,6 +240,8 @@ graph TD
 
 </details>
 
+> 📸 **📸 Screenshot Proof:** Capture the Restore Jobs console showing status **Completed**, and the EC2 Volumes console showing the new restored volume with `Name=ravi-backup-restored` tag, **Available** and **unattached**.
+
 > ✨ **Non-destructive!** Original volume untouched. Restored volume starts **unattached** — verify ID, size, AZ, encryption, tags, `Available` state.
 
 ---
@@ -236,14 +250,14 @@ graph TD
 
 | # | Check | Status |
 |---|-------|--------|
-| 1️⃣ | Original volume tagged `Lab=24`, `Name=ravi-backup-lab` | ☐ |
-| 2️⃣ | `ravi-backup-plan` exists with 7-day retention | ☐ |
-| 3️⃣ | `ravi-backup-assignment` targets tagged EBS | ☐ |
-| 4️⃣ | On-demand backup job = **Completed** | ☐ |
-| 5️⃣ | Recovery point in Default vault | ☐ |
-| 6️⃣ | Restore job = **Completed** | ☐ |
-| 7️⃣ | Second EBS volume exists, unattached | ☐ |
-| 8️⃣ | Both volumes identifiable by ID + tags | ☐ |
+| 1️⃣ | Original volume tagged `Lab=24`, `Name=ravi-backup-lab` | ☐ ✅ |
+| 2️⃣ | `ravi-backup-plan` exists with 7-day retention | ☐ ✅ |
+| 3️⃣ | `ravi-backup-assignment` targets tagged EBS | ☐ ✅ |
+| 4️⃣ | On-demand backup job = **Completed** | ☐ ✅ |
+| 5️⃣ | Recovery point in Default vault | ☐ ✅ |
+| 6️⃣ | Restore job = **Completed** | ☐ ✅ |
+| 7️⃣ | Second EBS volume exists, unattached | ☐ ✅ |
+| 8️⃣ | Both volumes identifiable by ID + tags | ☐ ✅ |
 
 ---
 
@@ -253,13 +267,13 @@ graph TD
 
 | Step | Action | Console Location |
 |------|--------|------------------|
-| 1️⃣ | Delete restored volume (`ravi-backup-restored`) | EC2 → Volumes |
-| 2️⃣ | Delete original volume (`ravi-backup-lab`) | EC2 → Volumes |
-| 3️⃣ | Delete assignment `ravi-backup-assignment` | AWS Backup → Plan |
-| 4️⃣ | Delete plan `ravi-backup-plan` | AWS Backup → Plans |
-| 5️⃣ | Delete **lab's** recovery point only | Backup vaults → Default |
-| 6️⃣ | Delete dedicated IAM role (if created) | IAM → Roles |
-| 7️⃣ | **Final sweep:** EC2, Backup jobs, Restore jobs, Recovery points | All consoles |
+| 1️⃣ 🗑️ | Delete restored volume (`ravi-backup-restored`) | EC2 → Volumes |
+| 2️⃣ 🗑️ | Delete original volume (`ravi-backup-lab`) | EC2 → Volumes |
+| 3️⃣ 🧹 | Delete assignment `ravi-backup-assignment` | AWS Backup → Plan |
+| 4️⃣ 🧹 | Delete plan `ravi-backup-plan` | AWS Backup → Plans |
+| 5️⃣ 🗑️ | Delete **lab's** recovery point only | Backup vaults → Default |
+| 6️⃣ 🧹 | Delete dedicated IAM role (if created) | IAM → Roles |
+| 7️⃣ 🔍 | **Final sweep:** EC2, Backup jobs, Restore jobs, Recovery points | All consoles |
 
 > 🛑 **NEVER DELETE:** Default backup vault • Other labs' recovery points • Vault-locked/retention-protected points
 
@@ -279,7 +293,7 @@ graph TD
 
 ## 🆘 Troubleshooting Quick Reference
 
-| Issue | Likely Cause | Fix |
+| 🔍 Issue | 💡 Likely Cause | 🔧 Fix |
 |-------|--------------|-----|
 | 📦 Volume not listed | Wrong Region / not `Available` / EBS not opted-in | Check Region, volume state, Backup Settings |
 | ❌ Backup job fails | IAM permissions / Region mismatch / KMS / resource state | Read job status message for specifics |
