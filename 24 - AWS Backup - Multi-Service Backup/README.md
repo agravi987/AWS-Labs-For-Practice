@@ -1,217 +1,324 @@
-# Lab 24 - AWS Backup: Backup and Restore an EBS Volume
+# 🛡️ Lab 24 - AWS Backup: Backup & Restore an EBS Volume
 
-> Updated 20 August 2026
+> 📅 **Updated:** 20 August 2026 | ⏱️ **Duration:** 30-45 minutes | 📊 **Level:** Beginner/Intermediate
 
 ![AWS Backup](https://img.shields.io/badge/AWS%20Backup-EBS%20restore-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white)
 ![Difficulty](https://img.shields.io/badge/Difficulty-Beginner%2FIntermediate-F2C94C?style=flat-square)
 ![Time](https://img.shields.io/badge/Time-30--45%20minutes-2F80ED?style=flat-square)
+![Status](https://img.shields.io/badge/Status-Active%20Lab-2E7D32?style=flat-square)
 
-## What you will learn
+---
 
-You will create an AWS Backup plan, assign an EBS volume to it, run an on-demand backup, restore the backup as a new volume, and clean up only the resources created in this lab.
+## 🎯 What You'll Master
 
-This lab deliberately uses one resource. The important skill is the backup and restore workflow. RDS, S3, and DynamoDB are optional extensions because each service has different prerequisites and restore behavior.
+| Skill | Description |
+|-------|-------------|
+| 🏗️ **Backup Plan Creation** | Build a plan with schedule + retention rules |
+| 🏷️ **Resource Assignment** | Tag-based targeting for EBS volumes |
+| ⚡ **On-Demand Backup** | Trigger immediate backups without waiting |
+| ✅ **Recovery Point Validation** | Confirm backups completed successfully |
+| 🔄 **Restore Workflow** | Create new volumes from recovery points |
+| 🧹 **Cleanup Strategy** | Remove only lab resources safely |
 
-## Before you start
+> 💡 **Pro Tip:** This lab focuses on **EBS** as the core skill. The same patterns apply to RDS, S3, DynamoDB — each with their own nuances (covered in Optional Extensions).
 
-- Choose one AWS Region and use it for every step.
-- Confirm that your account can use AWS Backup, EC2, IAM, and EBS.
-- Make sure you are not working in a production account.
-- Set an AWS Billing alarm if this is a paid account.
+---
 
-You do not need an EC2 key pair or an RDS database for the core lab. An EC2 instance is optional; an unattached EBS volume is enough.
+## 🚦 Before You Start
 
-## Cost and safety
+### ✅ Prerequisites Checklist
+- [ ] 🌍 **Single Region** — Pick one and stick with it
+- [ ] 🔐 **Permissions** — AWS Backup, EC2, IAM, EBS access
+- [ ] 🚫 **Non-Production** — Never run in prod accounts!
+- [ ] 💰 **Billing Alarm** — Set up if using a paid account
 
-EBS volumes, backup recovery points, and restored volumes can incur charges. The exact price depends on Region, size, storage class, and how long the resources remain.
+### 📦 What You Need (and Don't)
+| Required | Optional |
+|----------|----------|
+| AWS Account | EC2 Key Pair |
+| EBS Volume (1 GiB gp3) | EC2 Instance |
+| AWS Backup Access | RDS Database |
 
-Use these tags on every resource created here:
+---
 
-| Key | Value |
-|---|---|
-| `Lab` | `24` |
-| `Name` | `ravi-backup-lab` |
+## 💰 Cost & Safety First
 
-At the end, delete only resources with these tags. Do not delete every recovery point in the Default vault: it may contain backups from another lab or workload.
+> ⚠️ **Real resources = Real charges.** EBS volumes, recovery points, and restored volumes incur costs based on Region, size, storage class, and duration.
 
-## How AWS Backup fits together
+### 🏷️ **Mandatory Tags** — Apply to EVERY resource:
 
-```text
-EBS volume
-    |
-    v
-Backup plan -- schedule + retention rule
-    |
-    v
-Backup job ---> recovery point in a backup vault
-                         |
-                         v
-                    restore job
-                         |
-                         v
-                  new EBS volume
+| Key | Value | Purpose |
+|-----|-------|---------|
+| `Lab` | `24` | Lab identification |
+| `Name` | `ravi-backup-lab` | Resource naming |
+
+> 🛑 **CLEANUP RULE:** Delete ONLY resources with these tags. The Default vault may contain backups from other labs — **don't touch them!**
+
+---
+
+## 🧠 How AWS Backup Fits Together
+
+```mermaid
+graph TD
+    A[📦 EBS Volume] --> B[📋 Backup Plan<br/>Schedule + Retention]
+    B --> C[⚙️ Backup Job]
+    C --> D[💾 Recovery Point<br/>in Backup Vault]
+    D --> E[🔄 Restore Job]
+    E --> F[📦 New EBS Volume]
+    
+    style A fill:#FF9800,color:#fff
+    style B fill:#2196F3,color:#fff
+    style C fill:#4CAF50,color:#fff
+    style D fill:#9C27B0,color:#fff
+    style E fill:#F44336,color:#fff
+    style F fill:#FFEB3B,color:#000
 ```
 
-- A **backup plan** contains one or more rules.
-- A rule defines the schedule, backup vault, and lifecycle.
-- A **backup job** creates a recovery point.
-- A **restore job** creates a new resource from a recovery point.
-- A scheduled rule does not normally run immediately. This lab uses an on-demand backup so you can finish without waiting for the clock.
+### 🔑 Key Concepts
+| Component | Role |
+|-----------|------|
+| **Backup Plan** | Container for one or more rules |
+| **Rule** | Defines schedule, vault, lifecycle |
+| **Backup Job** | Creates a recovery point |
+| **Restore Job** | Creates new resource from recovery point |
+| **On-Demand** | Runs immediately (no waiting for schedule) |
 
-## Step 1 - Create or choose an EBS volume
+---
 
-Use an existing non-production EBS volume, or create a small one:
+## 🪜 Step-by-Step Guide
 
-1. Open the **EC2 console** in your chosen Region.
-2. Open **Elastic Block Store > Volumes**.
-3. Choose **Create volume**.
-4. Select `gp3`, set the size to `1 GiB` or the smallest allowed size, and choose an Availability Zone.
-5. Add the tags `Lab=24` and `Name=ravi-backup-lab`.
-6. Choose **Create volume**.
-7. Record the volume ID and Availability Zone.
+### 🟢 Step 1: Create or Choose an EBS Volume
 
-The volume can remain unattached. Wait until its state is **Available** before continuing.
+<details>
+<summary><b>📋 Expand for detailed steps</b></summary>
 
-## Step 2 - Check AWS Backup settings
+1. 🌐 Open **EC2 Console** → **Elastic Block Store** → **Volumes**
+2. ➕ Click **Create volume**
+3. ⚙️ Configure:
+   - **Type:** `gp3`
+   - **Size:** `1 GiB` (minimum)
+   - **AZ:** Pick one (note it down!)
+4. 🏷️ **Add tags:**
+   - `Lab = 24`
+   - `Name = ravi-backup-lab`
+5. ✅ Click **Create volume**
+6. 📝 **Record:** Volume ID + Availability Zone
+7. ⏳ Wait for state **Available**
 
-1. Open the **AWS Backup console** in the same Region.
-2. Open **Settings**.
-3. Review **Service opt-in** and confirm that **Amazon Elastic Block Store (Amazon EBS)** is enabled if it is listed.
-4. Open **Protected resources** and confirm that the EBS resource is discoverable.
+</details>
 
-Discovery is not protection. A resource is protected only after it is assigned to a backup plan and a backup job completes.
+> 💡 **The volume can stay unattached!** No EC2 instance needed for this lab.
 
-If you cannot open AWS Backup or see EBS resources, resolve the IAM or Region issue before creating a plan.
+---
 
-## Step 3 - Create the backup plan
+### 🟢 Step 2: Verify AWS Backup Settings
 
-1. In AWS Backup, open **Backup plans**.
-2. Choose **Create backup plan**.
-3. Choose **Build a new plan**. Console labels may change, so do not depend on a template name.
-4. Set **Backup plan name** to `ravi-backup-plan`.
-5. Add a rule with:
-   - **Rule name**: `daily-ebs-backup`
-   - **Backup vault**: `Default`
-   - **Schedule**: daily at a convenient time
-   - **Retention**: `7` days
-6. Create the plan.
+<details>
+<summary><b>🔍 Expand for verification steps</b></summary>
 
-Use the console schedule picker when possible. If it asks for a cron expression, confirm the displayed timezone and whether the field expects the expression with or without the `cron(...)` wrapper. This schedule is for future runs; it is not the validation backup for this lab.
+1. 🌐 Open **AWS Backup Console** (same Region!)
+2. ⚙️ Go to **Settings** → Check **Service opt-in**
+3. ✅ Confirm **Amazon EBS** is **Enabled**
+4. 📋 Open **Protected resources** → Verify your volume is discoverable
 
-## Step 4 - Assign the tagged volume
+</details>
 
-1. Open `ravi-backup-plan`.
-2. Open the **Resource assignments** or **Resources** tab. The label may vary in the current console.
-3. Choose **Assign resources**.
-4. Set **Assignment name** to `ravi-backup-assignment`.
-5. Select **EBS** as the resource type.
-6. Choose the tag-based resource selection and enter key `Lab` with value `24`.
-7. Select the AWS Backup service role offered by the console. If none exists, choose the option to create the default AWS Backup service role.
-8. Submit the assignment.
+> ⚠️ **Discovery ≠ Protection** — A resource is only protected after assignment + completed backup job.
 
-If your console only offers resource IDs, select the volume ID recorded in Step 1. Using a tag or exact ID avoids accidentally selecting an unrelated volume.
+---
 
-## Step 5 - Run an on-demand backup
+### 🟢 Step 3: Create the Backup Plan
 
-The daily rule may not run during this lab, so create a backup now:
+<details>
+<summary><b>📋 Expand for plan creation</b></summary>
 
-1. Open **Protected resources**.
-2. Choose **Create an on-demand backup**.
-3. Select **EBS** as the resource type.
-4. Select the volume created in Step 1.
-5. Select the **Default** backup vault.
-6. Set the retention period to `7` days.
-7. Choose the AWS Backup service role.
-8. Choose **Create on-demand backup**.
-9. Open **Backup jobs** and wait for the job to reach **Completed**.
+1. 🌐 **Backup plans** → **Create backup plan**
+2. 🏗️ Choose **Build a new plan**
+3. 📝 **Plan name:** `ravi-backup-plan`
+4. ➕ **Add rule:**
+   | Field | Value |
+   |-------|-------|
+   | Rule name | `daily-ebs-backup` |
+   | Backup vault | `Default` |
+   | Schedule | Daily (pick convenient time) |
+   | Retention | `7` days |
+5. ✅ **Create plan**
 
-Do not continue to restore until the job is completed. A running job does not yet provide a usable recovery point.
+</details>
 
-## Step 6 - Confirm the recovery point
+> 🕐 **Schedule Note:** Use console picker. If cron expression needed, verify timezone and `cron(...)` wrapper. This schedules FUTURE runs — we'll use on-demand for validation.
 
-1. Open **Backup vaults > Default**.
-2. Find the recovery point created for the tagged volume.
-3. Check its resource ID, creation time, status, and expiry date.
+---
 
-The recovery point is evidence that the backup exists. The original EBS volume being present is not evidence that it was backed up.
+### 🟢 Step 4: Assign the Tagged Volume
 
-## Step 7 - Restore the backup
+<details>
+<summary><b>🏷️ Expand for assignment steps</b></summary>
 
-1. Select the recovery point created in Step 6.
-2. Choose **Restore**.
-3. Leave the restore set to create a new EBS volume.
-4. Select the same Availability Zone recorded in Step 1.
-5. Keep the original size and encryption settings unless you have a reason to change them.
-6. Add `Lab=24` and `Name=ravi-backup-restored` if the restore form allows tags.
-7. Submit the restore job.
-8. Open **Restore jobs** and wait for **Completed**.
-9. Open **EC2 > Volumes** and find the new volume.
+1. 🌐 Open `ravi-backup-plan`
+2. 📋 Go to **Resource assignments** / **Resources** tab
+3. ➕ **Assign resources**
+4. 📝 **Assignment name:** `ravi-backup-assignment`
+5. 🎯 **Resource type:** `EBS`
+6. 🏷️ **Selection:** Tag-based → Key `Lab`, Value `24`
+7. 🔐 **IAM Role:** Use AWS Backup service role (create default if needed)
+8. ✅ **Submit**
 
-The restore is non-destructive: the original volume is not overwritten. The restored volume normally starts unattached. Verify its ID, size, Availability Zone, encryption, tags, and `Available` state.
+</details>
 
-## Validation checklist
+> 🎯 **Tag vs ID:** Tag selection (`Lab=24`) is safer — avoids accidentally picking wrong volume.
 
-- [ ] The original volume has tags `Lab=24` and `Name=ravi-backup-lab`.
-- [ ] `ravi-backup-plan` exists with a 7-day retention rule.
-- [ ] `ravi-backup-assignment` targets the tagged EBS volume.
-- [ ] The on-demand backup job is **Completed**.
-- [ ] The matching recovery point exists in the Default vault.
-- [ ] The restore job is **Completed**.
-- [ ] A second EBS volume exists and is not attached to the original resource.
-- [ ] You can identify both volumes by their IDs and tags.
+---
 
-## Cleanup
+### 🟢 Step 5: Run On-Demand Backup ⚡
 
-Clean up in this order:
+<details>
+<summary><b>⚡ Expand for immediate backup</b></summary>
 
-1. In **EC2 > Volumes**, delete the restored volume tagged `Name=ravi-backup-restored`.
-2. Delete the original volume tagged `Name=ravi-backup-lab`.
-3. In AWS Backup, delete the `ravi-backup-assignment` assignment.
-4. Delete `ravi-backup-plan`.
-5. In **Backup vaults > Default**, delete only the recovery point created by this lab.
-6. If you created a dedicated IAM role, delete it only after confirming no other backup plan uses it.
-7. Recheck EC2 volumes, Backup jobs, Restore jobs, and the recovery point list.
+1. 🌐 **Protected resources** → **Create on-demand backup**
+2. 🎯 **Resource type:** `EBS`
+3. 📦 Select your Step 1 volume
+4. 💾 **Backup vault:** `Default`
+5. ⏳ **Retention:** `7` days
+6. 🔐 **IAM Role:** AWS Backup service role
+7. ✅ **Create on-demand backup**
+8. ⏳ **Wait** for **Backup jobs** → **Completed**
 
-Do not delete the Default backup vault. Do not delete recovery points that belong to another resource or lab. A recovery point can be protected by retention or vault-lock settings; follow the AWS console message rather than trying to bypass it.
+</details>
 
-## Optional extensions
+> 🛑 **STOP HERE** until job shows **Completed**! Running job = no usable recovery point.
 
-Complete these only after the core EBS lab:
+---
 
-- **RDS**: assign an available RDS database, run an on-demand backup, and restore it as a new database instance. This takes longer and costs more.
-- **S3**: review current AWS Backup for S3 prerequisites, including bucket versioning, service opt-in, IAM permissions, and the supported backup mode.
-- **DynamoDB**: review the current AWS Backup requirements and restore workflow. A restore creates a new table and does not overwrite the source table.
-- **Cross-Region copy**: use a dedicated vault in the destination Region and test copy and cleanup separately.
-- **Compliance reporting**: configure AWS Backup Audit Manager and a framework before creating compliance reports. A report is not automatically generated just because a backup plan exists.
+### 🟢 Step 6: Confirm Recovery Point ✅
 
-## Troubleshooting
+<details>
+<summary><b>🔍 Expand for verification</b></summary>
 
-### The volume is not listed
+1. 🌐 **Backup vaults** → **Default**
+2. 🔍 Find recovery point for your tagged volume
+3. ✅ Verify:
+   - Resource ID matches
+   - Creation time
+   - Status = **Completed**
+   - Expiry date (7 days from now)
 
-Confirm the console is in the same Region, the volume is `Available`, and EBS is enabled under AWS Backup service settings. If tag selection is used, check the tag key and value exactly.
+</details>
 
-### The backup job fails
+> 📌 **Evidence:** Recovery point = proof of backup. Original volume existing ≠ backed up!
 
-Open the job details and read the status message. Common causes include an incorrect Region, missing AWS Backup service-role permissions, an unsupported resource state, or a vault/KMS permission issue.
+---
 
-### The recovery point is not visible
+### 🟢 Step 7: Restore the Backup 🔄
 
-Wait for the backup job to reach **Completed**, then refresh **Backup vaults > Default**. Filter by the resource ID instead of relying on the newest item.
+<details>
+<summary><b>🔄 Expand for restore steps</b></summary>
 
-### The restore job fails
+1. 🌐 Select recovery point from Step 6
+2. 🔄 Click **Restore**
+3. 📦 **Restore type:** New EBS volume (default)
+4. 📍 **AZ:** Same as Step 1
+5. ⚙️ Keep original size & encryption
+6. 🏷️ **Add tags** (if form allows):
+   - `Lab = 24`
+   - `Name = ravi-backup-restored`
+7. ✅ **Submit restore job**
+8. ⏳ **Restore jobs** → Wait for **Completed**
+9. 🌐 **EC2 → Volumes** → Find new volume
 
-Check the restore job details, destination Availability Zone, EBS quotas, and KMS permissions. Restore to a new volume and do not overwrite the source volume.
+</details>
 
-## Official documentation
+> ✨ **Non-destructive!** Original volume untouched. Restored volume starts **unattached** — verify ID, size, AZ, encryption, tags, `Available` state.
 
-- [What is AWS Backup?](https://docs.aws.amazon.com/aws-backup/latest/devguide/whatisbackup.html)
-- [Creating a backup plan](https://docs.aws.amazon.com/aws-backup/latest/devguide/creating-a-backup-plan.html)
-- [Assigning resources to a backup plan](https://docs.aws.amazon.com/aws-backup/latest/devguide/assigning-resources.html)
-- [Restoring a backup](https://docs.aws.amazon.com/aws-backup/latest/devguide/restoring-a-backup.html)
-- [Deleting backups](https://docs.aws.amazon.com/aws-backup/latest/devguide/deleting-backups.html)
+---
 
-## What you learned
+## ✅ Validation Checklist
 
-AWS Backup is a coordination layer: a plan defines when backups should run, a vault stores recovery points, and a restore job creates a new resource. The reliable habit is simple: create a backup, wait for **Completed**, restore it, verify the result, and clean up deliberately.
+| # | Check | Status |
+|---|-------|--------|
+| 1️⃣ | Original volume tagged `Lab=24`, `Name=ravi-backup-lab` | ☐ |
+| 2️⃣ | `ravi-backup-plan` exists with 7-day retention | ☐ |
+| 3️⃣ | `ravi-backup-assignment` targets tagged EBS | ☐ |
+| 4️⃣ | On-demand backup job = **Completed** | ☐ |
+| 5️⃣ | Recovery point in Default vault | ☐ |
+| 6️⃣ | Restore job = **Completed** | ☐ |
+| 7️⃣ | Second EBS volume exists, unattached | ☐ |
+| 8️⃣ | Both volumes identifiable by ID + tags | ☐ |
 
-**Next:** [Lab 25 - Capstone: Full Stack on AWS](../25%20-%20Capstone%20-%20Full%20Stack%20on%20AWS/README.md)
+---
+
+## 🧹 Cleanup (Follow Order!)
+
+> ⚠️ **Delete in this exact sequence to avoid dependency errors:**
+
+| Step | Action | Console Location |
+|------|--------|------------------|
+| 1️⃣ | Delete restored volume (`ravi-backup-restored`) | EC2 → Volumes |
+| 2️⃣ | Delete original volume (`ravi-backup-lab`) | EC2 → Volumes |
+| 3️⃣ | Delete assignment `ravi-backup-assignment` | AWS Backup → Plan |
+| 4️⃣ | Delete plan `ravi-backup-plan` | AWS Backup → Plans |
+| 5️⃣ | Delete **lab's** recovery point only | Backup vaults → Default |
+| 6️⃣ | Delete dedicated IAM role (if created) | IAM → Roles |
+| 7️⃣ | **Final sweep:** EC2, Backup jobs, Restore jobs, Recovery points | All consoles |
+
+> 🛑 **NEVER DELETE:** Default backup vault • Other labs' recovery points • Vault-locked/retention-protected points
+
+---
+
+## 🚀 Optional Extensions (Post-Core Lab)
+
+| Service | What to Try | Notes |
+|---------|-------------|-------|
+| 🗄️ **RDS** | Backup & restore DB instance | ⏱️ Longer, 💰 costlier |
+| 🪣 **S3** | Enable versioning, opt-in, IAM, backup mode | Prerequisites differ |
+| ⚡ **DynamoDB** | Backup & restore to new table | Restore ≠ overwrite |
+| 🌍 **Cross-Region** | Dedicated vault in target Region | Test copy + cleanup separately |
+| 📋 **Compliance** | AWS Backup Audit Manager + framework | Reports ≠ auto-generated |
+
+---
+
+## 🆘 Troubleshooting Quick Reference
+
+| Issue | Likely Cause | Fix |
+|-------|--------------|-----|
+| 📦 Volume not listed | Wrong Region / not `Available` / EBS not opted-in | Check Region, volume state, Backup Settings |
+| ❌ Backup job fails | IAM permissions / Region mismatch / KMS / resource state | Read job status message for specifics |
+| 👻 Recovery point invisible | Job not **Completed** / wrong filter | Wait for completion, filter by resource ID |
+| 💥 Restore fails | AZ mismatch / EBS quota / KMS / trying to overwrite | Check job details, use new volume, verify perms |
+
+---
+
+## 📚 Official Documentation
+
+- 📖 [What is AWS Backup?](https://docs.aws.amazon.com/aws-backup/latest/devguide/whatisbackup.html)
+- 📋 [Creating a Backup Plan](https://docs.aws.amazon.com/aws-backup/latest/devguide/creating-a-backup-plan.html)
+- 🏷️ [Assigning Resources](https://docs.aws.amazon.com/aws-backup/latest/devguide/assigning-resources.html)
+- 🔄 [Restoring a Backup](https://docs.aws.amazon.com/aws-backup/latest/devguide/restoring-a-backup.html)
+- 🗑️ [Deleting Backups](https://docs.aws.amazon.com/aws-backup/latest/devguide/deleting-backups.html)
+
+---
+
+## 🎓 What You Learned
+
+> **AWS Backup = Coordination Layer**
+> - 📋 **Plan** → When backups run
+> - 💾 **Vault** → Stores recovery points  
+> - 🔄 **Restore** → Creates new resources
+
+**Golden Habit:** Create → Wait **Completed** → Restore → Verify → Clean up deliberately 🧹
+
+---
+
+## ➡️ What's Next?
+
+🎯 **[Lab 25 - Capstone: Full Stack on AWS](../25%20-%20Capstone%20-%20Full%20Stack%20on%20AWS/README.md)**
+
+---
+
+<div align="center">
+
+### ⭐ Enjoyed this lab? Star the repo & share your feedback!
+
+**Happy Learning!** 🚀☁️
+
+</div>
