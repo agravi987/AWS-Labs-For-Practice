@@ -12,7 +12,6 @@
 </div>
 
 > "If your data isn't encrypted, it's like leaving your front door wide open with a neon sign saying 'Free Stuff!'" — Rithu
-
 ---
 
 <details>
@@ -183,6 +182,7 @@ Your key is now created! You should see it listed with a status of **Enabled**.
 > "Customer Managed Keys give YOU control over who can use the key, how it's used, and when it's deleted. AWS-managed keys are fine for basic encryption, but customer managed keys are required for compliance (HIPAA, PCI-DSS)."
 
 📸 [Screenshot: KMS console showing the newly created `ravi-lab-key` with Enabled status]
+![KMS console showing the newly created `ravi-lab-key` with Enabled status](screenshots/01-kms-key-enabled.png)
 
 ---
 
@@ -227,6 +227,7 @@ Your file is now encrypted with your custom KMS key! 🔐
 > "S3 server-side encryption means AWS encrypts the data when it's written to disk and decrypts it when you download it. The encryption/decryption is transparent — you don't need to do anything special to read your files."
 
 📸 [Screenshot: S3 object Properties showing KMS encryption with ravi-lab-key ARN]
+![S3 object Properties showing KMS encryption with ravi-lab-key ARN](screenshots/02-s3-object-kms-encryption.png)
 
 ---
 
@@ -265,6 +266,7 @@ Replace `your-file-name.txt` with the actual name of the file you uploaded.
 > "The `head-object` command is like checking the label on a package — it tells you metadata about the file without downloading it. The encryption info is right there in the metadata!"
 
 📸 [Screenshot: Terminal showing the head-object output with SSEKMSKeyId visible]
+![Terminal showing the head-object output with SSEKMSKeyId visible](screenshots/03-s3-head-object-kms-output.png)
 
 ---
 
@@ -301,6 +303,7 @@ Let's create an encrypted EBS volume using your KMS key!
 > "Encrypted EBS volumes mean that data at rest on the disk is encrypted. If someone steals the physical drive, they can't read your data without the KMS key. This is a must-have for sensitive data!"
 
 📸 [Screenshot: EBS volume details showing encryption enabled with ravi-lab-key]
+![EBS volume details showing encryption enabled with ravi-lab-key](screenshots/04-ebs-volume-kms-encrypted.png)
 
 ---
 
@@ -367,6 +370,7 @@ You should see the volume mounted and the data written! The data on this volume 
 > "The encryption is transparent to the operating system. You mount and use the volume normally — AWS handles all the encrypt/decrypt operations behind the scenes using the KMS key."
 
 📸 [Screenshot: Terminal showing lsblk, mount, and the encrypted data]
+![Terminal showing lsblk, mount, and the encrypted data](screenshots/05-ebs-volume-mounted-terminal.png)
 
 ---
 
@@ -375,8 +379,8 @@ You should see the volume mounted and the data written! The data on this volume 
 Want ALL new EBS volumes to be encrypted automatically? Enable default encryption!
 
 1. Go to **EC2** in the AWS Console
-2. Click **EBS encryption** in the left sidebar (under Elastic Block Store)
-3. Click **Manage encryption defaults** (or look for the encryption settings)
+2. Click **Setting** in the left sidebar and select **EBS encryption**
+3. Click **Manage**
 
 **Configure default encryption:**
 
@@ -391,7 +395,7 @@ Now, every new EBS volume you create will automatically be encrypted with your K
 > "Default encryption is like setting your phone to auto-lock. You don't have to remember to lock it — it just happens. Same with EBS volumes — encrypt everything by default and you'll never accidentally create an unencrypted volume."
 
 📸 [Screenshot: EBS encryption defaults page showing encryption enabled with ravi-lab-key]
-
+![EBS encryption defaults page showing encryption enabled with ravi-lab-key](screenshots/06-ebs-default-encryption-enabled.png)
 ---
 
 ### <img src="https://img.shields.io/badge/Step%207-Understand%20Key%20Policy-2ECC71?style=for-the-badge" />
@@ -429,6 +433,7 @@ The key policy is a JSON document that controls:
 > "KMS key policies are like a VIP list at a club. The key policy says who gets in (can use the key) and who can change the guest list (can administer the key). Everyone else is turned away!"
 
 📸 [Screenshot: KMS key policy tab showing the policy document]
+![KMS key policy tab showing the policy document](screenshots/07-kms-key-policy.png)
 
 ---
 
@@ -504,8 +509,6 @@ KMS keys cost $1/month. Delete everything carefully!
 
 > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
 > "The 7-day waiting period for KMS key deletion is intentional — it's a safety net. If you accidentally schedule a key for deletion, you have 7 days to cancel it. In production, never delete a key that's encrypting important data!"
-
-📸 [Screenshot: KMS console showing the key in "Pending deletion" status]
 
 ---
 
