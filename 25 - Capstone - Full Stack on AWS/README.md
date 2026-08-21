@@ -496,6 +496,8 @@ AUDITING     ravi-capstone-trail → ravi-capstone-audit-12345 (S3)
 
 </details>
 
+![Capstone architecture diagram showing the VPC, ALB, Auto Scaling, EC2, RDS, S3, CloudWatch, and CloudTrail components](screenshots/12-capstone-architecture.png)
+
 ---
 
 ## ✅ Validation Checklist
