@@ -1,21 +1,14 @@
-﻿<div align="center">
+﻿# 🔒 Lab 09 - VPC: NAT Gateway & VPC Endpoints
 
-<img src="https://img.shields.io/badge/Lab%2009-NAT%20Gateway%20%26%20VPC%20Endpoints-1ABC9C?style=for-the-badge&labelColor=232F3E" />
+> 📅 **Updated:** 21 August 2026 | ⏱️ **Duration:** ~40 minutes | 📊 **Level:** Beginner+
 
-</div>
+![VPC](https://img.shields.io/badge/VPC-NAT%20Gateway%20%26%20VPC%20Endpoints-1ABC9C?style=for-the-badge&logo=amazon-aws&logoColor=white)
+![Difficulty](https://img.shields.io/badge/Difficulty-Medium-F1C40F?style=flat-square)
+![Time](https://img.shields.io/badge/Time-~40%20minutes-2F80ED?style=flat-square)
+![Status](https://img.shields.io/badge/Status-Active%20Lab-2E7D32?style=flat-square)
 
-<div align="center">
-
-<img src="https://img.shields.io/badge/Difficulty-Medium-F4D03F?style=flat-square" />
-<img src="https://img.shields.io/badge/Time-~40min-3498DB?style=flat-square" />
-<img src="https://img.shields.io/badge/Cost-~3%20USD-E74C3C?style=flat-square" />
-<img src="https://img.shields.io/badge/Service-VPC%20%7C%20EC2-8E44AD?style=flat-square" />
-
-</div>
-
-> "Private subnets keep your instances hidden from the internet. NAT Gateways let them talk OUT without letting anyone talk IN. VPC Endpoints let them talk to AWS services without going through the internet at all!" — Rithu 🔒
-
----
+> ### 🗣️ *"Private subnets keep your instances hidden from the internet. NAT Gateways let them talk OUT without letting anyone talk IN. VPC Endpoints let them talk to AWS services without going through the internet at all!"*
+> — **Rithu** 🔒
 
 <details>
 <summary><b>🎭 Ravi & Rithu's Coffee Break Chat</b></summary>
@@ -36,550 +29,399 @@
 
 ---
 
-## 📋 Table of Contents
+## 🎯 What You'll Master
 
-- [🎯 Objective](#-objective)
-- [📊 Lab Progress](#-lab-progress)
-- [🤔 In Plain English](#-in-plain-english)
-- [🧠 Prerequisites](#-prerequisites)
-- [💰 Cost Warning](#-cost-warning)
-- [🏗️ Architecture](#️-architecture)
-- [🛠️ Step-by-Step Instructions](#️-step-by-step-instructions)
-- [✅ Validation Checklist](#-validation-checklist)
-- [🧹 Cleanup (IMPORTANT!)](#-cleanup-important)
-- [🧠 Memory Tips](#-memory-tips)
-- [🎓 What You Learned](#-what-you-learned)
-- [🎮 Test Yourself](#-test-yourself-no-peeking-)
-- [🆚 Pro Tip vs Noob Tip](#-pro-tip-vs-noob-tip)
-- [🔗 What's Next?](#-whats-next)
-- [❓ Troubleshooting](#-troubleshooting)
+| Skill | Description |
+|-------|-------------|
+| 🏘️ **Private Subnet** | No public IP, no inbound internet |
+| 🪞 **NAT Gateway** | One-way mirror: outbound yes, inbound no |
+| 🔑 **Bastion Host** | Jump box to SSH into private instances |
+| 🕳️ **VPC Endpoint (Gateway)** | Free, private, fast path to S3 |
+| 💸 **Cost Discipline** | NAT = ~$32/mo — delete it FIRST |
+
+> 💡 **Pro Tip:** This is exactly how production networks are built — public in the front yard, sensitive stuff (databases!) locked in the basement.
 
 ---
 
-<div align="center">
+## 🚦 Before You Start
 
-## 📊 Lab Progress
+### ✅ Prerequisites Checklist
+- [ ] ✅ **[Lab 08](../08%20-%20VPC%20-%20Build%20from%20Scratch/README.md)** complete (or recreate — takes ~5 min)
+- [ ] 🔑 Key pair ready
+- [ ] 🛡️ `ravi-vpc-sg` (SSH ← My IP) exists or recreate
 
-`[██░░░░░░░░░░░░░░░░░░] 5% — Let's Begin!`
-
-</div>
-
----
-
-## 🤔 In Plain English
-
-> **What is this, really?** A **private subnet** is a room with no windows — servers there have no public IP, so the internet can't even see them. A **NAT Gateway** is a one-way door: it lets those hidden servers *call out* to the internet (updates, APIs) while nobody outside can *call in*. A **VPC Endpoint** is a private tunnel straight to AWS services like S3 — your data never touches the public internet at all. 🚪
->
-> 🌍 **Why you should care:** This is exactly how production networks are built: public stuff in the front yard, sensitive stuff (databases!) locked in the basement.
+### 📦 What You Need (and Don't)
+| Required | Optional |
+|----------|----------|
+| ~40 minutes | AWS CLI v2 install on private EC2 |
+| Existing VPC from Lab 08 (or recreate) | |
 
 ---
 
-## 🎯 Objective
+## 💰 Cost & Safety First
 
-In this lab, you'll extend your VPC from Lab 08 by adding a **private subnet**, a **NAT Gateway** (so private instances can access the internet), and a **VPC Endpoint** (so private instances can access S3 directly through the AWS network). This is how production networks are designed!
-
----
-
-## 🧠 Prerequisites
-
-- [x] Completed [Lab 08 — VPC: Build from Scratch](../08%20-%20VPC%20-%20Build%20from%20Scratch/README.md)
-- [x] AWS account with console access
-- [x] Familiarity with VPC, subnets, route tables, and security groups
+> ⚠️ **NAT Gateway ≈ $0.045/hour (~$32/month) + data processing.** The priciest resource in this lab. Pennies for minutes; forget to delete = surprise bill. **DELETE IT IMMEDIATELY AFTER THE LAB.**
 
 ---
 
-## 💰 Cost Warning
+## 🧠 How It All Fits Together
 
-> ⚠️ **A NAT Gateway costs ~$0.045/hour (~$32/month) plus data processing charges** — the priciest resource in this lab. Used for a few minutes it's just pennies, but forget to delete it and you'll get a surprise bill. **DELETE IT IMMEDIATELY after the lab — do NOT skip cleanup!**
+```mermaid
+graph TD
+    NET["🌍 Internet"] <--> IGW["🚪 ravi-igw"]
+    IGW <-->|"0.0.0.0/0"| PUB["🛣️ ravi-public-subnet-1a<br/>10.0.1.0/24"]
+    PUB -->|"hosts"| NAT["🪞 ravi-nat-gw<br/>(Elastic IP)"]
+    NAT -.->|"outbound only"| PRIV["🛣️ ravi-private-subnet-1a<br/>10.0.2.0/24"]
+    PRIV -.->|"0.0.0.0/0 → NAT"| PRRT["🪧 ravi-private-rt"]
+    PRIV -.->|"S3 prefix → endpoint"| PRRT
+    BAST["🖥️ bastion-ec2<br/>public IP"] -.->|"SSH → 10.0.1.0/24"| PRIV
+    PEC["🖥️ private-ec2-test<br/>NO public IP"] --- PRIV
+    S3["🪣 S3"] <-->|"Gateway Endpoint<br/>FREE"| EP["🕳️ ravi-s3-endpoint<br/>com.amazonaws.us-east-1.s3"]
+    EP -.-> PRRT
 
----
-
-## 🏗️ Architecture
-
-```
-┌──────────────────────────────────────────────────────────────────┐
-│  VPC: ravi-custom-vpc (10.0.0.0/16)                              │
-│                                                                  │
-│  ┌──────────────────────────────┐  ┌──────────────────────────┐  │
-│  │  PUBLIC SUBNET               │  │  PRIVATE SUBNET          │  │
-│  │  10.0.1.0/24 | us-east-1a   │  │  10.0.2.0/24 | us-east-1a│  │
-│  │                              │  │                          │  │
-│  │  ┌───────────────────┐       │  │  ┌────────────────────┐  │  │
-│  │  │ Bastion / Public   │       │  │  │ Private EC2        │  │  │
-│  │  │ EC2                │       │  │  │ (no public IP)     │  │  │
-│  │  └───────────────────┘       │  │  └─────────┬──────────┘  │  │
-│  │                              │  │            │              │  │
-│  │  ┌───────────────────┐       │  │  ┌─────────▼──────────┐  │  │
-│  │  │ NAT Gateway        │◄─────┼──┼──│ Private RT          │  │  │
-│  │  │ (Elastic IP)       │       │  │ │ 0.0.0.0/0 → NAT GW │  │  │
-│  │  └───────────────────┘       │  │  │ S3 prefix → S3 EP   │  │  │
-│  │                              │  │ └────────────────────┘  │  │
-│  │  ┌───────────────────┐       │  │                          │  │
-│  │  │ Internet Gateway   │       │  │  ┌────────────────────┐  │  │
-│  │  │ (ravi-igw)         │       │  │  │ S3 VPC Endpoint    │  │  │
-│  │  └───────────────────┘       │  │  │ (com.amazonaws...s3)│  │  │
-│  └──────────────────────────────┘  │  └────────────────────┘  │  │
-│                                    └──────────────────────────┘  │
-└──────────────────────────────────────────────────────────────────┘
+    style NET fill:#FF9800,color:#fff
+    style IGW fill:#E67E22,color:#fff
+    style PUB fill:#3498DB,color:#fff
+    style NAT fill:#9C27B0,color:#fff
+    style PRIV fill:#2C3E50,color:#fff
+    style PRRT fill:#F39C12,color:#fff
+    style BAST fill:#4CAF50,color:#fff
+    style PEC fill:#4CAF50,color:#fff
+    style EP fill:#2ECC71,color:#fff
+    style S3 fill:#2ECC71,color:#fff
 ```
 
----
-
-## 🛠️ Step-by-Step Instructions
-
-### Step 0: Recreate or Reuse the VPC from Lab 08
-
-> <img src="https://img.shields.io/badge/Step%200-Recreate%20or%20Reuse%20VPC-3498DB?style=for-the-badge" />
-
-If you still have `ravi-custom-vpc` from Lab 08, use it! If you deleted it, recreate it quickly:
-
-1. Go to **VPC** → **Create VPC**
-2. **VPC only:**
-   - Name: `ravi-custom-vpc`
-   - IPv4 CIDR: `10.0.0.0/16`
-3. Create the public subnet:
-   - Name: `ravi-public-subnet-1a`
-   - AZ: us-east-1a
-   - CIDR: `10.0.1.0/24`
-4. Create and attach Internet Gateway `ravi-igw`
-5. Create route table `ravi-public-rt` with `0.0.0.0/0 → ravi-igw`
-6. Associate with `ravi-public-subnet-1a`
-7. Enable auto-assign public IP on the public subnet
-8. Recreate the `ravi-vpc-sg` security group (SSH from **My IP**) from Lab 08 — Step 6 needs it later
-
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> Same setup as Lab 08 — about 5 minutes to recreate. If you still have it, skip to Step 1!
+### 🔑 Key Concepts
+| Component | Role |
+|-----------|------|
+| **Private subnet** | No auto-assign public IP; instances invisible from internet |
+| **NAT Gateway in PUBLIC subnet** | Needs IGW route to relay traffic; the "receptionist in the lobby" |
+| **Private route table** | `0.0.0.0/0 → NAT GW` (not IGW) = outbound-only |
+| **Bastion host** | Public instance you jump through to reach private ones |
+| **S3 Gateway Endpoint** | Free, faster, more secure — skips NAT, stays in AWS network |
 
 ---
 
-### Step 1: Create a Private Subnet
+## 🪜 Step-by-Step Guide
 
-> <img src="https://img.shields.io/badge/Step%201-Create%20Private%20Subnet-2ECC71?style=for-the-badge" />
+### 🟢 Step 0: Reuse or Recreate Lab 08 VPC 🏗️
 
-A private subnet has NO direct internet access — instances here can't be reached from the internet.
+<details>
+<summary><b>🏗️ Expand if you need to rebuild</b></summary>
 
-1. Go to **VPC** → **Subnets**
-2. Click **Create subnet**
+If you still have `ravi-custom-vpc` from Lab 08, skip to Step 1! Otherwise:
+
+1. VPC only: `ravi-custom-vpc` / `10.0.0.0/16`
+2. Public subnet: `ravi-public-subnet-1a` / `10.0.1.0/24` / us-east-1a
+3. IGW `ravi-igw` → attach
+4. RT `ravi-public-rt` → `0.0.0.0/0 → ravi-igw` → associate subnet
+5. Auto-assign public IP ON
+6. SG `ravi-vpc-sg` (SSH ← My IP)
+
+</details>
+
+> 🗣️ **Rithu's Tip:** *"Same 5-minute setup as Lab 08. If you have it, you're golden."*
+
+---
+
+### 🟢 Step 1: Create Private Subnet 🛣️
+
+<details>
+<summary><b>🛣️ Expand for private subnet steps</b></summary>
+
+1. VPC → **Subnets** → ➕ **Create subnet**
+2. VPC: `ravi-custom-vpc`
 3. Configure:
-   - **VPC:** `ravi-custom-vpc`
-   - **Subnet name:** `ravi-private-subnet-1a`
-   - **Availability Zone:** `us-east-1a`
-   - **IPv4 CIDR block:** `10.0.2.0/24`
 
-> 📸 [Screenshot: Private subnet configuration]
+   | Field | Value |
+   |-------|-------|
+   | Name | `ravi-private-subnet-1a` |
+   | AZ | `us-east-1a` |
+   | CIDR | `10.0.2.0/24` |
+
+4. ✅ Create
+5. **Disable auto-assign public IP** (should be off by default — verify):
+   - Select subnet → Actions → Edit subnet settings → **UNCHECK** auto-assign public IPv4 → Save
+
+</details>
+
 ![Private subnet configuration](screenshots/private-subnet-configuration.png)
 
-4. Click **Create subnet**
-
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> Why `10.0.2.0/24`? Our VPC is `10.0.0.0/16` (65,536 IPs); the public subnet uses `10.0.1.0/24` (256 IPs), so the private subnet gets `10.0.2.0/24` (another 256). Subnet CIDRs must never overlap!
-
-5. **Important:** Make sure auto-assign public IP is **DISABLED** on this subnet:
-   - Click on `ravi-private-subnet-1a`
-   - Click **Actions** → **Edit subnet settings**
-   - Make sure **Enable auto-assign public IPv4 address** is UNCHECKED
-   - Click **Save**
-
-> 📸 [Screenshot: Auto-assign public IP DISABLED on private subnet]
 ![Auto-assign public IP DISABLED on private subnet](screenshots/private-subnet-no-public-ip.png)
 
+> 🗣️ **Rithu's Tip:** *"VPC = 65,536 IPs. Public takes 256 at .1.x, private takes another 256 at .2.x. CIDRs must NEVER overlap!"*
+
 ---
 
-### Step 2: Create the NAT Gateway
+### 🟢 Step 2: Create NAT Gateway 🪞
 
-> <img src="https://img.shields.io/badge/Step%202-Create%20NAT%20Gateway-E74C3C?style=for-the-badge" />
+<details>
+<summary><b>🪞 Expand for NAT Gateway steps</b></summary>
 
-The NAT Gateway lets instances in the private subnet access the internet (for updates, API calls, etc.) without being directly reachable from the internet.
+1. VPC → **NAT Gateways** → ➕ **Create NAT Gateway**
+2. 🔑 **Allocate Elastic IP** → gives the NAT a static public IP
+3. Configure:
 
-1. Go to **VPC** → **NAT Gateways** (left sidebar)
-2. Click **Create NAT Gateway**
+   | Field | Value |
+   |-------|-------|
+   | Name | `ravi-nat-gw` |
+   | Subnet | `ravi-public-subnet-1a` ← MUST be public! |
+   | Connectivity | Public |
+   | Elastic IP | auto-filled |
 
-#### Allocate an Elastic IP:
+4. ✅ **Create NAT Gateway** → wait for **Available** (~2–3 min)
 
-3. Click **Allocate Elastic IP** (or **Allocate new EIP**)
-4. This assigns a static public IP address to the NAT Gateway
+</details>
 
-
-#### Configure the NAT Gateway:
-
-5. **Name:** `ravi-nat-gw`
-6. **Subnet:** Select `ravi-public-subnet-1a`
-   - ⚠️ **Important:** NAT Gateways MUST be in a PUBLIC subnet (one with an IGW route)!
-7. **Connectivity type:** Public
-8. **Elastic IP allocation ID:** Should be auto-filled from step 4
-9. Click **Create NAT Gateway**
-
-> 📸 [Screenshot: NAT Gateway creation form]
 ![NAT Gateway creation form](screenshots/nat-gateway-creation-form.png)
 
-
-10. Wait for the NAT Gateway state to change to **Available** (this takes about 2-3 minutes)
-
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> Why the public subnet? The NAT Gateway forwards traffic to the internet through the IGW, so it must sit in a subnet that routes to the IGW. Think of it as a receptionist — in the lobby (public subnet), relaying messages to/from the internet for the private offices (private subnet)!
+> 🗣️ **Rithu's Tip:** *"NAT lives in the PUBLIC subnet (the lobby) — it uses the IGW to reach the internet on behalf of private instances. Receptionist analogy!"*
 
 ---
 
-### Step 3: Create a Private Route Table
+### 🟢 Step 3: Private Route Table 🪧
 
-> <img src="https://img.shields.io/badge/Step%203-Create%20Private%20Route%20Table-F39C12?style=for-the-badge" />
+<details>
+<summary><b>🪧 Expand for private route table</b></summary>
 
-We need a route table for the private subnet that routes internet traffic through the NAT Gateway.
+1. VPC → **Route Tables** → ➕ **Create route table**
+2. Name: `ravi-private-rt` · VPC: `ravi-custom-vpc` → Create
+3. **Routes** tab → Edit routes → Add route:
+   - Destination: `0.0.0.0/0`
+   - Target: **NAT Gateway** → `ravi-nat-gw` → Save
+4. **Subnet associations** → Edit → check `ravi-private-subnet-1a` → Save
 
-1. Go to **VPC** → **Route Tables**
-2. Click **Create route table**
-3. Configure:
-   - **Name:** `ravi-private-rt`
-   - **VPC:** `ravi-custom-vpc`
-4. Click **Create route table**
+</details>
 
-> 📸 [Screenshot: Private route table created]
 ![Private route table created](screenshots/private-route-table-created.png)
 
-5. Add a route to the internet via NAT:
-   - Click on `ravi-private-rt`
-   - **Routes** tab → **Edit routes**
-   - **Add route:**
-     - **Destination:** `0.0.0.0/0`
-     - **Target:** Select **NAT Gateway** → choose `ravi-nat-gw`
-   - Click **Save changes**
-
-> 📸 [Screenshot: Route: 0.0.0.0/0 → ravi-nat-gw]
 ![Route: 0.0.0.0/0 → ravi-nat-gw](screenshots/route-to-nat-gateway.png)
 
-6. Associate with the private subnet:
-   - **Subnet associations** tab → **Edit subnet associations**
-   - Check `ravi-private-subnet-1a`
-   - Click **Save**
-
-> 📸 [Screenshot: Private subnet associated with private route table]
 ![Private subnet associated with private route table](screenshots/private-route-table-association.png)
 
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> Notice the private route table has `0.0.0.0/0 → ravi-nat-gw` instead of `→ ravi-igw`. This means traffic goes through the NAT Gateway (outbound only) instead of directly to the internet (bidirectional). That's what makes the subnet "private"!
+> 🗣️ **Rithu's Tip:** *"Private RT points to NAT, not IGW. That's what makes it 'private' — traffic goes out through the one-way door, never directly to the internet."*
 
 ---
 
-### Step 4: Create a Security Group for the Private EC2
+### 🟢 Step 4: Private Security Group 🛡️
 
-> <img src="https://img.shields.io/badge/Step%204-Create%20Security%20Group-9B59B6?style=for-the-badge" />
+<details>
+<summary><b>🛡️ Expand for private SG</b></summary>
 
-We need a security group that allows SSH access from the public subnet.
+1. VPC → **Security Groups** → ➕ **Create security group**
+2. Name: `ravi-private-sg` · Description: `Private EC2 security group` · VPC: `ravi-custom-vpc`
+3. **Inbound:** SSH (22) · Source: **Custom** → `10.0.1.0/24` (public subnet CIDR!)
+4. Outbound: default Allow-all → Create
 
-1. Go to **VPC** → **Security Groups**
-2. Click **Create security group**
-3. Configure:
-   - **Name:** `ravi-private-sg`
-   - **Description:** `Private EC2 security group`
-   - **VPC:** `ravi-custom-vpc`
-4. **Inbound rules:**
-   - Click **Add rule**
-   - **Type:** SSH
-   - **Port range:** 22
-   - **Source:** Select **Custom** → type `10.0.1.0/24` (the public subnet CIDR)
-   - 📸 [Screenshot: SSH rule from public subnet CIDR 10.0.1.0/24]
-   ![SSH rule from public subnet CIDR 10.0.1.0/24](screenshots/security-group-ssh-rule.png)
+</details>
 
+![SSH rule from public subnet CIDR 10.0.1.0/24](screenshots/security-group-ssh-rule.png)
 
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> We're allowing SSH only from the public subnet (10.0.1.0/24). This means you can SSH to the private EC2 from the public EC2 (bastion host) but NOT directly from the internet. This is a common security pattern!
-
-5. **Outbound rules:** Allow all traffic (default)
-6. Click **Create security group**
+> 🗣️ **Rithu's Tip:** *"SSH only from the public subnet. You'll jump from bastion → private. Direct internet SSH = blocked. This IS the pattern!"*
 
 ---
 
-### Step 5: Launch EC2 in the Private Subnet
+### 🟢 Step 5: Launch Private EC2 🖥️
 
-> <img src="https://img.shields.io/badge/Step%205-Launch%20Private%20EC2-1ABC9C?style=for-the-badge" />
+<details>
+<summary><b>🖥️ Expand for private instance</b></summary>
 
-1. Go to **EC2** → **Launch instance**
-2. Configure:
-   - **Name:** `private-ec2-test`
-   - **AMI:** Amazon Linux 2023
-   - **Instance type:** t2.micro
-   - **Key pair:** Select your existing key pair
-3. **Network settings** → **Edit:**
-   - **VPC:** `ravi-custom-vpc`
-   - **Subnet:** `ravi-private-subnet-1a`
-   - **Auto-assign public IP:** Disabled
-   - **Security group:** Select existing → `ravi-private-sg`
-4. Click **Launch instance**
-5. Wait for it to be **Running**
+1. EC2 → Launch instance
+2. Name: `private-ec2-test` · AL2023 · t2.micro · your key pair
+3. Network → Edit:
+   - VPC: `ravi-custom-vpc`
+   - Subnet: `ravi-private-subnet-1a`
+   - Auto-assign public IP: **Disabled**
+   - SG: `ravi-private-sg`
+4. Launch → wait for Running
 
-> 📸 [Screenshot: Private EC2 instance running — note NO public IP!]
+</details>
+
 ![Private EC2 instance running — note NO public IP!](screenshots/private-ec2-no-public-ip.png)
 
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> Notice that the private EC2 has NO public IP address. You can't SSH to it directly from your laptop. That's by design! We'll access it through the public EC2 (bastion host).
+> 🗣️ **Rithu's Tip:** *"No public IP. You CAN'T SSH directly from your laptop. That's by design — we'll use the bastion."*
 
 ---
 
-### Step 6: Launch a Public EC2 (Bastion Host)
+### 🟢 Step 6: Launch Bastion Host 🏰
 
-> <img src="https://img.shields.io/badge/Step%206-Launch%20Bastion%20Host-E67E22?style=for-the-badge" />
+<details>
+<summary><b>🏰 Expand for bastion</b></summary>
 
-We need a "jump box" or "bastion host" to SSH into the private instance.
+1. EC2 → Launch instance
+2. Name: `bastion-ec2` · AL2023 · t2.micro · your key pair
+3. Network → Edit:
+   - VPC: `ravi-custom-vpc`
+   - Subnet: `ravi-public-subnet-1a`
+   - Auto-assign public IP: **Enabled**
+   - SG: `ravi-vpc-sg` (SSH ← My IP)
+4. Launch → wait for Running + public IP
 
-1. Go to **EC2** → **Launch instance**
-2. Configure:
-   - **Name:** `bastion-ec2`
-   - **AMI:** Amazon Linux 2023
-   - **Instance type:** t2.micro
-   - **Key pair:** Select your existing key pair
-3. **Network settings** → **Edit:**
-   - **VPC:** `ravi-custom-vpc`
-   - **Subnet:** `ravi-public-subnet-1a`
-   - **Auto-assign public IP:** Enabled
-   - **Security group:** Select existing → `ravi-vpc-sg` (from Lab 08 — allows SSH from My IP)
-4. Click **Launch instance**
-5. Wait for it to be **Running** and get a public IP
+</details>
 
-> 📸 [Screenshot: Bastion EC2 with public IP in public subnet]
 ![Bastion EC2 with public IP in public subnet](screenshots/bastion-ec2-public-ip.png)
 
 ---
 
-### Step 7: SSH into Private EC2 via Bastion
+### 🟢 Step 7: SSH Private via Bastion 🔐
 
-> <img src="https://img.shields.io/badge/Step%207-SSH%20via%20Bastion-3498DB?style=for-the-badge" />
+<details>
+<summary><b>🔐 Expand for bastion SSH</b></summary>
 
-1. Copy the **public IP** of `bastion-ec2`
-2. SSH into the bastion:
-
-```bash
-ssh -i "your-key.pem" ec2-user@<BASTION_PUBLIC_IP>
-```
-
-3. From the bastion, SSH into the private EC2:
+1. Copy bastion's **public IP**
+2. SSH with agent forwarding (so your key works on the next hop):
 
 ```bash
-ssh -i "your-key.pem" ec2-user@<PRIVATE_EC2_PRIVATE_IP>
+ssh -A -i "your-key.pem" ec2-user@<BASTION_PUBLIC_IP>
 ```
 
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> You need to copy your `.pem` key file to the bastion first, or use SSH agent forwarding:
-> ```bash
-> ssh -A -i "your-key.pem" ec2-user@<BASTION_IP>
-> ```
-> The `-A` flag forwards your SSH agent so the bastion can use your key to connect to the private instance!
+3. From bastion, SSH to private instance's **private IP**:
+
+```bash
+ssh ec2-user@<PRIVATE_EC2_PRIVATE_IP>
+```
+
+</details>
+
+> 🗣️ **Rithu's Tip:** *"`-A` forwards your SSH agent — the bastion uses YOUR key to auth to the private instance. No copying .pem files around!"*
 
 ---
 
-### Step 8: Verify Internet Access via NAT Gateway
+### 🟢 Step 8: Verify Internet via NAT 🌐
 
-> <img src="https://img.shields.io/badge/Step%208-Verify%20Internet%20Access-2ECC71?style=for-the-badge" />
+<details>
+<summary><b>🌐 Expand for NAT verification</b></summary>
 
-On the PRIVATE EC2 (via bastion):
+On the **private EC2** (via bastion):
 
 ```bash
 curl http://checkip.amazonaws.com
 ```
 
-**Important:** The IP returned should be the **NAT Gateway's Elastic IP** — NOT the instance's IP (because the instance has no public IP!).
-
-You can verify: go to the NAT Gateway in the VPC console and check its Elastic IP — it should match!
-![NAT Gateway Elastic IP matches checkip output](screenshots/nat-gateway-verification.png)
+The returned IP = **NAT Gateway's Elastic IP** — not the instance's (it has none!).
 
 ```bash
 ping -c 4 8.8.8.8
 ```
 
-This should work! The private EC2 can reach the internet through the NAT Gateway.
+Replies = outbound internet works through NAT. ✅
 
+</details>
 
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> This is the magic of NAT: no public IP, yet full outbound internet — the gateway forwards traffic out and routes replies back. And because it's outbound-only, nobody from the internet can initiate a connection TO the instance. One-way door!
+![NAT Gateway Elastic IP matches checkip output](screenshots/nat-gateway-verification.png)
+
+> 🗣️ **Rithu's Tip:** *"Private instance, no public IP, yet full outbound internet. The one-way door does its job — nobody can knock IN."*
 
 ---
 
-### Step 9: Create a VPC Endpoint for S3
+### 🟢 Step 9: Create S3 VPC Endpoint 🕳️
 
-> <img src="https://img.shields.io/badge/Step%209-Create%20VPC%20Endpoint-E74C3C?style=for-the-badge" />
+<details>
+<summary><b>🕳️ Expand for endpoint steps</b></summary>
 
-VPC Endpoints let your private instances access AWS services (like S3) through the AWS private network — without going through the internet or the NAT Gateway. This is faster, more secure, and FREE!
+1. VPC → **Endpoints** → ➕ **Create endpoint**
+2. Configure:
 
-1. Go to **VPC** → **Endpoints** (left sidebar)
-2. Click **Create endpoint**
-3. Configure:
-   - **Name:** `ravi-s3-endpoint`
-   - **Service:** Search for `s3` and select `com.amazonaws.us-east-1.s3` (Type: Gateway)
-     - ⚠️ Make sure you pick the **Gateway** type, not Interface
-   - **VPC:** `ravi-custom-vpc`
-   - **Route tables:** Check `ravi-private-rt` — AWS auto-adds the S3 route (prefix list) to it
-   - **Policy:** Full Access (or leave as default)
-4. Click **Create endpoint**
+   | Field | Value |
+   |-------|-------|
+   | Name | `ravi-s3-endpoint` |
+   | Service | `com.amazonaws.us-east-1.s3` (Type: **Gateway**) |
+   | VPC | `ravi-custom-vpc` |
+   | Route tables | Check `ravi-private-rt` (auto-adds S3 prefix list) |
+   | Policy | Full Access |
 
-> 📸 [Screenshot: VPC Endpoint creation with S3 gateway endpoint]
+3. ✅ Create → wait for **Available**
+
+</details>
+
 ![VPC Endpoint creation with S3 gateway endpoint](screenshots/s3-endpoint-creation.png)
 
-5. Wait for the endpoint to become **Available**
-
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> Why a VPC Endpoint for S3? **Free** (gateway type), **faster** (stays inside AWS's network), **more secure** (no internet exposure) — and S3 traffic skips the NAT Gateway, saving you data processing fees.
+> 🗣️ **Rithu's Tip:** *"Gateway endpoint for S3 = **FREE**, faster, more secure. Traffic: Private EC2 → Endpoint → S3. No NAT, no internet, no NAT data fees!"*
 
 ---
 
-### Step 10: Verify S3 Access via VPC Endpoint
+### 🟢 Step 10: Verify S3 Access via Endpoint ✅
 
-> <img src="https://img.shields.io/badge/Step%2010-Verify%20S3%20Access-F39C12?style=for-the-badge" />
+<details>
+<summary><b>✅ Expand for S3 verification</b></summary>
 
-On the PRIVATE EC2 (via bastion), install the AWS CLI if not already present:
+On private EC2:
 
 ```bash
-# Install AWS CLI v2 (install unzip first if missing: sudo dnf install -y unzip)
+# Install AWS CLI v2
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 unzip awscliv2.zip
 sudo ./aws/install
-```
-
-Then test S3 access:
-
-```bash
+aws configure   # add keys, or better: attach IAM role with S3 read
 aws s3 ls
 ```
 
-This should list your S3 buckets (or return empty if you have none). The important thing is that it WORKS — and it's going through the VPC Endpoint, NOT the NAT Gateway!
+Works = traffic went through the VPC Endpoint, not NAT. ✅
 
-> **Heads up:** The instance has no IAM role by default, so `aws s3 ls` needs credentials. Run `aws configure` with your access keys, or relaunch the instance with an IAM role that allows S3 read access (e.g., `AmazonS3ReadOnlyAccess`).
+</details>
 
-![S3 access via the VPC endpoint verified](screenshots/nat-gateway-verification.png)
-
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> Without the endpoint: Private EC2 → NAT Gateway → Internet → S3. With it: Private EC2 → VPC Endpoint → S3. Faster, cheaper, more secure!
-
----
-
-### Step 11: Verify Your Work
-
-> <img src="https://img.shields.io/badge/Step%2011-Verify%20Your%20Work-9B59B6?style=for-the-badge" />
-
-Everything's in place — work through the [Validation Checklist](#-validation-checklist) below to confirm each piece before cleanup.
+> 🗣️ **Rithu's Tip:** *"Without endpoint: EC2 → NAT → Internet → S3. With it: EC2 → Endpoint → S3. Free, faster, secure."*
 
 ---
 
 ## ✅ Validation Checklist
 
-| # | ✅ Check | Status |
+| # | Check | Status |
 |---|-------|--------|
-| 1 | Private subnet created with CIDR `10.0.2.0/24` | ☐ ✅ |
-| 2 | NAT Gateway `ravi-nat-gw` available with Elastic IP | ☐ ✅ |
-| 3 | Private route table routes through NAT | ☐ ✅ |
-| 4 | Private EC2 has no public IP | ☐ ✅ |
-| 5 | Private EC2 can reach internet via NAT | ☐ ✅ |
-| 6 | VPC Endpoint for S3 created | ☐ ✅ |
-| 7 | `aws s3 ls` works on private EC2 | ☐ ✅ |
-| 8 | Bastion host allows SSH access to private EC2 | ☐ ✅ |
+| 1️⃣ | Private subnet `10.0.2.0/24`, no auto-assign IP | ☐ ✅ |
+| 2️⃣ | `ravi-nat-gw` Available with Elastic IP | ☐ ✅ |
+| 3️⃣ | `ravi-private-rt` has `0.0.0.0/0 → NAT` + associated | ☐ ✅ |
+| 4️⃣ | Private EC2 has NO public IP | ☐ ✅ |
+| 5️⃣ | Private EC2 reaches internet (curl + ping via NAT) | ☐ ✅ |
+| 6️⃣ | S3 Gateway Endpoint created + Available | ☐ ✅ |
+| 7️⃣ | `aws s3 ls` works on private EC2 | ☐ ✅ |
+| 8️⃣ | Bastion → private SSH works | ☐ ✅ |
 
 ---
 
-## 🧹 Cleanup (IMPORTANT!)
+## 🧹 Cleanup (Follow Order!)
 
-> ⚠️ **Delete the NAT Gateway FIRST — it's the expensive one (~$32/month)! Do not forget!**
+> ⚠️ **DELETE NAT GATEWAY FIRST — it's the ~$32/mo expense!**
 
-### 🗑️ Step 1: Delete the NAT Gateway (CRITICAL!)
+| Step | Action | Console Location |
+|------|--------|------------------|
+| 1️⃣ 🗑️ | Delete `ravi-nat-gw` (type name) | VPC → NAT Gateways |
+| 2️⃣ 🔑 | Release Elastic IP | VPC → Elastic IPs |
+| 3️⃣ 🕳️ | Delete `ravi-s3-endpoint` | VPC → Endpoints |
+| 4️⃣ 🖥️ | Terminate `bastion-ec2` + `private-ec2-test` | EC2 → Instances |
+| 5️⃣ 🛡️ | Delete `ravi-private-sg`, `ravi-vpc-sg` | VPC → Security Groups |
+| 6️⃣ 🪧 | Disassociate + delete `ravi-private-rt`, `ravi-public-rt` | VPC → Route Tables |
+| 7️⃣ 🚪 | Detach + delete `ravi-igw` | VPC → Internet Gateways |
+| 8️⃣ 🛣️ | Delete `ravi-private-subnet-1a`, `ravi-public-subnet-1a` | VPC → Subnets |
+| 9️⃣ 🏘️ | Delete `ravi-custom-vpc` | VPC → Your VPCs |
 
-> <img src="https://img.shields.io/badge/Step%201-Delete%20NAT%20Gateway-E74C3C?style=for-the-badge" />
-
-1. Go to **VPC** → **NAT Gateways**
-2. Select `ravi-nat-gw`
-3. Click **Actions** → **Delete NAT gateway**
-4. Type `ravi-nat-gw` to confirm
-5. Click **Delete**
-
-> 📸 [Screenshot: NAT Gateway deletion confirmed]
 ![NAT Gateway deletion confirmed](screenshots/nat-gateway-delete-confirmation.png)
 
-### 🗑️ Step 2: Release the Elastic IP
-
-> <img src="https://img.shields.io/badge/Step%202-Release%20Elastic%20IP-F39C12?style=for-the-badge" />
-
-1. Go to **VPC** → **Elastic IPs**
-2. Select the Elastic IP used by the NAT Gateway
-3. Click **Actions** → **Release Elastic IP addresses**
-4. Confirm
-
-### 🗑️ Step 3: Delete the VPC Endpoint
-
-> <img src="https://img.shields.io/badge/Step%203-Delete%20VPC%20Endpoint-2ECC71?style=for-the-badge" />
-
-1. Go to **VPC** → **Endpoints**
-2. Select `ravi-s3-endpoint`
-3. Click **Actions** → **Delete endpoints**
-4. Confirm
-
-### 🗑️ Step 4: Terminate Both EC2 Instances
-
-> <img src="https://img.shields.io/badge/Step%204-Terminate%20EC2%20Instances-9B59B6?style=for-the-badge" />
-
-1. Go to **EC2** → **Instances**
-2. Select `bastion-ec2` → **Instance state** → **Terminate instance**
-3. Select `private-ec2-test` → **Instance state** → **Terminate instance**
-
-### 🗑️ Step 5: Delete Security Groups
-
-> <img src="https://img.shields.io/badge/Step%205-Delete%20Security%20Groups-3498DB?style=for-the-badge" />
-
-1. Go to **VPC** → **Security Groups**
-2. Delete `ravi-private-sg`
-3. Delete `ravi-vpc-sg` (if not needed for future labs)
-
-### 🗑️ Step 6: Delete Route Tables
-
-> <img src="https://img.shields.io/badge/Step%206-Delete%20Route%20Tables-E67E22?style=for-the-badge" />
-
-1. Go to **VPC** → **Route Tables**
-2. Disassociate and delete `ravi-private-rt`
-3. Disassociate and delete `ravi-public-rt`
-
-### 🗑️ Step 7: Detach and Delete Internet Gateway
-
-> <img src="https://img.shields.io/badge/Step%207-Delete%20Internet%20Gateway-1ABC9C?style=for-the-badge" />
-
-1. **Internet Gateways** → select `ravi-igw` → **Detach** → **Delete**
-
-### 🗑️ Step 8: Delete Subnets
-
-> <img src="https://img.shields.io/badge/Step%208-Delete%20Subnets-27AE60?style=for-the-badge" />
-
-1. Delete `ravi-private-subnet-1a`
-2. Delete `ravi-public-subnet-1a`
-
-### 🗑️ Step 9: Delete the VPC
-
-> <img src="https://img.shields.io/badge/Step%209-Delete%20VPC-C0392B?style=for-the-badge" />
-
-1. **Your VPCs** → select `ravi-custom-vpc` → **Delete VPC** → type name → confirm
-
-
+> 🗣️ **Rithu's Tip:** *"Most expensive mistake in this lab: leaving NAT running. Set a timer! ⏰💰"*
 
 ---
 
-## 🧠 Memory Tips
+## 🚀 Level Ups (Post-Core Lab)
 
-Stick these in your brain and they'll never leave. 🧲
-
-| 🧠 Memory Hook | Remember it like... |
-|---|---|
-| **NAT = one-way mirror** | You can see out; nobody can see in. **Outbound-only** internet for private instances. 🪞 |
-| **NAT sits in the PUBLIC subnet** | The middleman lives **in the lobby**, not the basement — it routes through the IGW. 🏢 |
-| **Gateway Endpoint for S3 = FREE** | Unlike NAT ($$$), the S3 gateway endpoint costs **$0**. Free private tunnel! 🤑 |
-| **Bastion host = jump box** | A tiny public instance you **jump through** to SSH into private servers. Your ladder over the wall. 🪜 |
-| **NAT ≈ $0.045/hour** | ~$32/month if you leave it on. **Delete it after the lab!** 💸 |
-
-> 🗣️ **Rithu:** *"Private + NAT = secure AND connected. Private without NAT = a hermit. That's the difference between outbound-only and no-connectivity."*
+| Challenge | What to Try | Notes |
+|-----------|-------------|-------|
+| 🪞 **Break the Door** | Stop NAT → `dnf update` fails → recreate NAT → works | Feel what NAT actually does |
+| 🔐 **Interface Endpoint** | Add `com.amazonaws.us-east-1.secretsmanager` (Interface type, ~$7.20/mo) | Not free, but private |
+| 🏗️ **Multi-AZ NAT** | NAT per AZ for HA | Production requirement |
 
 ---
 
-## 🎓 What You Learned
+## 🆘 Troubleshooting Quick Reference
 
-- **Private subnets** don't have direct internet access — instances there have no public IPs
-- **NAT Gateways** allow outbound internet access for private instances without inbound exposure
-- NAT Gateways sit in **public subnets** and route traffic through the **Internet Gateway**
-- **VPC Endpoints** let private instances access AWS services through the AWS private network
-- **Gateway VPC Endpoints** for S3 are free and don't require a NAT Gateway
-- **Bastion hosts** (jump boxes) are used to SSH into private instances
-- The difference between **outbound-only** (NAT) and **no connectivity** (no NAT, no endpoint)
+| 🔍 Issue | 💡 Likely Cause | 🔧 Fix |
+|-------|--------------|-----|
+| 🌐 Private EC2 no internet | NAT not Available / wrong RT / no association | Check all three; wait 2–3 min for NAT init |
+| ⏳ `curl checkip` times out | NAT init / public subnet missing IGW route | Verify public subnet RT → IGW |
+| 🔐 Can't SSH private from bastion | SG wrong / wrong VPC / key mismatch | SG must allow 10.0.1.0/24; same VPC; agent forward |
+| 🪣 `aws s3 ls` fails | Endpoint not Available / not on private RT / no IAM | Endpoint on `ravi-private-rt` + IAM role/creds |
+| ❌ Too many NAT Gateways | Limit 5/AZ | Delete unused |
+| 🔑 EIP won't release | Still associated | Delete NAT first, wait, retry |
+| 🕳️ Endpoint creation fails | Picked Interface type | Must be **Gateway** for S3 |
 
 ---
 
@@ -589,76 +431,68 @@ Stick these in your brain and they'll never leave. 🧲
 
 <details><summary>👀 Show answer</summary>
 
-**A:** The **public subnet** — it needs an internet path (via the IGW) so it can relay traffic for private instances. 🏢
+**A:** The **public subnet** — it needs an internet path (via IGW) to relay traffic for private instances. 🏢
 
 </details>
 
-**Q2:** Can a hacker on the internet initiate a connection to your private instance behind the NAT Gateway?
+**Q2:** Can a hacker on the internet initiate a connection to your private instance behind NAT?
 
 <details><summary>👀 Show answer</summary>
 
-**A:** **No.** NAT allows **outbound only**. Nobody can reach in — that's the whole point. 🪞
+**A:** **No.** NAT is **outbound only**. That's the whole point. 🪞
 
 </details>
 
-**Q3:** Your private instance needs to reach S3. Which is cheaper: a NAT Gateway or a Gateway VPC Endpoint?
+**Q3:** Private instance needs S3. Cheaper: NAT Gateway or Gateway VPC Endpoint?
 
 <details><summary>👀 Show answer</summary>
 
-**A:** The **Gateway VPC Endpoint — it's free!** NAT Gateways cost per-hour + data. Endpoint for the win. 🤑
+**A:** **Gateway VPC Endpoint — it's FREE!** NAT = hourly + data. Endpoint for the win. 🤑
 
 </details>
 
-### 🔥 Bonus Challenge
-
-Delete (or stop) the NAT Gateway temporarily, then from your private instance try `sudo dnf update`. It fails — because the one-way door is gone. Recreate it and watch the update work again. You just *felt* what NAT actually does. 🪞
-
-> 💪 **Rithu:** *"Security is best understood by feeling the absence of it. Break it, fix it, learn it."
+> 💪 **Rithu:** *"Security is best understood by feeling the absence of it. Break it, fix it, learn it."*
 
 ---
 
-### 🆚 Pro Tip vs Noob Tip
+## 📚 Official Documentation
+
+- 🪞 [NAT Gateways](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html)
+- 🕳️ [VPC Endpoints](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-endpoints.html)
+- 🔐 [Bastion Hosts (AWS Best Practices)](https://docs.aws.amazon.com/whitepapers/latest/aws-security-best-practices/bastion-hosts.html)
+
+---
+
+## 🎓 What You Learned
+
+> **The basement architect's blueprint:**
+> - 🛣️ **Private subnet** → no public IP, invisible from internet
+> - 🪞 **NAT Gateway** → outbound-only, lives in public subnet, costs real money
+> - 🪧 **Private RT** → `0.0.0.0/0 → NAT` (not IGW!)
+> - 🏰 **Bastion** → your ladder over the wall (SSH jump)
+> - 🕳️ **S3 Gateway Endpoint** → free, fast, private, skips NAT entirely
+
+**Golden Habit:** Private by default → NAT for outbound → Endpoints for AWS services → delete NAT immediately. 🧹
 
 | | Approach |
 |---|---|
-| **Noob Tip** | Make everything public to skip the NAT setup — easy target for attackers |
-| **Pro Tip** | Private subnets + NAT for outbound + VPC Endpoints for AWS services. Secure, and still connected |
+| 👶 **Noob Way** | Everything public "to skip NAT setup" — easy target |
+| 🧙 **Pro Way** | Private subnets + NAT for outbound + VPC Endpoints for AWS services. Secure AND connected |
 
 ---
 
-## 🔗 What's Next?
+## ➡️ What's Next?
 
-You've built a proper VPC with public and private subnets! Now let's learn how to distribute traffic across multiple EC2 instances using an Application Load Balancer.
+Proper VPC with public + private done. Next: distribute traffic across multiple EC2s with an Application Load Balancer. ⚖️
 
-➡️ **[Lab 10 — ELB: Application Load Balancer](../10%20-%20ELB%20-%20Application%20Load%20Balancer/README.md)**
-
----
-
-## ❓ Troubleshooting
-
-<details>
-<summary><strong>Click to expand Troubleshooting Table</strong></summary>
-
-| 🔍 Problem | 💡 Solution |
-|---------|----------|
-| 🔧 Private EC2 can't reach internet | Check: (1) NAT Gateway is Available, (2) Private route table has `0.0.0.0/0 → NAT GW`, (3) Route table is associated with private subnet |
-| 🔧 `curl checkip.amazonaws.com` times out | NAT Gateway may still be initializing (wait 2-3 min). Also check the NAT's subnet has a route to the IGW |
-| 🔧 Can't SSH to private EC2 from bastion | Make sure: (1) Private SG allows SSH from public subnet CIDR `10.0.1.0/24`, (2) Bastion and private EC2 are in the same VPC, (3) You're using the correct key pair |
-| 🔧 `aws s3 ls` fails on private EC2 | Check: (1) VPC Endpoint is Available, (2) Endpoint is associated with `ravi-private-rt`, (3) AWS CLI is installed and configured |
-| 🔧 "Too many NAT Gateways" error | You may have hit the limit (5 per Availability Zone). Delete unused NAT Gateways first |
-| 🔧 Can't delete NAT Gateway | Make sure no resources are actively using it. Wait a moment and try again |
-| 🔧 Elastic IP won't release | Disassociate it from any resource first (NAT Gateway should be deleted by now) |
-| 🔧 VPC Endpoint creation fails | Make sure you selected the **Gateway** type (not Interface) for S3 |
-
-</details>
-
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> The most expensive mistake in this lab is leaving the NAT Gateway running (~$0.045/hr ≈ $32/month). Set a timer if you need to! ⏰💰
+🎯 **[Lab 10 - ELB: Application Load Balancer](../10%20-%20ELB%20-%20Application%20Load%20Balancer/README.md)**
 
 ---
 
 <div align="center">
 
-<img src="https://img.shields.io/badge/Lab%2009-Complete!-27AE60?style=for-the-badge&labelColor=232F3E" />
+### ⭐ Enjoyed this lab? Star the repo & share your feedback!
+
+**Happy Learning!** 🚀☁️
 
 </div>
