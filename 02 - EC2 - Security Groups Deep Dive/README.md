@@ -1,23 +1,14 @@
-<div align="center">
+# 🔥 Lab 02 - EC2: Security Groups Deep Dive
 
-# Lab 02 — EC2: Security Groups Deep Dive
+> 📅 **Updated:** 21 August 2026 | ⏱️ **Duration:** ~25 minutes | 📊 **Level:** Beginner
 
-<img src="https://img.shields.io/badge/Lab%2002-EC2%20Security%20Groups-FF9900?style=for-the-badge&labelColor=232F3E" />
+![Security Groups](https://img.shields.io/badge/EC2-Security%20Groups-FF9900?style=for-the-badge&logo=amazon-aws&logoColor=white)
+![Difficulty](https://img.shields.io/badge/Difficulty-Easy-2ECC71?style=flat-square)
+![Time](https://img.shields.io/badge/Time-~25%20minutes-2F80ED?style=flat-square)
+![Status](https://img.shields.io/badge/Status-Active%20Lab-2E7D32?style=flat-square)
 
-<br/>
-
-![Difficulty: Easy](https://img.shields.io/badge/Difficulty-Easy-27AE60?style=flat-square)
-![Time: ~25 min](https://img.shields.io/badge/Time-~25%20min-2980B9?style=flat-square)
-![Cost: <$1](https://img.shields.io/badge/Cost-%3C%241-95A5A6?style=flat-square)
-![Service: EC2/VPC](https://img.shields.io/badge/Service-EC2%2FVPC-FF9900?style=flat-square)
-
-<br/>
-
-_"Security groups are the bouncers of your EC2 club. They decide who gets in (inbound) and what the party people can access (outbound). Tonight, YOU are the bouncer."_ — Rithu
-
-</div>
-
----
+> ### 🗣️ *"Security groups are the bouncers of your EC2 club. They decide who gets in (inbound) and what the party people can access (outbound). Tonight, YOU are the bouncer."*
+> — **Rithu** 🚪
 
 <details>
 <summary><b>🎭 Ravi & Rithu's Coffee Break Chat</b></summary>
@@ -26,176 +17,158 @@ _"Security groups are the bouncers of your EC2 club. They decide who gets in (in
 
 **Rithu:** "Exactly! But this bouncer checks IDs, remembers faces, and never takes a break."
 
-**Ravi:** "What if I open port 22 to 0.0.0.0/0?"
+**Ravi:** "What if I open port 22 to `0.0.0.0/0`?"
 
-**Rithu:** "That's like leaving your front door wide open with a sign saying 'Free WiFi + Steal My Stuff'."
+**Rithu:** "That's leaving your front door wide open with a sign saying 'Free WiFi + Steal My Stuff'."
 
-**Ravi:** "Noted. Closing that immediately."
+**Ravi:** "...Noted. Closing that immediately."
 
 </details>
 
 ---
 
-## 📋 Table of Contents
+## 🎯 What You'll Master
 
-- [🎯 Objective](#-objective)
-- [📊 Lab Progress](#-lab-progress)
-- [🤔 In Plain English](#-in-plain-english)
-- [🧠 Prerequisites](#-prerequisites)
-- [💰 Cost Warning](#-cost-warning)
-- [🏗️ Architecture](#️-architecture)
-- [🛠️ Step-by-Step Instructions](#️-step-by-step-instructions)
-- [✅ Validation Checklist](#-validation-checklist)
-- [🧹 Cleanup (IMPORTANT!)](#-cleanup-important)
-- [🧠 Memory Tips](#-memory-tips)
-- [🎓 What You Learned](#-what-you-learned)
-- [🎮 Test Yourself](#-test-yourself-no-peeking-)
-- [🆚 Pro Tip vs Noob Tip](#pro-tip-vs-noob-tip)
-- [🔗 What's Next?](#-whats-next)
-- [❓ Troubleshooting](#-troubleshooting)
+| Skill | Description |
+|-------|-------------|
+| 🛡️ **Create Security Groups** | Hand-crafted rules instead of wizard defaults |
+| 🌐 **Control Web Traffic** | Add/remove HTTP access live — watch the site die & revive |
+| 🔐 **Restrict SSH by IP** | Understand why *My IP* matters |
+| ⚡ **Live Rule Changes** | Rules apply instantly — no reboots |
+| 🔗 **SG-to-SG Referencing** | The multi-tier secret weapon |
+| 🧠 **Stateful Thinking** | Why replies flow back without extra rules |
+
+> 💡 **Pro Tip:** Misconfigured security groups cause more outages and hacks than almost anything else in AWS. Master this lab and you'll never be the person who "opened everything just in case."
 
 ---
 
-<div align="center">
+## 🚦 Before You Start
 
-## 📊 Lab Progress
+### ✅ Prerequisites Checklist
+- [ ] ✅ **[Lab 01](../01%20-%20EC2%20-%20Launch%20and%20Connect/README.md) complete** — you need SSH basics + your key pair
+- [ ] 🌍 Same Region as Lab 01
+- [ ] 💻 Comfortable with basic Linux shell commands
 
-`[██░░░░░░░░░░░░░░░░░░] 5% — Let's Begin!`
-
-</div>
-
----
-
-## 🤔 In Plain English
-
-> **What is this, really?** A Security Group is a **virtual bouncer** standing outside your EC2 instance. Every packet of traffic must show its ID card (the rules) before it's allowed in or out. Unlike a firewall you configure on the server itself, this bouncer lives *outside* — in AWS's network — and guards everything behind it.
->
-> 🌍 **Why you should care:** Misconfigured security groups cause more outages and hacks than almost anything else in AWS. Master this lab and you'll stop being the person who "opened everything just in case."
+### 📦 What You Need (and Don't)
+| Required | Optional |
+|----------|----------|
+| Key pair from Lab 01 | Second browser for testing |
+| ~25 minutes | |
 
 ---
 
-## 🎯 Objective
+## 💰 Cost & Safety First
 
-Become a security group expert by creating, modifying, and chaining security group rules on EC2 instances. You'll see firsthand how traffic flows in a live environment, then intentionally block traffic to understand how security groups enforce boundaries.
+> ✅ **Security groups are always free** — AWS charges for compute time, not firewall rules. Stick to `t2.micro` and this lab costs pennies (or draws pennies from credits on post-Jul-2025 accounts).
 
-## 🧠 Prerequisites
+> 💸 **Ravi's Mistake of the Day:** *"I opened SSH to 0.0.0.0/0 during a lab. Within 10 minutes my instance was running crypto-mining software. AWS sent me a very stern email. Lesson: LOCK. YOUR. PORTS."* 🔒
 
-- Completion of **[Lab 01 — EC2: Launch and Connect](../01%20-%20EC2%20-%20Launch%20and%20Connect/README.md)** — you need SSH basics
-- Familiarity with Linux shell navigation
+### 🏷️ Naming Convention
 
-## 💰 Cost Warning
+| Resource | Name |
+|----------|------|
+| 🛡️ Web SG | `web-server-sg` |
+| 🛡️ App SG | `app-sg` |
+| 🖥️ Instances | `security-group-lab-instance`, `app-instance` |
 
-> <img src="https://img.shields.io/badge/Warning-Important-E74C3C?style=flat-square" />
+---
 
-Still Free Tier eligible as long as you stick to t2.micro. Security groups themselves are always free — AWS charges for compute time, not firewall rules. But **terminate unused instances** when done.
+## 🧠 How It All Fits Together
 
-> **Ravi's Mistake of the Day:** I opened SSH to 0.0.0.0/0 (the entire internet) during a lab. Within 10 minutes, my instance was compromised with crypto mining software. AWS sent me a very stern email. Lesson: LOCK. YOUR. PORTS.
+```mermaid
+graph TD
+    U["🌍 Internet"] -->|"HTTP :80"| WSG["🛡️ web-server-sg<br/>SSH :22 ← My IP<br/>HTTP :80 ← world"]
+    ME["💻 Your Laptop"] -->|"SSH :22"| WSG
+    WSG --> W["🖥️ web instance<br/>httpd"]
+    W -->|"HTTP :80<br/>source = web-server-sg 🤝"| ASG["🛡️ app-sg"]
+    ASG --> A["🖥️ app instance<br/>private subnet vibes"]
 
-## 🏗️ Architecture
-
-```
-╔══════════════════════════════════════════════════════════════╗
-║                          VPC                                 ║
-║                                                              ║
-║   ┌──────────────────────────────┐    ┌──────────────────┐   ║
-║   │     web-server-sg            │    │     app-sg        │   ║
-║   │  ┌────────────────────────┐  │    │  ┌────────────┐  │   ║
-║   │  │ Inbound Rules:         │  │    │  │ Inbound:   │  │   ║
-║   │  │  SSH  (22)  → My IP    │  │    │  │ HTTP (80)  │  │   ║
-║   │  │  HTTP (80)  → 0.0.0.0/0│  │    │  │  ← ref:    │  │   ║
-║   │  │  HTTPS(443) → 0.0.0.0/0│  │    │  │  web-sg    │  │   ║
-║   │  ├────────────────────────┤  │    │  ├────────────┤  │   ║
-║   │  │ Outbound: ALL traffic  │  │    │  │ Outbound:  │  │   ║
-║   │  └────────────────────────┘  │    │  │ ALL traffic│  │   ║
-║   │                              │    │  └────────────┘  │   ║
-║   │   ◉ t2.micro (httpd)        │    │                  │   ║
-║   │      public-ip               │    │   ◉ t2.micro     │   ║
-║   └──────────────────────────────┘    │      private-ip   │   ║
-║                                       └──────────────────┘   ║
-╚══════════════════════════════════════════════════════════════╝
+    style U fill:#FF9800,color:#fff
+    style ME fill:#FF9800,color:#fff
+    style WSG fill:#F44336,color:#fff
+    style ASG fill:#9C27B0,color:#fff
+    style W fill:#4CAF50,color:#fff
+    style A fill:#4CAF50,color:#fff
 ```
 
-> **Did You Know?** Security groups are STATEFUL. That means if you allow outbound traffic to a server, the response comes back automatically - you don't need a separate inbound rule for replies.
+### 🔑 Key Concepts
+| Component | Role |
+|-----------|------|
+| **Inbound rules** | Who's allowed INTO the club |
+| **Outbound rules** | Who the club is allowed to call |
+| **Stateful** | The bouncer remembers who left — replies walk back in free |
+| **SG referencing** | Bouncer-to-bouncer trust: *"my friends are allowed"* — no IPs exposed |
+| **Instant rules** | Guest list updates in real time, party keeps going |
+
+> 🧠 **Did You Know?** Security groups are **stateful**: allow outbound traffic and the response returns automatically — no separate inbound rule needed. (Network ACLs are the stateless ones — different beast, later! 🐺)
 
 ---
 
-## 🛠️ Step-by-Step Instructions
+## 🪜 Step-by-Step Guide
 
----
+### 🟢 Step 1: Create the Web Server SG 🛡️
 
-### Step 1: Create a New Security Group
+<details>
+<summary><b>📋 Expand for detailed steps</b></summary>
 
-<img src="https://img.shields.io/badge/Step%201-Create%20SG-27AE60?style=for-the-badge" />
+1. 🌐 **EC2 Console** → **Security Groups** (under Network & Security)
+2. ➕ **Create security group**
+3. 📝 Fill in:
 
-Let's leave behind the auto-created groups from Lab 01.
+   | Field | Value |
+   |-------|-------|
+   | Name | `web-server-sg` |
+   | Description | `Security group for the web server lab` |
+   | VPC | default VPC |
 
-1. EC2 Console → **Security Groups** under Network & Security in the left panel.
-2. Click **Create security group** (top right of the page).
-3. Fill in:
+4. ➕ **Inbound rules:**
 
-   | Field               | Value                                   |
-   | ------------------- | --------------------------------------- |
-   | Security group name | `web-server-sg`                         |
-   | Description         | `Security group for the web server lab` |
-   | VPC                 | default VPC                             |
+   | Type | Port | Source | Description |
+   |------|------|--------|-------------|
+   | SSH | 22 | **My IP** | SSH from my secure fortress |
+   | HTTP | 80 | **0.0.0.0/0** | Allow all web traffic |
 
-4. Add these **Inbound rules**:
+5. 📤 Outbound: leave default (**Allow all**)
+6. ✅ **Create security group**
 
-   | Type | Protocol | Port | Source        | Description                 |
-   | ---- | -------- | ---- | ------------- | --------------------------- |
-   | SSH  | TCP      | 22   | **My IP**     | SSH from my secure fortress |
-   | HTTP | TCP      | 80   | **0.0.0.0/0** | Allow all web traffic       |
+</details>
 
-   > <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> Notice how SSH is locked to YOUR IP and HTTP is open to the entire internet. That's intentional. You manage the server privately, your users browse the website publicly.
-
-5. **Outbound rules** leave as default: **Allow all traffic** to 0.0.0.0/0.
-
-6. Click **Create security group** at the bottom.
-
-📸 [Screenshot: Security group creation page with web-server-sg showing SSH and HTTP inbound rules]
 ![Security group creation page with web-server-sg showing SSH and HTTP inbound rules](screenshots/01-security-group-creation.png)
 
----
-
-### Step 2: Launch an EC2 Instance with This Security Group
-
-<img src="https://img.shields.io/badge/Step%202-Launch%20Instance-2980B9?style=for-the-badge" />
-
-1. EC2 Console → **Instances** → **Launch instance**.
-2. Name: `security-group-lab-instance`.
-
-3. **AMI:** Amazon Linux 2023 (Free Tier).
-
-4. **Instance type:** t2.micro.
-
-5. **Key pair:** Select `first-key-pair` from Lab 01. If you deleted it, create a new one (see Lab 01 Step 1).
-
-6. **Network settings:**
-   - VPC: default
-   - Subnet: No preference (default)
-   - **Auto-assign public IP:** Enable
-   - **Firewall (security group):** Choose **Select existing security group**
-   - Check `web-server-sg`
-
-7. **Storage:** Default 8 GiB gp2/gp3.
-
-8. Click **Launch instance**.
+> 🗣️ **Rithu's Tip:** *"SSH locked to YOUR IP, HTTP open to the world — that's intentional. You manage the server privately; your users browse publicly."*
 
 ---
 
-### Step 3: Set Up the Web Server
+### 🟢 Step 2: Launch an Instance With It 🖥️
 
-<img src="https://img.shields.io/badge/Step%203-Web%20Server-8E44AD?style=for-the-badge" />
+<details>
+<summary><b>🖥️ Expand for launch steps</b></summary>
 
-Wait for 2/2 status checks. SSH into the instance:
+1. 🌐 **EC2 → Instances → Launch instance**
+2. 📝 **Name:** `security-group-lab-instance`
+3. ⚙️ **AMI:** Amazon Linux 2023 · **Type:** `t2.micro`
+4. 🔑 **Key pair:** select `first-key-pair` from Lab 01
+5. 🌐 **Network settings:**
+   - Auto-assign public IP: ✅ Enable
+   - Firewall: **Select existing security group** → `web-server-sg`
+6. 💾 Storage: default 8 GiB → ✅ **Launch**
+
+</details>
+
+---
+
+### 🟢 Step 3: Set Up the Web Server 🌐
+
+<details>
+<summary><b>🌐 Expand for server setup</b></summary>
+
+Wait for **2/2 checks**, then SSH in:
 
 ```bash
 ssh -i first-key-pair.pem ec2-user@<public-ip>
 ```
 
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> Forgot your key's location? Look in your Downloads folder. Future you keeps SSH keys organized. Present you? Well... at least it's somewhere.
-
-Inside the instance:
+Install and serve:
 
 ```bash
 sudo dnf update -y
@@ -205,363 +178,238 @@ sudo systemctl enable httpd
 echo '<h1>Security Groups Lab - Ravi rocks!</h1>' | sudo tee /var/www/html/index.html
 ```
 
+</details>
+
+> 🗣️ **Rithu's Tip:** *"Lost your key? Check Downloads. Future you keeps SSH keys organized... present you, well, at least it's somewhere."* 😅
+
 ---
 
-### Step 4: Verify HTTP Access
+### 🟢 Step 4: Verify Access ✅
 
-<img src="https://img.shields.io/badge/Step%204-Verify%20Access-E67E22?style=for-the-badge" />
+<details>
+<summary><b>✅ Expand for verification</b></summary>
 
-1. Open your browser.
-2. Go to `http://<public-ip>` (not https).
+1. 🌍 Browser → `http://<public-ip>` (not https!)
+2. 👀 Expect: **"Security Groups Lab - Ravi rocks!"**
+3. 🎉 Take a moment. You built this.
 
-📸 [Screenshot: Browser displaying "Security Groups Lab - Ravi rocks!"]
+</details>
+
 ![Browser displaying "Security Groups Lab - Ravi rocks!"](screenshots/02-browser-web-page.png)
 
-**Take a moment to celebrate.** 🎉
+---
+
+### 🟢 Step 5: The SSH Restriction Test 🚫
+
+<details>
+<summary><b>🚫 Expand for the lockout experiment</b></summary>
+
+Your SSH rule trusts **My IP**. Simulate being elsewhere:
+
+1. 🔧 `web-server-sg` → **Edit inbound rules** → change SSH source to `1.2.3.4/32` → **Save**
+2. 🖥️ Existing SSH session keeps working (stateful! established connections stay open)
+3. 🆕 Open a **NEW** terminal and try SSH → it hangs, then times out. **Denied!** 🚫
+4. ↩️ Change source back to **My IP** → save → SSH works again
+
+</details>
+
+> 🗣️ **Rithu's Tip:** *"At a coffee shop your IP changes — and your bouncer doesn't recognize you anymore. That's exactly how production incidents start!"* ☕
 
 ---
 
-### Step 5: The SSH Restriction Test
+### 🟢 Step 6: Kill the Site (On Purpose!) 💥
 
-<img src="https://img.shields.io/badge/Step%205-SSH%20Restriction-E74C3C?style=for-the-badge" />
+<details>
+<summary><b>💥 Expand for the takedown</b></summary>
 
-The SSH rule is locked to **My IP**, which AWS determined when you created the rule.
+1. 🔧 `web-server-sg` → **Edit inbound rules**
+2. 🗑️ Remove the HTTP rule → **Save**
+3. 🔄 Refresh `http://<public-ip>` in a **fresh Incognito window**
 
-**Test:** SSH into your instance from your current machine — it works. Now imagine you're at a coffee shop with a different IP. SSH would fail.
+Result: connection refused/timeout. AWS silently drops those packets — the server is fine, the door is just closed.
 
-To simulate:
+</details>
 
-1. Temporarily change the SSH source for `web-server-sg`:
-   - EC2 Console → Security Groups → `web-server-sg`, Inbound rules → **Edit inbound rules**.
-   - Change SSH source to a random IP like `1.2.3.4/32`.
-   - Click **Save rules**.
-2. Go back to your terminal and press Enter. You'll notice nothing happens — SSH connections are stateful (already-established connections stay open).
-3. Open a NEW terminal window and try SSH:
-
-   ```bash
-   ssh -i first-key-pair.pem ec2-user@<public-ip>
-   ```
-
-   It hangs and eventually times out. Connection never established. **Denied!** 🚫
-
-4. **Change it back!** Set SSH source back to **My IP**, save rules, try SSH again.
-
----
-
-### Step 6: Remove HTTP and Watch the Site Go Down
-
-<img src="https://img.shields.io/badge/Step%206-Remove%20HTTP-E74C3C?style=for-the-badge" />
-
-1. Security Groups → `web-server-sg` → Inbound → **Edit inbound rules**.
-2. Click **Remove** (the trash icon) next to the HTTP rule.
-3. Click **Save rules**.
-4. Refresh your browser at `http://<public-ip>`.
-
-📸 [Screenshot: Browser showing connection refused or timeout error]
 ![Browser showing connection refused or timeout error](screenshots/03-browser-connection-refused.png)
 
-The page won't load. Why? Because HTTP traffic can't reach port 80. AWS is silently dropping those packets.
-
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> Security groups are **stateful**, so an already-open HTTP keep-alive connection can linger after the rule is removed. Test from a fresh Incognito/Private window for a clean result.
+> 🗣️ **Rithu's Tip:** *"Stateful = an already-open keep-alive connection can linger after the rule dies. Incognito window = clean test!"*
 
 ---
 
-### Step 7: Re-add HTTP to Restore Access
+### 🟢 Step 7: Restore + Add HTTPS ✨
 
-<img src="https://img.shields.io/badge/Step%207-Restore%20HTTP-27AE60?style=for-the-badge" />
+<details>
+<summary><b>✨ Expand for restore steps</b></summary>
 
-1. Edit inbound rules for `web-server-sg`.
-2. Click **Add rule**:
-   - Type: **HTTP** | Source: **0.0.0.0/0** | Description: `HTTP restored`
-3. **Save**.
-4. Refresh the browser.
+1. ➕ Edit inbound rules → **Add rule:** HTTP `80` ← `0.0.0.0/0` (`HTTP restored`) → **Save**
+2. 🔄 Refresh browser → site's back! Feels powerful, right? 🔥
+3. 🔒 Add another rule while you're there: **HTTPS** `443` ← `0.0.0.0/0` (`HTTPS placeholder`) — ready for SSL in later labs
 
-The site is back. Feels good to control traffic at will, right? 🔥
-
----
-
-### Step 8: Add an HTTPS Rule (for illustration)
-
-<img src="https://img.shields.io/badge/Step%208-Add%20HTTPS-2980B9?style=for-the-badge" />
-
-Even if you don't have an SSL cert right now, let's add the rule:
-
-1. Edit inbound rules → **Add rule**.
-   - Type: **HTTPS** | Source: **0.0.0.0/0** | Description: `HTTPS placeholder`
-2. Save.
-
-This rule accepts HTTPS traffic on port 443, which we'll need when we set up SSL in later labs.
+</details>
 
 ---
 
-### Step 9: Reference a Security Group Inside Another SG
+### 🟢 Step 8: SG-to-SG Referencing 🔗
 
-<img src="https://img.shields.io/badge/Step%209-SG%20Referencing-8E44AD?style=for-the-badge" />
+<details>
+<summary><b>🔗 Expand for the spicy part</b></summary>
 
-This is where things get spicy. Security groups can reference OTHER security groups as a source, instead of IP ranges. This is gold for multi-tier apps.
+Security groups can trust **other security groups** instead of IP ranges — gold for multi-tier apps!
 
-1. Create a second SG:
+**Create the backend SG:**
 
-   | Field               | Value                                        |
-   | ------------------- | -------------------------------------------- |
-   | Security group name | `app-sg`                                     |
-   | Description         | `Backend app tier that trusts web-server-sg` |
-   | VPC                 | default                                      |
+1. ➕ **Create security group**
+2. 📝 Name: `app-sg` · Description: `Backend app tier that trusts web-server-sg`
+3. ➕ Inbound: **HTTP** `80` ← Source: **Custom** → type `web-server-sg` → select it
+4. ✅ Source shows `web-server-sg (sg-xxxxxxxx)` → **Create**
 
-2. Add a single inbound rule:
-   - Type: **HTTP**
-   - Source: **Custom** → start typing `web-server-sg` in the source search box
-   - Select `web-server-sg`
+**Launch the backend instance:**
 
-   Your source should display: `web-server-sg (sg-xxxxxxxx)`
+5. 🖥️ Launch `app-instance` (t2.micro, AL2023) with **`app-sg`** — no public IP needed
 
-3. Click **Create security group**.
+**Wire up and test:**
 
-📸 [Screenshot: app-sg inbound rule showing source as web-server-sg]
+6. SSH into `app-instance`:
+   ```bash
+   sudo dnf install -y httpd && sudo systemctl start httpd
+   echo "<h1>Backend App - Only reachable from web-server-sg</h1>" | sudo tee /var/www/html/index.html
+   ```
+7. SSH into `security-group-lab-instance`, then:
+   ```bash
+   curl http://<private-ip-of-app-instance>
+   ```
+8. 👀 You get the backend page — because traffic came from something wearing the `web-server-sg` badge!
+
+</details>
+
 ![app-sg inbound rule showing source as web-server-sg](screenshots/04-app-sg-referencing-web-sg.png)
 
-Now launch a SECOND EC2 instance:
-
-1. Launch another t2.micro Amazon Linux 2023 instance named `app-instance`.
-2. Network section: Select **app-sg** as the security group.
-3. Launch it. SSH into both instances.
-
-On `security-group-lab-instance`:
-
-```bash
-# Test connectivity from the web server to the app layer
-curl http://<private-ip-of-app-instance>:80
-```
-
-Wait — the app instance doesn't have httpd running. Install and start it:
-
-```bash
-# Inside app-instance
-sudo dnf install -y httpd
-sudo systemctl start httpd
-echo "<h1>Backend App - Only reachable from web-server-sg</h1>" | sudo tee /var/www/html/index.html
-```
-
-Now curl again from `security-group-lab-instance`:
-
-```bash
-curl http://<private-ip-of-app-instance>
-```
-
-You should see the response! The `app-sg` is configured to trust traffic only if it comes from `web-server-sg`.
-
----
-
-### Step 10: Verify Your Work
-
-<img src="https://img.shields.io/badge/Step%2010-Verify-16A085?style=for-the-badge" />
-
-| ✅  | 🔍 Check                                                                       |
-| --- | --------------------------------------------------------------------------- |
-| ☐   | 🌐 `web-server-sg` has SSH from My IP, HTTP from anywhere, HTTPS from anywhere |
-| ☐   | 🔐 SSH works from your laptop                                                  |
-| ☐   | 🖥️ Browser loads `http://<public-ip>` → sees the Security Groups Lab page      |
-| ☐   | 🚫 Removing HTTP rule kills the site                                           |
-| ☐   | ✨ Re-adding HTTP restores the site                                            |
-| ☐   | 🔗 `app-sg` references `web-server-sg` as source                               |
-| ☐   | 🌐 Web server can curl the app instance's HTTP endpoint via private IP         |
+> 🗣️ **Rithu's Tip:** *"Instead of handing out addresses (IPs), your bouncer tells the other bouncer: 'my friends are allowed.' Even if IPs change — auto-scaling! — the trust holds."* 🤝
 
 ---
 
 ## ✅ Validation Checklist
 
-| ✅  | 🔍 Validation Item                                                      | Status |
-| --- | -------------------------------------------------------------------- | ------ |
-| ☐   | 🛡️ Security group `web-server-sg` created with SSH + HTTP inbound rules | ⬜     |
-| ☐   | 🖥️ EC2 instance launched and serving custom index.html via httpd        | ⬜     |
-| ☐   | 🌐 HTTP access verified from browser                                    | ⬜     |
-| ☐   | 🔐 Temporary SSH restriction by changing source to 1.2.3.4/32           | ⬜     |
-| ☐   | 🚫 HTTP rule removed → site goes down → verified                        | ⬜     |
-| ☐   | ✨ HTTP rule re-added → site comes back → verified                      | ⬜     |
-| ☐   | 🔒 HTTPS rule added (placeholder)                                       | ⬜     |
-| ☐   | 🔗 Security group `app-sg` created referencing `web-server-sg`          | ⬜     |
-| ☐   | 🌐 Cross-SG HTTP access verified via curl on private IP                 | ⬜     |
+| # | Check | Status |
+|---|-------|--------|
+| 1️⃣ | `web-server-sg`: SSH ← My IP, HTTP ← anywhere | ☐ ✅ |
+| 2️⃣ | Browser loads the custom page | ☐ ✅ |
+| 3️⃣ | SSH blocked after source change to `1.2.3.4/32` | ☐ ✅ |
+| 4️⃣ | Removing HTTP kills the site | ☐ ✅ |
+| 5️⃣ | Re-adding HTTP revives the site | ☐ ✅ |
+| 6️⃣ | HTTPS placeholder rule added | ☐ ✅ |
+| 7️⃣ | `app-sg` references `web-server-sg` as source | ☐ ✅ |
+| 8️⃣ | Web instance curls app instance via private IP | ☐ ✅ |
 
-> **POV:** You just removed the HTTP rule and now your website shows "connection refused" - exactly as planned.
-
-<div align="center">
-
-> **Achievement Unlocked:** Firewall Master! You control the gates now.
-
-</div>
+> 🏆 **Achievement Unlocked:** Firewall Master! You control the gates now.
 
 ---
 
-## 🧹 Cleanup (IMPORTANT!)
+## 🧹 Cleanup (Follow Order!)
 
-> <img src="https://img.shields.io/badge/Warning-Important-E74C3C?style=flat-square" /> Forgetting to clean up will incur costs. Double-check every item below.
+> ⚠️ **Double-check every item — forgotten instances bill forever!**
 
-1. **Terminate both instances:**
-   - `security-group-lab-instance` → Instance state → **Terminate** → Confirm.
-   - `app-instance` → Instance state → **Terminate** → Confirm.
-
-2. **Delete both security groups:**
-   - EC2 Console → Security Groups.
-   - Select `web-server-sg` → Actions → Delete security groups.
-   - Select `app-sg` → Actions → Delete security groups.
-   - **Note:** You might need to wait until the instances are fully terminated.
-
-3. **Delete key pair** (if you created a new one).
+| Step | Action | Console Location |
+|------|--------|------------------|
+| 1️⃣ 🗑️ | Terminate `security-group-lab-instance` | EC2 → Instances |
+| 2️⃣ 🗑️ | Terminate `app-instance` | EC2 → Instances |
+| 3️⃣ ⏳ | Wait 2–3 min for full termination | ☕ break time |
+| 4️⃣ 🧹 | Delete `web-server-sg` and `app-sg` | EC2 → Security Groups |
+| 5️⃣ 🔑 | Delete key pair (if you made a new one) | EC2 → Key Pairs |
 
 ---
 
-## 🧠 Memory Tips
+## 🚀 Level Ups (Post-Core Lab)
 
-Stick these in your brain and they'll never leave. 🧲
-
-| 🧠 Memory Hook | Remember it like... |
-|---|---|
-| **Stateful = has a memory** | The bouncer **remembers** who walked OUT, so their reply walks back IN free. No rule needed for replies. 🧠 |
-| **22 / 80 / 443** | The web trio: **22** SSH, **80** HTTP, **443** HTTPS. Say it like a phone number. ☎️ |
-| **Inbound vs Outbound** | **In** = who's allowed in the club. **Out** = who the club is allowed to call. 🚪 |
-| **SG-to-SG referencing** | Instead of giving out your address (IP), your bouncer tells the other bouncer: *"my friends are allowed."* No IPs exposed! 🤝 |
-| **Rules apply instantly** | No reboot, no waiting. The bouncer updates the guest list in real time. ⚡ |
-
-> 🗣️ **Rithu:** *"Security groups are stateful. Network ACLs (a different thing, later!) are stateless. If you remember nothing else, remember: SG = smart bouncer with a memory."*
+| Challenge | What to Try | Notes |
+|-----------|-------------|-------|
+| 🏗️ **Three Tiers** | Add a `db-sg` allowing 3306 only from `app-sg` | The full defense-in-depth chain |
+| 🚪 **NACL Peek** | Compare a Network ACL vs your SGs | Stateless vs stateful, feel the difference |
+| ⚡ **Rule Racing** | Time how fast a new rule takes effect | Spoiler: near-instant |
 
 ---
 
-## 🎓 What You Learned
+## 🆘 Troubleshooting Quick Reference
 
-| Concept                  | Takeaway                                                                        |
-| ------------------------ | ------------------------------------------------------------------------------- |
-| **Inbound vs Outbound**  | Inbound controls incoming traffic; outbound controls what your resource reaches |
-| **Source IP filtering**  | SSH restricted to My IP keeps attackers out                                     |
-| **Stateful firewalls**   | Security groups track connections; replies flow automatically                   |
-| **Dynamic rule changes** | Rules apply immediately. No restart needed.                                     |
-| **SG-to-SG referencing** | Allows traffic between resources without exposing IPs                           |
-| **HTTP/HTTPS rules**     | Port 80 (HTTP) and 443 (HTTPS). Different rules, same drill                     |
-
-### Pro Tip vs Noob Tip
-
-|              | Approach                                                                                     |
-| ------------ | -------------------------------------------------------------------------------------------- |
-| **Noob Tip** | One security group with all ports open "for convenience"                                     |
-| **Pro Tip**  | Separate SGs per tier. Web gets 80/443, App gets web-SG only, DB gets 3306 from app-SG only. |
+| 🔍 Issue | 💡 Likely Cause | 🔧 Fix |
+|-------|--------------|-----|
+| 🔐 SSH times out after source change | Rule no longer matches your IP | Set source back to **My IP** |
+| 🌐 Browser times out after HTTP removal | Door is closed | Re-add HTTP `80` inbound rule |
+| 🚫 Curl gets `Connection refused` | httpd not running on target | `sudo systemctl status httpd`; install if missing |
+| ⚠️ Can't delete a security group | Instances still attached | Terminate instances first, wait 2–3 min |
+| 🔒 Multiple SGs assigned, still blocked | No rule allows that traffic anywhere | SG rules are **additive** — check each SG for the missing rule |
+| 🔗 SG referencing fails | Wrong VPC or Region | Both SGs must share the same VPC **and** Region |
 
 ---
 
 ## 🎮 Test Yourself! (No Peeking 👀)
 
-**Q1:** True or false: a security group is **stateless** — every reply packet needs its own inbound rule.
+**Q1:** True or false: security groups are **stateless** — every reply needs its own inbound rule.
 
 <details><summary>👀 Show answer</summary>
 
-**A:** **False!** Security groups are **stateful**. If your instance initiated the connection, the reply flows back automatically. (Network ACLs are the stateless ones — different beast. 🐺)
+**A:** **False!** They're **stateful** — replies to connections your instance initiated flow back automatically. 🧠
 
 </details>
 
-**Q2:** You add a new inbound rule. Does the instance need a restart?
+**Q2:** You add a new inbound rule. Restart required?
 
 <details><summary>👀 Show answer</summary>
 
-**A:** **No.** Rules apply **immediately**. The bouncer updates the list while the party is still going. 🎉
+**A:** **Nope.** Rules apply instantly — the bouncer updates the list mid-party. 🎉
 
 </details>
 
-**Q3:** Why is referencing another security group safer than allowing a specific IP range?
+**Q3:** Why reference an SG instead of an IP range?
 
 <details><summary>👀 Show answer</summary>
 
-**A:** Because the source SG's IPs may change (auto-scaling!) — but the *group* is stable. You allow "anything belonging to the web-SG" instead of hardcoding IPs that go stale. 🎯
+**A:** IPs change (auto-scaling!); the **group identity is stable**. You trust the badge, not the address. 🎯
 
 </details>
-
-### 🔥 Bonus Challenge
-
-Create a **second EC2 instance**, give it its own security group, and let it talk to your first instance **only via an SG-to-SG reference** — no IP ranges allowed. Ping/HTTP between them should work, while the rest of the internet still gets blocked. You just built defense-in-depth like a real architect. 🏗️
 
 > 💪 **Rithu:** *"If you can chain security groups in your sleep, you're already ahead of half the engineers I've met."*
 
 ---
 
-## 🔗 What's Next?
+## 📚 Official Documentation
 
-Time to talk disks. EC2 without storage is like a laptop without a hard drive.
-
-<div align="center">
-
-👉 **Proceed to Lab 03:** [EBS — Volumes and Snapshots](../03%20-%20EBS%20-%20Volumes%20and%20Snapshots/README.md)
-
-_We'll add extra storage volumes, format them, take snapshots, and restore from a backup. Yes, like cloud forensics but friendlier._
-
-</div>
+- 🛡️ [Amazon EC2 Security Groups](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-security-groups.html)
+- ⚖️ [Security Group Rules Reference](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/security-group-rules.html)
+- 🔗 [Referencing Security Groups](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/security-group-rules.html#security-group-referencing)
 
 ---
 
-## ❓ Troubleshooting
+## 🎓 What You Learned
 
-<details>
-<summary><strong>🔐 SSH times out after changing source IP</strong></summary>
-<br/>
+> **The bouncer's full job description:**
+> - 🚪 **Inbound** → who gets in (SSH: My IP, HTTP: world)
+> - 📞 **Outbound** → who the club calls (default: everyone)
+> - 🧠 **Stateful** → replies come home free
+> - 🤝 **Referencing** → trust badges, not addresses
+> - ⚡ **Instant** → rules live-update, zero downtime
 
-**🔍 Likely Cause:** SSH rule source changed to a non-matching IP
+**Golden Habit:** Least privilege per tier → test both directions → clean up every rule you create. 🧹
 
-**🔧 Fix:** Set source back to **My IP** immediately
+| | Approach |
+|---|---|
+| 👶 **Noob Way** | One SG, all ports open, "for convenience" |
+| 🧙 **Pro Way** | Separate SG per tier: web gets 80/443, app trusts web-SG, DB trusts app-SG |
 
-</details>
+---
 
-<details>
-<summary><strong>🌐 Browser times out after removing HTTP</strong></summary>
-<br/>
+## ➡️ What's Next?
 
-**🔍 Likely Cause:** HTTP rule deleted; traffic blocked
+Time to talk disks — EC2 without storage is a laptop without a hard drive. We'll add volumes, format them, snapshot them, and restore like cloud forensics pros (but friendlier). 🔍
 
-**🔧 Fix:** Re-add HTTP (80) inbound rule
-
-</details>
-
-<details>
-<summary><strong>🚫 <code>app-instance</code> curl gets <code>Connection refused</code></strong></summary>
-<br/>
-
-**🔍 Likely Cause:** httpd not installed/running on app instance
-
-**🔧 Fix:** Run `sudo systemctl status httpd`; install if needed
-
-</details>
-
-<details>
-<summary><strong>⚠️ <code>operation not permitted</code> on security group deletion</strong></summary>
-<br/>
-
-**🔍 Likely Cause:** Instances still running
-
-**🔧 Fix:** Terminate associated instances first, wait 2–3 min
-
-</details>
-
-<details>
-<summary><strong>🔒 Multiple SGs on one instance and still blocked</strong></summary>
-<br/>
-
-**🔍 Likely Cause:** No rule in any assigned SG allows that traffic
-
-**🔧 Fix:** SG rules are **additive** (a union) — traffic flows if ANY assigned SG allows it. Check each SG for the missing rule.
-
-</details>
-
-<details>
-<summary><strong>🔗 SG-to-SG referencing doesn't work</strong></summary>
-<br/>
-
-**🔍 Likely Cause:** Cross-account or cross-region referencing not allowed
-
-**🔧 Fix:** Both SGs must be in the same VPC and region
-
-</details>
+🎯 **[Lab 03 - EBS: Volumes and Snapshots](../03%20-%20EBS%20-%20Volumes%20and%20Snapshots/README.md)**
 
 ---
 
 <div align="center">
 
-<img src="https://img.shields.io/badge/Lab%20Complete-Well%20Done!-27AE60?style=for-the-badge&labelColor=232F3E" />
+### ⭐ Enjoyed this lab? Star the repo & share your feedback!
 
-_Written with a click-click, save-save, test-test philosophy — Rithu_
+**Happy Learning!** 🚀☁️
 
 </div>
