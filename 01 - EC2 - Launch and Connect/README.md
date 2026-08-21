@@ -1,24 +1,14 @@
-<div align="center">
+# ⚡ Lab 01 - EC2: Launch & Connect
 
-<img src="https://img.shields.io/badge/%F0%9F%9A%80%20Lab%2001-EC2%20Launch%20%26%20Connect-FF9900?style=for-the-badge&labelColor=232F3E" />
+> 📅 **Updated:** 21 August 2026 | ⏱️ **Duration:** ~30 minutes | 📊 **Level:** Beginner (Ground Zero 🌱)
 
-# ⚡ Amazon EC2: Launch & Connect
+![EC2](https://img.shields.io/badge/Amazon%20EC2-First%20Server-FF9900?style=for-the-badge&logo=amazon-aws&logoColor=white)
+![Difficulty](https://img.shields.io/badge/Difficulty-Easy-2ECC71?style=flat-square)
+![Time](https://img.shields.io/badge/Time-~30%20minutes-2F80ED?style=flat-square)
+![Status](https://img.shields.io/badge/Status-Active%20Lab-2E7D32?style=flat-square)
 
-### Your First Cloud Server — From Zero to SSH in 30 Minutes!
-
-<img src="https://img.shields.io/badge/Difficulty-🟢%20Easy-2ECC71?style=flat-square" />
-<img src="https://img.shields.io/badge/Time-~30%20min-3498DB?style=flat-square" />
-<img src="https://img.shields.io/badge/Cost-<%241-95A5A6?style=flat-square" />
-<img src="https://img.shields.io/badge/Service-EC2-FF9900?style=flat-square" />
-
-</div>
-
----
-
-> ### 🗣️ *"Ravi, every cloud engineer's journey starts with launching a virtual server. It's like the 'Hello World' of AWS. Let's get your first EC2 instance up and running!"*
+> ### 🗣️ *"Ravi, every cloud engineer's journey starts with launching a virtual server. It's the 'Hello World' of AWS. Let's get your first EC2 instance up and running!"*
 > — **Rithu** ☁️
-
----
 
 <details>
 <summary><b>🎭 Ravi & Rithu's Coffee Break Chat</b></summary>
@@ -29,537 +19,392 @@
 
 **Ravi:** "Can I install games on it?"
 
-**Rithu:** "You CAN. But AWS charges by the hour, so your gaming habit just got a subscription model."
-
-**Ravi:** "...I'll stick to Apache."
+**Rithu:** "You CAN. But AWS charges by the hour, so your gaming habit just got a subscription model. 😏"
 
 </details>
 
 ---
 
-<div align="center">
+## 🎯 What You'll Master
 
-## 📊 Lab Progress
+| Skill | Description |
+|-------|-------------|
+| 🚀 **Launch an EC2 Instance** | From console click to running server in ~90 seconds |
+| 🔑 **SSH Key Pairs** | Create, download, and protect your `.pem` |
+| 🔐 **Connect via SSH** | Three ways in: terminal, PuTTY, browser |
+| 🌐 **Install Apache httpd** | Install → start → enable, the sacred trio |
+| 📄 **Host a Live Webpage** | Your HTML, served to the entire internet |
+| 🧹 **Clean Termination** | Stop the billing meter like a pro |
 
-`[██░░░░░░░░░░░░░░░░░░] 5% — Let's Begin!`
-
-</div>
-
----
-
-## 📋 Table of Contents
-
-- [🎯 What You'll Accomplish](#-what-youll-accomplish)
-- [📊 Lab Progress](#-lab-progress)
-- [🤔 In Plain English](#-in-plain-english)
-- [🧠 Prerequisites](#-prerequisites)
-- [💸 Cost Warning](#-cost-warning)
-- [🏗️ Architecture Overview](#️-architecture-overview)
-- [🛠️ Step-by-Step Walkthrough](#️-step-by-step-walkthrough)
-- [✅ Validation Checklist](#-validation-checklist)
-- [🧹 Cleanup (DO NOT SKIP!)](#-cleanup-do-not-skip)
-- [🧠 Memory Tips](#-memory-tips)
-- [🎓 What You Learned](#-what-you-learned)
-- [🎮 Test Yourself](#-test-yourself-no-peeking-)
-- [🆚 Pro Tip vs Noob Tip](#pro-tip-vs-noob-tip)
-- [🔗 What's Next?](#-whats-next)
-- [❓ Troubleshooting](#-troubleshooting)
+> 💡 **Pro Tip:** This lab is the foundation for ALL 24 labs that follow. Take the 30 minutes seriously — every future skill stacks on top of this one!
 
 ---
 
-## 🤔 In Plain English
+## 🚦 Before You Start
 
-> **What is this, really?** EC2 is just **renting a computer that lives in AWS's data center** instead of buying one. You pick the size (t2.micro = the Free Tier-eligible small one), the operating system, and where it lives — and it boots up in about a minute. It's *your* server: SSH in, install software, host websites.
->
-> 🌍 **Why you should care:** Every company with a website, app, or API uses servers just like this one. Once you've launched one EC2, you've done the AWS rite of passage. Everything else builds on this.
+### ✅ Prerequisites Checklist
+- [ ] ☁️ **AWS account** with administrative access
+- [ ] 🌍 **Single Region** — pick one and stick with it
+- [ ] 🖥️ Basic familiarity with the AWS Console
+- [ ] 🎓 Zero EC2 experience needed — this is day one!
 
----
-
-## 🎯 What You'll Accomplish
-
-By the end of this lab, you'll have **your own virtual server running in the cloud** — accessible from your laptop, serving a real webpage to the entire internet.
-
-> <img src="https://img.shields.io/badge/🧠-What%20You'll%20Learn-8E44AD?style=flat-square" />
->
-> ✅ Launch an EC2 instance from the AWS Console
-> ✅ Create & manage SSH key pairs
-> ✅ Connect to your server via SSH
-> ✅ Install Apache httpd web server
-> ✅ Host a custom webpage — live on the internet!
+### 📦 What You Need (and Don't)
+| Required | Optional |
+|----------|----------|
+| AWS Account | PuTTY (Windows users only) |
+| Browser + terminal access | Domain name (not yet!) |
+| ~30 minutes | |
 
 ---
 
-## 🧠 Prerequisites
+## 💰 Cost & Safety First
 
-| Requirement | Details |
-|:---:|---|
-| ☁️ | An **AWS account** with administrative access |
-| 🖥️ | Basic familiarity with the AWS Management Console |
-| 🎓 | No prior EC2 experience needed — this is ground zero! |
+> ⚠️ **Real resources = Real charges.** This lab is Free Tier friendly — but only if you terminate!
 
----
+> 🕰️ **Free Tier note:** Accounts created before **July 15, 2025** get 750 hrs/month of `t2.micro` free for 12 months. Newer accounts draw from their **$100–200 signup credits** instead (~$0.01 for this lab). Either way: **terminate when done!** [Details →](https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/free-tier.html)
 
-## 💸 Cost Warning
+> 💸 **Ravi's Mistake of the Day:** *"I forgot to terminate my instance and got a surprise $15 bill next month."* Don't be Ravi. There's a Cleanup section at the bottom. **USE IT.** 🛑
 
-<table>
-<tr>
-<td width="50" align="center"><h1>💰</h1></td>
-<td>
+### 🏷️ Naming Convention
 
-All resources in this lab are **Free Tier eligible** (t2.micro). However, as our favorite greenhorn once said:
-
-> *"I forgot to terminate my instance and got a surprise **$15 AWS bill** the next month."*
-
-**Never forget to terminate.** Seriously. There's a Cleanup section at the bottom. **USE IT.**
-
-</td>
-</tr>
-</table>
-
-> **Ravi's Mistake of the Day:** I once forgot to add an HTTP inbound rule and spent 20 minutes debugging why my website wouldn't load. The server was fine. The code was fine. The firewall was just being a bouncer with a "no visitors" policy.
+| Resource | Name |
+|----------|------|
+| 🖥️ Instance | `first-ec2-instance` |
+| 🔑 Key pair | `first-key-pair` |
 
 ---
 
-## 🏗️ Architecture Overview
+## 🧠 How It All Fits Together
 
-```
-╔══════════════════════════════════════════════════════╗
-║                    PUBLIC SUBNET                      ║
-║                                                      ║
-║   ┌──────────────────────────────────────────────┐   ║
-║   │            🖥️  t2.micro EC2                  │   ║
-║   │         Amazon Linux 2023 AMI                 │   ║
-║   │                                              │   ║
-║   │   🔐 Security Group:                         │   ║
-║   │      SSH (22) ──▶ My IP Only                 │   ║
-║   │      HTTP (80) ──▶ 0.0.0.0/0                │   ║
-║   │                                              │   ║
-║   │   🌐 httpd installed & running               │   ║
-║   │   📄 index.html served on port 80            │   ║
-║   └──────────────────────┬───────────────────────┘   ║
-║                          │                            ║
-║                    ┌─────▼─────┐                      ║
-║                    │    IGW    │ ◀── Internet Gateway  ║
-║                    └─────┬─────┘                      ║
-║                          │                            ║
-╚══════════════════════════╪════════════════════════════╝
-                           │
-                    ┌──────▼──────┐
-                    │  🌍 Browser │
-                    │  http://<IP>│
-                    └─────────────┘
+```mermaid
+graph TD
+    B["🌍 Your Browser<br/>http://&lt;public-ip&gt;"] --> IGW["🌐 Internet Gateway"]
+    IGW --> SG["🔥 Security Group<br/>SSH :22 ← My IP · HTTP :80 ← world"]
+    SG --> EC2["🖥️ t2.micro EC2<br/>Amazon Linux 2023<br/>Apache httpd"]
+
+    style B fill:#FF9800,color:#fff
+    style IGW fill:#607D8B,color:#fff
+    style SG fill:#F44336,color:#fff
+    style EC2 fill:#4CAF50,color:#fff
 ```
 
-> **Did You Know?** Amazon EC2 was launched in 2006. Before that, if you wanted a server, you had to physically buy one, rack it, wire it, and pray it didn't overheat. Now you can launch one in 90 seconds from your couch.
+### 🔑 Key Concepts
+| Component | Role |
+|-----------|------|
+| **EC2 Instance** | Your rented computer in AWS's data center |
+| **AMI** | The disk image — we use Amazon Linux 2023 |
+| **Instance Type** | The hardware size — `t2.micro` = free-tier tiny |
+| **Key Pair** | Your door key — `.pem` file, lose it = locked out |
+| **Security Group** | The bouncer 🚪 — stateful firewall with a guest list |
+
+> 🗣️ **Rithu:** *"Before EC2 existed (2006!), you had to physically buy a server, rack it, wire it, and pray it didn't overheat. Now you launch one from your couch in 90 seconds. Appreciate the magic!"* ✨
 
 ---
 
-## 🛠️ Step-by-Step Walkthrough
+## 🪜 Step-by-Step Guide
+
+### 🟢 Step 1: Launch the EC2 Instance 🚀
+
+<details>
+<summary><b>📋 Expand for detailed steps</b></summary>
+
+1. 🌐 Open **AWS Console** → search **EC2** → open it
+2. ➕ Click the orange **Launch instance** button
+3. 📝 **Name:** `first-ec2-instance`
+4. 💿 **OS:** Amazon Linux → **Amazon Linux 2023 AMI** (Free Tier eligible ✅)
+5. ⚙️ **Instance type:** `t2.micro`
+6. 🔑 **Key pair:** **Create new key pair**
+   - Name: `first-key-pair` · Type: **RSA** · Format: **`.pem`**
+   - Click **Create key pair** → the `.pem` downloads automatically
+7. 🌐 **Network settings → Edit:**
+   - VPC/Subnet: leave default
+   - **Auto-assign public IP:** ✅ Enable
+   - Firewall: **Create security group** → name `launch-wizard-1`
+   - Add rule: **SSH** `22` ← Source **My IP**
+8. 💾 **Storage:** leave default 8 GiB
+9. ✅ **Launch instance** → **View all instances**
+
+</details>
+
+![EC2 Dashboard showing the Launch instance button](screenshots/01-ec2-dashboard-launch-button.png)
+
+> 🗣️ **Rithu's Tip:** *"Move that `.pem` file to `~/.ssh/` (Mac/Linux) or a dedicated folder (Windows). Don't lose it — you can't SSH without it, and AWS won't reissue it!"* 🔑
 
 ---
 
-### Step 1: Launch the EC2 Instance
+### 🟢 Step 2: Wait for Ready ⏳
 
-> <img src="https://img.shields.io/badge/Step%201-🚀%20Launch%20Instance-27AE60?style=for-the-badge" />
+<details>
+<summary><b>⏳ Expand for readiness checks</b></summary>
 
-**1.** Go to the **AWS Management Console** → search for **EC2** → click it.
+1. 👀 Watch the instance state: **Pending** → **Running**
+2. ✅ Wait for **2/2 status checks** passed (refresh every ~30 s)
+3. 📋 Both checks green = your server is truly ready
 
-**2.** Click the orange **`Launch instance`** button.
+</details>
 
-<div align="center">
-<img src="screenshots/01-ec2-dashboard-launch-button.png" width="700" alt="EC2 Dashboard showing the Launch instance button" />
-<br/>
-<sub>📸 EC2 Dashboard — Click that beautiful orange button!</sub>
-</div>
-
-<br/>
-
-**3.** **Name your instance:** Enter `first-ec2-instance`
-
-**4.** **Choose your OS:**
-- Click **Amazon Linux** (usually the default)
-- Select **Amazon Linux 2023 AMI** *(Free Tier eligible ✅)*
-
-**5.** **Instance type:** Select **t2.micro**
-> That little asterisk saying "Free tier eligible" is like winning the lottery 🎰
-
-**6.** **Key pair (your door key):**
-- Click **Create new key pair**
-- Name: `first-key-pair` | Type: **RSA** | Format: **.pem**
-- Click **Create key pair** — the `.pem` file downloads automatically
-
-> <img src="https://img.shields.io/badge/💡-Rithu's%20Tip-FFC300?style=flat-square" />
-> Move that `.pem` file to `~/.ssh/` on Mac/Linux or a dedicated folder on Windows.
-> **Don't lose it. You can't SSH without it.** 🔑
-
-**7.** **Network settings →** Click **Edit:**
-- VPC & Subnet: leave as default
-- **Auto-assign public IP:** ✅ Enable
-- **Firewall:** Select "Create security group"
-  - Name: `launch-wizard-1`
-  - Click **Add security group rule:**
-    - Type: **SSH** | Source: **My IP** | Description: `SSH from my IP`
-
-**8.** **Storage:** Leave default 8 GiB gp2/gp3
-
-**9.** Click **`Launch instance`** at the bottom → **View all instances**
-
-<div align="center">
-<img src="screenshots/02-instance-running-with-status-checks.png" width="700" alt="Instance list showing first-ec2-instance with status checks" />
-<br/>
-<sub>📸 Your first EC2 instance — running and healthy! 🎉</sub>
-</div>
+![Instance list showing first-ec2-instance running with 2/2 checks](screenshots/02-instance-running-with-status-checks.png)
 
 ---
 
-### Step 2: Wait for Instance Ready
+### 🟢 Step 3: Find Your Public IP 🔍
 
-> <img src="https://img.shields.io/badge/Step%202-⏳%20Wait%20for%20Ready-3498DB?style=for-the-badge" />
-
-- Instance shows **Pending** → then **Running**
-- Wait for **2/2 status checks** to pass (refresh every 30s)
-
-```
-┌──────────────────────┬──────────┬───────────┬────────────┐
-│ Instance State       │ Status   │ Checks    │ Public IP  │
-├──────────────────────┼──────────┼───────────┼────────────┤
-│ ✅ Running           │ 2/2 OK   │  ✅ PASS  │ 54.x.x.x  │
-└──────────────────────┴──────────┴───────────┴────────────┘
-```
-
----
-
-### Step 3: Find Your Public IP
-
-> <img src="https://img.shields.io/badge/Step%203-🔍%20Find%20IP-E67E22?style=for-the-badge" />
+<details>
+<summary><b>🔍 Expand to find the IP</b></summary>
 
 1. Click `first-ec2-instance` in the list
-2. Go to **Details** tab
-3. Copy the **Public IPv4 address** — you'll need this!
-4. Also note the **Public IPv4 DNS** — it works too
-
----
-
-### Step 4: Connect via SSH
-
-> <img src="https://img.shields.io/badge/Step%204-🔐%20SSH%20Connect-8E44AD?style=for-the-badge" />
-
-Pick **ONE** option based on your OS:
-
----
-
-<details>
-<summary><b>🍎 Option A: Mac / Linux — Terminal</b></summary>
-
-```bash
-# 1. Lock down key permissions (SSH is paranoid — and it should be!)
-chmod 400 /path/to/your/first-key-pair.pem
-
-# 2. SSH into your cloud server!
-ssh -i /path/to/your/first-key-pair.pem ec2-user@<YOUR-PUBLIC-IP>
-```
-
-When prompted:
-```
-The authenticity of host 'xx.xx.xx.xx' can't be established.
-Are you sure you want to continue connecting (yes/no)?
-```
-Type `yes` and press Enter.
-
-You should see:
-```
-   ,     #_
-   ~\_  ####_        Amazon Linux 2023
-  ~~  \_#####\
-  ~~     \###|
-  ~~       \#/ ___   https://aws.amazon.com/linux/
-   ~~       V~' '->
-    ~~~         /
-      ~~._.   _/
-         _/ _/
-       _/m/'
-[ec2-user@ip-xxx-xxx-xxx-xxx ~]$
-```
-
-> <img src="https://img.shields.io/badge/💡-Rithu's%20Tip-FFC300?style=flat-square" />
-> If you see `Permissions 0644 are too open`, you forgot `chmod 400`. Fix it!
+2. 📋 **Details** tab → copy **Public IPv4 address**
+3. 📝 Note the **Public IPv4 DNS** too — it works just as well
 
 </details>
 
 ---
 
+### 🟢 Step 4: Connect via SSH 🔐
+
+Pick **ONE** of three ways in:
+
 <details>
-<summary><b>🪟 Option B: Windows — PuTTY</b></summary>
+<summary><b>🍎 Option A: Mac / Linux Terminal</b></summary>
 
-PuTTY needs a `.ppk` key. If you didn't download `.ppk` when creating the key pair (the console lets you pick `.pem` or `.ppk`), convert your `.pem`:
+```bash
+# 1. Lock down key permissions (SSH is paranoid — rightly so!)
+chmod 400 /path/to/first-key-pair.pem
 
-1. Open **PuTTYgen** → click **Load** → select your `.pem` file
-2. Click **OK** → **Save private key** → **Yes** (no passphrase)
-3. Save as `first-key-pair.ppk`
+# 2. SSH into your cloud server!
+ssh -i /path/to/first-key-pair.pem ec2-user@<YOUR-PUBLIC-IP>
+```
 
-Now connect with PuTTY:
+Type `yes` at the fingerprint prompt → you'll see the Amazon Linux 2023 ASCII logo and the `ec2-user@ip-...` prompt. 🎉
+
+> 🗣️ **Rithu's Tip:** *"`Permissions 0644 are too open`? You forgot `chmod 400`. SSH rejects loose keys — it's protecting you from yourself!"*
+
+</details>
+
+<details>
+<summary><b>🪟 Option B: Windows PuTTY</b></summary>
+
+PuTTY needs `.ppk`. If you didn't pick `.ppk` at creation, convert:
+
+1. 🔧 Open **PuTTYgen** → **Load** → select your `.pem`
+2. 💾 **Save private key** → **Yes** (no passphrase) → `first-key-pair.ppk`
+
+Connect:
 
 | Setting | Value |
 |---------|-------|
 | Host Name | `ec2-user@<YOUR-PUBLIC-IP>` |
 | Port | `22` |
 | Connection type | SSH |
-| Auth → Credentials (or "Auth → Private key" in older PuTTY) | `first-key-pair.ppk` |
+| Auth → Credentials | `first-key-pair.ppk` |
 
-Click **Open** → **Accept** the fingerprint → You're in! 🎉
+**Open** → **Accept** fingerprint → You're in! 🎉
 
 </details>
-
----
 
 <details>
-<summary><b>🌐 Option C: AWS EC2 Instance Connect (Browser)</b></summary>
+<summary><b>🌐 Option C: EC2 Instance Connect (Browser)</b></summary>
 
-The easiest option — no setup needed:
+The zero-setup option:
 
-1. Select your instance → **Connect** button
-2. Go to **EC2 Instance Connect** tab
-3. Click **Connect**
-4. New browser tab opens with a terminal — magic! ✨
+1. Select instance → **Connect** button
+2. **EC2 Instance Connect** tab → **Connect**
+3. ✨ Browser terminal appears — magic!
 
-> <img src="https://img.shields.io/badge/💡-Rithu's%20Tip-FFC300?style=flat-square" />
-> Great for quick tasks, but falls flat in private subnets.
-> **Learn the CLI methods — they'll save you someday!**
+> 🗣️ **Rithu's Tip:** *"Great for quick tasks, but it struggles with private-subnet instances. Learn the CLI methods — they'll save you someday!"*
 
 </details>
 
 ---
 
-### Step 5: Install Apache Web Server
+### 🟢 Step 5: Install Apache 🌐
 
-> <img src="https://img.shields.io/badge/Step%205-🌐%20Install%20httpd-E74C3C?style=for-the-badge" />
-
-You're inside your EC2 instance now. Let's install Apache:
+<details>
+<summary><b>🌐 Expand for httpd setup</b></summary>
 
 ```bash
-# Update all packages (always do this first!)
+# Update packages (always first!)
 sudo dnf update -y
-```
 
-```bash
-# Install the Apache web server
+# Install Apache web server
 sudo dnf install -y httpd
-```
 
-```bash
-# Start the web server
+# Start it now
 sudo systemctl start httpd
-```
 
-```bash
-# Enable auto-start on reboot (survives restarts!)
+# Auto-start on reboot (survives restarts!)
 sudo systemctl enable httpd
-```
 
-```bash
-# Verify it's running
+# Verify — want to see: active (running) 🟢
 sudo systemctl status httpd
 ```
 
-You should see: **`active (running)`** — the green light! 🟢
+</details>
+
+> 🗣️ **Rithu's Tip:** *"Remember **ISE** — **I**nstall, **S**tart, **E**nable. `start` runs it now; `enable` makes it survive reboots. Pros do both!"* 🔄
 
 ---
 
-### Step 6: Create Your Custom Web Page
+### 🟢 Step 6: Create Your Web Page 📝
 
-> <img src="https://img.shields.io/badge/Step%206-📝%20Custom%20Page-16A085?style=for-the-badge" />
+<details>
+<summary><b>📝 Expand for the one-liner</b></summary>
 
 ```bash
 echo "<h1>Hello from Ravi's first EC2 instance!</h1>" | sudo tee /var/www/html/index.html
 ```
 
-> <img src="https://img.shields.io/badge/💡-Rithu's%20Tip-FFC300?style=flat-square" />
-> `tee` writes to a file AND prints to terminal — like a microphone + speaker.
-> `sudo` is needed because `/var/www/html/` is owned by `root`.
+</details>
+
+> 🗣️ **Rithu's Tip:** *"`tee` writes the file AND prints to screen — microphone + speaker 🎤. And `sudo` is required because `/var/www/html/` belongs to root."*
 
 ---
 
-### Step 7: Verify Your Work 🎉
-
-> <img src="https://img.shields.io/badge/Step%207-🎉%20Verify%20It!-F39C12?style=for-the-badge" />
-
-1. Open your browser
-2. Go to: **`http://<YOUR-PUBLIC-IP>`**
-3. **You should see:** `Hello from Ravi's first EC2 instance!`
-
-> <img src="https://img.shields.io/badge/💡-Rithu's%20Tip-FFC300?style=flat-square" />
-> Notice it's `http://` NOT `https://`. SSL comes later. Patience, grasshopper. 🦗
-
----
+### 🟢 Step 7: Verify Your Work 🎉
 
 <details>
-<summary><b>⚠️ Page not loading? Click here!</b></summary>
+<summary><b>🎉 Expand for verification</b></summary>
 
-**Most likely cause:** Your security group doesn't have an HTTP rule!
-
-**Fix it now:**
-1. EC2 Console → Security Groups → select your SG
-2. **Inbound rules** → **Edit inbound rules** → **Add rule:**
-   - Type: **HTTP** | Source: **0.0.0.0/0** | Description: `HTTP from anywhere`
-3. **Save rules** → Refresh browser → **Magic!** ✨
+1. 🌍 Open your browser
+2. 🔗 Go to `http://<YOUR-PUBLIC-IP>`
+3. 👀 Expect: **Hello from Ravi's first EC2 instance!**
 
 </details>
+
+> 📸 **Screenshot Proof:** Capture the browser showing your custom page live on the internet.
+
+> ⚠️ **Page not loading?** Your security group is missing the HTTP rule! Fix: **EC2 → Security Groups → your SG → Edit inbound rules → Add: HTTP `80` ← `0.0.0.0/0`** → Save → refresh → magic! ✨
+
+> 🗣️ **Rithu's Tip:** *"It's `http://`, NOT `https://`. No SSL cert yet — patience, grasshopper. 🦗"*
 
 ---
 
 ## ✅ Validation Checklist
 
-Before moving on, confirm ALL of these:
+| # | Check | Status |
+|---|-------|--------|
+| 1️⃣ | EC2 launched from Amazon Linux 2023 AMI | ☐ ✅ |
+| 2️⃣ | Key pair `first-key-pair` created & downloaded | ☐ ✅ |
+| 3️⃣ | SSH connection established | ☐ ✅ |
+| 4️⃣ | Apache `active (running)` | ☐ ✅ |
+| 5️⃣ | Custom page visible at `http://<public-ip>` | ☐ ✅ |
+| 6️⃣ | HTTP inbound rule added to security group | ☐ ✅ |
 
-- [ ] 🖥️ EC2 instance launched from Amazon Linux 2023 AMI ✅
-- [ ] 🔑 Key pair `first-key-pair` created and downloaded ✅
-- [ ] 🔐 SSH connection established to the instance ✅
-- [ ] 🌐 Apache httpd installed and running (`active (running)`) ✅
-- [ ] 📄 Custom `index.html` visible at `http://<public-ip>` ✅
-- [ ] 🔥 HTTP inbound rule added to security group ✅
-
-> **POV:** You launched your first EC2 instance and keep refreshing the page to see if it's still running.
-
-<div align="center">
-
-> **Achievement Unlocked:** First Cloud Server! You've officially entered the cloud.
-
-</div>
+> 🏆 **Achievement Unlocked:** First Cloud Server! You've officially entered the cloud.
 
 ---
 
-## 🧹 Cleanup (DO NOT SKIP!)
+## 🧹 Cleanup (Follow Order!)
 
-> <img src="https://img.shields.io/badge/⚠️-CLEANUP%20OR%20PAY!-E74C3C?style=for-the-badge" />
+> ⚠️ **Future Ravi will thank you.** Forgotten instances bill forever!
 
-Don't skip this. **Future Ravi will thank you.**
+| Step | Action | Console Location |
+|------|--------|------------------|
+| 1️⃣ 🗑️ | Terminate `first-ec2-instance` (Instance state → Terminate) | EC2 → Instances |
+| 2️⃣ 🔑 | Delete `first-key-pair` (+ delete `.pem`/`.ppk` locally) | EC2 → Key Pairs |
+| 3️⃣ 🧹 | Delete `launch-wizard-1` security group (wait for termination first!) | EC2 → Security Groups |
 
-### 🛑 1. Terminate the Instance
-
-EC2 Console → Instances → `first-ec2-instance` → **Instance state** → **Terminate**
-
-### 🗑️ 2. Delete the Key Pair
-
-EC2 Console → Network & Security → **Key Pairs** → `first-key-pair` → **Delete**
-
-Also delete the `.pem` / `.ppk` file from your computer.
-
-### 🧹 3. Clean Up Security Group
-
-EC2 Console → **Security Groups** → select your SG → **Delete security groups**
-
-> <img src="https://img.shields.io/badge/💡-Rithu's%20Tip-FFC300?style=flat-square" />
-> You may need to wait for instance termination to complete before deleting the SG.
-> Get in the muscle memory early! 💪
+> 🗣️ **Rithu's Tip:** *"In my first month of AWS I racked up $87 — not because AWS is expensive, but because I didn't clean up. Build the cleanup muscle memory NOW."* 💪
 
 ---
 
-## 🧠 Memory Tips
+## 🚀 Level Ups (Post-Core Lab)
 
-Stick these in your brain and they'll never leave. 🧲
-
-| 🧠 Memory Hook | Remember it like... |
-|---|---|
-| **t2.micro = Free Tier** | t2.micro (plus t3.micro, t4g.micro) = the free lunch — 750 hrs/month. Think "**t**iny **2**-slice **micro** sandwich". 🥪 |
-| **`.pem` vs `.ppk`** | **PEM** stays on **P**enguins (**M**ac/Linux), **PPK** is **Pu**TTY's pet. Convert with PuTTYgen. 🐧 |
-| **Security Group = bouncer** | It has a guest list (rules). Only names on the list get in — stateful means it remembers who walked out. 🚪 |
-| **Install → Start → Enable** | Remember **ISE** — "**I**nstall, **S**tart, **E**nable". Enable = auto-start on reboot. 🔄 |
-| **SSH = port 22** | Port 22 sounds like "two-two, who's there?" — the secret knock for your server. 🤫 |
-
-> 🗣️ **Rithu:** *"If you remember just ONE thing: don't open SSH to the whole world. My-IP-only, always. The bouncer should know your face!"*
+| Challenge | What to Try | Notes |
+|-----------|-------------|-------|
+| 🔐 **HTTPS Peek** | Add port 443 inbound rule, try `https://<ip>` | Fails without cert — observe WHY, that's real learning |
+| 📜 **User Data** | Relaunch with a bootstrap script in Advanced details | Zero-touch Apache installs |
+| 🏷️ **Tagging** | Add `Name` + `Owner` tags to your instance | Habit for real environments |
 
 ---
 
-## 🎓 What You Learned
+## 🆘 Troubleshooting Quick Reference
 
-<table>
-<tr><th>Concept</th><th>Key Takeaway</th></tr>
-<tr><td>🖥️ EC2 Launch</td><td>t2.micro (also t3.micro, t4g.micro) is Free Tier eligible</td></tr>
-<tr><td>🔑 Key Pairs</td><td>RSA .pem for Mac/Linux, convert to .ppk for PuTTY</td></tr>
-<tr><td>🔥 Security Groups</td><td>Stateful firewall — allow only what's needed</td></tr>
-<tr><td>🔐 SSH Methods</td><td>Mac/Linux CLI, Windows PuTTY, EC2 Instance Connect</td></tr>
-<tr><td>🌐 Apache httpd</td><td>Install → start → enable for automatic boot</td></tr>
-<tr><td>📝 User Data</td><td>Not covered here, but remember: scripts run at launch!</td></tr>
-</table>
-
-### Pro Tip vs Noob Tip
-| | Approach |
-|---|---|
-| **Noob Tip** | Open SSH to 0.0.0.0/0 "so I can connect from anywhere" |
-| **Pro Tip** | Lock SSH to My IP only. Security is not optional. |
+| 🔍 Issue | 💡 Likely Cause | 🔧 Fix |
+|-------|--------------|-----|
+| 🔐 `Permission denied (publickey)` | Wrong key or permissions | `chmod 400` the `.pem`; verify username `ec2-user` |
+| 🪟 PuTTY: `No supported auth algorithms` | Fed `.pem` directly | Convert to `.ppk` with PuTTYgen |
+| 🌐 Website won't load | Missing HTTP rule in SG | Add inbound HTTP `80` ← `0.0.0.0/0` |
+| ⏱️ Connection timeout | Wrong IP or instance stopped | Re-copy Public IP; check instance state |
+| 📦 `yum` errors on AL2023 | AL2023 uses **dnf** | Use `sudo dnf update -y` / `dnf install -y httpd` |
+| 🖥️ Default Apache test page | Custom index failed | Re-run the `echo \| sudo tee` command |
 
 ---
 
 ## 🎮 Test Yourself! (No Peeking 👀)
 
-**Q1:** Which EC2 instance type is Free Tier eligible?
+**Q1:** Which instance types are Free Tier eligible?
 
 <details><summary>👀 Show answer</summary>
 
-**A:** `t2.micro` (also `t3.micro` and `t4g.micro`) — Free Tier gives you 750 hours/month of these tiny workhorses. 🐴
+**A:** `t2.micro` — plus `t3.micro` and `t4g.micro`. Tiny workhorses, 750 hrs/month on legacy accounts. 🐴
 
 </details>
 
-**Q2:** What port does SSH use, and why does it matter for your security group?
+**Q2:** What port does SSH use, and how should its source be restricted?
 
 <details><summary>👀 Show answer</summary>
 
-**A:** Port **22**. You should only allow it from **My IP**, so random bots on the internet can't try to break in.
+**A:** Port **22**, locked to **My IP** — never `0.0.0.0/0`, or internet bots will knock all night. 🚪
 
 </details>
 
-**Q3:** What does `sudo systemctl enable httpd` do that `start` doesn't?
+**Q3:** What does `systemctl enable httpd` do that `start` doesn't?
 
 <details><summary>👀 Show answer</summary>
 
-**A:** `start` runs it now; **`enable` makes it auto-start after every reboot**. Both together = server that survives restarts. 💪
+**A:** `start` runs it now; **`enable` auto-starts it after every reboot**. Both together = a server that survives restarts. 💪
 
 </details>
 
 ### 🔥 Bonus Challenge
 
-Your site works on `http://`. Now **add an HTTPS (port 443) rule** to your security group and try `https://<your-ip>`. It won't fully work (no SSL cert yet) — but watch what happens, and note why browsers complain. That's exactly how real traffic gets encrypted later. 🔐
+Add an HTTPS (443) rule and try `https://<your-ip>`. It won't fully work (no SSL cert) — but watch exactly HOW the browser complains. That's the door SSL later opens. 🔐
 
 > 💪 **Rithu:** *"Breaking things on purpose is how you learn what 'working' actually means. Click the button, Ravi!"*
 
 ---
 
-## 🔗 What's Next?
+## 📚 Official Documentation
 
-> <img src="https://img.shields.io/badge/➡️-Next%20Lab-2ECC71?style=for-the-badge" />
-
-This was the warm-up! Next up, we play with **firewalls**.
-
-👉 **[Lab 02 — EC2 Security Groups Deep Dive](../02%20-%20EC2%20-%20Security%20Groups%20Deep%20Dive/README.md)**
-
-We'll lock down traffic, open ports on-demand, and reference security groups within each other.
-It'll be like being a **cloud bouncer**. 🫡
+- 🚀 [Launch an EC2 Instance](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html)
+- 🔑 [EC2 Key Pairs](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html)
+- 🔐 [Connect to Your Linux Instance](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AccessingInstances.html)
+- 🌐 [Get Started with Amazon EC2](https://aws.amazon.com/ec2/getting-started/)
 
 ---
 
-## ❓ Troubleshooting
+## 🎓 What You Learned
 
-| 🔍 Problem | 💡 Likely Cause | 🔧 Fix |
-|---------|-------------|-----|
-| 🔐 `Permission denied (publickey)` | Wrong key or permissions | `chmod 400` on `.pem`, verify key name |
-| 🪟 PuTTY: `No supported auth algorithms` | `.pem` used directly | Convert to `.ppk` with PuTTYgen |
-| 🌐 Website won't load | Missing HTTP rule in SG | Add inbound HTTP (80) from `0.0.0.0/0` |
-| ⏱️ Connection timeout | Wrong IP or instance down | Verify Public IP, check instance state |
-| 📦 `yum` errors on AL2023 | AL2023 uses **dnf** (`yum` is only a compatibility alias) | Use `sudo dnf update -y` / `sudo dnf install -y httpd` |
-| 🖥️ Browser shows default Apache page | Custom index.html failed | Re-run the `echo \| sudo tee` command |
+> **Your first full stack deployment loop:**
+> - 🚀 **Launch** → AMI + type + key pair + SG
+> - 🔐 **Connect** → SSH via terminal, PuTTY, or browser
+> - 🌐 **Serve** → httpd installed, started, enabled
+> - 🧹 **Terminate** → stop the meter deliberately
+
+**Golden Habit:** Launch → Verify → **Terminate**. Every single time. 🧹
+
+| | Approach |
+|---|---|
+| 👶 **Noob Way** | Open SSH to `0.0.0.0/0` "so I can connect from anywhere" |
+| 🧙 **Pro Way** | Lock SSH to My IP. Security is not optional. |
+
+> 🗣️ **Rithu:** *"If you remember ONE thing: don't open SSH to the whole world. My-IP-only, always. The bouncer should know your face!"* 🚪
 
 ---
 
-> **Rithu's Real Talk:** In my first month of AWS, I racked up $87 in charges. Not because AWS is expensive - because I didn't clean up. These labs are designed to prevent that. Follow the cleanup sections. Your wallet will thank you.
+## ➡️ What's Next?
+
+This was the warm-up! Next up, we play with **firewalls** — lock down traffic, open ports on demand, and chain security groups together. Cloud bouncer school. 🫡
+
+🎯 **[Lab 02 - EC2: Security Groups Deep Dive](../02%20-%20EC2%20-%20Security%20Groups%20Deep%20Dive/README.md)**
+
+---
 
 <div align="center">
 
-### 🏆 Lab Complete!
+### ⭐ Enjoyed this lab? Star the repo & share your feedback!
 
-<img src="https://img.shields.io/badge/✅-Lab%2001%20DONE!-2ECC71?style=for-the-badge" />
-
----
-
-*Built with ☕ and a lot of patience — Rithu* ☁️
+**Happy Learning!** 🚀☁️
 
 </div>
