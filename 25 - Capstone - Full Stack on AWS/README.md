@@ -1,427 +1,212 @@
-<div align="center">
+# 🏆 Lab 25 - Capstone: Full Stack on AWS
 
-<img src="https://img.shields.io/badge/Lab%2025-Capstone%20Full%20Stack-E74C3C?style=for-the-badge&labelColor=232F3E" />
+> 📅 **Updated:** 21 August 2026 | ⏱️ **Duration:** ~90 minutes | 📊 **Level:** Advanced (Final Boss 👑)
 
-<br/>
-
-# Lab 25 — Capstone: Full Stack on AWS
-
-![Difficulty](https://img.shields.io/badge/Difficulty-Hard-red?style=for-the-badge&labelColor=232F3E)
-![Time](https://img.shields.io/badge/Time-~90min-purple?style=for-the-badge&labelColor=232F3E)
-![Cost](https://img.shields.io/badge/Cost-%3C%245-orange?style=for-the-badge&labelColor=232F3E)
-![Service](https://img.shields.io/badge/Service-Multiple%20Services-blueviolet?style=for-the-badge&labelColor=232F3E)
-
-> "This is it, Ravi. Everything you've learned, everything you've built — it all comes together now. Let's build something real." — Rithu
-
-</div>
+![Capstone](https://img.shields.io/badge/Lab%2025-Final%20Boss-E74C3C?style=for-the-badge&logo=amazon-aws&logoColor=white)
+![Difficulty](https://img.shields.io/badge/Difficulty-Advanced-red?style=flat-square)
+![Time](https://img.shields.io/badge/Time-~90%20minutes-purple?style=flat-square)
+![Status](https://img.shields.io/badge/Status-Active%20Lab-2E7D32?style=flat-square)
 
 ---
 
+## 🎯 What You'll Master
+
+| Skill | Description |
+|-------|-------------|
+| 🌐 **Multi-Tier Networking** | VPC with public/private subnets across 2 AZs |
+| 🔐 **Defense in Depth** | Chained security groups: ALB → EC2 → RDS |
+| ⚖️ **Load Balancing** | ALB + target group distributing web traffic |
+| 📈 **Auto Scaling** | Self-healing fleet with target tracking policy |
+| 🗄️ **Managed Database** | Private-subnet RDS MySQL with real data |
+| 📊 **Monitoring** | CloudWatch dashboard + CPU alarm + SNS alert |
+| 🕵️ **Auditing** | CloudTrail logging every API call |
+| 🧹 **Full Cleanup** | Tear down 10+ services in the right order |
+
+> 💡 **Pro Tip:** This is the **final exam** — every skill from Labs 01–24 assembled into one production-like app. Take your time, name everything carefully, and be proud of this one! 🎉
+
+---
+
+## 🚦 Before You Start
+
+### ✅ Prerequisites Checklist
+- [ ] 🏁 **Labs 01–24 done** — this lab assumes those skills
+- [ ] 🌍 **Single Region** — Pick one and stick with it
+- [ ] 🔐 **Permissions** — Admin access (VPC, EC2, RDS, S3, IAM, CloudWatch, CloudTrail)
+- [ ] ⏰ **~90 uninterrupted minutes**
+- [ ] 📝 **Notepad ready** — You'll create many named resources!
+
+### 📦 What You Need (and Don't)
+| Required | Optional |
+|----------|----------|
+| AWS Account (Free Tier friendly) | Registered domain (for Route 53) |
+| EC2 Key Pair (from Lab 01) | Browser tab discipline 😅 |
+| Your email (for alarm alerts) | |
+
+---
+
+## 💰 Cost & Safety First
+
+> ⚠️ **Real resources = Real charges.** Most of this lab fits Free Tier, but the ALB is *not* free — and forgotten resources bill forever.
+
+### 💵 Estimated Cost (~90-minute session)
+
+| Resource | Free Tier? | Est. Cost |
+|----------|-----------|-----------|
+| 🖥️ 2× t2.micro EC2 | ✅ 750 hrs/month free | ~$0 |
+| 🗄️ db.t3.micro RDS | ✅ 750 hrs/month free | ~$0 |
+| ⚖️ ALB | ❌ Not free tier | ~$0.05 |
+| 🪣 S3 (a few KB) | ✅ 5 GB free | ~$0 |
+| 📊 CloudWatch basic | ✅ Free tier | ~$0 |
+| 🕵️ CloudTrail (1st trail) | ✅ Management events free | ~$0 |
+| **Total** | | **< $1** ✨ |
+
+### 🏷️ **Naming Convention** — Use these EXACT names:
+
+| Pattern | Example | Purpose |
+|---------|---------|---------|
+| `ravi-capstone-*` | `ravi-capstone-vpc` | Instantly identify lab resources |
+
+> 🛑 **CLEANUP RULE:** Delete ONLY resources matching `ravi-capstone-*` (and your audit bucket). Default/default-VPC resources belong to AWS — **don't touch them!**
+
+---
+
+## 🧠 How It All Fits Together
+
+```mermaid
+graph TD
+    U["🌍 Users"] --> ALB["⚖️ Application Load Balancer<br/>public front door"]
+    ALB --> E1["🖥️ EC2 #1<br/>public subnet · AZ-a"]
+    ALB --> E2["🖥️ EC2 #2<br/>public subnet · AZ-b"]
+    E1 --> RDS["🗄️ RDS MySQL<br/>private subnet"]
+    E2 --> RDS
+    E1 -.-> S3["🪣 S3<br/>static assets"]
+    CW["📊 CloudWatch"] -.->|watches| ALB
+    CT["🕵️ CloudTrail"] -.->|logs every API call| CLOUD["☁️ Your Account"]
+
+    style U fill:#FF9800,color:#fff
+    style ALB fill:#2196F3,color:#fff
+    style E1 fill:#4CAF50,color:#fff
+    style E2 fill:#4CAF50,color:#fff
+    style RDS fill:#9C27B0,color:#fff
+    style S3 fill:#FFEB3B,color:#000
+    style CW fill:#F44336,color:#fff
+    style CT fill:#607D8B,color:#fff
+```
+
+### 🔑 Key Concepts
+| Component | Role |
+|-----------|------|
+| **VPC + Subnets** | Isolated network; public = internet-facing, private = database |
+| **Security Group Chain** | Internet → ALB (:80) → EC2 (:80) → RDS (:3306) — each layer trusts only the one above |
+| **Launch Template** | Blueprint: AMI, size, SG, startup script |
+| **ASG + Target Tracking** | Cruise control 🚗 — keeps 2–4 healthy instances |
+| **ALB + Target Group** | Front door + health-checked traffic splitter |
+| **RDS (private)** | Managed MySQL — no public IP, ever |
+| **CloudWatch** | Dashboards + alarms = early warning system |
+| **CloudTrail** | Black-box recorder for every API action |
+
+> 🛡️ **Why no NAT Gateway?** Nothing here needs outbound internet from a private subnet (web servers are public, RDS is managed). Skipping it avoids the classic **~$32/month** forgetting-to-delete trap. Want NAT practice? See Lab 09.
+
+---
+
+## 🪜 Step-by-Step Guide
+
+> 🗺️ **Build order matters:** Network → Firewalls → Storage → Compute blueprint → Traffic → Scaling → Database → Monitoring → Auditing. Each step unblocks the next!
+
+### 🟢 Step 1: Create the VPC 🌐
+
 <details>
-<summary><b>🎭 Ravi & Rithu's Coffee Break Chat</b></summary>
+<summary><b>📋 Expand for detailed steps</b></summary>
 
-**Ravi:** "We're actually building a FULL application?"
-
-**Rithu:** "The whole enchilada! VPC, EC2, RDS, S3, ALB, Auto Scaling, CloudWatch, CloudTrail."
-
-**Ravi:** "That's... everything we've learned."
-
-**Rithu:** "That's the point. You've leveled up. Now show me what you've got!"
+1. 🌐 Open **VPC Console** → **VPC and more** (one-shot wizard!)
+2. 📝 **Name tag auto-generation:** `ravi-capstone-vpc`
+3. ⚙️ Configure:
+   - **IPv4 CIDR:** `10.0.0.0/16`
+   - **AZs:** `2`
+   - **Public subnets:** `2` · **Private subnets:** `2`
+   - **NAT gateways:** `None` ✅ (cost trap avoided!)
+   - **VPC endpoints:** `None`
+   - **DNS hostnames:** ✅ Enabled
+4. 👀 Preview should show: 4 subnets (`10.0.1–4.0/24`), 1 IGW, route tables
+5. ✅ Click **Create VPC**
+6. 🔍 Verify: **Subnets** = 4 · **Internet Gateways** = 1 attached · **NAT Gateways** = none
 
 </details>
 
-## 📋 Table of Contents
+> 📸 **Screenshot Proof:** Capture the VPC visual topology showing all 4 subnets, IGW, and route tables.
 
-- [🎯 Objective](#-objective)
-- [📊 Lab Progress](#-lab-progress)
-- [🤔 In Plain English](#-in-plain-english)
-- [🧠 Prerequisites](#-prerequisites)
-- [💰 Cost Warning](#-cost-warning)
-- [🏗️ Architecture](#️-architecture)
-- [🛠️ Step-by-Step Instructions](#️-step-by-step-instructions)
-- [✅ Validation Checklist](#-validation-checklist)
-- [🧹 Cleanup (IMPORTANT!)](#-cleanup-important)
-- [🧠 Memory Tips](#-memory-tips)
-- [🎓 What You Learned](#-what-you-learned)
-- [🎮 Test Yourself](#-test-yourself-no-peeking-)
-- [🔗 What's Next?](#-whats-next)
+> 💡 **The VPC is your virtual data center.** Everything you build from here lives inside it — just like Lab 08, but bigger!
 
 ---
 
-<div align="center">
+### 🟢 Step 2: Create the Security Group Chain 🔐
 
-## 📊 Lab Progress
+<details>
+<summary><b>🔐 Expand for firewall setup</b></summary>
 
-`[███░░░░░░░░░░░░░░░░░] 8% — The Final Boss Awaits!`
+Create all three in **EC2 Console** → **Security Groups**, in this exact order:
 
-</div>
+**1️⃣ ALB SG — the front door**
+- Name: `ravi-alb-sg` · VPC: `ravi-capstone-vpc`
+- Inbound: HTTP `80` ← Anywhere-IPv4 (`0.0.0.0/0`)
 
----
+**2️⃣ EC2 SG — the app layer**
+- Name: `ravi-ec2-sg` · VPC: `ravi-capstone-vpc`
+- Inbound: HTTP `80` ← Source = `ravi-alb-sg` 🎯
+- Inbound: SSH `22` ← Source = **My IP**
 
-## 🤔 In Plain English
+**3️⃣ RDS SG — the vault**
+- Name: `ravi-rds-sg` · VPC: `ravi-capstone-vpc`
+- Inbound: MySQL/Aurora `3306` ← Source = `ravi-ec2-sg` 🎯
 
-> **What is this, really?** The Capstone is **everything you've learned, assembled into one real application**. A VPC with public/private subnets, EC2 servers behind an ALB, an Auto Scaling Group, an RDS database, S3 for storage, CloudWatch watching it all, and CloudTrail logging everything. It's the same architecture real companies run — built by you, from scratch. 🏗️
->
-> 🌍 **Why you should care:** This is your **portfolio piece**. When someone asks "what have you built on AWS?", this is the answer. Take your time — you've earned the right to be proud of this one.
+</details>
 
----
+> 📸 **Screenshot Proof:** Capture all three security groups showing their inbound rules chained together.
 
-## 🎯 Objective
-
-By the end of this capstone lab, you will:
-- Design and deploy a complete multi-tier application architecture on AWS
-- Integrate VPC, EC2, RDS, S3, ALB, Auto Scaling, CloudWatch, and CloudTrail
-- Experience a real-world deployment from infrastructure to monitoring
-- Document and clean up a production-like environment
-
-This is your **final exam and celebration**. You'll build a full-stack web application that ties together every skill from Labs 01-24. Take your time, enjoy the process, and be proud of how far you've come!
-
-**Architecture Overview:**
-```
-Route 53 → ALB → EC2 (Auto Scaling) → RDS (MySQL) → S3 (static assets) → CloudWatch (monitoring) → CloudTrail (auditing)
-```
+> 🏰 **Defense in depth:** Each layer only accepts traffic from the layer above. Even if one falls, the next still holds! Creating them **first** means RDS (Step 7) can reference them immediately — no rework.
 
 ---
 
-## 🧠 Prerequisites
+### 🟢 Step 3: Create the S3 Assets Bucket 🪣
 
-- [ ] Completed Labs 01-24 (all previous labs)
-- [ ] Solid understanding of VPC, EC2, RDS, S3, Security Groups, and IAM
-- [ ] AWS Console access with administrator permissions
-- [ ] At least 90 minutes of uninterrupted time
-- [ ] A notepad to track resource names (you'll create many!)
+<details>
+<summary><b>🪣 Expand for bucket setup</b></summary>
 
----
+1. 🌐 Open **S3 Console** → **Create bucket**
+2. 📝 **Bucket name:** `ravi-capstone-assets-12345` (add your own random digits — must be globally unique)
+3. 🌍 **Region:** Same as your VPC
+4. 🔒 **Block Public Access:** Leave all ✅ ON (default — safest!)
+5. 🔐 **Default encryption:** Keep SSE-S3 (default)
+6. ✅ **Create bucket**
+7. 📤 Open bucket → **Upload** → add a local `style.css`:
+   ```css
+   body { font-family: Arial; background-color: #f0f0f0; }
+   h1 { color: #333; }
+   ```
+8. ✅ **Upload**
 
-## 💰 Cost Warning
+</details>
 
-This lab uses **multiple AWS services**. Estimated costs:
+> 📸 **Screenshot Proof:** Capture the bucket showing `style.css` uploaded.
 
-| Service | Estimated Cost |
-|---------|---------------|
-| EC2 (2x t2.micro, ~1.5 hours) | ~$0.03 |
-| RDS (db.t3.micro, ~1.5 hours) | ~$0.05 |
-| ALB (Application Load Balancer) | ~$0.02 |
-| NAT Gateway (~1.5 hours) | ~$0.04 |
-| S3 (minimal storage) | ~$0.01 |
-| CloudWatch (dashboard + alarms) | ~$0.01 |
-| Data transfer (minimal) | ~$0.01 |
-| **Total estimated** | **~$3-5** |
-
-> <img src="https://img.shields.io/badge/Warning-STOP!-E74C3C?style=flat-square" /> **CRITICAL WARNING**: This lab creates MANY resources across multiple services. **You MUST follow the cleanup instructions at the end** or you WILL incur ongoing charges. The NAT Gateway is particularly expensive (~$0.045/hr = ~$32/month if left running). **CLEAN UP EVERYTHING!**
-
-> **Ravi's Mistake of the Day:** In the capstone, I launched everything and cleaned up in the wrong order. Tried to delete the VPC before the NAT Gateway. AWS said "nah" and I spent 45 minutes untangling dependencies. Follow. The. Cleanup. Order.
+> 💡 **Public access stays blocked!** In real apps, static assets are served privately via CloudFront or presigned URLs — never a wide-open bucket. (See Labs 05–07 for the hosting patterns.)
 
 ---
 
-## 🏗️ Architecture
-
-```
-                              ┌─────────────┐
-                              │  Route 53    │
-                              │  (DNS)       │
-                              └──────┬──────┘
-                                     │
-                              ┌──────▼──────┐
-                              │  ALB         │
-                              │  (Load       │
-                              │   Balancer)  │
-                              └──────┬──────┘
-                                     │
-                    ┌────────────────┼────────────────┐
-                    │                │                 │
-             ┌──────▼──────┐  ┌─────▼───────┐        │
-             │  Public      │  │  Public      │        │
-             │  Subnet      │  │  Subnet      │        │
-             │  10.0.1.0/24 │  │  10.0.2.0/24│        │
-             │  (us-east-1a)│  │  (us-east-1b)│        │
-             └──────┬──────┘  └─────┬───────┘        │
-                    │                │                 │
-             ┌──────▼──────┐  ┌─────▼───────┐        │
-             │  EC2         │  │  EC2         │        │
-             │  (Auto       │  │  (Auto       │        │
-             │   Scaling)   │  │   Scaling)   │        │
-             └──────┬──────┘  └─────┬───────┘        │
-                    │                │                 │
-                    └────────────────┼────────────────┘
-                                     │
-                              ┌──────▼──────┐
-                              │  Private     │
-                              │  Subnet      │
-                              │  (RDS)       │
-                              └──────┬──────┘
-                                     │
-                              ┌──────▼──────┐
-                               │  RDS MySQL   │
-                               │  (Multi-AZ)  │
-                               └─────────────┘
-```
-
-> **Did You Know?** The capstone architecture you're building mirrors what companies like Netflix, Airbnb, and Spotify use at scale. The difference? They run millions of instances. You're running 2. But the architecture is the same!
-
----
-
-## 🛠️ Step-by-Step Instructions
-
-### Step 1: Create VPC
-
-<img src="https://img.shields.io/badge/Step%201-Create%20VPC-27AE60?style=for-the-badge" />
-
-Let's build the network foundation for our full-stack app!
-
-1. Go to **VPC** in the AWS Console
-2. Click **Your VPCs** in the left sidebar
-3. Click **Create VPC** (top right)
-4. Select **VPC and more** (the visual option)
-
-**Configure the VPC:**
-
-5. **Name tag auto-generation**: Type `ravi-capstone-vpc`
-6. **IPv4 CIDR block**: `10.0.0.0/16`
-7. **Number of AZs**: Select **2**
-8. **Number of public subnets**: Select **2**
-9. **Number of private subnets**: Select **2**
-10. **NAT gateways**: Select **None** — nothing in this lab needs outbound internet from a private subnet (the web servers live in public subnets, and RDS is fully managed). Skipping it also avoids a ~$32/month cost trap. (Want NAT practice? See Lab 09 and create one manually.)
-11. **VPC endpoints**: Select **None**
-12. **DNS hostnames**: Check ✅ (should be enabled by default)
-
-You should see a visual showing:
-- VPC: `10.0.0.0/16`
-- Public subnets: `10.0.1.0/24` (us-east-1a), `10.0.2.0/24` (us-east-1b)
-- Private subnets: `10.0.3.0/24` (us-east-1a), `10.0.4.0/24` (us-east-1b)
-- Internet Gateway
-- Route tables
-
-13. Click **Create VPC**
-
-
-**Wait for the VPC to be created**, then verify:
-14. Go to **Your VPCs** → You should see `ravi-capstone-vpc`
-15. Go to **Subnets** → You should see 4 subnets (2 public, 2 private)
-16. Go to **Internet Gateways** → You should see one attached to the VPC
-17. Go to **NAT Gateways** → Confirm none exist (we chose None)
-
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> "The VPC is your virtual data center. Everything we build from here lives inside this VPC. The public subnets can talk to the internet; the private subnets are isolated. This is how real production architectures work!"
-
-📸 [Screenshot: VPC console showing the visual topology with all subnets, IGW, and NAT Gateway]
-
----
-
-### Step 2: Create S3 Bucket for Static Assets
-
-<img src="https://img.shields.io/badge/Step%202-Create%20S3%20Bucket-27AE60?style=for-the-badge" />
-
-Our application needs a place to store static files (CSS, images, logos).
-
-1. Go to **S3** in the AWS Console
-2. Click **Create bucket**
-
-**Configure the bucket:**
-
-3. **Bucket name**: Type `ravi-capstone-assets-12345` (add random numbers — must be globally unique)
-4. **AWS Region**: Same region as your VPC (e.g., us-east-1)
-5. **Block Public Access settings**: Uncheck **Block all public access** (we need the bucket accessible for static assets)
-6. Check ✅ the acknowledgment that says you understand the bucket will be public
-7. Under **Default encryption**:
-   - Check ✅ **Enable**
-   - **Encryption key type**: Select **Server-side encryption with AWS KMS keys**
-   - **AWS KMS key**: Select **aws/s3** (S3 managed key — free)
-8. Click **Create bucket**
-
-**Upload test files:**
-
-9. Click on the bucket name
-10. Click **Upload** → **Add files**
-11. Create a simple text file called `style.css` with this content:
-    ```css
-    body { font-family: Arial; background-color: #f0f0f0; }
-    h1 { color: #333; }
-    ```
-12. Upload the file
-13. Click **Upload** → **Close**
-
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> "In a real application, you'd store images, CSS, JavaScript, and fonts in S3. You can even configure S3 for static website hosting — serving HTML/CSS/JS directly from S3 without any server!"
-
-📸 [Screenshot: S3 bucket with the style.css file uploaded and encryption enabled]
-
----
-
-### Step 3: Create RDS MySQL
-
-<img src="https://img.shields.io/badge/Step%203-Create%20RDS%20MySQL-27AE60?style=for-the-badge" />
-
-Let's create the database for our application!
-
-1. Go to **RDS** in the AWS Console
-2. Click **Create database**
-
-**Configure the database:**
-
-3. **Creation method**: Standard create
-4. **Engine type**: MySQL
-5. **Engine version**: Latest Free Tier eligible version
-6. **Templates**: Free tier
-7. **DB instance identifier**: Type `ravi-capstone-db`
-8. **Master username**: Type `admin`
-9. **Master password**: Create a strong password (write it down!)
-10. **Confirm password**: Re-enter
-
-**Configure storage:**
-
-11. **Storage type**: gp3
-12. **Allocated storage**: 20 GB
-13. **Storage autoscaling**: Uncheck (stay in Free Tier)
-
-**Configure connectivity:**
-
-14. **VPC**: Select `ravi-capstone-vpc`
-15. **DB subnet group**: Create new → name it `ravi-capstone-subnet-group`
-    - Select both **private** subnets (10.0.3.0/24 and 10.0.4.0/24)
-16. **Public access**: No
-17. **Security group**: Create new → name it `ravi-rds-sg`
-18. **Availability Zone**: Select first AZ (us-east-1a)
-
-**Configure additional settings:**
-
-19. **Initial database name**: Type `capstone_app`
-20. **Backup**: Uncheck **Enable automated backups** (for this lab — saves time on deletion)
-21. **Deletion protection**: Uncheck (so we can delete it easily)
-
-22. Click **Create database**
-23. Wait 5-10 minutes for the RDS instance to be **Available**
-
-**After the RDS instance is available:**
-
-24. Click on `ravi-capstone-db`
-25. Note the **Endpoint** (something like `ravi-capstone-db.xxxx.us-east-1.rds.amazonaws.com`)
-26. Go to the **Security groups** link → click on `ravi-rds-sg`
-27. Click **Edit inbound rules**
-28. Click **Add rule**
-29. **Type**: MySQL/Aurora
-30. **Port**: 3306
-31. **Source**: Select **Custom** → type the security group ID of `ravi-ec2-sg` (we'll create this next — if it doesn't exist yet, add `10.0.0.0/16` temporarily)
-32. Click **Save rules**
-
-**Connect to RDS and set up the database:**
-
-33. SSH into one of your EC2 instances (or launch a temporary one)
-34. Install MySQL client:
-    ```bash
-    sudo dnf install -y mariadb105
-    ```
-    > 💡 On Amazon Linux 2023, the `mysql` package isn't available. `mariadb105` provides the `mysql` command and is fully compatible with RDS MySQL.
-35. Connect to the database:
-    ```bash
-    mysql -h ravi-capstone-db.xxxx.us-east-1.rds.amazonaws.com -u admin -p
-    ```
-36. Create a table and insert data:
-    ```sql
-    USE capstone_app;
-
-    CREATE TABLE users (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        name VARCHAR(100) NOT NULL,
-        email VARCHAR(100) NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
-
-    INSERT INTO users (name, email) VALUES
-        ('Ravi', 'ravi@example.com'),
-        ('Rithu', 'rithu@example.com'),
-        ('AWS Learner', 'learner@example.com');
-
-    SELECT * FROM users;
-    EXIT;
-    ```
-
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> "The RDS instance is in a private subnet — it has NO public IP. Only EC2 instances in the VPC can connect to it. This is a critical security pattern: databases should never be directly accessible from the internet!"
-
-📸 [Screenshot: RDS instance available, security group configured, table created with data]
-
----
-
-### Step 4: Create Security Groups
-
-<img src="https://img.shields.io/badge/Step%204-Create%20Security%20Groups-27AE60?style=for-the-badge" />
-
-Security Groups act as firewalls. Let's create them properly!
-
-1. Go to **EC2** → **Security Groups** (left sidebar, under Network & Security)
-
-**ALB Security Group:**
-
-2. Click **Create security group**
-3. **Security group name**: Type `ravi-alb-sg`
-4. **Description**: Type `Security group for Application Load Balancer`
-5. **VPC**: Select `ravi-capstone-vpc`
-6. **Inbound rules**:
-   - Click **Add rule**
-   - **Type**: HTTP
-   - **Port**: 80
-   - **Source**: Anywhere-IPv4 (0.0.0.0/0)
-7. Click **Create security group**
-
-**EC2 Security Group:**
-
-8. Click **Create security group**
-9. **Security group name**: Type `ravi-ec2-sg`
-10. **Description**: Type `Security group for EC2 instances`
-11. **VPC**: Select `ravi-capstone-vpc`
-12. **Inbound rules**:
-    - Click **Add rule** → **Type**: HTTP → **Port**: 80 → **Source**: Select `ravi-alb-sg` (the ALB can send traffic to EC2)
-    - Click **Add rule** → **Type**: SSH → **Port**: 22 → **Source**: Select **My IP** (only you can SSH)
-13. Click **Create security group**
-
-**RDS Security Group:**
-
-14. Click **Create security group**
-15. **Security group name**: Type `ravi-rds-sg`
-16. **Description**: Type `Security group for RDS database`
-17. **VPC**: Select `ravi-capstone-vpc`
-18. **Inbound rules**:
-    - Click **Add rule** → **Type**: MySQL/Aurora → **Port**: 3306 → **Source**: Select `ravi-ec2-sg` (only EC2 can talk to RDS)
-19. Click **Create security group**
-
-**Update RDS security group:**
-
-20. Go to **RDS** → **Databases** → `ravi-capstone-db`
-21. Click **Modify** (scroll to bottom)
-22. Under **Connectivity** → **Security group** → Remove old SG, add `ravi-rds-sg`
-23. Click **Continue** → **Apply immediately** (for this lab)
-24. Click **Modify DB instance**
-
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> "Notice the security group chain: Internet → ALB (port 80) → EC2 (port 80) → RDS (port 3306). Each layer only allows traffic from the layer above it. This is called 'defense in depth' — even if one layer is compromised, the next layer is still protected!"
-
-📸 [Screenshot: Three security groups showing their inbound rules chained together]
-
----
-
-### Step 5: Create Launch Template
-
-<img src="https://img.shields.io/badge/Step%205-Create%20Launch%20Template-27AE60?style=for-the-badge" />
-
-A Launch Template defines what EC2 instances look like when Auto Scaling creates them.
-
-1. Go to **EC2** → **Launch Templates** (left sidebar)
-2. Click **Create launch template**
-
-**Configure the template:**
-
-3. **Launch template name**: Type `ravi-capstone-template`
-4. **Template version description**: Type `Capstone project launch template`
-5. **AMI**: Amazon Linux 2023 (Free Tier eligible)
-6. **Instance type**: t2.micro
-7. **Key pair**: Select your existing key pair
-8. **Network settings**:
-   - Select **Select existing security group**
-   - **Security groups**: Select `ravi-ec2-sg`
-9. **Storage**:
-   - **Size**: 8 GiB (default)
-
-**Add User Data (startup script):**
-
-10. Expand **Advanced details**
-11. In the **User data** field, paste this entire script:
+### 🟢 Step 4: Create the Launch Template 📄
+
+<details>
+<summary><b>📄 Expand for template setup</b></summary>
+
+1. 🌐 **EC2 Console** → **Launch Templates** → **Create launch template**
+2. 📝 **Name:** `ravi-capstone-template`
+3. ⚙️ Configure:
+   - **AMI:** Amazon Linux 2023 (Free Tier eligible)
+   - **Instance type:** `t2.micro`
+   - **Key pair:** Select yours
+   - **Firewall:** Select existing → `ravi-ec2-sg`
+   - **Storage:** 8 GiB gp3 (default)
+4. 📜 Expand **Advanced details** → paste into **User data**:
 
 ```bash
 #!/bin/bash
@@ -443,751 +228,380 @@ EOF
 systemctl enable httpd
 ```
 
-12. Click **Create launch template**
+5. ✅ **Create launch template**
 
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> "The User Data script runs every time an instance launches. It installs Apache (httpd) and PHP, then creates a simple HTML page. In production, you'd use a proper deployment pipeline, but this works great for a demo!"
+</details>
 
-📸 [Screenshot: Launch template creation page with User Data script visible]
+> 📸 **Screenshot Proof:** Capture the launch template summary page showing AMI, instance type, SG, and User Data.
 
----
-
-### Step 6: Create Auto Scaling Group
-
-<img src="https://img.shields.io/badge/Step%206-Create%20Auto%20Scaling%20Group-27AE60?style=for-the-badge" />
-
-Auto Scaling ensures we always have enough EC2 instances running!
-
-1. Go to **EC2** → **Auto Scaling Groups** (left sidebar)
-2. Click **Create Auto Scaling group**
-
-**Configure the ASG:**
-
-3. **Name**: Type `ravi-capstone-asg`
-4. **Launch template**: Select `ravi-capstone-template`
-5. Click **Next**
-
-**Configure VPC and subnets:**
-
-6. **VPC**: Select `ravi-capstone-vpc`
-7. **Availability Zones**: Select both public subnets:
-   - `10.0.1.0/24 (us-east-1a)`
-   - `10.0.2.0/24 (us-east-1b)`
-8. Click **Next**
-
-**Configure advanced options:**
-
-9. **Load balancing**: Select **Attach to an existing load balancer** (we'll create the ALB first, so if it's not ready, select **Skip to next step** and come back)
-   - If the ALB isn't created yet, choose **Skip to next step** and we'll attach it later
-10. **Health check type**: Select **ELB** (if ALB is attached) or **EC2**
-11. **Health check grace period**: 300 seconds
-12. Click **Next**
-
-**Configure group size and scaling:**
-
-13. **Desired capacity**: Type `2`
-14. **Minimum capacity**: Type `2`
-15. **Maximum capacity**: Type `4`
-16. **Scaling policies**: Select **Target tracking scaling policy**
-17. **Metric type**: Average CPU utilization
-18. **Target value**: `50`
-19. Click **Next**
-
-**Add notifications (optional):**
-
-20. Click **Skip to next step**
-
-**Review:**
-
-21. Click **Create Auto Scaling group**
-
-The ASG will launch 2 EC2 instances across the two public subnets. Wait 2-3 minutes for them to be in service.
-
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> "Auto Scaling with target tracking is like cruise control for your servers. If CPU goes above 50%, it adds instances. If it drops below, it removes them. Your app always has exactly the right amount of capacity!"
-
-📸 [Screenshot: Auto Scaling Group showing 2 instances InService across both AZs]
+> 💡 **User Data = bootstrap script.** It runs on every instance the ASG launches — Apache + PHP + MariaDB client, plus a homepage. Bonus: `mariadb105` pre-installs the MySQL client we'll use in Step 7! 😉
 
 ---
 
-### Step 7: Create Application Load Balancer
+### 🟢 Step 5: Create Target Group + ALB ⚖️
 
-<img src="https://img.shields.io/badge/Step%207-Create%20ALB-27AE60?style=for-the-badge" />
+<details>
+<summary><b>⚖️ Expand for load balancer setup</b></summary>
 
-The ALB distributes traffic across our EC2 instances!
+**Part A — Target Group first:**
 
-1. Go to **EC2** → **Load Balancers** (left sidebar)
-2. Click **Create Load Balancer**
-3. Select **Application Load Balancer**
+1. 🌐 **EC2 Console** → **Target Groups** → **Create target group**
+2. ⚙️ Configure:
+   - **Type:** Instances · **Name:** `ravi-capstone-tg`
+   - **Protocol:** HTTP `80` · **VPC:** `ravi-capstone-vpc`
+   - **Health check path:** `/`
+3. ✅ **Create target group** (don't register targets — the ASG does that!)
 
-**Configure the ALB:**
+**Part B — Now the ALB:**
 
-4. **Name**: Type `ravi-capstone-alb`
-5. **Scheme**: Internet-facing
-6. **IP address type**: IPv4
-7. **VPC**: Select `ravi-capstone-vpc`
-8. **Mappings**: Check ✅ both availability zones (us-east-1a, us-east-1b)
-9. **Security groups**: Select `ravi-alb-sg`
+4. 🌐 **Load Balancers** → **Create load balancer** → **Application Load Balancer**
+5. ⚙️ Configure:
+   - **Name:** `ravi-capstone-alb` · **Scheme:** Internet-facing
+   - **VPC:** `ravi-capstone-vpc` · **Mappings:** ✅ both AZs
+   - **Security group:** `ravi-alb-sg`
+   - **Listener:** HTTP `80` → Forward to `ravi-capstone-tg`
+6. ✅ **Create load balancer**
+7. ⏳ Wait for **State = Active** (~2–3 min), then copy the **DNS name**
 
-**Configure listener:**
+</details>
 
-10. **Listener 1**: HTTP on port 80
-11. **Default action**: Forward to target group
-12. **Target group**: Select **Create a target group**
-    - **Name**: Type `ravi-capstone-tg`
-    - **Target type**: Instances
-    - **Protocol**: HTTP
-    - **Port**: 80
-    - **VPC**: `ravi-capstone-vpc`
-    - **Health check path**: Type `/`
-    - **Health check protocol**: HTTP
-13. Click **Create target group** (this opens in a new tab)
-14. Go back to the ALB creation tab
-15. Refresh the target group dropdown → select `ravi-capstone-tg`
-16. Click **Create load balancer**
+> 📸 **Screenshot Proof:** Capture the ALB details showing State **Active** and its DNS name.
 
-**Wait for the ALB to be active:**
-
-17. Wait 2-3 minutes for the ALB status to change to **Active**
-18. Copy the **DNS name** (something like `ravi-capstone-alb-xxxx.us-east-1.elb.amazonaws.com`)
-
-**Verify the ALB is working:**
-
-19. Open a new browser tab
-20. Paste the ALB DNS name
-21. You should see the HTML page from one of your EC2 instances!
-
-**Test load balancing:**
-
-22. Refresh the page 5-10 times
-23. You might see different responses if the instances are different (or same if the User Data is identical — that's expected)
-
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> "The ALB is the front door to your application. It distributes traffic, performs health checks, and can even handle SSL/TLS termination. If one EC2 instance fails, the ALB automatically routes traffic to healthy instances."
-
-📸 [Screenshot: ALB active with DNS name, browser showing the capstone web page]
+> 🚦 **The ALB is your front door.** Health checks fail targets out, traffic flows only to healthy instances. If one server dies, users never notice!
 
 ---
 
-### Step 8: Set Up CloudWatch
+### 🟢 Step 6: Create the Auto Scaling Group 📈
 
-<img src="https://img.shields.io/badge/Step%208-Set%20Up%20CloudWatch-27AE60?style=for-the-badge" />
+<details>
+<summary><b>📈 Expand for ASG setup</b></summary>
 
-Let's monitor our application!
+1. 🌐 **EC2 Console** → **Auto Scaling Groups** → **Create Auto Scaling group**
+2. 📝 **Name:** `ravi-capstone-asg` · **Launch template:** `ravi-capstone-template` → **Next**
+3. 🌐 **Network:** VPC `ravi-capstone-vpc` → select **both public subnets** (`10.0.1.0/24`, `10.0.2.0/24`) → **Next**
+4. ⚙️ **Advanced options:**
+   - **Attach to an existing load balancer** → choose `ravi-capstone-tg` ✨ (it exists now — that's why we built it first!)
+   - **Health checks:** ✅ ELB · Grace period `300` seconds → **Next**
+5. 📏 **Group size:** Desired `2` · Min `2` · Max `4`
+6. 🎯 **Scaling policy:** Target tracking → **Average CPU utilization** → target `50` → **Next**
+7. ⏭️ Skip notifications → **Next** → **Next** → **Create Auto Scaling group**
+8. ⏳ Wait 2–3 min → **Activity** tab shows 2 instances launching · **Instances** show **InService**
 
-1. Go to **CloudWatch** in the AWS Console
+</details>
 
-**Create a dashboard:**
+> 📸 **Screenshot Proof:** Capture the ASG showing 2 instances **InService** across both AZs, and the target group showing 2 **healthy** targets.
 
-2. Click **Dashboards** in the left sidebar
-3. Click **Create dashboard**
-4. **Dashboard name**: Type `Capstone-Dashboard`
-5. Click **Create dashboard**
-
-**Add widgets:**
-
-6. Click **Add widget** → Select **Line** → **Next**
-7. Select **EC2** metrics → **Per-Instance Metrics** → Select CPU Utilization for both instances → Click **Create widget**
-8. Click **Add widget** → Select **Number** → **Next**
-9. Select **Application Load Balancer** → **Per App, Target Group, Load Balancer** → Select **RequestCount** → **Create widget**
-10. Click **Add widget** → Select **Line** → **Next**
-11. Select **RDS** → **Database connections** → Select your RDS instance → **Create widget**
-12. Click **Add widget** → Select **Number** → **Next**
-13. Select **Application Load Balancer** → **UnHealthyHostCount** → **Create widget**
-
-14. Click **Save dashboard**
-
-**Create a CloudWatch Alarm:**
-
-15. Click **Alarms** in the left sidebar
-16. Click **Create alarm**
-17. Click **Select metric**
-18. Search for `EC2` → **Per-Instance Metrics** → Select **CPUUtilization** for one instance
-19. Click **Select metric**
-
-**Configure the alarm:**
-
-20. **Statistic**: Average
-21. **Period**: 5 minutes
-22. **Threshold type**: Static
-23. **Whenever CPUUtilization is**: Greater than `80`
-24. **Datapoints to alarm**: 2 out of 3
-25. Click **Next**
-
-**Configure notification:**
-
-26. **Alarm notification**: Select **Create new SNS topic**
-27. **Topic name**: Type `ravi-capstone-alerts`
-28. **Email endpoints**: Type your email address
-29. Click **Create topic**
-30. Click **Next** → **Next** → **Create alarm**
-
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> "Dashboards give you a bird's-eye view of your application's health. Alarms alert you when something goes wrong. Together, they're your early warning system. In production, you'd have alarms for CPU, memory, disk, error rates, and latency!"
-
-📸 [Screenshot: CloudWatch dashboard showing EC2 CPU, ALB requests, RDS connections, and UnhealthyHostCount]
+> 🚗 **Cruise control for servers:** CPU above 50%? Add instances. Below? Remove them. Plus self-healing — kill an instance and watch the ASG replace it automatically!
 
 ---
 
-### Step 9: Enable CloudTrail
+### 🟢 Step 7: Create RDS MySQL 🗄️
 
-<img src="https://img.shields.io/badge/Step%209-Enable%20CloudTrail-27AE60?style=for-the-badge" />
+<details>
+<summary><b>🗄️ Expand for database setup</b></summary>
 
-Let's add audit logging for all API activity!
+**Create the database:**
 
-1. Go to **CloudTrail** in the AWS Console
-2. Click **Trails** → **Create trail**
+1. 🌐 **RDS Console** → **Create database**
+2. ⚙️ Configure:
+   - **Engine:** MySQL · **Templates:** Free tier
+   - **DB identifier:** `ravi-capstone-db`
+   - **Master username:** `admin` · **Password:** strong one (write it down! 📝)
+   - **Storage:** gp3, `20` GiB, autoscaling ❌ unchecked
+   - **Connectivity:** VPC `ravi-capstone-vpc` · Public access **No**
+   - **Existing SG:** `ravi-rds-sg` ✨ (created back in Step 2!)
+   - **Initial DB name:** `capstone_app`
+   - **Automated backups:** ❌ off · **Deletion protection:** ❌ off (easy cleanup)
+3. ✅ **Create database** → ⏳ wait 5–10 min for **Available** → copy the **Endpoint**
 
-**Configure the trail:**
+**Seed real data (from a web server):**
 
-3. **Trail name**: Type `ravi-capstone-trail`
-4. Under **Management events**: Read/Write events
-5. **Storage location**:
-   - Select **Create new S3 bucket**
-   - **S3 bucket**: Type `ravi-capstone-audit-12345` (add random numbers)
-6. Click **Create trail**
+4. 🔑 SSH into one ASG instance (public IP from **EC2 → Instances**)
+5. 🔌 Connect (client already installed by User Data!):
+   ```bash
+   mysql -h ravi-capstone-db.xxxx.us-east-1.rds.amazonaws.com -u admin -p
+   ```
+6. 🌱 Create a table + rows:
+   ```sql
+   USE capstone_app;
+   CREATE TABLE users (
+       id INT AUTO_INCREMENT PRIMARY KEY,
+       name VARCHAR(100) NOT NULL,
+       email VARCHAR(100) NOT NULL,
+       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+   );
+   INSERT INTO users (name, email) VALUES
+       ('Ravi', 'ravi@example.com'),
+       ('Rithu', 'rithu@example.com'),
+       ('AWS Learner', 'learner@example.com');
+   SELECT * FROM users;
+   EXIT;
+   ```
 
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> "CloudTrail is your black box recorder. If something goes wrong — unauthorized access, accidental deletion, strange behavior — CloudTrail tells you exactly what happened, who did it, and when. Never fly without it!" (Console-created trails are multi-Region by default, so every region gets logged automatically.)
+</details>
 
-📸 [Screenshot: CloudTrail trail created and showing Logging status]
+> 📸 **Screenshot Proof:** Capture the RDS instance **Available** with endpoint, and the terminal showing `SELECT * FROM users` returning 3 rows.
 
----
-
-### Step 10: Configure Route 53 (Optional)
-
-<img src="https://img.shields.io/badge/Step%2010-Route%2053%20(Optional)-3498DB?style=for-the-badge" />
-
-If you have a domain name, you can point it to your ALB!
-
-**Option A: You have a domain name**
-
-1. Go to **Route 53** → **Hosted zones**
-2. Click on your domain name
-3. Click **Create record**
-4. **Record name**: Leave blank (for root domain) or type `www`
-5. **Record type**: A
-6. **Alias**: Toggle ON
-7. **Route traffic to**: Alias to Application Load Balancer → select your region → select `ravi-capstone-alb`
-8. Click **Create records**
-
-**Option B: You don't have a domain (that's fine!)**
-
-Just use the ALB DNS name directly. The architecture still works perfectly!
-
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> "Route 53 is AWS's DNS service. It translates domain names (like example.com) to IP addresses or AWS resources. For this lab, the ALB DNS name works great. In production, you'd use a friendly domain name!"
-
-📸 [Screenshot: Route 53 record created pointing to ALB (or note: using ALB DNS directly)]
-
----
-
-### Step 11: Full Verification
-
-<img src="https://img.shields.io/badge/Step%2011-Full%20Verification-27AE60?style=for-the-badge" />
-
-Time to verify everything is working! Let's check each component.
-
-**Test the web application:**
-
-1. Open a browser tab
-2. Go to your ALB DNS name (or your Route 53 domain)
-3. You should see the capstone HTML page
-4. Refresh multiple times — traffic should be load-balanced across instances
-
-**Check Auto Scaling:**
-
-5. Go to **EC2** → **Auto Scaling Groups**
-6. Verify 2 instances are **InService**
-7. Go to **EC2** → **Instances**
-8. You should see 2 instances with the `ravi-capstone-template` prefix
-
-**Check CloudWatch:**
-
-9. Go to **CloudWatch** → **Dashboards** → `Capstone-Dashboard`
-10. You should see metrics flowing (CPU, requests, connections)
-11. Go to **Alarms** → Check that the CPU alarm is in **OK** state
-
-**Check CloudTrail:**
-
-12. Go to **CloudTrail** → **Event history**
-13. Filter by **Event source** = `ec2.amazonaws.com`
-14. You should see all the EC2 actions you took during this lab
-
-**Check RDS:**
-
-15. Go to **RDS** → **Databases** → `ravi-capstone-db`
-16. Verify it's **Available**
-17. Check **Database connections** metric in CloudWatch — it should show connection activity
-
-**Check S3:**
-
-18. Go to **S3** → `ravi-capstone-assets-12345`
-19. Verify the `style.css` file is there
-20. Check that default encryption is enabled
-
-**Check VPC:**
-
-21. Go to **VPC** → **Your VPCs** → Verify `ravi-capstone-vpc` exists
-22. Go to **Subnets** → Verify 4 subnets (2 public, 2 private)
-23. Go to **NAT Gateways** → Verify 1 NAT Gateway is active
-
-📸 [Screenshot: Browser showing capstone page, CloudWatch dashboard, CloudTrail events, and all services running]
+> 🏰 **Crown jewels stay hidden:** RDS lives in a private subnet with **no public IP**. Only your EC2 layer can reach port 3306 — the SG chain from Step 2 enforces it!
 
 ---
 
-### Step 12: Document Your Architecture
+### 🟢 Step 8: Set Up CloudWatch 📊
 
-<img src="https://img.shields.io/badge/Step%2012-Document%20Architecture-27AE60?style=for-the-badge" />
+<details>
+<summary><b>📊 Expand for monitoring setup</b></summary>
 
-Great engineers document their work! Create a simple architecture summary.
+**Build the dashboard:**
 
-**Resources created:**
+1. 🌐 **CloudWatch Console** → **Dashboards** → **Create dashboard** → name: `Capstone-Dashboard`
+2. ➕ Add widgets:
+   | Widget | Metric |
+   |--------|--------|
+   | 📈 Line | EC2 → Per-Instance → **CPUUtilization** (both instances) |
+   | 🔢 Number | ALB → **RequestCount** |
+   | 📈 Line | RDS → **DatabaseConnections** |
+   | 🔢 Number | ALB → **UnHealthyHostCount** |
+3. 💾 **Save dashboard**
 
-```
-VPC:
-  - ravi-capstone-vpc (10.0.0.0/16)
-  - Public Subnets: 10.0.1.0/24 (1a), 10.0.2.0/24 (1b)
-  - Private Subnets: 10.0.3.0/24 (1a), 10.0.4.0/24 (1b)
-  - Internet Gateway
-  - NAT Gateway
+**Create the alarm:**
 
-Compute:
-  - EC2 Auto Scaling Group (2-4 instances, t2.micro)
-  - Launch Template: ravi-capstone-template
+4. 🚨 **Alarms** → **Create alarm** → **Select metric** → EC2 → Per-Instance → **CPUUtilization**
+5. ⚙️ Configure:
+   - **Statistic:** Average · **Period:** 5 min
+   - **Threshold:** Greater than `80` · **Datapoints:** 2 of 3
+6. 🔔 **Notification:** New SNS topic `ravi-capstone-alerts` → your email → **Create topic**
+7. ✅ **Next → Next → Create alarm** → 📬 confirm the subscription email!
 
-Database:
-  - RDS MySQL: ravi-capstone-db (db.t3.micro, 20GB)
+</details>
 
-Load Balancing:
-  - ALB: ravi-capstone-alb (HTTP:80)
-  - Target Group: ravi-capstone-tg
+> 📸 **Screenshot Proof:** Capture the dashboard with all 4 widgets, and the alarm in **OK** state.
 
-Storage:
-  - S3: ravi-capstone-assets-12345 (static assets)
+> 🚨 **Dashboards = bird's-eye view. Alarms = smoke detector.** Metrics take 5–15 min to appear — patience, young builder. ⏳
 
-Monitoring:
-  - CloudWatch Dashboard: Capstone-Dashboard
-  - CloudWatch Alarm: CPU > 80%
-  - SNS Topic: ravi-capstone-alerts
+---
 
-Auditing:
-  - CloudTrail: ravi-capstone-trail → S3 bucket
+### 🟢 Step 9: Enable CloudTrail 🕵️
 
-Security Groups:
-  - ravi-alb-sg (HTTP from anywhere)
-  - ravi-ec2-sg (HTTP from ALB, SSH from My IP)
-  - ravi-rds-sg (MySQL from EC2)
+<details>
+<summary><b>🕵️ Expand for audit trail setup</b></summary>
 
-Estimated Cost: ~$3-5 for this lab session
+1. 🌐 **CloudTrail Console** → **Trails** → **Create trail**
+2. ⚙️ Configure:
+   - **Trail name:** `ravi-capstone-trail`
+   - **Storage location:** Create new S3 bucket → `ravi-capstone-audit-12345` (add random digits)
+   - **Management events:** Read/Write events (default)
+3. ✅ **Create trail** → status shows **Logging** 🟢
+
+</details>
+
+> 📸 **Screenshot Proof:** Capture the trail showing **Logging = Yes**.
+
+> 📼 **Black-box recorder:** Every API call — who, what, when. Console-created trails cover **all Regions** automatically. If something breaks, CloudTrail tells you exactly what happened!
+
+---
+
+### 🟡 Step 10: Configure Route 53 (Optional) 🌍
+
+<details>
+<summary><b>🌍 Expand for DNS setup — skip if no domain</b></summary>
+
+**Have a domain? Point it at your ALB:**
+
+1. 🌐 **Route 53** → **Hosted zones** → your domain
+2. ➕ **Create record:**
+   - **Record type:** `A` · **Alias:** ✅ ON
+   - **Route traffic to:** Alias to ALB → your Region → `ravi-capstone-alb`
+3. ✅ **Create records**
+
+**No domain? No problem!** The ALB DNS name works perfectly — the architecture is identical. 💪
+
+</details>
+
+> 📸 **Screenshot Proof:** Capture the alias record pointing to the ALB (or a note that you're using the ALB DNS directly).
+
+---
+
+### 🟢 Step 11: Full Verification ✅
+
+<details>
+<summary><b>✅ Expand for end-to-end checks</b></summary>
+
+Run through every layer of the stack:
+
+| # | Check | Where | Expect |
+|---|-------|-------|--------|
+| 1️⃣ | Web app loads | Browser → ALB DNS | 🎉 Capstone HTML page |
+| 2️⃣ | Load balancing | Refresh 5–10× | Requests split across instances |
+| 3️⃣ | Fleet healthy | EC2 → ASG | 2 instances **InService** |
+| 4️⃣ | Targets green | EC2 → Target Group | 2 targets **healthy** |
+| 5️⃣ | Database live | RDS console | `ravi-capstone-db` **Available** |
+| 6️⃣ | Data persisted | Your earlier `SELECT` | 3 user rows |
+| 7️⃣ | Metrics flowing | CloudWatch dashboard | CPU, requests, connections |
+| 8️⃣ | Alarm calm | CloudWatch → Alarms | Status **OK** 🟢 |
+| 9️⃣ | Audit working | CloudTrail → Event history | Filter source `ec2.amazonaws.com` |
+| 🔟 | Assets stored | S3 bucket | `style.css` present |
+| 1️⃣1️⃣ | Network solid | VPC console | 4 subnets + IGW attached |
+
+</details>
+
+> 📸 **Screenshot Proof:** Capture the browser showing the capstone page + the CloudWatch dashboard with live metrics.
+
+> 🏆 **Every layer verified = a genuinely production-like deployment.** You built this from scratch!
+
+---
+
+### 🟢 Step 12: Document Your Architecture 📝
+
+<details>
+<summary><b>📝 Expand for the resource inventory</b></summary>
+
+Great engineers document their work! Here's what you built:
+
+```text
+NETWORK      ravi-capstone-vpc (10.0.0.0/16)
+             ├─ Public:  10.0.1.0/24 (AZ-a), 10.0.2.0/24 (AZ-b)
+             ├─ Private: 10.0.3.0/24 (AZ-a), 10.0.4.0/24 (AZ-b)
+             └─ Internet Gateway
+
+COMPUTE      ravi-capstone-template → ravi-capstone-asg (2–4 × t2.micro)
+
+TRAFFIC      ravi-capstone-alb → ravi-capstone-tg (HTTP :80)
+
+DATABASE     ravi-capstone-db (MySQL, db.t3.micro, private subnets)
+
+STORAGE      ravi-capstone-assets-12345 (style.css)
+
+SECURITY     ravi-alb-sg → ravi-ec2-sg → ravi-rds-sg (chained!)
+
+MONITORING   Capstone-Dashboard · CPU >80% alarm · ravi-capstone-alerts (SNS)
+
+AUDITING     ravi-capstone-trail → ravi-capstone-audit-12345 (S3)
 ```
 
-📸 [Screenshot: Your architecture documentation — ASCII art or a screenshot of a diagram tool]
+</details>
+
+> 📸 **Screenshot Proof:** Save this inventory (or draw the diagram yourself in any tool) — it's your portfolio artifact! 🎨
 
 ---
 
 ## ✅ Validation Checklist
 
-Before cleaning up, confirm ALL of these:
-
-<table>
-<tr>
-<th>Status</th>
-<th>Check</th>
-</tr>
-<tr>
-<td>- [ ]</td>
-<td>ALB DNS name loads the capstone web page in browser ✅</td>
-</tr>
-<tr>
-<td>- [ ]</td>
-<td>2 EC2 instances are running (Auto Scaling Group) ✅</td>
-</tr>
-<tr>
-<td>- [ ]</td>
-<td>RDS instance is Available ✅</td>
-</tr>
-<tr>
-<td>- [ ]</td>
-<td>S3 bucket has the style.css file ✅</td>
-</tr>
-<tr>
-<td>- [ ]</td>
-<td>CloudWatch dashboard shows metrics ✅</td>
-</tr>
-<tr>
-<td>- [ ]</td>
-<td>CloudTrail is logging events ✅</td>
-</tr>
-<tr>
-<td>- [ ]</td>
-<td>VPC has 4 subnets, IGW, and NAT Gateway ✅</td>
-</tr>
-<tr>
-<td>- [ ]</td>
-<td>Security groups are chained: ALB → EC2 → RDS ✅</td>
-</tr>
-</table>
+| # | Check | Status |
+|---|-------|--------|
+| 1️⃣ | ALB DNS loads the capstone page in a browser | ☐ ✅ |
+| 2️⃣ | 2 EC2 instances **InService** across both AZs | ☐ ✅ |
+| 3️⃣ | Target group shows both targets **healthy** | ☐ ✅ |
+| 4️⃣ | RDS **Available** + `users` table returns 3 rows | ☐ ✅ |
+| 5️⃣ | S3 bucket holds `style.css` | ☐ ✅ |
+| 6️⃣ | CloudWatch dashboard shows live metrics | ☐ ✅ |
+| 7️⃣ | CPU alarm exists in **OK** state | ☐ ✅ |
+| 8️⃣ | CloudTrail trail is **Logging** | ☐ ✅ |
+| 9️⃣ | SG chain correct: ALB → EC2 → RDS | ☐ ✅ |
+| 🔟 | VPC has 4 subnets + IGW (and NO NAT Gateway 😉) | ☐ ✅ |
 
 ---
 
-> **POV:** You look at your AWS bill after the capstone and realize you actually stayed under $5. Clean-up skills: unlocked.
+## 🧹 Cleanup (Follow Order!)
+
+> ⚠️ **Delete in this exact sequence to avoid dependency errors. Missing cleanup = ongoing charges!**
+
+| Step | Action | Console Location |
+|------|--------|------------------|
+| 1️⃣ 🗑️ | Delete Route 53 records (if created) | Route 53 → Hosted zones |
+| 2️⃣ 🧹 | Delete CPU alarm → dashboard | CloudWatch |
+| 3️⃣ 🗑️ | Delete SNS topic `ravi-capstone-alerts` | SNS → Topics |
+| 4️⃣ 🗑️ | Delete trail `ravi-capstone-trail` | CloudTrail → Trails |
+| 5️⃣ 💾 | **Empty** + delete audit bucket | S3 |
+| 6️⃣ 🗑️ | Delete ALB, then target group | EC2 → Load Balancers / Target Groups |
+| 7️⃣ 📉 | ASG: set **Desired = 0** → wait for termination → **Delete** | EC2 → Auto Scaling Groups |
+| 8️⃣ 🧹 | Delete launch template | EC2 → Launch Templates |
+| 9️⃣ 🗑️ | Terminate any leftover instances | EC2 → Instances |
+| 🔟 🗑️ | Delete `ravi-capstone-db` (❌ final snapshot, ✅ acknowledgment) → wait → delete subnet group | RDS |
+| 1️⃣1️⃣ 💾 | **Empty** + delete assets bucket | S3 |
+| 1️⃣2️⃣ 🌐 | Delete VPC `ravi-capstone-vpc` (subnets, IGW, route tables go with it) | VPC → Your VPCs |
+| 1️⃣3️⃣ 🔐 | Delete `ravi-alb-sg`, `ravi-ec2-sg`, `ravi-rds-sg` | EC2 → Security Groups |
+| 1️⃣4️⃣ 🔍 | **Final sweep:** EC2, RDS, S3, VPC, CloudTrail, CloudWatch, ALB | All consoles |
+
+> 🛑 **NEVER DELETE:** Default VPC/subnets/SGs • buckets not named `ravi-capstone-*` • other labs' resources
+
+> 💡 **Order logic:** Consumers die before providers — traffic stuff first, network foundation last. Delete the VPC **after** everything inside it is gone, and S3 buckets must be **emptied** before deletion!
 
 ---
 
-> **Achievement Unlocked:** AWS Builder! Full stack complete! You are LEGENDARY!
+## 🚀 Level Ups (Post-Core Lab)
+
+| Challenge | What to Try | Notes |
+|-----------|-------------|-------|
+| 💥 **Chaos Test** | Terminate one web instance → watch ALB drain + ASG replace it | Self-healing proof! |
+| 🕵️ **Audit Hunt** | Find your terminate event in CloudTrail Event history | Who/what/when |
+| 📜 **Infrastructure as Code** | Rebuild the whole stack with CloudFormation (see Lab 21) | Reproducible = pro move |
+| 🌍 **Custom Domain** | Add Route 53 + ACM HTTPS certificate | Real-world polish |
+| ⚡ **Serverless Tier** | Swap EC2 for Lambda + API Gateway (Labs 18–19) | Compare architectures |
 
 ---
 
-## 🧹 Cleanup (IMPORTANT!)
+## 🆘 Troubleshooting Quick Reference
 
-Follow this EXACT order to avoid dependency issues and ensure everything is deleted!
-
-> <img src="https://img.shields.io/badge/Warning-Cleanup-E74C3C?style=flat-square" /> **Do NOT skip any step. Missing cleanup = ongoing charges!**
-
-**🗑️ Step 1: Route 53 (if you created records)**
-
-1. 🔄 Go to **Route 53** → **Hosted zones**
-2. 🗑️ Select any records you created → **Delete**
-3. 🧹 If you created health checks, delete them too
-
-**🗑️ Step 2: CloudWatch**
-
-4. 🛑 Go to **CloudWatch** → **Dashboards**
-5. 🗑️ Select `Capstone-Dashboard` → **Delete dashboard**
-6. 🧹 Go to **Alarms** → Select your alarm → **Delete**
-7. 🗑️ Go to **SNS** → **Topics** → Select `ravi-capstone-alerts` → **Delete topic**
-
-**🗑️ Step 3: CloudTrail**
-
-8. 🔄 Go to **CloudTrail** → **Trails**
-9. 🗑️ Select `ravi-capstone-trail` → **Delete**
-10. 💾 Go to **S3** → Find the audit bucket → **Empty** → **Delete bucket**
-
-**🗑️ Step 4: Application Load Balancer**
-
-11. 🛑 Go to **EC2** → **Load Balancers**
-12. 🗑️ Select `ravi-capstone-alb` → **Delete**
-13. 🧹 Go to **Target Groups** → Select `ravi-capstone-tg` → **Delete**
-
-**🗑️ Step 5: Auto Scaling Group**
-
-14. 🔄 Go to **EC2** → **Auto Scaling Groups**
-15. 🔍 Select `ravi-capstone-asg` → **Edit**
-16. 🛑 Change **Desired capacity** to `0` → **Update**
-17. ⏳ Wait for instances to terminate
-18. 🗑️ Select the ASG → **Delete**
-
-**🗑️ Step 6: Launch Template**
-
-19. 🧹 Go to **EC2** → **Launch Templates**
-20. 🗑️ Select `ravi-capstone-template` → **Delete**
-
-**🗑️ Step 7: EC2 Instances**
-
-21. 🛑 Go to **EC2** → **Instances**
-22. 🗑️ Select any remaining instances → **Terminate**
-
-**🗑️ Step 8: RDS Database**
-
-23. 🔄 Go to **RDS** → **Databases**
-24. 🗑️ Select `ravi-capstone-db` → **Actions** → **Delete**
-25. 🛑 Uncheck **Create final snapshot**
-26. ✅ Check **Acknowledge**
-27. 🧹 Type `delete me` to confirm
-28. 🗑️ Click **Delete**
-29. ⏳ Wait 5-10 minutes for deletion to complete
-
-**🗑️ Step 9: S3 Bucket**
-
-30. 💾 Go to **S3** → **Buckets**
-31. 🔍 Find `ravi-capstone-assets-12345`
-32. 🗑️ Click → **Empty** → Type `permanently delete` → **Delete**
-33. 🧹 Go back → Select bucket → **Delete** → Type name → **Delete bucket**
-
-**🛑 Step 10: NAT Gateway (CRITICAL!)**
-
-34. 🛑 Go to **VPC** → **NAT Gateways**
-35. 🗑️ Select the NAT Gateway → **Delete**
-36. 🧹 Confirm deletion
-
-> <img src="https://img.shields.io/badge/Warning-NAT%20Gateway-E74C3C?style=flat-square" /> NAT Gateway costs ~$0.045/hr = ~$32/month! Do NOT skip this!
-
-**🗑️ Step 11: VPC Resources**
-
-37. 🔄 Go to **VPC** → **Subnets** → Delete private subnets first, then public subnets
-38. 🧹 Go to **VPC** → **Route tables** → Delete custom route tables (keep the main one)
-39. 🗑️ Go to **VPC** → **Internet Gateways** → Detach from VPC → Delete
-40. 🛑 Go to **VPC** → **Your VPCs** → Select `ravi-capstone-vpc` → **Delete**
-
-**🗑️ Step 12: Security Groups**
-
-41. 🔄 Go to **EC2** → **Security Groups**
-42. 🗑️ Delete `ravi-alb-sg`, `ravi-ec2-sg`, `ravi-rds-sg` (one by one — can't delete the default)
-
-**🗑️ Step 13: RDS Subnet Group**
-
-43. 🧹 Go to **RDS** → **Subnet groups** → Delete `ravi-capstone-subnet-group`
-
-**🔍 Step 14: Final Verification**
-
-44. ✅ Go through each service one more time:
-
-<table>
-<tr>
-<th>Service</th>
-<th>Expected State</th>
-</tr>
-<tr>
-<td>🖥️ EC2</td>
-<td>✅ No instances</td>
-</tr>
-<tr>
-<td>🗄️ RDS</td>
-<td>✅ No databases</td>
-</tr>
-<tr>
-<td>🪣 S3</td>
-<td>✅ No buckets</td>
-</tr>
-<tr>
-<td>🌐 VPC</td>
-<td>✅ No VPCs (except default)</td>
-</tr>
-<tr>
-<td>🕵️ CloudTrail</td>
-<td>✅ No trails</td>
-</tr>
-<tr>
-<td>📊 CloudWatch</td>
-<td>✅ No dashboards</td>
-</tr>
-<tr>
-<td>⚖️ ALB</td>
-<td>✅ No load balancers</td>
-</tr>
-<tr>
-<td>🔗 NAT Gateway</td>
-<td>✅ None active</td>
-</tr>
-</table>
-
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" /> "The cleanup order matters! You can't delete a VPC if resources are still in it. You can't delete subnets if route tables reference them. Follow the order and everything will clean up smoothly!"
-
-📸 [Screenshot: All AWS services showing no resources remaining]
+| 🔍 Issue | 💡 Likely Cause | 🔧 Fix |
+|-------|--------------|-----|
+| ⚖️ ALB returns **502** | Targets failing health checks | Wait for User Data to finish (~2 min); verify `ravi-ec2-sg` allows :80 from `ravi-alb-sg` |
+| 🎯 Targets **unhealthy** | App not up yet / wrong SG chain | Check health check path `/`; confirm SG references, not CIDRs |
+| 🗄️ Can't reach RDS from EC2 | SG chain broken / wrong endpoint | `ravi-rds-sg` must allow 3306 from `ravi-ec2-sg`; copy full endpoint hostname |
+| 📈 ASG won't launch instances | Quota / template error | Check Service Quotas for t2.micro; verify launch template + subnet IPs available |
+| 📊 Dashboard shows no data | Metrics still propagating | Wait 5–15 min; confirm correct Region in CloudWatch |
+| 🗑️ Can't delete VPC | Resources still inside | Delete subnets' occupants first — follow Cleanup order 1→13 |
+| 🪣 Bucket won't delete | Objects still inside | **Empty** bucket first, then delete |
+| 🚨 Alarm stuck in **INSUFFICIENT_DATA** | Not enough datapoints yet | Normal for first ~15 min; it settles to OK |
 
 ---
 
-## 🧠 Memory Tips
+## 📚 Official Documentation
 
-Final exam edition — the mnemonics that should now be muscle memory. 🧲
-
-| 🧠 Memory Hook | Remember it like... |
-|---|---|
-| **VPC = gated neighborhood** | Subnets = streets, IGW = front gate, route tables = street signs. 🏘️ |
-| **ALB = traffic cop, ASG = robot manager** | ALB spreads traffic; ASG keeps the right number of servers alive. 🚦🤖 |
-| **SG = bouncer, RDS = managed vault** | Firewall rules at the door; database in a locked, backed-up room. 🚪🗄️ |
-| **S3 = cabinet, CloudWatch = cameras, CloudTrail = black box** | Storage, monitoring, and audit — your observability trio. 📦🎥🕵️ |
-| **Defense in depth** | Layers of security: VPC isolation + SG rules + private subnets. No single door = the whole castle. 🏰 |
-
-> 🗣️ **Rithu:** *"If you can explain every piece of this architecture to a friend without notes, you've genuinely learned AWS. That's the real final exam."
+- 🌐 [VPC User Guide](https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-vpc.html)
+- ⚖️ [Application Load Balancers](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html)
+- 📈 [EC2 Auto Scaling User Guide](https://docs.aws.amazon.com/autoscaling/ec2/userguide/what-is-amazon-ec2-auto-scaling.html)
+- 🗄️ [RDS for MySQL User Guide](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_MySQL.html)
+- 📊 [CloudWatch User Guide](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/WhatIsCloudWatch.html)
+- 🕵️ [CloudTrail User Guide](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-user-guide.html)
 
 ---
 
 ## 🎓 What You Learned
 
-In this capstone lab, you brought together EVERY skill from Labs 01-24:
+> **You assembled the full stack:**
+> - 🌐 **Network** → VPC, subnets, IGW
+> - 🔐 **Security** → chained SGs, private database
+> - ⚖️ **Traffic** → ALB + health-checked targets
+> - 📈 **Scale** → ASG with target tracking
+> - 🗄️ **Data** → managed MySQL in private subnets
+> - 📊 **Observe** → dashboards, alarms, audit logs
 
-| Service | Skill Applied |
-|---------|--------------|
-| **VPC** | Designed network architecture with public/private subnets |
-| **EC2** | Launched instances with User Data bootstrapping |
-| **Auto Scaling** | Created self-healing, scalable infrastructure |
-| **ALB** | Distributed traffic across multiple instances |
-| **RDS** | Deployed a managed MySQL database |
-| **S3** | Stored static assets with encryption |
-| **Security Groups** | Implemented defense-in-depth networking |
-| **CloudWatch** | Monitored application health with dashboards and alarms |
-| **CloudTrail** | Enabled audit logging for compliance |
-| **Route 53** | (Optional) Configured DNS for the application |
-
-**Architecture patterns you now understand:**
-- Multi-tier application design (web → app → database)
-- High availability across multiple Availability Zones
-- Auto Scaling for fault tolerance and cost optimization
-- Defense-in-depth security with chained Security Groups
-- Centralized monitoring and audit logging
+**Golden Habit:** Build in dependency order → Verify each layer → Break it on purpose → Clean up completely 🧹
 
 | | Approach |
 |---|---|
-| **Noob Tip** | Click through the console to create everything manually |
-| **Pro Tip** | Use CloudFormation/IaC. Reproducible, documented, and version-controlled.
+| 👶 **Noob Way** | Click through the console every time |
+| 🧙 **Pro Way** | Template it (CloudFormation/IaC) — reproducible, documented, version-controlled |
 
 ---
+
+## ➡️ What's Next?
+
+🎉 **CONGRATULATIONS — ALL 25 LABS COMPLETE!** 🎉
+
+You went from launching your first EC2 instance (Lab 01) to building a full multi-tier, monitored, audited application (this one). That's not tutorial-following — that's **engineering**. 🏆
+
+| Path | Next Move |
+|------|-----------|
+| 📜 **Certify** | AWS Cloud Practitioner → Solutions Architect Associate |
+| ⚡ **Go Serverless** | Lambda, API Gateway, ECS/Fargate deep dives |
+| 🛠️ **Build Real** | Deploy a portfolio site, blog, or small SaaS |
+| 👥 **Community** | AWS re:Post, r/aws, local meetups |
 
 <div align="center">
 
-## 🎮 Test Yourself! (No Peeking 👀)
+**You are now an AWS Builder. Go build something amazing!** 🚀☁️
 
-**Q1:** Why does the database live in a **private subnet** while the web servers live in a **public** one?
-
-<details><summary>👀 Show answer</summary>
-
-**A:** **Defense in depth** — web servers *must* face the internet, but the database should only be reachable by your app layer. Private subnet + strict SG = the crown jewels stay hidden. 🏰
-
-</details>
-
-**Q2:** If one web server dies, name the TWO services that keep the app online.
-
-<details><summary>👀 Show answer</summary>
-
-**A:** The **ALB** stops sending it traffic (health check), and the **ASG** launches a replacement automatically. Traffic cop + robot manager working as a team. 🤝
-
-</details>
-
-**Q3:** The app is getting slow. Which service tells you WHERE to look, and which one tells you WHO did what?
-
-<details><summary>👀 Show answer</summary>
-
-**A:** **CloudWatch** shows you the metrics (CPU, latency, alarms) — the "where". **CloudTrail** logs every API action — the "who". Observability + auditability. 📊🕵️
-
-</details>
-
-**Q4:** What makes this architecture *production-like* compared to the earlier labs?
-
-<details><summary>👀 Show answer</summary>
-
-**A:** **Multi-tier design, high availability (multi-AZ), auto-scaling, managed database, monitoring, and audit logging** — the full enterprise checklist, not just a single service demo. 🏆
-
-</details>
-
-### 🔥 Final Challenge
-
-**Break it, then prove it recovers:** kill the primary web instance and watch the ALB + ASG recover. Then terminate an instance and find the event in **CloudTrail**. Finally, delete the entire stack piece by piece following the cleanup checklist. When the account is empty, you've completed AWS Bootcamp. 👏
-
-> 💪 **Rithu:** *"You didn't watch tutorials — you BUILT. That puts you ahead of 90% of people who 'want to learn AWS.' Go be a cloud engineer."
-
----
-
-## 🔗 What's Next?
-
-![Complete](https://img.shields.io/badge/CAPSTONE%20COMPLETE!-E74C3C?style=for-the-badge&labelColor=232F3E)
-![Badge](https://img.shields.io/badge/AWS%20Builder-You%20Did%20It!-F1C40F?style=for-the-badge&labelColor=232F3E)
-![Celebration](https://img.shields.io/badge/Labs%2001--24-COMPLETE-27AE60?style=for-the-badge&labelColor=232F3E)
-
-> **CONGRATULATIONS, RAVI!**
->
-> You did it! You've gone from launching your first EC2 instance to building a complete full-stack application on AWS. You should be incredibly proud of yourself.
->
-> The cloud journey never ends — keep exploring, keep building, keep learning. Here are some ideas for what to do next:
->
-> - **Explore more services**: Lambda, API Gateway, ECS, EKS, Step Functions
-> - **Get certified**: AWS Cloud Practitioner or Solutions Architect Associate
-> - **Build something real**: Deploy a blog, a portfolio site, or a small SaaS app
-> - **Join the community**: AWS re:Post, Reddit r/aws, local meetups
->
-> **You are now an AWS Builder. Go build something amazing!** 🚀
->
-> — Rithu
-
-![Done](https://img.shields.io/badge/Mission-Accomplished-2ECC71?style=for-the-badge&labelColor=232F3E)
-
-</div>
-
----
-
-<details>
-<summary>🔍 <img src="https://img.shields.io/badge/FAQ-Troubleshooting-3498DB?style=flat-square" /> <b>Problem: VPC creation fails or times out</b></summary>
-<br/>
-
-💡 **Fix**: Try creating with fewer subnets first, then add more. Make sure you have enough IP addresses in your CIDR block. Try a different region if us-east-1 is having issues.
-
-</details>
-
-<details>
-<summary>🔍 <img src="https://img.shields.io/badge/FAQ-Troubleshooting-3498DB?style=flat-square" /> <b>Problem: RDS instance won't create</b></summary>
-<br/>
-
-💡 **Fix**: Check that you're using the Free Tier template. Ensure the subnet group selects private subnets. If you hit a quota limit, go to Service Quotas and request an increase for RDS instances.
-
-</details>
-
-<details>
-<summary>🔍 <img src="https://img.shields.io/badge/FAQ-Troubleshooting-3498DB?style=flat-square" /> <b>Problem: EC2 instances show as "Unhealthy" in ALB</b></summary>
-<br/>
-
-💡 **Fix**: Wait 2-3 minutes after launch for the UserData script to complete. Check that the security group allows traffic from the ALB security group. Verify the health check path `/` returns HTTP 200.
-
-</details>
-
-<details>
-<summary>🔍 <img src="https://img.shields.io/badge/FAQ-Troubleshooting-3498DB?style=flat-square" /> <b>Problem: Can't SSH into EC2 instances</b></summary>
-<br/>
-
-🔧 **Fix**: Ensure your security group allows SSH (port 22) from "My IP". Make sure you're using the correct key pair. Check that the instance has a public IP (it should, since it's in a public subnet).
-
-</details>
-
-<details>
-<summary>🔍 <img src="https://img.shields.io/badge/FAQ-Troubleshooting-3498DB?style=flat-square" /> <b>Problem: ALB returns 502 Bad Gateway</b></summary>
-<br/>
-
-💡 **Fix**: The target group health checks are failing. Check that EC2 instances are running and Apache is started. Verify security groups allow traffic from ALB → EC2 on port 80.
-
-</details>
-
-<details>
-<summary>🔍 <img src="https://img.shields.io/badge/FAQ-Troubleshooting-3498DB?style=flat-square" /> <b>Problem: RDS connection refused from EC2</b></summary>
-<br/>
-
-🔧 **Fix**: Verify the RDS security group allows MySQL (3306) from the EC2 security group. Make sure you're using the correct endpoint. Check that the RDS instance is in the same VPC as the EC2 instances.
-
-</details>
-
-<details>
-<summary>🔍 <img src="https://img.shields.io/badge/FAQ-Troubleshooting-3498DB?style=flat-square" /> <b>Problem: Auto Scaling won't launch new instances</b></summary>
-<br/>
-
-💡 **Fix**: Check that the launch template is valid. Ensure you haven't hit EC2 instance limits (check Service Quotas). Verify the subnets have available IP addresses.
-
-</details>
-
-<details>
-<summary>🔍 <img src="https://img.shields.io/badge/FAQ-Troubleshooting-3498DB?style=flat-square" /> <b>Problem: CloudWatch dashboard shows no data</b></summary>
-<br/>
-
-💡 **Fix**: Wait 5-10 minutes for metrics to appear. CloudWatch metrics can take up to 15 minutes to populate. Ensure the correct region is selected in the CloudWatch console.
-
-</details>
-
-<details>
-<summary>🔍 <img src="https://img.shields.io/badge/FAQ-Troubleshooting-3498DB?style=flat-square" /> <b>Problem: Can't delete VPC</b></summary>
-<br/>
-
-🔧 **Fix**: This is usually because resources still exist in the VPC. Delete NAT Gateway, subnets, route tables, and security groups first. Then try deleting the VPC again.
-
-</details>
-
-<details>
-<summary>🔍 <img src="https://img.shields.io/badge/FAQ-Troubleshooting-3498DB?style=flat-square" /> <b>Problem: NAT Gateway won't delete</b></summary>
-<br/>
-
-🔧 **Fix**: Make sure all resources using it (EC2 instances, etc.) are terminated first. The NAT Gateway must be detached from the subnet before deletion.
-
-</details>
-
-<details>
-<summary>🔍 <img src="https://img.shields.io/badge/FAQ-Troubleshooting-3498DB?style=flat-square" /> <b>Problem: S3 bucket won't delete</b></summary>
-<br/>
-
-💡 **Fix**: You must EMPTY the bucket first (delete all objects), then delete the bucket itself. S3 buckets cannot be deleted if they contain any objects.
-
-</details>
-
----
-
-> **Rithu's Real Talk:** If you've made it to Lab 25, you're ahead of 90% of people who "want to learn AWS." You didn't just watch tutorials - you BUILT things. That's what makes you different. Keep building.
-
----
-
-<div align="center">
-
-> **Rithu says**: "I'm incredibly proud of you, Ravi. You started this journey knowing nothing about AWS, and now you've built a production-grade application architecture. You are officially a cloud engineer. Keep building, keep learning, and remember — every expert was once a beginner. You've got this!"
-
-![End](https://img.shields.io/badge/End%20of%20Lab-25-27AE60?style=for-the-badge&labelColor=232F3E)
+⭐ Enjoyed the journey? Star the repo & share your feedback!
 
 </div>
