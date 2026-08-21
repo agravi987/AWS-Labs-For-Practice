@@ -1,23 +1,14 @@
-<div align="center">
+# ⏳ Lab 06 - S3: Versioning and Lifecycle Policies
 
-<img src="https://img.shields.io/badge/Lab%2006-S3%20Versioning%20%26%20Lifecycle-3498DB?style=for-the-badge&labelColor=232F3E" />
+> 📅 **Updated:** 21 August 2026 | ⏱️ **Duration:** ~20 minutes | 📊 **Level:** Beginner
 
-</div>
+![S3](https://img.shields.io/badge/S3-Versioning%20%26%20Lifecycle-3498DB?style=for-the-badge&logo=amazon-s3&logoColor=white)
+![Difficulty](https://img.shields.io/badge/Difficulty-Easy-2ECC71?style=flat-square)
+![Time](https://img.shields.io/badge/Time-~20%20minutes-2F80ED?style=flat-square)
+![Status](https://img.shields.io/badge/Status-Active%20Lab-2E7D32?style=flat-square)
 
-<div align="center">
-
-# Lab 06 — S3: Versioning and Lifecycle Policies
-
-<img src="https://img.shields.io/badge/Difficulty-Easy-brightgreen?style=flat-square" />
-<img src="https://img.shields.io/badge/Time-~20min-blue?style=flat-square" />
-<img src="https://img.shields.io/badge/Cost-%3C1%20USD-green?style=flat-square" />
-<img src="https://img.shields.io/badge/Service-S3-orange?style=flat-square" />
-
-</div>
-
-> "Versioning is like having a time machine for your files. Accidentally deleted something? No worries — it's still there!" — Rithu 🚀
-
----
+> ### 🗣️ *"Versioning is like having a time machine for your files. Accidentally deleted something? No worries — it's still there!"*
+> — **Rithu** 🚀
 
 <details>
 <summary><b>🎭 Ravi & Rithu's Coffee Break Chat</b></summary>
@@ -34,470 +25,357 @@
 
 ---
 
-## 📋 Table of Contents
+## 🎯 What You'll Master
 
-- [🎯 Objective](#-objective)
-- [📊 Lab Progress](#-lab-progress)
-- [🤔 In Plain English](#-in-plain-english)
-- [🧠 Prerequisites](#-prerequisites)
-- [💰 Cost Warning](#-cost-warning)
-- [🏗️ Architecture](#️-architecture)
-- [🛠️ Step-by-Step Instructions](#️-step-by-step-instructions)
-- [✅ Validation Checklist](#-validation-checklist)
-- [🧹 Cleanup (IMPORTANT!)](#-cleanup-important)
-- [🧠 Memory Tips](#-memory-tips)
-- [🎓 What You Learned](#-what-you-learned)
-- [🎮 Test Yourself](#-test-yourself-no-peeking-)
-- [🆚 Pro Tip vs Noob Tip](#-pro-tip-vs-noob-tip)
-- [🔗 What's Next?](#-whats-next)
+| Skill | Description |
+|-------|-------------|
+| 🕰️ **Enable Versioning** | Every upload becomes a save point |
+| 👻 **Soft Deletes** | Delete markers — hidden, not gone |
+| 🔄 **Restore Versions** | Roll back like a video game |
+| 🏷️ **Lifecycle Policies** | Money autopilot: Standard → IA → Glacier |
+| 🗑️ **Versioned Cleanup** | The trap everyone falls into |
+
+> 💡 **Pro Tip:** Accidental overwrites destroy careers; cheap storage saves budgets. Versioning + lifecycle are the two features every real-world S3 bucket should have from day one.
 
 ---
 
-<div align="center">
+## 🚦 Before You Start
 
-## 📊 Lab Progress
+### ✅ Prerequisites Checklist
+- [ ] ✅ **[Lab 05](../05%20-%20S3%20-%20Static%20Website%20Hosting/README.md)** complete
+- [ ] 🌍 Region: us-east-1
+- [ ] 📝 Text editor for a tiny HTML file
 
-`[██░░░░░░░░░░░░░░░░░░] 5% — Let's Begin!`
-
-</div>
-
----
-
-## 🤔 In Plain English
-
-> **What is this, really?** Versioning turns your bucket into a **time machine** — every upload becomes a saved "version" of the file, so overwrites and deletes are never truly lost. Lifecycle policies are the **money-saving autopilot**: they automatically move old files to cheaper storage (Standard → Infrequent Access → Glacier) without you lifting a finger. ⏳
->
-> 🌍 **Why you should care:** Accidental overwrites destroy careers. Cheap storage saves budgets. Together they're the two features every real-world S3 bucket should have from day one.
+### 📦 What You Need (and Don't)
+| Required | Optional |
+|----------|----------|
+| ~20 minutes | Glacier retrieval patience (not needed today!) |
+| S3 console familiarity | |
 
 ---
 
-## 🎯 Objective
+## 💰 Cost & Safety First
 
-You'll enable versioning, upload multiple versions of a file, soft-delete and restore it, and add a lifecycle policy that auto-moves objects to cheaper storage classes.
+> ✅ **Under $1 total.** But remember: S3 charges per GB-month, and transitions only save money if you actually need them.
 
----
+> 💸 **Ravi's Mistake of the Day:** *"I turned on versioning but never set up lifecycle policies. After 6 months I had 10,000 versions of the same file and my S3 bill was... not happy."*
 
-## 🧠 Prerequisites
+### 🏷️ Naming Convention
 
-- [x] Completed [Lab 05 — S3: Static Website Hosting](../05%20-%20S3%20-%20Static%20Website%20Hosting/README.md)
-- [x] AWS account with console access
-- [x] Basic familiarity with the S3 console
-
----
-
-## 💰 Cost Warning
-
-> ⚠️ **This lab costs less than $1.** But remember: S3 charges per GB per month, and transitions to Standard-IA/Glacier only save money if you actually need them. **Always clean up after yourself!**
-
-> **Ravi's Mistake of the Day:** I turned on versioning but never set up lifecycle policies. After 6 months, I had 10,000 versions of the same file and my S3 bill was... not happy.
+| Resource | Name |
+|----------|------|
+| 🪣 Bucket | `ravi-versioning-lab-12345` *(taken? change the number)* |
+| 🏷️ Lifecycle rule | `move-to-standard-ia` |
 
 ---
 
-## 🏗️ Architecture
+## 🧠 How It All Fits Together
 
-```
-┌─────────────────────────────────────────────────┐
-│              S3 Bucket                          │
-│         ravi-versioning-lab-12345                │
-│                                                 │
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐      │
-│  │ index.html│  │ index.html│  │ index.html│     │
-│  │  v1 (old) │  │  v2 (old) │  │  v3 (current)│ │
-│  └──────────┘  └──────────┘  └──────────┘      │
-│                                                 │
-│  ┌─────────────────────────────────────┐        │
-│  │       Lifecycle Policy              │        │
-│  │  30 days → Standard-IA             │        │
-│  │  7 days (noncurrent) → Glacier     │        │
-│  │  90 days (noncurrent) → Delete     │        │
-│  └─────────────────────────────────────┘        │
-└─────────────────────────────────────────────────┘
+```mermaid
+graph TD
+    U["📤 Upload index.html<br/>v1 → v2 → v3"] --> B["🪣 ravi-versioning-lab-12345<br/>versioning ENABLED"]
+    D["🗑️ Delete"] -->|"soft"| M["👻 Delete marker<br/>data still alive below"]
+    R["🔄 Download old version<br/>+ re-upload"] -->|"restores"| B
+    L["🏷️ Lifecycle rule"] -->|"current · 30d"| IA["📦 Standard-IA"]
+    L -->|"noncurrent · 7d"| G["🧊 Glacier Flexible"]
+    L -->|"noncurrent · 90d"| X["💀 Permanently deleted"]
+
+    style U fill:#FF9800,color:#fff
+    style B fill:#2ECC71,color:#fff
+    style M fill:#9E9E9E,color:#fff
+    style R fill:#4CAF50,color:#fff
+    style L fill:#9C27B0,color:#fff
+    style IA fill:#2196F3,color:#fff
+    style G fill:#607D8B,color:#fff
+    style X fill:#F44336,color:#fff
 ```
 
-> **Did You Know?** S3 Standard storage has 99.999999999% durability (11 nines). That means if you store 10 million objects, you might lose ONE object every 10,000 years. Probably fine.
+### 🔑 Key Concepts
+| Component | Role |
+|-----------|------|
+| **Versioning** | Every overwrite = new Version ID; one-way valve (suspend ≠ undo) |
+| **Delete marker** | Sticky note saying "pretend this doesn't exist" — data safe underneath |
+| **Current vs noncurrent** | Checkmark = current; everything else waits in history |
+| **Lifecycle transitions** | Standard $0.023 → Standard-IA $0.0125 → Glacier $0.004 /GB-month |
+| **Versioned cleanup** | Bucket refuses deletion until ALL versions + markers are gone |
+
+> 🧠 **Did You Know?** S3 Standard has 99.999999999% durability (11 nines). Store 10 million objects and you might lose ONE every 10,000 years. Probably fine.
 
 ---
 
-## 🛠️ Step-by-Step Instructions
+## 🪜 Step-by-Step Guide
 
-> <img src="https://img.shields.io/badge/Step%201-Create%20an%20S3%20Bucket-2ECC71?style=for-the-badge" />
+### 🟢 Step 1: Create the Bucket 🪣
 
-1. Log in to the [AWS Management Console](https://console.aws.amazon.com/)
-2. In the search bar at the top, type **S3** and click on **S3** under Services
-3. Click the orange **Create bucket** button
-4. Under **Bucket name**, type: `ravi-versioning-lab-12345`
-   - 📸 [Screenshot: Bucket name field filled in]
-      ![Bucket name field filled in](screenshots/bucket-name-field.png)
-5. Leave **AWS Region** as **US East (N. Virginia) us-east-1**
-6. Scroll down and leave all other settings as default
-7. Click the orange **Create bucket** button at the bottom
+<details>
+<summary><b>🪣 Expand for creation steps</b></summary>
 
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> Bucket names must be globally unique across ALL of AWS. The `12345` suffix helps, but if it's taken, try a different number!
+1. 🌐 Console → **S3** → ➕ **Create bucket**
+2. 📝 Name: `ravi-versioning-lab-12345` · Region: `us-east-1`
+3. Everything else default → ✅ **Create bucket**
+
+</details>
+
+![Bucket name field filled in](screenshots/bucket-name-field.png)
+
+> 🗣️ **Rithu's Tip:** *"Globally unique across ALL of AWS. The `12345` helps, but if it's taken, try different numbers!"*
 
 ---
 
-> <img src="https://img.shields.io/badge/Step%202-Enable%20Versioning%20on%20the%20Bucket-3498DB?style=for-the-badge" />
+### 🟢 Step 2: Enable Versioning 🕰️
 
-1. Click on your newly created bucket name: `ravi-versioning-lab-12345`
-2. Click on the **Properties** tab (next to Objects, at the top)
-3. Scroll down until you find **Bucket Versioning**
-4. Click the **Edit** button
-5. Select **Enable**
-6. Click the orange **Save changes** button
-7. You should see a green banner saying "Successfully edited bucket versioning"
+<details>
+<summary><b>🕰️ Expand for versioning steps</b></summary>
 
-> 📸 [Screenshot: Bucket Versioning showing "Enabled"]
+1. Open the bucket → **Properties** tab
+2. Scroll to **Bucket Versioning** → ✏️ **Edit**
+3. Select **Enable** → ✅ **Save changes** → green banner confirms
+
+</details>
+
 ![Bucket Versioning showing "Enabled"](screenshots/versioning-enabled.png)
 
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> Once you enable versioning, you can never go back to "Unversioned" — you can only suspend it, which stops new versions but keeps the old ones. Think of it like a one-way valve!
+> 🗣️ **Rithu's Tip:** *"Once enabled, you can never go back to Unversioned — only suspend it, which stops NEW versions but keeps old ones. One-way valve!"*
 
 ---
 
-> <img src="https://img.shields.io/badge/Step%203-Upload%20Version%201-E67E22?style=for-the-badge" />
+### 🟢 Step 3: Upload Three Versions 📤
 
-1. Click the **Objects** tab, then the orange **Upload** button
-2. Create `index.html` on your computer with this content:
+<details>
+<summary><b>📤 Expand for the three uploads</b></summary>
+
+Upload the SAME filename three times, editing between uploads:
 
 ```html
 <h1>Hello from Version 1</h1>
 ```
-
-3. Save it somewhere easy to find (like your Desktop)
-4. Click **Add files**, select `index.html`, then click **Upload**
-5. You should see a green "Upload succeeded" banner
-
-> 📸 [Screenshot: Upload succeeded screen]
-![Upload succeeded screen](screenshots/upload-succeeded.png)
-
----
-
-> <img src="https://img.shields.io/badge/Step%204-Upload%20Version%202-9B59B6?style=for-the-badge" />
-
-1. Open the SAME `index.html` file and change the content to:
-
 ```html
 <h1>Hello from Version 2 — Updated!</h1>
 ```
-
-2. Save it, then upload it again (**Objects** tab → **Upload** → **Add files**)
-3. You should see "Upload succeeded" again
-
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> Notice that S3 didn't complain about "overwriting" the file? That's because versioning is enabled — it creates a NEW version instead of replacing the old one!
-
----
-
-> <img src="https://img.shields.io/badge/Step%205-Upload%20Version%203-E74C3C?style=for-the-badge" />
-
-1. Go back to the **Objects** tab
-2. Change `index.html` content to:
-
 ```html
 <h1>Hello from Version 3 — Final Version!</h1>
 ```
 
-3. Save and upload again — wait for the success banner
+Each time: **Objects → Upload → Add files → Upload** → wait for the green banner.
+
+Notice S3 never complains about "overwriting" — versioning creates a NEW version instead!
+
+</details>
+
+![Upload succeeded screen](screenshots/upload-succeeded.png)
 
 ---
 
-> <img src="https://img.shields.io/badge/Step%206-View%20All%20Versions-1ABC9C?style=for-the-badge" />
+### 🟢 Step 4: See All Versions 👀
 
-1. On the Objects tab, you should see `index.html` listed — but it looks like there's only ONE file, right? 😏
-2. Look above the file list — you'll see a toggle or link that says **List versions** or **Show versions**
-3. Click on it!
-4. Now you'll see THREE versions of `index.html` — each with a different **Version ID**
-5. Notice which one has the checkmark icon — that's the **current** version (v3)
+<details>
+<summary><b>👀 Expand for version listing</b></summary>
 
-> 📸 [Screenshot: All 3 versions of index.html displayed with Version IDs]
+1. Objects tab shows ONE file... 😏
+2. Toggle **List versions** above the file list
+3. 👀 THREE versions appear, each with its own **Version ID**
+4. ✔️ The checkmark icon = the **current** version (v3)
+
+</details>
+
 ![All 3 versions of index.html displayed with Version IDs](screenshots/versions-list.png)
 
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> This is the magic of versioning! S3 kept every single version. If you ever accidentally upload the wrong file, you can roll back to any previous version. It's like Git, but for your files!
+> 🗣️ **Rithu's Tip:** *"It's like Git, but for your files! Wrong upload? Roll back to any previous version."*
 
 ---
 
-> <img src="https://img.shields.io/badge/Step%207-Delete%20the%20File%20(Soft%20Delete!)-F39C12?style=for-the-badge" />
+### 🟢 Step 5: Soft Delete + Restore + Revive 🔄
 
-1. Make sure **List versions** is still turned ON
-2. Select `index.html` (the current version — the one with the checkmark)
-3. Click the **Delete** button at the top
-4. In the confirmation box, you'll see:
-   - "Permanently delete" vs "Delete"
-   - Make sure **Delete** is selected (NOT "Permanently delete")
-5. Type `delete` in the confirmation field
-6. Click the orange **Delete** button
+<details>
+<summary><b>🗑️ Expand for soft-delete steps</b></summary>
 
-7. Now look at your file list — wait, `index.html` is STILL there! 😮
-8. But look closely — there's now a **Delete marker** at the top (with a grey "x" icon)
-9. The three versions are still listed below it
+1. With **List versions** ON, select the CURRENT `index.html` (checkmark one)
+2. 🗑️ **Delete** → choose **Delete** (NOT "Permanently delete") → type `delete` → confirm
+3. 👀 File is STILL there! A **Delete marker** (grey x) now sits on top — the 3 versions remain below
 
-> 📸 [Screenshot: Delete marker shown with all 3 versions still present]
+</details>
+
 ![Delete marker shown with all 3 versions still present](screenshots/delete-marker-with-versions.png)
 
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> When you "delete" a versioned object, S3 doesn't actually delete anything. It just adds a **Delete Marker** — think of it like putting a sticky note that says "pretend this file doesn't exist." The actual data is still safe underneath!
+<details>
+<summary><b>🔄 Expand for restore steps</b></summary>
 
----
+Pretend we panicked:
 
-> <img src="https://img.shields.io/badge/Step%208-Restore%20a%20Previous%20Version-34495E?style=for-the-badge" />
+1. Find **v1** ("Hello from Version 1") → check its box
+2. **Actions → Download** (or open via Version ID → Download)
+3. Re-upload that downloaded file → S3 creates a NEW current version with v1's content
 
-Now let's pretend we panicked and want our file back!
+The console has no "make current" button (that's CLI territory: `aws s3api copy-object`). Download + re-upload is the console way.
 
-1. Make sure **List versions** is still enabled
-2. Find the version you want to restore (let's pick v1 — "Hello from Version 1")
-3. Click the checkbox next to that specific version
-4. Click **Actions** → **Download** (or click the **Version ID** to open the object, then **Download**)
-5. Re-upload the downloaded file — S3 creates a NEW current version containing v1's content
+</details>
 
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> The console has no "make this version current" button — that requires the CLI (`aws s3api copy-object` with the version ID). Download + re-upload is the console-friendly way to restore.
-
-> 📸 [Screenshot: Downloading/restoring a previous version]
 ![Downloading/restoring a previous version](screenshots/restore-version.png)
 
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> Versioning saved the day! Ravi, imagine you're a developer and you accidentally deployed broken code to production. With versioning, you just restore the last known good version. No stress!
+<details>
+<summary><b>✨ Expand for removing the delete marker</b></summary>
+
+1. With **List versions** ON, select the **Delete marker** itself
+2. 🗑️ **Delete** → type `delete` → confirm
+3. ✨ The latest real version becomes "current" again — visible without listing versions
+
+</details>
+
+> 🗣️ **Rithu's Tip:** *"Imagine you deployed broken code to production. Versioning = restore last known good. No stress!"*
 
 ---
 
-> <img src="https://img.shields.io/badge/Step%209-Remove%20the%20Delete%20Marker-16A085?style=for-the-badge" />
+### 🟢 Step 6: Create the Lifecycle Rule 🏷️
 
-Let's clean up the delete marker so our file is "visible" again:
+<details>
+<summary><b>🏷️ Expand for lifecycle steps</b></summary>
 
-1. Make sure **List versions** is ON
-2. Find the **Delete marker** (it has a grey "x" icon)
-3. Select it
-4. Click **Delete**
-5. Type `delete` to confirm
-6. Click **Delete**
+1. 🪣 Bucket → **Management** tab → **Lifecycle rules** → ➕ **Create lifecycle rule**
 
-Now the most recent version of `index.html` should be "current" again (visible without listing versions).
+   > 📝 *Console note:* the editor is a single scrolling page — no wizard steps. Finish with **Create rule** at the bottom.
 
----
+2. 📝 Configure:
 
-> <img src="https://img.shields.io/badge/Step%2010-Set%20Up%20a%20Lifecycle%20Policy-8E44AD?style=for-the-badge" />
+   | Section | Setting |
+   |---------|---------|
+   | Rule name | `move-to-standard-ia` |
+   | Scope | **Apply to all objects in the bucket** (+ acknowledge) |
+   | Current versions | Move to **Standard-IA** after **30** days |
+   | Noncurrent versions | Move to **Glacier Flexible Retrieval** after **7** days noncurrent |
+   | Noncurrent versions | **Permanently delete** after **90** days noncurrent |
 
-Now for the really cool part — let S3 manage your storage automatically!
+3. Review: current → IA @30d · noncurrent → Glacier @7d · noncurrent → delete @90d
+4. ✅ **Create rule**
 
-1. Click on the **Management** tab of your bucket
-2. Scroll down to the **Lifecycle rules** section
-3. Click **Create lifecycle rule**
+Why it saves money: rarely-accessed files auto-walk to cheaper shelves — up to 80%+ savings!
 
-> 📝 **Console note:** The lifecycle rule editor is now a single scrolling page (no "Next" wizard steps). Fill in the sections below and finish with the **Create rule** button at the bottom.
+</details>
 
-#### Configure Rule 1: Move Current Versions to Standard-IA
-
-1. **Rule name:** `move-to-standard-ia`
-2. Under **Choose a rule scope**, select **Apply to all objects in the bucket**
-   - ⚠️ Check **I acknowledge that this rule applies to all objects in the bucket** when prompted
-3. Under **Lifecycle rule actions**, check the box for **Move current versions of objects between storage classes**
-4. In the dropdown, select **Standard-IA**
-5. In the **Days after creation** field, type: `30`
-6. Click **Add transition** (if needed)
-
-#### Configure Rule 2: Move Noncurrent Versions to Glacier
-
-1. Still on the same page, scroll to **Noncurrent versions**
-2. Check **Move noncurrent versions of objects between storage classes**
-3. Select **Glacier Flexible Retrieval**
-4. **Days after objects become noncurrent:** `7`
-
-#### Configure Rule 3: Permanently Delete Noncurrent Versions
-
-1. Still under **Noncurrent versions**, check **Permanently delete noncurrent versions of objects**
-2. **Days after objects become noncurrent:** `90`
-
-3. Review your rules — you should see:
-   - Current → Standard-IA after 30 days
-   - Noncurrent → Glacier after 7 days
-   - Noncurrent → Delete after 90 days
-4. Click **Create rule**
-
-> 📸 [Screenshot: Lifecycle rule configuration showing all three transitions]
 ![Lifecycle rule configuration showing all three transitions](screenshots/lifecycle-rule-config.png)
-
-
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> Why does this save money? Because different storage classes have different costs:
-> - **S3 Standard** — $0.023/GB/month (most accessible, most expensive)
-> - **S3 Standard-IA** — $0.0125/GB/month (half the price, but you pay to retrieve)
-> - **S3 Glacier Flexible Retrieval** — $0.004/GB/month (cheap, but retrieval takes hours)
->
-> If you have old files you rarely access, letting S3 automatically move them to Glacier saves you 80%+!
-
----
-
-> <img src="https://img.shields.io/badge/Step%2011-Verify%20Your%20Work-2C3E50?style=for-the-badge" />
-
-Let's make sure everything is set up correctly:
-
-- [ ] Bucket `ravi-versioning-lab-12345` exists in us-east-1
-- [ ] Versioning is **Enabled** on the bucket
-- [ ] You can see at least 1 version of `index.html` in the bucket
-- [ ] The lifecycle rule `move-to-standard-ia` exists and is enabled
-- [ ] The lifecycle rule shows transitions for both current and noncurrent versions
-
-
 
 ---
 
 ## ✅ Validation Checklist
 
-| # | ✅ Check | Status |
+| # | Check | Status |
 |---|-------|--------|
-| 1 | Bucket `ravi-versioning-lab-12345` created | ☐ ✅ |
-| 2 | Versioning enabled on bucket | ☐ ✅ |
-| 3 | `index.html` uploaded with 3 different versions | ☐ ✅ |
-| 4 | All 3 versions visible when listing versions | ☐ ✅ |
-| 5 | Delete marker created and file "soft deleted" | ☐ ✅ |
-| 6 | Previous version restored successfully | ☐ ✅ |
-| 7 | Lifecycle rule created with correct transitions | ☐ ✅ |
-| 8 | Lifecycle rule applies to all objects in bucket | ☐ ✅ |
+| 1️⃣ | Bucket created in us-east-1 | ☐ ✅ |
+| 2️⃣ | Versioning shows **Enabled** | ☐ ✅ |
+| 3️⃣ | 3 versions of `index.html` listed with distinct IDs | ☐ ✅ |
+| 4️⃣ | Delete created a marker, not a massacre | ☐ ✅ |
+| 5️⃣ | Old version restored via download + re-upload | ☐ ✅ |
+| 6️⃣ | Delete marker removed; file visible again | ☐ ✅ |
+| 7️⃣ | Lifecycle rule `move-to-standard-ia` active with all 3 transitions | ☐ ✅ |
 
-<div align="center">
-
-> **Achievement Unlocked:** Time Traveler! Versioning means never losing data.
-
-</div>
+> 🏆 **Achievement Unlocked:** Time Traveler! Versioning means never losing data.
 
 ---
 
-## 🧹 Cleanup (IMPORTANT!)
+## 🧹 Cleanup (Follow Order!)
 
-> ⚠️ **Don't skip this!** Even though the cost is tiny, it's good practice to always clean up. Let's build that habit now!
+> ⚠️ **A versioned bucket REFUSES to delete until every version AND marker is gone!**
 
-### 🗑️ Step 1: Empty the Bucket (Delete All Versions)
+| Step | Action | Console Location |
+|------|--------|------------------|
+| 1️⃣ 👻 | Turn ON **List versions** | Bucket → Objects |
+| 2️⃣ 🗑️ | Select ALL (incl. delete markers) → type `permanently delete` → confirm | Objects |
+| 3️⃣ 🪣 | Select bucket → type name → **Delete bucket** | S3 → Buckets |
 
-1. Go to the **Objects** tab of your bucket
-2. Click **List versions** to show all versions
-3. Select ALL objects (including delete markers) by checking the box next to **Name**
-4. Click **Delete**
-5. In the confirmation box, type `permanently delete`
-6. Click the orange **Permanently delete** button
-
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> With versioning enabled, you can't just "delete" objects — you have to delete ALL versions. S3 makes you type `permanently delete` to make sure you really mean it. Double-check!
-
-### 🗑️ Step 2: Delete the Bucket
-
-1. Go back to the S3 bucket list (click **S3** in the breadcrumbs)
-2. Select your bucket `ravi-versioning-lab-12345`
-3. Click **Delete**
-4. Type `ravi-versioning-lab-12345` in the confirmation field
-5. Click **Delete bucket**
-
-### 🗑️ Step 3: Delete the Lifecycle Rule (If Bucket Still Exists)
-
-If you want to delete the lifecycle rule before emptying the bucket:
-1. Go to **Management** → **Lifecycle rules**
-2. Select the rule
-3. Click **Delete**
-
-
+> 🗣️ **Rithu's Tip:** *"With versioning you can't just 'delete' objects — S3 makes you type `permanently delete` so you really mean it. Double-check!"*
 
 ---
 
-## 🧠 Memory Tips
+## 🚀 Level Ups (Post-Core Lab)
 
-Stick these in your brain and they'll never leave. 🧲
-
-| 🧠 Memory Hook | Remember it like... |
-|---|---|
-| **Versioning = time machine** | Every overwrite is a **save point**. Roll back to any moment like a video game. 🕹️ |
-| **Delete marker = soft delete** | Deleting with versioning on just drops a **"hidden" flag** on the object — the data is still alive, just invisible. 👻 |
-| **Lifecycle = money autopilot** | Standard → **IA** (cheap for cold data) → **Glacier** (deep freeze). Old files slowly walk to cheaper shelves by themselves. 🏷️ |
-| **Cleanup trap** | A versioned bucket **refuses to delete** until every version AND marker is gone. Empty it fully — no shortcuts! 🗑️ |
-
-> 🗣️ **Rithu:** *"Versioning is like cloud undo. The cost? Tiny. The peace of mind? Priceless."*
+| Challenge | What to Try | Notes |
+|-----------|-------------|-------|
+| 🕹️ **Break It On Purpose** | Overwrite 3×, restore v1, delete, resurrect | Full time-travel loop |
+| 🧊 **Glacier Peek** | Try retrieving an object from Glacier Flexible | Feel the hours-long thaw |
+| 📏 **Prefix Rules** | Scope a lifecycle rule to a `logs/` prefix only | Real buckets use prefixes |
 
 ---
 
-## 🎓 What You Learned
+## 🆘 Troubleshooting Quick Reference
 
-- **S3 Versioning** keeps every version of a file, protecting against accidental deletion and overwrites
-- **Delete Markers** are "soft deletes" — the data is still there, just hidden
-- **Restoring previous versions** is easy — just re-upload or download an old version
-- **Lifecycle Policies** automate storage class transitions, saving you money over time
-- The difference between **S3 Standard**, **Standard-IA**, and **Glacier** storage classes
-- How to properly clean up versioned S3 buckets (you must delete ALL versions!)
+| 🔍 Issue | 💡 Likely Cause | 🔧 Fix |
+|-------|--------------|-----|
+| 🔧 Bucket name rejected | Taken globally | Change number suffix (`ravi-versioning-lab-67890`) |
+| 🕰️ Versioning toggle greyed out | Wrong tab | Use **Properties**, not Objects |
+| 👀 No "List versions" toggle | Easy to miss | Small button/link just above the file list |
+| 🏷️ Lifecycle rule won't save | Missing required fields | Fill days + storage class for each action |
+| 🗑️ Can't delete bucket | Not truly empty | List versions ON → delete everything incl. markers |
+| 🚫 Access Denied on lifecycle rule | IAM missing permission | Need `s3:PutLifecycleConfiguration` |
 
 ---
 
 ## 🎮 Test Yourself! (No Peeking 👀)
 
-**Q1:** Versioning is ON. You delete a file. Is it gone forever?
+**Q1:** Versioning is ON. You delete a file. Gone forever?
 
 <details><summary>👀 Show answer</summary>
 
-**A:** **No!** S3 drops a **delete marker** — the file is hidden, not destroyed. Remove the marker (or restore the old version) and it's back. 👻
+**A:** **No!** S3 drops a **delete marker** — hidden, not destroyed. Remove the marker or restore the version. 👻
 
 </details>
 
-**Q2:** Why would you add a lifecycle policy to transition objects to Glacier after 90 days?
+**Q2:** Why transition objects to Glacier after 90 days?
 
 <details><summary>👀 Show answer</summary>
 
-**A:** To **save money** — you rarely access old data, and Glacier costs a fraction of Standard. The policy does it automatically, so you never forget. 💰
+**A:** **Money.** Rarely-accessed data costs a fraction of Standard there, and the policy automates what humans forget. 💰
 
 </details>
 
-**Q3:** You try to delete your versioned bucket and AWS says no. What's missing?
+**Q3:** AWS won't delete your versioned bucket. What's missing?
 
 <details><summary>👀 Show answer</summary>
 
-**A:** The bucket still contains **versions and delete markers**. Empty it with "List versions" ON, delete everything, *then* delete the bucket. 🗑️
+**A:** **Versions + delete markers** still inside. Empty fully with "List versions" ON, then delete. 🗑️
 
 </details>
 
-### 🔥 Bonus Challenge
-
-Upload a file, **overwrite it 3 times** (changing the content each time), then restore **version 1**. Confirm the original content is back. Then delete the file and bring it back from the dead. You just became an S3 time-traveler. 🕹️
-
-> 💪 **Rithu:** *"Go break something on purpose. Versioning has your back — that's the whole point."
+> 💪 **Rithu:** *"Go break something on purpose. Versioning has your back — that's the whole point."*
 
 ---
 
-### 🆚 Pro Tip vs Noob Tip
+## 📚 Official Documentation
+
+- 🕰️ [Using Versioning in S3 Buckets](https://docs.aws.amazon.com/AmazonS3/latest/userguide/Versioning.html)
+- 🏷️ [Managing Your Storage Lifecycle](https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lifecycle-mgmt.html)
+- 📦 [Amazon S3 Storage Classes](https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage-class-intro.html)
+
+---
+
+## 🎓 What You Learned
+
+> **The time traveler's kit:**
+> - 🕰️ **Versioning** → every overwrite is a save point
+> - 👻 **Delete markers** → soft deletes; data alive underneath
+> - 🔄 **Restore** → download old version, re-upload as new current
+> - 🏷️ **Lifecycle** → Standard → IA → Glacier autopilot
+> - 🗑️ **Cleanup trap** → versions + markers must ALL go first
+
+**Golden Habit:** Versioning + lifecycle together from day one → bill stays tiny, data stays safe. 🧹
 
 | | Approach |
 |---|---|
-| **Noob Tip** | Enable versioning, never set lifecycle → storage bill quietly grows forever |
-| **Pro Tip** | Versioning + lifecycle from day one: old versions auto-migrate to Glacier, bill stays tiny |
+| 👶 **Noob Way** | Versioning on, no lifecycle → storage bill quietly grows forever |
+| 🧙 **Pro Way** | Both from day one: old versions auto-migrate to Glacier, bill stays tiny |
 
 ---
 
-## 🔗 What's Next?
+## ➡️ What's Next?
 
-Now that you know how to protect your data within a single region, let's learn how to replicate it across regions for disaster recovery!
+You can protect data within a region. Next: replicate it across regions for disaster recovery. 🌍
 
-➡️ **[Lab 07 — S3: Cross-Region Replication](../07%20-%20S3%20-%20Cross-Region%20Replication/README.md)**
-
----
-
-<details>
-<summary><strong>❓ Troubleshooting</strong></summary>
-
-| 🔍 Problem | 💡 Solution |
-|---------|----------|
-| 🔧 Can't create bucket with name `ravi-versioning-lab-12345` | The name is taken! Change the number suffix (e.g., `ravi-versioning-lab-67890`) |
-| 🔧 Versioning toggle is greyed out | Make sure you're on the **Properties** tab, not Objects |
-| 🔧 Can't see "List versions" toggle | Look carefully above the file list — it's a small button/link |
-| 🔧 Lifecycle rule not saving | Make sure you filled in all required fields (days, storage class) |
-| 🔧 Upload keeps failing | Check file size — it should be tiny. Also check your internet connection |
-| 🔧 Can't delete bucket | Make sure the bucket is EMPTY first — including all versions. Turn on "List versions" and delete everything |
-| 🔧 "Access Denied" when creating lifecycle rule | You need S3 full permissions. Check your IAM user/role has `s3:PutLifecycleConfiguration` |
-
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> Stuck? Take a screenshot and check the AWS console error message carefully. 90% of S3 errors are about permissions or the bucket not being empty. You've got this, Ravi! 💪
-
-</details>
+🎯 **[Lab 07 - S3: Cross-Region Replication](../07%20-%20S3%20-%20Cross-Region%20Replication/README.md)**
 
 ---
 
 <div align="center">
 
-<img src="https://img.shields.io/badge/Lab%20Complete!-3498DB?style=for-the-badge&labelColor=232F3E" />
+### ⭐ Enjoyed this lab? Star the repo & share your feedback!
+
+**Happy Learning!** 🚀☁️
 
 </div>
