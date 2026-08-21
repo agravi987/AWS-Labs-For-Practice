@@ -1,19 +1,14 @@
-<div align="center">
+# 📊 Lab 15 - CloudWatch: Alarms and Dashboards
 
-<img src="https://img.shields.io/badge/Lab%2015-CloudWatch%20Alarms%20%26%20Dashboards-E67E22?style=for-the-badge&labelColor=232F3E" />
+> 📅 **Updated:** 21 August 2026 | ⏱️ **Duration:** ~25 minutes | 📊 **Level:** Beginner
 
-# Lab 15 — CloudWatch: Alarms and Dashboards — Your Infrastructure's Control Center
+![CloudWatch](https://img.shields.io/badge/CloudWatch-Alarms%20%26%20Dashboards-E67E22?style=for-the-badge&logo=amazon-cloudwatch&logoColor=white)
+![Difficulty](https://img.shields.io/badge/Difficulty-Easy-2ECC71?style=flat-square)
+![Time](https://img.shields.io/badge/Time-~25%20minutes-2F80ED?style=flat-square)
+![Status](https://img.shields.io/badge/Status-Active%20Lab-2E7D32?style=flat-square)
 
-<img src="https://img.shields.io/badge/Difficulty-Easy-green?style=flat-square" />
-<img src="https://img.shields.io/badge/Time-~25_min-blue?style=flat-square" />
-<img src="https://img.shields.io/badge/Cost-<%241-green?style=flat-square" />
-<img src="https://img.shields.io/badge/Service-Amazon%20CloudWatch-orange?style=flat-square" />
-
-</div>
-
-> "Ravi, you've built amazing infrastructure in the last 14 labs. But how do you know when something breaks at 3 AM? CloudWatch is your 24/7 security camera, fire alarm, and health monitor all rolled into one. Let me show you how to navigate the modern AWS CloudWatch Console!" — Rithu
-
----
+> ### 🗣️ *"Ravi, you've built amazing infrastructure in the last 14 labs. But how do you know when something breaks at 3 AM? CloudWatch is your 24/7 security camera, fire alarm, and health monitor all rolled into one."*
+> — **Rithu** 📊
 
 <details>
 <summary><b>🎭 Ravi & Rithu's Coffee Break Chat</b></summary>
@@ -28,141 +23,117 @@
 
 </details>
 
-## 📋 Table of Contents
+---
 
-- [🎯 Objective](#-objective)
-- [📊 Lab Progress](#-lab-progress)
-- [🤔 In Plain English](#-in-plain-english)
-- [🧠 Prerequisites](#-prerequisites)
-- [💰 Cost Warning](#-cost-warning)
-- [🏗️ Architecture](#️-architecture)
-- [🛠️ Step-by-Step Instructions](#️-step-by-step-instructions)
-  - [Step 1: Launch a Test EC2 Instance](#step-1-launch-a-test-ec2-instance)
-  - [Step 2: Explore CloudWatch Metrics (Modern Console UI)](#step-2-explore-cloudwatch-metrics-modern-console-ui)
-  - [Step 3: Create a CloudWatch Alarm (4-Step Wizard)](#step-3-create-a-cloudwatch-alarm-4-step-wizard)
-  - [Step 4: Stress CPU & Trigger the Alarm](#step-4-stress-cpu--trigger-the-alarm)
-  - [Step 5: Build a Custom Dashboard (Modern Widget Picker)](#step-5-build-a-custom-dashboard-modern-widget-picker)
-  - [Step 6: Centralize Logs, Use Logs Insights & Live Tail](#step-6-centralize-logs-use-logs-insights--live-tail)
-- [✅ Validation Checklist](#-validation-checklist)
-- [🧹 Cleanup (IMPORTANT!)](#-cleanup-important)
-- [🧠 Memory Tips](#-memory-tips)
-- [🎓 What You Learned](#-what-you-learned)
-- [🎮 Test Yourself](#-test-yourself-no-peeking-)
-- [🆚 Pro Tip vs Noob Tip](#-pro-tip-vs-noob-tip)
-- [🔗 What's Next?](#-whats-next)
-- [❓ Troubleshooting](#-troubleshooting)
+## 🎯 What You'll Master
+
+| Skill | Description |
+|-------|-------------|
+| 📈 **Explore Metrics** | Modern console: Classic metrics, Browse tab, namespaces |
+| 🚨 **Create Alarms** | 4-step wizard: metric → condition → SNS action → create |
+| 📧 **SNS Notifications** | Email alerts when CPU > 80% (confirm subscription!) |
+| 🔥 **Stress Testing** | `stress-ng` to trigger the alarm live |
+| 🖥️ **Custom Dashboards** | Line, Number, Alarm status, Markdown widgets |
+| 📝 **Logs + Insights** | Log groups, Logs Insights queries, Live Tail |
+
+> 💡 **Pro Tip:** You can't fix what you can't see. CloudWatch surfaces issues *before* customers notice downtime.
 
 ---
 
-<div align="center">
+## 🚦 Before You Start
 
-## 📊 Lab Progress
+### ✅ Prerequisites Checklist
+- [ ] ✅ **[Lab 14](../14%20-%20DynamoDB%20-%20CRUD%20Operations/README.md)** complete
+- [ ] 📧 Active email address for SNS notifications
+- [ ] 🔑 SSH key pair in EC2
+- [ ] 🔐 Permissions for CloudWatch, EC2, SNS
 
-`[███████████████░░░░░] 75% — Monitoring Your Cloud Estate!`
-
-</div>
-
----
-
-## 🤔 In Plain English
-
-> **What is this, really?** CloudWatch is the **heart monitor + security cameras + black box** of your AWS account. It automatically collects performance metrics (CPU usage, network traffic, status checks) from AWS services, fires automated alarms ("CPU > 80%!"), shows metrics on mission-control dashboards, and aggregates application logs for instant troubleshooting. 📊
->
-> 🌍 **Why you should care:** You can't fix what you can't see. CloudWatch surfaces issues *before* customers notice downtime.
+### 📦 What You Need (and Don't)
+| Required | Optional |
+|----------|----------|
+| ~25 minutes | CloudWatch Agent (RAM metrics — advanced) |
+| Real email inbox access | |
 
 ---
 
-## 🎯 Objective
+## 💰 Cost & Safety First
 
-In this lab, you will:
+| Resource | Cost |
+|----------|------|
+| EC2 Basic Monitoring (5-min) | ✅ Free, automatic |
+| CloudWatch Alarms | ✅ 10 free; then ~$0.10/alarm/mo |
+| Dashboards | ✅ 3 free; then ~$3/dashboard/mo |
+| CloudWatch Logs | ✅ First 5 GB free |
+| SNS email | ✅ Free |
+| **Lab total** | **~$0 within Free Tier** |
 
-- Navigate the **modern CloudWatch Console** to explore metrics across namespaces.
-- Differentiate **Basic Monitoring** (hypervisor level, free) from **OS-level monitoring** (CloudWatch Agent).
-- Create a **CloudWatch Alarm** (4-step wizard) that emails alerts via **Amazon SNS**.
-- Generate high CPU load on Amazon Linux 2023 with `stress-ng` (or a zero-dependency Python script).
-- Build a **CloudWatch Dashboard** with 4 widget types: **Line**, **Number**, **Alarm status**, and **Markdown Text**.
-- Create a **Log Group**, stream test logs, and query them with **Logs Insights** and **Live Tail**.
+> 💸 **Ravi's Mistake of the Day:** *"I created an alarm connected to SNS but forgot to click 'Confirm Subscription' in the email. The alarm went into alarm state... and notified nobody! ALWAYS confirm your SNS subscription."* 📧
 
----
+### 🏷️ Naming Convention
 
-## 🧠 Prerequisites
-
-Before starting, ensure you have:
-
-- ✅ Completed **Lab 14** (DynamoDB)
-- ✅ An active AWS account with permissions for CloudWatch, EC2, and SNS
-- ✅ An active email address for receiving SNS alarm notifications
-- ✅ An SSH key pair created in EC2
-
----
-
-## 💰 Cost Warning
-
-| Resource | Cost Model |
-|----------|------------|
-| EC2 Basic Monitoring metrics (5-min) | **Free** (automatic) |
-| CloudWatch Alarms | **10 free**; then ~$0.10 per alarm / month |
-| CloudWatch Dashboards | **3 free**; then ~$3.00 per dashboard / month |
-| CloudWatch Logs | First 5 GB ingested & stored free |
-| SNS Notifications | Free for email subscriptions |
-| **Estimated Total** | **~$0 (within Free Tier)** |
-
-> ⚠️ **Rithu's Cost Alert:** Dashboards and alarms are free only within the Free Tier limits — delete them in the **Cleanup** section when you're done. 🧹
-
-> **Ravi's Mistake of the Day:** I created a CloudWatch alarm connected to SNS, but forgot to click "Confirm Subscription" in the email AWS sent me. The alarm went into alarm state... and notified nobody! Always confirm your SNS subscription! 📧
+| Resource | Name |
+|----------|------|
+| 🖥️ Instance | `cloudwatch-test-ec2` |
+| 🛡️ Security Group | `cloudwatch-sg` |
+| 🚨 Alarm | `ec2-cpu-alarm` |
+| 📧 SNS Topic | `ec2-cpu-alerts` |
+| 🖥️ Dashboard | `Ravi-Labs-Dashboard` |
+| 📝 Log Group | `ravi-app-logs` |
 
 ---
 
-## 🏗️ Architecture
+## 🧠 How It All Fits Together
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                              Amazon CloudWatch                                  │
-│                                                                                 │
-│  ┌────────────────────┐    ┌─────────────────────┐   ┌──────────────────────┐  │
-│  │ CloudWatch Metrics │    │  CloudWatch Alarms  │   │ CloudWatch Dashboards│  │
-│  │ (AWS/EC2 Namespace)│    │   (4-Step Wizard)   │   │  (Interactive Grid)  │  │
-│  │                    │    │                     │   │                      │  │
-│  │ • CPUUtilization   │───▶│ Condition: > 80%    │──▶│ • CPU Line Chart     │  │
-│  │ • NetworkIn/Out    │    │ Datapoints: 1 / 1   │   │ • Network In Number  │  │
-│  │ • StatusCheckFailed│    │ Evaluation: 5 min   │   │ • Alarm Status Badge │  │
-│  └────────────────────┘    └──────────┬──────────┘   │ • Markdown Title Bar │  │
-│                                       │              └──────────────────────┘  │
-│                                       ▼                                         │
-│                            ┌────────────────────┐                               │
-│                            │  Amazon SNS Topic  │                               │
-│                            │  "ec2-cpu-alerts"  │                               │
-│                            └──────────┬─────────┘                               │
-│                                       │                                         │
-│                                       ▼                                         │
-│                            ┌────────────────────┐                               │
-│                            │  📧 Email Alert    │                               │
-│                            │ (Confirmed Endpt)  │                               │
-│                            └────────────────────┘                               │
-└─────────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+graph TD
+    EC2["🖥️ cloudwatch-test-ec2<br/>t2.micro · httpd"] -->|"5-min hypervisor metrics"| M["📈 AWS/EC2 Metrics<br/>CPUUtilization"]
+    M -->|"CPU > 80%"| A["🚨 ec2-cpu-alarm<br/>1 of 1 datapoints · 5 min"]
+    A -->|"In alarm"| SNS["📧 ec2-cpu-alerts<br/>SNS Topic"]
+    SNS --> EMAIL["✉️ Your Inbox<br/>(confirmed!)"]
+    DASH["🖥️ Ravi-Labs-Dashboard<br/>Line + Number + Alarm + Text"] -.-> M
+    DASH -.-> A
+    LOGS["📝 ravi-app-logs<br/>7-day retention"] -.-> INSIGHTS["🔍 Logs Insights<br/>+ Live Tail"]
+
+    style EC2 fill:#FF9800,color:#fff
+    style M fill:#3498DB,color:#fff
+    style A fill:#E74C3C,color:#fff
+    style SNS fill:#9C27B0,color:#fff
+    style EMAIL fill:#2ECC71,color:#fff
+    style DASH fill:#E67E22,color:#fff
+    style LOGS fill:#607D8B,color:#fff
+    style INSIGHTS fill:#8E44AD,color:#fff
 ```
 
+### 🔑 Key Concepts
+| Component | Role |
+|-----------|------|
+| **Basic Monitoring** | Free 5-min snapshots — CPU, Network, Disk I/O, Status checks |
+| **Detailed Monitoring** | Paid 1-min feed for mission-critical resources |
+| **CloudWatch Agent** | Required for OS-level metrics (RAM %, disk space %) |
+| **Alarm → SNS** | Smoke detector wired to your phone |
+| **Log Retention** | Paper shredder — set 7 days so storage doesn't inflate the bill |
+
 ---
 
-## 🛠️ Step-by-Step Instructions
+## 🪜 Step-by-Step Guide
 
-### Step 1: Launch a Test EC2 Instance
+### 🟢 Step 1: Launch the Test Instance 🖥️
 
-If you don't have a test EC2 instance running, launch one using Amazon Linux 2023:
+<details>
+<summary><b>🖥️ Expand for launch steps</b></summary>
 
-1. Open the **EC2 Console** → click **Launch Instance**.
-2. Fill out the configuration fields:
+1. EC2 Console → ➕ **Launch instance**
+2. Configure:
 
-| Panel | Field | Setting / Value |
-|-------|-------|-----------------|
-| **Name and tags** | Name | `cloudwatch-test-ec2` |
-| **Application and OS Images** | AMI | **Amazon Linux 2023 AMI** (Free tier eligible) |
-| **Instance type** | Instance type | `t2.micro` (or `t3.micro`) |
-| **Key pair** | Key pair name | Select your existing key pair |
-| **Network settings** | Security group | **Create security group** → Name: `cloudwatch-sg` |
-| | Inbound Rules | **SSH** (Port 22) from *My IP*, **HTTP** (Port 80) from *Anywhere* |
+   | Field | Value |
+   |-------|-------|
+   | Name | `cloudwatch-test-ec2` |
+   | AMI | Amazon Linux 2023 |
+   | Type | `t2.micro` |
+   | Key pair | your existing key pair |
+   | SG | Create `cloudwatch-sg`: SSH 22 ← My IP, HTTP 80 ← Anywhere |
 
-3. Scroll down to **Advanced details** → **User data** box, and paste the following startup script:
+3. **User data:**
 
 ```bash
 #!/bin/bash
@@ -172,196 +143,164 @@ systemctl start httpd
 systemctl enable httpd
 ```
 
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> Amazon Linux 2023 uses `dnf` as its package manager and includes `stress-ng` in its default repositories. Installing it in User Data ensures our CPU stress generator is ready immediately! 🚀
+4. ✅ Launch → wait for **Running + 2/2 checks**
 
-4. Click **Launch Instance**.
-5. Wait until the instance state changes to **Running** and **2/2 status checks passed**.
+</details>
 
-📸 **[Screenshot: EC2 instance cloudwatch-test-ec2 in running state]**
 ![EC2 instance cloudwatch-test-ec2 in running state](screenshots/ec2-running-state.png)
 
+> 🗣️ **Rithu's Tip:** *"AL2023 ships `stress-ng` in its repos — installing it in user data means our CPU stress generator is ready immediately!"*
+
 ---
 
-### Step 2: Explore CloudWatch Metrics (Modern Console UI)
+### 🟢 Step 2: Explore Metrics (Modern Console) 📈
 
-Let's see how AWS publishes hypervisor metrics to CloudWatch in the modern console.
+<details>
+<summary><b>📈 Expand for metrics exploration</b></summary>
 
-1. Open the **CloudWatch Console**.
-2. In the left navigation menu under **Metrics**, note the 4 options:
-   - **Query studio**: Run Prometheus (PromQL) or SQL queries on metrics.
-   - **Classic metrics**: Browse standard namespaces by service (e.g., `AWS/EC2`). *(Labeled "All metrics" in older consoles)*.
-   - **Explorer**: Create tag-based dynamic visualizations.
-   - **Streams**: Stream metrics to Firehose or third-party destinations.
-3. Click **Classic metrics**.
-4. In the main window, notice the top navigation tabs:
-   - **Browse**: Explore metrics grouped by AWS service namespaces (`AWS/EC2`, `AWS/RDS`, `AWS/DynamoDB`, etc.).
-   - **Graphed metrics**: Adjust the statistic (Average, Max, Sum), period, color, and Y-axis for selected metrics.
-   - **Query**: Run SQL queries using **CloudWatch Metrics Insights**.
-5. Click the **Browse** tab → under **AWS namespaces**, select **EC2** → click **Per-Instance Metrics**.
-6. Locate `cloudwatch-test-ec2` in the table:
-   - Check the box next to **CPUUtilization** (Percentage of allocated compute units in use).
-   - Observe other hypervisor metrics: **NetworkIn**, **NetworkOut**, **DiskReadBytes**, **StatusCheckFailed**.
-7. Inspect the graph panel at the top:
-   - Use the time-range picker to view **1h** or **3h**.
-   - Note that default hypervisor metrics publish every **5 minutes** for FREE (Basic Monitoring).
+1. CloudWatch Console → left nav under **Metrics**, note the options:
+   - **Query studio** — PromQL/SQL queries
+   - **Classic metrics** — browse by namespace *(labeled "All metrics" in older consoles)*
+   - **Explorer** — tag-based dynamic visualizations
+   - **Streams** — stream to Firehose/third parties
+2. Click **Classic metrics** → top tabs:
+   - **Browse** — namespaces (`AWS/EC2`, `AWS/RDS`, `AWS/DynamoDB`)
+   - **Graphed metrics** — adjust statistic, period, color, Y-axis
+   - **Query** — SQL via Metrics Insights
+3. **Browse** → **EC2** → **Per-Instance Metrics**
+4. Find `cloudwatch-test-ec2` → check **CPUUtilization**
+5. Also note: **NetworkIn/Out**, **DiskReadBytes**, **StatusCheckFailed**
+6. Time-range picker → view **1h** or **3h** — default = every **5 min** (Basic Monitoring, FREE)
 
-📸 **[Screenshot: CloudWatch metrics page showing CPU utilization graph for the EC2 instance]**
+</details>
+
 ![CloudWatch metrics page showing CPU utilization graph for the EC2 instance](screenshots/cloudwatch-cpu-graph.png)
 
-> <img src="https://img.shields.io/badge/Deep%20Dive-Hypervisor%20vs%20OS%20Metrics-2980B9?style=flat-square" />
->
-> | Metric Level | Metrics Collected | Requires Agent? | Interval / Cost |
-> |--------------|-------------------|-----------------|-----------------|
-> | **Hypervisor (Basic)** | CPU utilization, Network bytes in/out, Disk I/O ops, Status check failures | ❌ No (Built-in) | Every **5 min** (Free) |
-> | **Hypervisor (Detailed)** | CPU utilization, Network bytes in/out | ❌ No | Every **1 min** (Paid) |
-> | **OS / Guest Level** | Memory (RAM) % free/used, Disk space % free/used, Swap usage, Process count | ✅ **Yes** (Unified CloudWatch Agent) | Configurable (1s - 60s) |
+> 🗣️ **Rithu's Tip:** *"Hypervisor metrics are FREE every 5 min. RAM/disk-space are OS-level — they need the CloudWatch Agent. Hypervisor can't see inside the guest!"*
 
 ---
 
-### Step 3: Create a CloudWatch Alarm (4-Step Wizard)
+### 🟢 Step 3: Create the Alarm (4-Step Wizard) 🚨
 
-We will now configure a CloudWatch Alarm that emails you when CPU utilization exceeds 80%.
+<details>
+<summary><b>🚨 Expand for alarm wizard</b></summary>
 
-1. In the CloudWatch Console left menu under **Alarms**, click **All alarms**.
-2. Click the orange **Create alarm** button.
+**Step 1 — Specify metric & conditions:**
 
-#### 🔹 Step 3a: Step 1 of Wizard — Specify Metric and Conditions
-1. Click **Select metric** → select **EC2** → **Per-Instance Metrics**.
-2. Find `cloudwatch-test-ec2`, select **CPUUtilization**, and click **Select metric**.
-3. Set **Statistic**: `Average` and **Period**: `5 minutes`.
-4. Configure threshold conditions:
+1. CloudWatch → **Alarms → All alarms** → ➕ **Create alarm** → **Select metric**
+2. **EC2 → Per-Instance Metrics** → find `cloudwatch-test-ec2` → check **CPUUtilization** → **Select metric**
+3. Statistic: `Average` · Period: `5 minutes`
+4. Conditions:
 
-| Setting | Value | Explanation |
-|---------|-------|-------------|
-| **Threshold type** | **Static** | Trigger based on a fixed value (not AI anomaly detection) |
-| **Whenever CPUUtilization is...** | **Greater** (`>`) | Triggers when metric goes above threshold |
-| **than...** | `80` | 80% CPU threshold |
-| **Datapoints to alarm** | `1` out of `1` | Triggers after 1 evaluation period above 80% |
-| **Missing data treatment** | **Treat missing data as missing** | Prevents false alarms if metrics delay |
+   | Setting | Value |
+   |---------|-------|
+   | Threshold type | Static |
+   | Condition | Greater `>` than `80` |
+   | Datapoints to alarm | `1` out of `1` |
+   | Missing data | Treat missing data as missing |
 
-5. Click **Next**.
+→ **Next**
 
-#### 🔹 Step 3b: Step 2 of Wizard — Configure Actions
-1. Under **Alarm state trigger**, choose **In alarm**.
-2. Under **Send a notification to...**, select **Create new topic**:
+**Step 2 — Actions:**
 
-| Field | Value |
-|-------|-------|
-| **Create a new topic...** | `ec2-cpu-alerts` |
-| **Email endpoints...** | Enter **YOUR real email address** |
+5. Alarm state trigger: **In alarm**
+6. Send notification → **Create new topic**: `ec2-cpu-alerts` · Email: **YOUR real email** → **Create topic**
+7. 🛑 **CONFIRM SUBSCRIPTION:** check inbox for `no-reply@sns.amazonaws.com` → click **Confirm subscription** link!
 
-3. Click **Create topic**.
-4. 🛑 **CRITICAL STEP — CONFIRM SNS SUBSCRIPTION:**
-   - Check your email inbox for a message from `AWS Notifications <no-reply@sns.amazonaws.com>`.
-   - Subject: *"AWS Notification - Subscription Confirmation"*.
-   - Click the **Confirm subscription** link inside the email!
+   > ⚠️ *Skip this and AWS drops all alarm notifications!*
 
-> ⚠️ **Warning:** If you do not click the confirmation link, AWS will drop alarm notifications!
+→ **Next**
 
-5. Click **Next**.
+**Step 3 — Name & description:**
 
-#### 🔹 Step 3c: Step 3 of Wizard — Add Name and Description
-1. **Alarm name:** `ec2-cpu-alarm` — **Alarm description:** `Triggers an email when EC2 CPU exceeds 80%`
-2. Click **Next**.
+8. Name: `ec2-cpu-alarm` · Description: `Triggers an email when EC2 CPU exceeds 80%` → **Next**
 
-#### 🔹 Step 3d: Step 4 of Wizard — Preview and Create
-1. Review all settings, then click **Create alarm** at the bottom right.
+**Step 4 — Preview & create:**
 
-📸 **[Screenshot: Alarm creation page showing all configured settings]**
+9. Review → ✅ **Create alarm**
+
+</details>
+
 ![Alarm creation page showing all configured settings](screenshots/cloudwatch-alarm-creation.png)
 
 ---
 
-### Step 4: Stress CPU & Trigger the Alarm
+### 🟢 Step 4: Stress CPU & Trigger It 🔥
 
-Let's push CPU usage to 100% and watch the alarm trigger!
+<details>
+<summary><b>🔥 Expand for stress test</b></summary>
 
-1. Connect to your EC2 instance via SSH:
+1. SSH in:
 
 ```bash
 ssh -i "your-key.pem" ec2-user@<PUBLIC_IP>
 ```
 
-2. Run `stress-ng` to generate heavy CPU load across 4 processes:
+2. Max out CPU across 4 processes:
 
 ```bash
 stress-ng --cpu 4 --timeout 600s
 ```
 
-> 💡 **Fallback Command (Zero Dependencies):** If `stress-ng` is not installed, run this Python script to max out CPU cores:
-> ```bash
-> python3 -c "import multiprocessing as m; [m.Process(target=lambda: [0 for _ in iter(int, 1)]).start() for _ in range(m.cpu_count()*2)]"
-> ```
+Zero-dependency fallback:
 
-3. Observe metric updates in CloudWatch:
-   - Go to **CloudWatch Console** → **Metrics** → **Classic metrics** → **Browse** → **EC2** → **Per-Instance Metrics**.
-   - Check **CPUUtilization** for `cloudwatch-test-ec2`. The line graph climbs to 100%! 📈
+```bash
+python3 -c "import multiprocessing as m; [m.Process(target=lambda: [0 for _ in iter(int, 1)]).start() for _ in range(m.cpu_count()*2)]"
+```
 
-4. Track the Alarm State transition:
-   - Go to **CloudWatch** → **Alarms** → **All alarms**.
-   - State transition sequence: 🟢 **OK** → 🟡 **Insufficient data** → 🔴 **In alarm**.
-   - Within ~5–10 minutes, check your email inbox for the SNS alert detailing the breach. 📧
+3. Watch CPU climb: **Metrics → Classic metrics → Browse → EC2 → Per-Instance** → CPUUtilization hits ~100%! 📈
+4. Watch the alarm: **OK** 🟢 → **Insufficient data** 🟡 → **In alarm** 🔴 (~5–10 min)
+5. Check your inbox for the SNS alert 📧
+6. Stop stress: `Ctrl+C`
 
-📸 **[Screenshot: Alarm showing "In alarm" state in the CloudWatch console]**
+</details>
+
 ![Alarm showing "In alarm" state in the CloudWatch console](screenshots/cloudwatch-alarm-in-alarm-state.png)
 
-5. Stop the stress generator once confirmed (Press `Ctrl + C` in your SSH terminal).
-
 ---
 
-### Step 5: Build a Custom Dashboard (Modern Widget Picker)
+### 🟢 Step 5: Build the Dashboard 🖥️
 
-Let's build a multi-widget operational dashboard to monitor your infrastructure.
+<details>
+<summary><b>🖥️ Expand for dashboard widgets</b></summary>
 
-1. In the CloudWatch Console left menu, click **Dashboards**.
-2. Click **Create dashboard** → Name: `Ravi-Labs-Dashboard` → Click **Create dashboard**.
-3. In the **Add widget** modal, add 4 distinct widgets:
+1. CloudWatch → **Dashboards** → ➕ **Create dashboard** → Name: `Ravi-Labs-Dashboard` → Create
+2. Add 4 widgets from the **Add widget** modal:
 
-#### 📈 Widget 1: Line Chart (CPU Utilization)
-- Select **Line** → Click **Next** → Choose **Metrics**.
-- Navigate: **EC2** → **Per-Instance Metrics** → select `CPUUtilization` for `cloudwatch-test-ec2`.
-- Click **Create widget**.
+   | Widget | Type | Metric |
+   |--------|------|--------|
+   | 📈 1 | **Line** | EC2 → Per-Instance → `CPUUtilization` |
+   | 🔢 2 | **Number** | EC2 → Per-Instance → `NetworkIn` |
+   | 🚨 3 | **Alarm status** | `ec2-cpu-alarm` |
+   | 📝 4 | **Text** | Markdown header (below) |
 
-#### 🔢 Widget 2: Number Widget (Network In Bytes)
-- Click the **+** (Add widget) icon at top right.
-- Select **Number** → Click **Next** → Choose **Metrics**.
-- Navigate: **EC2** → **Per-Instance Metrics** → select `NetworkIn`.
-- Click **Create widget**.
+3. Text widget markdown:
 
-#### 🚨 Widget 3: Alarm Status Widget
-- Click **Add widget** → Select **Alarm status** → Click **Next**.
-- Check the box for your alarm: `ec2-cpu-alarm`.
-- Click **Create widget**.
+```markdown
+# 🚀 Mission Control Dashboard
+**Owner:** Ravi | **Environment:** Production | **Status:** 🟢 Monitored
+```
 
-#### 📝 Widget 4: Markdown Text Header
-- Click **Add widget** → Select **Text** → Click **Next**.
-- Paste the following Markdown content:
-  ```markdown
-  # 🚀 Mission Control Dashboard
-  **Owner:** Ravi | **Environment:** Production | **Status:** 🟢 Monitored
-  ```
-- Click **Create widget**.
+4. Drag/resize widgets → ✅ **Save dashboard**
 
-4. Drag and resize the widgets to arrange your layout, then click **Save dashboard** at the top right.
+</details>
 
-📸 **[Screenshot: Complete Ravi-Labs-Dashboard with all 4 widgets visible]**
 ![Complete Ravi-Labs-Dashboard with all 4 widgets visible](screenshots/cloudwatch-dashboard-complete.png)
+
 ---
 
-### Step 6: Centralize Logs, Use Logs Insights & Live Tail
+### 🟢 Step 6: Logs, Insights & Live Tail 📝
 
-Applications generate logs locally on servers. CloudWatch Logs aggregates them into a central, queryable repository.
+<details>
+<summary><b>📝 Expand for logging steps</b></summary>
 
-1. Go to **CloudWatch Console** → left menu: **Logs** → **Log groups**.
-2. Click **Create log group**:
-   - **Log group name:** `ravi-app-logs`
-   - **Retention setting:** `7 days` *(avoid "Never expire" to control storage costs)*
-3. Click **Create**.
+**Create log group + stream:**
 
-4. Open `ravi-app-logs` → click **Create log stream** → Name: `test-stream` → click **Create**.
+1. CloudWatch → **Logs → Log groups** → ➕ **Create log group**
+2. Name: `ravi-app-logs` · Retention: **7 days** (avoid "Never expire"!) → Create
+3. Open it → **Create log stream** → Name: `test-stream` → Create
 
-5. Send a test log entry using AWS CLI (or AWS CloudShell):
+**Send a test event (CLI or CloudShell):**
 
 ```bash
 aws logs put-log-events \
@@ -370,156 +309,140 @@ aws logs put-log-events \
   --log-events timestamp=$(date +%s000),message="[INFO] User login successful. Lab 15 CloudWatch Logging active."
 ```
 
-6. **Analyze Logs with CloudWatch Logs Insights:**
-   - In the left menu under **Logs**, click **Logs Insights**.
-   - In the log group selector, choose `ravi-app-logs`.
-   - Run the default query:
-     ```sql
-     fields @timestamp, @message
-     | sort @timestamp desc
-     | limit 20
-     ```
-   - Click **Run query** to see your log events.
+**Query with Logs Insights:**
 
-7. **Monitor Real-Time Logs with Live Tail:**
-   - In the left menu under **Logs**, click **Live Tail**.
-   - Select `ravi-app-logs` to stream incoming events live to your browser.
+4. **Logs → Logs Insights** → select `ravi-app-logs` → run:
 
-📸 **[Screenshot: CloudWatch Logs showing the test log message]**
+```sql
+fields @timestamp, @message
+| sort @timestamp desc
+| limit 20
+```
+
+**Watch it live with Live Tail:**
+
+5. **Logs → Live Tail** → select `ravi-app-logs` → events stream into your browser in real time!
+
+</details>
+
 ![CloudWatch Logs showing the test log message](screenshots/cloudwatch-log-message.png)
 
 ---
 
 ## ✅ Validation Checklist
 
-- [ ] EC2 instance `cloudwatch-test-ec2` launched and running ✅
-- [ ] CloudWatch Metrics explored under the **Browse** tab ✅
-- [ ] Alarm `ec2-cpu-alarm` created using the 4-step wizard ✅
-- [ ] SNS Topic `ec2-cpu-alerts` created & email subscription confirmed ✅
-- [ ] CPU stress test executed and alarm state transitioned to 🔴 **In alarm** ✅
-- [ ] Email notification received in your inbox ✅
-- [ ] Dashboard `Ravi-Labs-Dashboard` created with Line, Number, Alarm Status, and Text widgets ✅
-- [ ] Log Group `ravi-app-logs` created with 7-day retention & queried in Logs Insights ✅
+| # | Check | Status |
+|---|-------|--------|
+| 1️⃣ | `cloudwatch-test-ec2` running with 2/2 checks | ☐ ✅ |
+| 2️⃣ | Metrics explored via Browse tab (Per-Instance) | ☐ ✅ |
+| 3️⃣ | Alarm `ec2-cpu-alarm` created via 4-step wizard | ☐ ✅ |
+| 4️⃣ | SNS topic created + subscription CONFIRMED | ☐ ✅ |
+| 5️⃣ | Stress test → alarm transitioned to 🔴 In alarm | ☐ ✅ |
+| 6️⃣ | Email notification received | ☐ ✅ |
+| 7️⃣ | Dashboard with Line + Number + Alarm + Text widgets | ☐ ✅ |
+| 8️⃣ | Log group queried via Logs Insights + Live Tail | ☐ ✅ |
 
 ---
 
-## 🧹 Cleanup (IMPORTANT!)
+## 🧹 Cleanup (Follow Order!)
 
-Avoid unwanted charges by cleaning up CloudWatch resources after testing:
-
-1. 🗑️ **Delete Dashboard:**
-   - CloudWatch → **Dashboards** → select `Ravi-Labs-Dashboard` → click **Delete** → confirm.
-2. 🛑 **Delete Alarm:**
-   - CloudWatch → **Alarms** → **All alarms** → select `ec2-cpu-alarm` → click **Actions** → **Delete** → confirm.
-3. 📧 **Delete SNS Topic:**
-   - Search **SNS** in the top bar → **Topics** → select `ec2-cpu-alerts` → click **Delete** → type `delete` → confirm.
-4. 📝 **Delete Log Group:**
-   - CloudWatch → **Logs** → **Log groups** → select `ravi-app-logs` → click **Actions** → **Delete log group** → confirm.
-5. 💻 **Terminate EC2 Instance:**
-   - EC2 Console → **Instances** → select `cloudwatch-test-ec2` → click **Instance state** → **Terminate instance**.
-6. 🔐 **Delete Security Group:**
-   - EC2 Console → **Security Groups** → select `cloudwatch-sg` → click **Actions** → **Delete security group**.
+| Step | Action | Console Location |
+|------|--------|------------------|
+| 1️⃣ 🗑️ | Delete `Ravi-Labs-Dashboard` | CloudWatch → Dashboards |
+| 2️⃣ 🚨 | Delete `ec2-cpu-alarm` | CloudWatch → Alarms |
+| 3️⃣ 📧 | Delete `ec2-cpu-alerts` topic (type `delete`) | SNS → Topics |
+| 4️⃣ 📝 | Delete `ravi-app-logs` log group | CloudWatch → Log groups |
+| 5️⃣ 🖥️ | Terminate `cloudwatch-test-ec2` | EC2 → Instances |
+| 6️⃣ 🛡️ | Delete `cloudwatch-sg` | EC2 → Security Groups |
 
 ---
 
-## 🧠 Memory Tips
+## 🚀 Level Ups (Post-Core Lab)
 
-| 🧠 Concept | Plain English Analogy | Key Takeaway |
-|------------|-----------------------|--------------|
-| **Basic Monitoring** | Free 5-minute camera snapshots | Collects hypervisor CPU, Network, Disk I/O automatically. |
-| **Detailed Monitoring** | Paid 1-minute video feed | 1-minute granularity for mission-critical resources. |
-| **CloudWatch Agent** | Internal diagnostic scanner | Required to track OS metrics (RAM usage, free disk space %). |
-| **Alarms + SNS** | Smoke detector connected to your phone | Alarms evaluate conditions → push alerts to SNS topics. |
-| **Log Retention** | Automatic paper shredder | Set retention (e.g. 7 days) so old log storage doesn't inflate your bill. |
+| Challenge | What to Try | Notes |
+|-----------|-------------|-------|
+| 🧠 **RAM Monitoring** | Install Unified CloudWatch Agent, collect memory % | OS-level metrics |
+| 📐 **Composite Alarm** | Combine multiple alarms into one | Reduce alert noise |
+| ⏱️ **Anomaly Detection** | Rebuild alarm with anomaly threshold instead of static | ML-powered bands |
 
 ---
 
-## 🎓 What You Learned
+## 🆘 Troubleshooting Quick Reference
 
-| Feature | Key Skill Acquired |
-|---------|--------------------|
-| **Metrics Browsing** | Navigating AWS namespaces and graphing metrics over time |
-| **Alarm Configuration** | Defining static thresholds, evaluation periods, and missing data rules |
-| **SNS Alarm Actions** | Linking alarms to SNS topics for instant email notifications |
-| **Custom Dashboards** | Assembling operational cockpits using Line, Number, Alarm, and Text widgets |
-| **Log Management** | Creating Log Groups, configuring log retention, and querying via Logs Insights |
+| 🔍 Issue | 💡 Likely Cause | 🔧 Fix |
+|-------|--------------|-----|
+| ❌ `dnf install stress` fails | AL2023 packages `stress-ng`, not `stress` | `sudo dnf install -y stress-ng` or use the Python fallback |
+| 🟡 Alarm stuck "Insufficient Data" | Needs 1 full evaluation period | Wait ~5 min of datapoints |
+| 📧 No email received | Subscription not confirmed / spam folder | Confirm via `no-reply@sns.amazonaws.com` email; check spam |
 
 ---
 
 ## 🎮 Test Yourself! (No Peeking 👀)
 
-**Q1:** Basic monitoring publishes hypervisor metrics every how many minutes?
+**Q1:** Basic monitoring publishes hypervisor metrics how often?
 
 <details><summary>👀 Show answer</summary>
 
-**A:** Every **5 minutes** (Free). Detailed monitoring publishes every **1 minute** (Paid). 📷
+**A:** Every **5 minutes** (Free). Detailed monitoring = every **1 minute** (Paid). 📷
 
 </details>
 
-**Q2:** Does CloudWatch collect Memory (RAM) utilization by default without an agent?
+**Q2:** Does CloudWatch collect RAM usage without an agent?
 
 <details><summary>👀 Show answer</summary>
 
-**A:** **No!** RAM and disk space are OS-level metrics. You must install the **Unified CloudWatch Agent** inside the guest OS. 🧠
+**A:** **No!** Memory/disk-space are OS-level — requires the **Unified CloudWatch Agent**. 🧠
 
 </details>
 
-**Q3:** What AWS service is used by CloudWatch Alarms to send email notifications?
+**Q3:** Which service delivers CloudWatch alarm emails?
 
 <details><summary>👀 Show answer</summary>
 
-**A:** **Amazon SNS (Simple Notification Service)**. The alarm triggers an SNS topic, which delivers the email. 📟
+**A:** **Amazon SNS** — the alarm triggers a topic, which sends the email. 📟
 
 </details>
 
 ---
 
-### 🆚 Pro Tip vs Noob Tip
+## 📚 Official Documentation
 
-| | Practice |
+- 📊 [What Is Amazon CloudWatch?](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/WhatIsCloudWatch.html)
+- 🚨 [Using Amazon CloudWatch Alarms](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html)
+- 📝 [CloudWatch Logs Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/AnalyzingLogData.html)
+
+---
+
+## 🎓 What You Learned
+
+> **The mission control operator's panel:**
+> - 📈 **Metrics** → Browse namespaces, graph over time (5-min free)
+> - 🚨 **Alarms** → static thresholds, evaluation periods, missing-data rules
+> - 📧 **SNS actions** → alarms wired to email (confirm the subscription!)
+> - 🖥️ **Dashboards** → Line + Number + Alarm + Text widgets
+> - 📝 **Logs** → groups, retention, Insights queries, Live Tail
+
+**Golden Habit:** Retention on everything → confirm SNS subs → agent for RAM → dashboards for daily ops. 🧹
+
+| | Approach |
 |---|---|
-| ❌ **Noob Tip** | Leaving Log Group retention on "Never expire" and ignoring SNS confirmation emails. |
-| ✅ **Pro Tip** | Set Log Group retention to 7/30 days, install the CloudWatch Agent for RAM monitoring, and link Alarms to SNS for instant automated alerts! |
+| 👶 **Noob Way** | Retention "Never expire", ignore SNS confirmation emails |
+| 🧙 **Pro Way** | 7/30-day retention, agent for RAM, alarms linked to SNS for instant alerts |
 
 ---
 
-## 🔗 What's Next?
+## ➡️ What's Next?
 
-➡️ **Proceed to [Lab 16 — IAM: Users, Groups, Roles, Policies](../16%20-%20IAM%20-%20Users,%20Groups,%20Roles,%20Policies/README.md)** — Learn how to secure your AWS infrastructure with fine-grained identity and access control!
+You can see everything now. Next: control WHO can do WHAT — IAM users, groups, roles, and policies. 🔐
 
----
-
-## ❓ Troubleshooting
-
-<details>
-<summary><strong>🔍 "dnf install stress" fails on Amazon Linux 2023</strong></summary>
-
-- 💡 Amazon Linux 2023 repositories package `stress-ng` instead of `stress`. Run `sudo dnf install -y stress-ng`.
-- 🔧 Alternatively, run the zero-dependency Python script provided in Step 4.
-
-</details>
-
-<details>
-<summary><strong>🔍 Alarm remains in "Insufficient Data"</strong></summary>
-
-- ⏱️ CloudWatch needs at least 1 evaluation period (5 minutes) of data points before evaluating status.
-
-</details>
-
-<details>
-<summary><strong>🔍 No email notification received</strong></summary>
-
-- 🔍 Check your spam folder.
-- 🔧 Ensure you opened the email from `no-reply@sns.amazonaws.com` and clicked **Confirm subscription**.
-
-</details>
+🎯 **[Lab 16 - IAM: Users, Groups, Roles, Policies](../16%20-%20IAM%20-%20Users,%20Groups,%20Roles,%20Policies/README.md)**
 
 ---
 
 <div align="center">
 
-<img src="https://img.shields.io/badge/Lab%2015-Complete!-E67E22?style=for-the-badge&labelColor=232F3E" />
+### ⭐ Enjoyed this lab? Star the repo & share your feedback!
 
-> 🎉 **AMAZING WORK, Ravi!** You've mastered Amazon CloudWatch metrics, 4-step alarm workflows, operational dashboards, and centralized logging. You're fully equipped to monitor production cloud environments! 🚀✨
+**Happy Learning!** 🚀☁️
 
 </div>
