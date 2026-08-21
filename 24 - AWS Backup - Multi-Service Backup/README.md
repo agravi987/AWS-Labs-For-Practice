@@ -107,7 +107,8 @@ graph TD
 
 </details>
 
-> 📸 **📸 Screenshot Proof:** Capture the EC2 Volumes console showing your new volume with `Lab=24` and `Name=ravi-backup-lab` tags, status **Available**.
+> 📸 **📸 Screenshot Proof:** Capture the EC2 Volumes console.
+![EC2 Volumes console showing tagged lab volume](screenshots/01-ebs-volumes-console.png)
 
 > 💡 **The volume can stay unattached!** No EC2 instance needed for this lab.
 
@@ -128,6 +129,7 @@ graph TD
 > ⚠️ **Discovery ≠ Protection** — A resource is only protected after assignment + completed backup job.
 
 > 📸 **📸 Screenshot Proof:** Capture AWS Backup Settings showing **Amazon EBS** is **Enabled** in the Service opt-in section.
+![AWS Backup Settings showing Amazon EBS enabled in Service opt-in](screenshots/02-backup-settings-ebs-opt-in.png)
 
 ---
 
@@ -151,6 +153,7 @@ graph TD
 </details>
 
 > 📸 **📸 Screenshot Proof:** Capture the Backup Plan overview showing `ravi-backup-plan` with the `daily-ebs-backup` rule, schedule, and 7-day retention.
+![Backup plan overview with daily rule and 7-day retention](screenshots/03-backup-plan-overview.png)
 
 > 🕐 **Schedule Note:** Use console picker. If cron expression needed, verify timezone and `cron(...)` wrapper. This schedules FUTURE runs — we'll use on-demand for validation.
 
@@ -173,6 +176,7 @@ graph TD
 </details>
 
 > 📸 **📸 Screenshot Proof:** Capture the Resource Assignment screen showing `ravi-backup-assignment` targeting **EBS** with tag selection `Lab=24`.
+![Resource assignment targeting EBS with tag selection Lab=24](screenshots/04-resource-assignment-tag-based.png)
 
 > 🎯 **Tag vs ID:** Tag selection (`Lab=24`) is safer — avoids accidentally picking wrong volume.
 
@@ -195,6 +199,8 @@ graph TD
 </details>
 
 > 📸 **📸 Screenshot Proof:** Capture the Backup Jobs console showing the on-demand backup job with status **Completed** and your volume ID.
+![Backup jobs console showing on-demand backup Completed](screenshots/05-backup-job-completed.png)
+
 
 > 🛑 **STOP HERE** until job shows **Completed**! Running job = no usable recovery point.
 
@@ -216,6 +222,7 @@ graph TD
 </details>
 
 > 📸 **📸 Screenshot Proof:** Capture the Recovery Point details showing Resource ID, Status **Completed**, and Expiry date.
+![Recovery point details with status Completed and expiry date](screenshots/06-recovery-point-details.png)
 
 > 📌 **Evidence:** Recovery point = proof of backup. Original volume existing ≠ backed up!
 
@@ -241,6 +248,9 @@ graph TD
 </details>
 
 > 📸 **📸 Screenshot Proof:** Capture the Restore Jobs console showing status **Completed**, and the EC2 Volumes console showing the new restored volume with `Name=ravi-backup-restored` tag, **Available** and **unattached**.
+![Restore jobs console showing status Completed](screenshots/07-restore-job-completed.png)
+![EC2 Volumes console showing restored volume ravi-backup-restored Available and unattached](screenshots/08-restored-volume-available.png)
+
 
 > ✨ **Non-destructive!** Original volume untouched. Restored volume starts **unattached** — verify ID, size, AZ, encryption, tags, `Available` state.
 
