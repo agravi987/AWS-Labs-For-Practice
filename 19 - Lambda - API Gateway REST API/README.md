@@ -1,19 +1,14 @@
-<div align="center">
+# 🌐 Lab 19 - Lambda: API Gateway REST API
 
-<img src="https://img.shields.io/badge/Lab%2019-Lambda%20API%20Gateway-9B59B6?style=for-the-badge&labelColor=232F3E" />
+> 📅 **Updated:** 21 August 2026 | ⏱️ **Duration:** ~40 minutes | 📊 **Level:** Intermediate
 
-# Lab 19 — Lambda: API Gateway REST API
+![Lambda API Gateway](https://img.shields.io/badge/Lab%2019-Lambda%20API%20Gateway-9B59B6?style=for-the-badge&logo=amazon-aws&logoColor=white)
+![Difficulty](https://img.shields.io/badge/Difficulty-Medium-FFA500?style=flat-square)
+![Time](https://img.shields.io/badge/Time-~40%20minutes-2F80ED?style=flat-square)
+![Cost](https://img.shields.io/badge/Cost-%3C%241-F1C40F?style=flat-square)
 
-<img src="https://img.shields.io/badge/Difficulty-Medium-orange?style=flat-square" />
-<img src="https://img.shields.io/badge/Time-~40min-blue?style=flat-square" />
-<img src="https://img.shields.io/badge/Cost-<_%241-yellow?style=flat-square" />
-<img src="https://img.shields.io/badge/Service-Lambda%20%2F%20API%20Gateway-blue?style=flat-square" />
-
-</div>
-
-> "API Gateway is the front door of your building — it checks IDs, routes visitors to the right room, and kicks out anyone who shouldn't be there." — Rithu
-
----
+> ### 🗣️ *"API Gateway is the front door of your building — it checks IDs, routes visitors to the right room, and kicks out anyone who shouldn't be there."*
+> — **Rithu** 🚪
 
 <details>
 <summary><b>🎭 Ravi & Rithu's Coffee Break Chat</b></summary>
@@ -28,114 +23,90 @@
 
 </details>
 
-## 📋 Table of Contents
+---
 
-- [🎯 Objective](#-objective)
-- [📊 Lab Progress](#-lab-progress)
-- [🤔 In Plain English](#-in-plain-english)
-- [🧠 Prerequisites](#-prerequisites)
-- [💰 Cost Warning](#-cost-warning)
-- [🏗️ Architecture](#️-architecture)
-- [🛠️ Step-by-Step Instructions](#️-step-by-step-instructions)
-- [✅ Validation Checklist](#-validation-checklist)
-- [🧹 Cleanup (IMPORTANT!)](#-cleanup-important)
-- [🧠 Memory Tips](#-memory-tips)
-- [🎓 What You Learned](#-what-you-learned)
-- [🎮 Test Yourself](#-test-yourself-no-peeking-)
-- [🆚 Pro Tip vs Noob Tip](#-pro-tip-vs-noob-tip)
-- [🔗 What's Next?](#-whats-next)
-- [❓ Troubleshooting](#-troubleshooting)
+## 🎯 What You'll Master
+
+| Skill | Description |
+|-------|-------------|
+| 🌐 **REST APIs** | Create and configure resources + methods in API Gateway |
+| ⚡ **Lambda Proxy Integration** | Pass full HTTP request to Lambda and return HTTP responses |
+| 📦 **Stages & Deployment** | Deploy APIs to `dev`/`prod` environments |
+| 🔧 **CORS** | Cross-Origin Resource Sharing for browser access |
+| 🧪 **API Testing** | Test GET/POST with browser, curl, or Postman |
+
+> 💡 **Pro Tip:** Every modern "serverless API" — including most AI and mobile backends — is built exactly this way: API Gateway → Lambda → database.
 
 ---
 
-<div align="center">
+## 🚦 Before You Start
 
-## 📊 Lab Progress
+### ✅ Prerequisites Checklist
+- [ ] ✅ **[Lab 18](../18%20-%20Lambda%20-%20S3%20Triggered%20Function/README.md)** complete
+- [ ] 🌍 AWS account with root or admin access
+- [ ] 🧰 A tool for testing HTTP requests: browser, `curl`, or [Postman](https://www.postman.com/downloads/)
+- [ ] 📋 Basic understanding of HTTP methods (GET, POST) and JSON
 
-`[██░░░░░░░░░░░░░░░░░░] 5% — Let's Begin!`
+### 📦 What You Need (and Don't)
+| Required | Optional |
+|----------|----------|
+| AWS Account (Free Tier friendly) | Postman installed |
+| Browser or curl | Basic HTTP knowledge |
 
-</div>
-
----
-
-## 🤔 In Plain English
-
-> **What is this, really?** API Gateway is the **doorman + menu + kitchen order-slip system** for your backend. The browser hits a URL (`/students`), API Gateway checks the menu (resources & methods), routes the request to the right chef (Lambda function), and serves the finished dish (JSON response) back. No servers, no framework, just HTTP magic. 🍽️
->
-> 🌍 **Why you should care:** Every modern "serverless API" — including most AI and mobile backends — is built exactly this way: API Gateway → Lambda → database.
-
----
-
-## 🎯 Objective
-
-In this lab, you'll create a **REST API** using **Amazon API Gateway** that invokes a **Lambda function** for every HTTP request. You'll build a simple student management API with GET and POST endpoints — the foundation of modern serverless web applications.
-
-**By the end of this lab you will be able to:**
-- Create a Lambda function that handles HTTP requests
-- Create and configure a REST API in API Gateway
-- Create API resources (`/hello`, `/students`) and methods (GET, POST)
-- Connect API Gateway to Lambda using Lambda Proxy Integration
-- Deploy the API and test it with a browser, curl, or Postman
-- Understand the request/response flow between client → API Gateway → Lambda
+> 💡 If you've never used curl or Postman before, don't worry — a browser address bar is actually a GET request, so you can test GET endpoints just by visiting a URL!
 
 ---
 
-## 🧠 Prerequisites
+## 💰 Cost & Safety First
 
-- [ ] Completed [Lab 18 — Lambda: S3 Triggered Function](../18%20-%20Lambda%20-%20S3%20Triggered%20Function/README.md)
-- [ ] AWS account with root or admin access
-- [ ] A tool for testing HTTP requests: browser, `curl` (command line), or [Postman](https://www.postman.com/downloads/)
-- [ ] Basic understanding of HTTP methods (GET, POST) and JSON
+> ⚠️ **Real resources = Real charges.** API Gateway + Lambda is generous on Free Tier, but exposed endpoints can be exploited.
 
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> If you've never used curl or Postman before, don't worry — we'll cover the basics. A browser address bar is actually a GET request, so you can test GET endpoints just by visiting a URL!
+### 💵 Estimated Cost
 
----
+| Resource | Cost |
+|----------|------|
+| 🌐 API Gateway (12 months free) | 1M REST API calls/mo |
+| ⚡ Lambda (always free) | 1M requests/mo + 400K GB-seconds/mo |
+| **Total** | **< $1** ✨ |
 
-## 💰 Cost Warning
+> ⚠️ **IMPORTANT:** After the lab, delete the API Gateway (API, stage, deployment), the Lambda function, and the IAM role.
 
-**This lab costs less than $1!** 💸
+> 💸 **Ravi's Mistake of the Day:** *"I deployed an API Gateway + Lambda combo and forgot to enable CORS. My browser console was a wall of red CORS errors. Frontend debugging 101: check CORS first."*
 
-API Gateway Free Tier (12 months):
-- **1 million** REST API calls per month
-- **1 million** HTTP API calls per month
+### 🏷️ Naming Convention
 
-Lambda Free Tier (always free):
-- **1 million requests** per month
-- **400,000 GB-seconds** of compute time
-
-⚠️ **IMPORTANT:** After the lab, delete the API Gateway (API, stage, deployment), the Lambda function, and the IAM role. An exposed API endpoint can be exploited, and forgotten APIs can incur charges.
-
-> **Ravi's Mistake of the Day:** I deployed an API Gateway + Lambda combo and forgot to enable CORS. My browser console was a wall of red CORS errors. Frontend debugging 101: check CORS first.
+| Resource | Name |
+|----------|------|
+| ⚡ Lambda Function | `ravi-rest-api` |
+| 🌐 API Gateway | `ravi-student-api` |
+| 🔐 IAM Role | `api-lambda-role` |
 
 ---
 
-## 🏗️ Architecture
+## 🧠 How It All Fits Together
 
+```mermaid
+graph TD
+    CLIENT["🌐 Client<br/>Browser / curl / Postman"] -->|"HTTPS Request"| APIGW["🚪 ravi-student-api<br/>API Gateway REST API"]
+    APIGW -->|"/hello GET"| LAMBDA["⚡ ravi-rest-api<br/>Python Lambda"]
+    APIGW -->|"/students GET"| LAMBDA
+    APIGW -->|"/students POST"| LAMBDA
+    LAMBDA -->|"JSON Response"| APIGW
+    APIGW -->|"Forwarded Response"| CLIENT
+
+    style CLIENT fill:#FF9800,color:#fff
+    style APIGW fill:#9C27B0,color:#fff
+    style LAMBDA fill:#FF9800,color:#fff
 ```
-    Client (Browser/curl/Postman)
-              │
-              │  HTTPS Request
-              ▼
-    ┌─────────────────────┐
-    │   API Gateway        │
-    │   ravi-student-api   │
-    │                      │
-    │   /hello  → GET     │
-    │   /students → GET   │
-    │   /students → POST  │
-    └──────────┬──────────┘
-               │
-               │  Lambda Proxy Integration
-               ▼
-    ┌─────────────────────┐
-    │   Lambda Function    │
-    │   ravi-rest-api      │
-    │                      │
-    │  Returns JSON based  │
-    │  on path + method    │
-    └─────────────────────┘
-```
+
+### 🔑 Key Concepts
+| Component | Role |
+|-----------|------|
+| **Resource = Path** | `/hello`, `/students` — the URL segments |
+| **Method = Verb** | GET, POST, PUT, DELETE — the HTTP actions |
+| **Stage = Environment** | `dev`, `prod` — each gets its own URL |
+| **Lambda Proxy Integration** | Full HTTP request passed straight to Lambda — full control |
+| **CORS** | Cross-origin permission slip for browser access |
 
 **Request Flow:**
 ```
@@ -147,30 +118,31 @@ Lambda Free Tier (always free):
 6. API Gateway forwards the response back to the client
 ```
 
-> **Did You Know?** API Gateway supports WebSocket APIs too, not just REST. You can build real-time chat apps, live dashboards, and multiplayer games with serverless WebSockets.
-
 ---
 
-## 🛠️ Step-by-Step Instructions
+## 🪜 Step-by-Step Guide
 
-> <img src="https://img.shields.io/badge/Step%201-Create%20Lambda%20Function-2ECC71?style=for-the-badge" />
+> 🗺️ **Build order:** Lambda function → API Gateway → Resources + Methods → Deploy → Test → CORS fix
 
-1. Sign in to the **AWS Management Console**.
-2. In the search bar, type **Lambda** and click on **AWS Lambda**.
-3. Click **Create function**.
-4. **Author from scratch** (default).
-5. **Function name:** `ravi-rest-api`
-6. **Runtime:** Select **Python 3.14**.
-7. **Architecture:** `x86_64`
-8. **Execution role:**
-   - Select: ⚫ **Create a new role with basic Lambda permissions**
+### 🟢 Step 1: Create the Lambda Function ⚡
+
+<details>
+<summary><b>⚡ Expand for Lambda creation</b></summary>
+
+1. Console search → **Lambda** → **Create function**
+2. **Author from scratch** (default)
+3. **Function name:** `ravi-rest-api`
+4. **Runtime:** **Python 3.14**
+5. **Architecture:** `x86_64`
+6. **Execution role:**
+   - ⚫ **Create a new role with basic Lambda permissions**
    - **Role name:** `api-lambda-role`
-9. Click **Create function**.
+7. ✅ **Create function**
 
-#### Write the Lambda Code:
+**Write the Lambda code:**
 
-1. Scroll down to **Code source** → `lambda_function.py`.
-2. **Replace ALL the code** with:
+8. Scroll to **Code source** → `lambda_function.py`
+9. **Replace ALL the code** with:
 
 ```python
 import json
@@ -217,7 +189,9 @@ def lambda_handler(event, context):
         }
 ```
 
-3. Click **Deploy**.
+10. ✅ **Deploy**
+
+</details>
 
 ![Lambda code editor showing the Python code for the REST API](screenshots/01-lambda-code-editor.png)
 
@@ -228,84 +202,70 @@ def lambda_handler(event, context):
 | `/hello` | GET | Returns a greeting message with method and path info |
 | `/students` | GET | Returns a list of students as JSON |
 | `/students` | POST | Accepts a JSON body and returns confirmation |
-| Any other path | — | API Gateway rejects it with **403 Missing Authentication Token** before Lambda runs |
+| Any other path | — | API Gateway rejects it with **403** before Lambda runs |
 
-> 💡 The `else` (404) branch only fires for requests that API Gateway actually routes to your function. A path with no matching resource/method never reaches Lambda — you'll see the 403 in Test 4.
-
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> Notice how Lambda receives the `event` parameter — when API Gateway invokes Lambda, it passes the entire HTTP request as a JSON object, including the method, path, headers, query parameters, and body. Your Lambda then routes the request based on these values. It's like a doorman checking your reservation before seating you!
+> 🗣️ **Rithu's Tip:** *"Notice how Lambda receives the `event` parameter — when API Gateway invokes Lambda, it passes the entire HTTP request as a JSON object, including the method, path, headers, query parameters, and body. Your Lambda then routes the request based on these values."*
 
 ---
 
-> <img src="https://img.shields.io/badge/Step%202-Create%20API%20Gateway-3498DB?style=for-the-badge" />
+### 🟢 Step 2: Create the API Gateway 🚪
 
-1. In the search bar, type **API Gateway** and click on **API Gateway**.
-2. You'll see different API types. Under **REST API**, click **Build**.
-   - ⚠️ Make sure you select **REST API** (the one with the yellow/orange icon), NOT HTTP API. They're different!
-3. **Choose an API type:** ⚫ REST
-4. **Protocol:** REST
-5. **Create new API:** ⚫ New API
-6. **API name:** `ravi-student-api`
-7. **Description:** `Student management REST API for Ravi's lab`
-8. **Endpoint Type:** Regional
-9. Click **Create API**.
+<details>
+<summary><b>🚪 Expand for API Gateway creation</b></summary>
+
+1. Console search → **API Gateway** → under **REST API**, click **Build**
+   - ⚠️ Select **REST API** (yellow/orange icon), NOT HTTP API!
+2. **Protocol:** REST
+3. **Create new API:** ⚫ New API
+4. **API name:** `ravi-student-api`
+5. **Description:** `Student management REST API for Ravi's lab`
+6. **Endpoint Type:** Regional
+7. ✅ **Create API**
+
+</details>
 
 ![API Gateway creation form showing the REST API type selected with the name ravi-student-api](screenshots/02-api-gateway-rest-api-creation.png)
 
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> API Gateway offers three API types:
-> - **REST API** — Full-featured, supports request validation, caching, API keys, etc. (This is what we're using.)
-> - **HTTP API** — Simpler, cheaper, faster. Good for basic proxying to Lambda.
-> - **WebSocket API** — For real-time bidirectional communication.
->
-> For learning and production, REST API is the most commonly used.
+> 🗣️ **Rithu's Tip:** *"API Gateway offers three API types: **REST API** — full-featured, supports caching, API keys, etc. **HTTP API** — simpler, cheaper, faster. **WebSocket API** — for real-time bidirectional communication. REST API is the most commonly used."*
 
 ---
 
-> <img src="https://img.shields.io/badge/Step%203-Create%20Resources%20and%20Methods-E67E22?style=for-the-badge" />
+### 🟢 Step 3: Create Resources and Methods 🔧
 
-#### Create /hello Resource:
+<details>
+<summary><b>🔧 Expand for resource and method setup</b></summary>
 
-1. In your new API's **Resources** tree, click on the root `/`.
-2. Click the **Create resource** button (top-right of the Resources pane).
-3. **Resource Name:** `hello`
-4. **Resource Path:** `/hello` (should auto-fill)
-5. Check: ☑ **Enable API Gateway CORS** (we'll need this for browser access)
-6. Click **Create resource**.
+**Create /hello Resource:**
 
-#### Create GET Method on /hello:
+1. Click root `/` → **Create resource**
+2. **Resource Name:** `hello` · Path: `/hello`
+3. ☑ **Enable API Gateway CORS**
+4. ✅ **Create resource**
 
-1. Click on the newly created `/hello` resource.
-2. Click the **Create method** button.
-3. Select **GET** from the dropdown → Click the checkmark ✅.
-4. **Integration type:** ⚫ Lambda Function
-5. Check: ☑ **Use Lambda Proxy integration**
-6. **Lambda Function:** Type `ravi-rest-api` (it should auto-suggest)
-7. A warning appears: "You are about to give API Gateway permission to invoke your Lambda function." → Click **OK**.
-8. Click **Save**.
+**Create GET Method on /hello:**
 
+5. Click `/hello` → **Create method** → select **GET** → ✅
+6. **Integration type:** ⚫ Lambda Function
+7. ☑ **Use Lambda Proxy integration**
+8. **Lambda Function:** `ravi-rest-api` → click **OK** on permission warning
+9. ✅ **Save**
 
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> What's "Lambda Proxy Integration"? It means API Gateway passes the ENTIRE HTTP request to Lambda as-is (method, path, headers, body, everything). Without it, you'd have to manually map request/response templates — and that's a headache. Always use Lambda Proxy Integration unless you have a specific reason not to.
+**Create /students Resource:**
 
----
+10. Click root `/` → **Create resource**
+11. **Resource Name:** `students` · Path: `/students`
+12. ☑ **Enable API Gateway CORS**
+13. ✅ **Create resource**
 
-> <img src="https://img.shields.io/badge/Step%204-Create%20/students%20Resource-27AE60?style=for-the-badge" />
+**Create GET and POST Methods on /students:**
 
-1. Click on the root `/` resource.
-2. Click the **Create resource** button.
-3. **Resource Name:** `students`
-4. **Resource Path:** `/students`
-5. Check: ☑ **Enable API Gateway CORS**
-6. Click **Create resource**.
+14. Repeat the **Create method** flow from `/hello` twice — once **GET**, once **POST** — with Lambda Proxy Integration
 
-#### Create GET and POST Methods on /students:
-
-Repeat the **Create method** flow from `/hello` twice — once with **GET**, once with **POST** — selecting **Integration type:** Lambda Function, ☑ **Use Lambda Proxy integration**, **Lambda Function:** `ravi-rest-api`, then **Save** → **OK** on the permission warning.
+</details>
 
 ![Resources tree showing the /hello GET method and /students GET and POST methods](screenshots/03-api-resources-tree.png)
 
-**Your final API structure should look like:**
+**Your final API structure:**
 ```
 /
 ├── /hello
@@ -315,168 +275,101 @@ Repeat the **Create method** flow from `/hello` twice — once with **GET**, onc
     └── POST
 ```
 
+> 🗣️ **Rithu's Tip:** *"What's 'Lambda Proxy Integration'? It means API Gateway passes the ENTIRE HTTP request to Lambda as-is (method, path, headers, body, everything). Without it, you'd have to manually map request/response templates — and that's a headache. Always use Lambda Proxy Integration!"*
+
 ---
 
-> <img src="https://img.shields.io/badge/Step%205-Deploy%20API-9B59B6?style=for-the-badge" />
+### 🟢 Step 4: Deploy the API 🚀
 
-Your API is configured but it's not live yet. You need to **deploy** it!
+<details>
+<summary><b>🚀 Expand for API deployment</b></summary>
 
-1. In the API Gateway console, click the **Deploy API** button (top-right of the Resources page).
+1. Click **Deploy API** (top-right of Resources page)
 2. **Deployment stage:** ⚫ [New Stage]
 3. **Stage name:** `prod`
 4. **Stage description:** `Production stage`
-5. **Deployment description:** `Initial deployment`
-6. Click **Deploy**.
+5. ✅ **Deploy**
 
-![Deploy API dialog showing the prod stage selected for deployment](screenshots/04-deploy-api-prod-stage.png)
-
-After deployment, you'll be taken to the **Stage Editor**. At the top of the page, you'll see the **Invoke URL** — this is your live API endpoint!
-
+After deployment, you'll see the **Invoke URL**:
 ```
 Invoke URL: https://abc123def4.execute-api.us-east-1.amazonaws.com/prod
 ```
 
-> ⚠️ **WRITE DOWN THIS URL!** You'll need it for testing. Copy it somewhere safe.
+> ⚠️ **WRITE DOWN THIS URL!** You'll need it for testing.
 
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> API Gateway uses stages to manage different environments. Common stages are:
-> - `dev` — Development/testing
-> - `staging` — Pre-production testing
-> - `prod` — Live production
->
-> Each stage has its own URL and can have different settings (throttling, caching, logging, etc.).
+</details>
+
+![Deploy API dialog showing the prod stage selected for deployment](screenshots/04-deploy-api-prod-stage.png)
+
+> 🗣️ **Rithu's Tip:** *"API Gateway uses stages to manage different environments: `dev` → development, `staging` → pre-production, `prod` → live. Each stage has its own URL and can have different settings (throttling, caching, logging)."*
 
 ---
 
-> <img src="https://img.shields.io/badge/Step%206-Test%20the%20API-E74C3C?style=for-the-badge" />
+### 🟢 Step 5: Test the API 🧪
 
-Now let's test all three endpoints!
+<details>
+<summary><b>🧪 Expand for API testing</b></summary>
 
-#### Test 1: GET /hello
-
-**Using a browser or curl:** open `https://abc123def4.execute-api.us-east-1.amazonaws.com/prod/hello` in a browser, or run:
+**Test 1: GET /hello**
 
 ```bash
 curl https://abc123def4.execute-api.us-east-1.amazonaws.com/prod/hello
 ```
-
-**Expected response:**
-```json
-{
-  "message": "Hello from Ravi's API!",
-  "method": "GET",
-  "path": "/hello"
-}
-```
+Expected: `{"message": "Hello from Ravi's API!", "method": "GET", "path": "/hello"}`
 
 ![Browser response from the /hello endpoint showing the greeting JSON](screenshots/05-hello-endpoint-response.png)
 
-#### Test 2: GET /students
-
-**Using a browser or curl:** open `https://abc123def4.execute-api.us-east-1.amazonaws.com/prod/students` in a browser, or run:
+**Test 2: GET /students**
 
 ```bash
 curl https://abc123def4.execute-api.us-east-1.amazonaws.com/prod/students
 ```
-
-**Expected response:**
-```json
-{
-  "students": [
-    {"id": "S001", "name": "Ravi", "topic": "Lambda"},
-    {"id": "S002", "name": "Rithu", "topic": "API Gateway"}
-  ]
-}
-```
+Expected: `{"students": [{"id": "S001", "name": "Ravi", ...}, {"id": "S002", "name": "Rithu", ...}]}`
 
 ![GET /students response showing the student list JSON](screenshots/06-students-endpoint-response.png)
 
-#### Test 3: POST /students
+**Test 3: POST /students**
 
-**Using curl:**
 ```bash
-curl -X POST https://abc123def4.execute-api.us-east-1.amazonaws.com/prod/students -H "Content-Type: application/json" -d "{\"name\": \"Ravi\", \"topic\": \"API Gateway\"}"
+curl -X POST https://abc123def4.execute-api.us-east-1.amazonaws.com/prod/students \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Ravi", "topic": "API Gateway"}'
 ```
+Expected: `{"message": "Student created!", "data": {"name": "Ravi", "topic": "API Gateway"}}`
 
-**Using Postman:**
-1. Method: `POST`
-2. URL: `https://abc123def4.execute-api.us-east-1.amazonaws.com/prod/students`
-3. Headers: `Content-Type: application/json`
-4. Body (raw JSON):
-```json
-{
-  "name": "Ravi",
-  "topic": "API Gateway"
-}
-```
-5. Click **Send**.
+**Test 4: Unknown Path (403)**
 
-**Expected response:**
-```json
-{
-  "message": "Student created!",
-  "data": {
-    "name": "Ravi",
-    "topic": "API Gateway"
-  }
-}
-```
-
-#### Test 4: Unknown Path (403)
-
-**Using curl:**
 ```bash
 curl https://abc123def4.execute-api.us-east-1.amazonaws.com/prod/anything
 ```
-
-**Expected response:**
-```json
-{"message": "Missing Authentication Token"}
-```
+Expected: `{"message": "Missing Authentication Token"}`
 
 > 💡 This 403 comes from **API Gateway**, not your Lambda — there's no `/anything` resource, so the request never reaches the function. That's expected security behavior, not an error.
 
-
+</details>
 
 🎉 **Your API is live and working!** Anyone in the world with this URL can now call your API!
 
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> In production, you would NEVER expose an API without authentication! You'd add:
-> - **API Keys** — Simple key-based auth
-> - **IAM Authorization** — AWS credentials
-> - **Cognito Authorizer** — User pool-based JWT tokens
-> - **Lambda Authorizer** — Custom auth logic
->
-> We're keeping it open for learning purposes, but in production, always lock it down!
-
 ---
 
-> <img src="https://img.shields.io/badge/Step%207-Enable%20CORS%20(if%20needed)-1ABC9C?style=for-the-badge" />
+### 🟢 Step 6: Verify CORS (if needed) 🔗
 
-We already enabled CORS when creating the resources, and the Lambda returns `Access-Control-Allow-Origin` headers on every response — so browser access should just work. CORS is browser-only; curl and Postman ignore it.
+<details>
+<summary><b>🔗 Expand for CORS setup</b></summary>
+
+We already enabled CORS when creating resources, and the Lambda returns `Access-Control-Allow-Origin` headers — so browser access should just work. CORS is browser-only; curl and Postman ignore it.
 
 If you still see CORS errors in a browser:
 
-1. In API Gateway, select the resource (`/hello` or `/students`).
-2. Click **Enable CORS** → keep **Access-Control-Allow-Origin:** `*` (or your specific domain) and **Access-Control-Allow-Methods:** `GET,POST,OPTIONS`.
-3. Click **Enable CORS** → **Replace** → then **Deploy API** → `prod` → **Deploy**.
+1. Select the resource (`/hello` or `/students`)
+2. Click **Enable CORS** → keep `Access-Control-Allow-Origin: *`
+3. Click **Enable CORS** → **Replace** → then **Deploy API** → `prod`
 
-Remember: after any API change — CORS included — you must redeploy to the stage for it to take effect.
+> ⚠️ After any API change — CORS included — you must **redeploy** to the stage for it to take effect.
 
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> CORS (Cross-Origin Resource Sharing) is a browser security feature. It prevents a web page on `example.com` from calling your API on another domain unless the API explicitly allows it. For curl and Postman, CORS doesn't apply. In production, use your real domain instead of `*`.
+</details>
 
----
-
-> <img src="https://img.shields.io/badge/Step%208-Verify%20Your%20Work-F39C12?style=for-the-badge" />
-
-1. **Lambda function exists:** Lambda → Functions → `ravi-rest-api`.
-2. **API Gateway exists:** API Gateway → APIs → `ravi-student-api`.
-3. **API has correct structure:** `/hello` (GET), `/students` (GET, POST).
-4. **API is deployed:** Stage `prod` with an Invoke URL.
-5. **GET /hello returns JSON:** Browser or curl shows the greeting.
-6. **GET /students returns student list:** Browser or curl shows two students.
-7. **POST /students returns 201:** curl with JSON body returns confirmation.
+> 🗣️ **Rithu's Tip:** *"CORS (Cross-Origin Resource Sharing) is a browser security feature. It prevents a web page on `example.com` from calling your API on another domain unless the API explicitly allows it. In production, use your real domain instead of `*`."*
 
 ---
 
@@ -484,75 +377,57 @@ Remember: after any API change — CORS included — you must redeploy to the st
 
 | # | Check | Status |
 |---|-------|--------|
-| 1 | Lambda function `ravi-rest-api` created with correct code | ☐ ✅ |
-| 2 | API Gateway `ravi-student-api` created (REST API) | ☐ ✅ |
-| 3 | `/hello` resource with GET method exists | ☐ ✅ |
-| 4 | `/students` resource with GET and POST methods exists | ☐ ✅ |
-| 5 | All methods use Lambda Proxy Integration | ☐ ✅ |
-| 6 | API deployed to `prod` stage | ☐ ✅ |
-| 7 | GET /hello returns `{"message": "Hello from Ravi's API!"}` | ☐ ✅ |
-| 8 | GET /students returns student list | ☐ ✅ |
-| 9 | POST /students returns `{"message": "Student created!"}` with 201 | ☐ ✅ |
-| 10 | Unknown paths return 403 Missing Authentication Token | ☐ ✅ |
+| 1️⃣ | Lambda function `ravi-rest-api` created with correct code | ☐ ✅ |
+| 2️⃣ | API Gateway `ravi-student-api` created (REST API) | ☐ ✅ |
+| 3️⃣ | `/hello` resource with GET method exists | ☐ ✅ |
+| 4️⃣ | `/students` resource with GET and POST methods exists | ☐ ✅ |
+| 5️⃣ | All methods use Lambda Proxy Integration | ☐ ✅ |
+| 6️⃣ | API deployed to `prod` stage | ☐ ✅ |
+| 7️⃣ | GET /hello returns greeting JSON | ☐ ✅ |
+| 8️⃣ | GET /students returns student list | ☐ ✅ |
+| 9️⃣ | POST /students returns 201 Created | ☐ ✅ |
+| 🔟 | Unknown paths return 403 Missing Authentication Token | ☐ ✅ |
 
 ---
 
-> **Achievement Unlocked:** API Builder! REST APIs with Lambda.
+## 🧹 Cleanup (Follow Order!)
+
+> ⚠️ **Delete in this order to avoid dependency errors!** Exposed APIs can be exploited and forgotten APIs incur charges.
+
+| Step | Action | Console Location |
+|------|--------|------------------|
+| 1️⃣ 🗑️ | Delete API Gateway `ravi-student-api` | API Gateway → APIs → Actions → Delete |
+| 2️⃣ ⚡ | Delete Lambda function `ravi-rest-api` | Lambda → Functions → Actions → Delete |
+| 3️⃣ 🔐 | Delete IAM role `api-lambda-role` | IAM → Roles → Delete |
+
+> 🗣️ **Rithu's Tip:** *"Deleting the API first is important — if you delete Lambda first, the API will return 500 errors until the Lambda is recreated. Clean up top-down: API Gateway → Lambda → IAM."*
 
 ---
 
-## 🧹 Cleanup (IMPORTANT!)
+## 🚀 Level Ups (Post-Core Lab)
 
-**Delete all resources to avoid charges and security risks!**
-
-### 🗑️ Delete API Gateway:
-1. Go to **API Gateway → APIs**.
-2. Select `ravi-student-api` → Click **Actions → Delete**.
-3. Confirm by typing `ravi-student-api` → **Delete API**.
-   - This automatically deletes the stage, deployment, resources, and methods.
-
-### 🛑 Delete Lambda Function:
-1. Go to **Lambda → Functions → ravi-rest-api**.
-2. Click **Actions → Delete function**.
-3. Type `delete` → **Delete**.
-
-### 🧹 Delete IAM Role:
-1. Go to **IAM → Roles**.
-2. Search for `api-lambda-role`.
-3. Click on it → **Delete** → Type the role name → **Delete role**.
-
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> Deleting the API first is important — if you delete Lambda first, the API will return 500 errors until the Lambda is recreated. Not dangerous, but messy. Clean up top-down: API Gateway → Lambda → IAM.
+| Challenge | What to Try | Notes |
+|-----------|-------------|-------|
+| 🗑️ **DELETE Method** | Add `DELETE /students/{id}` with path parameters | Full CRUD API |
+| 🔐 **API Keys** | Enable API key requirement and test with `x-api-key` header | Simple auth |
+| 🌍 **Custom Domain** | Map a Route 53 domain to your API Gateway | Production polish |
+| ⏱️ **Caching** | Enable stage-level caching for GET responses | Performance optimization |
 
 ---
 
-## 🧠 Memory Tips
+## 🆘 Troubleshooting Quick Reference
 
-Stick these in your brain and they'll never leave. 🧲
+| 🔍 Issue | 💡 Likely Cause | 🔧 Fix |
+|---------|--------------|-----|
+| 502 Bad Gateway | Lambda returned malformed proxy response | `body` must be a **string** (`json.dumps`), `statusCode` must be present |
+| 500 Internal Server Error | Lambda function crashed | Lambda → Monitor → Logs → check most recent log stream |
+| CORS error in browser | CORS headers missing / API not redeployed | Enable CORS on resource → **redeploy** to `prod` |
+| "Missing Authentication Token" | Method doesn't exist / API not deployed | Check Resources tree; deploy after changes |
+| POST returns "Unsupported Media Type" | `Content-Type` header missing or wrong | Send `Content-Type: application/json` |
+| POST body empty in Lambda | Body not parsed / no proxy integration | Enable Lambda Proxy Integration; parse with `json.loads(event['body'])` |
+| "Endpoint request timed out" | Exceeded API Gateway integration timeout (29s) | Optimize Lambda code; raise timeout |
 
-| 🧠 Memory Hook | Remember it like... |
-|---|---|
-| **Resource = path, Method = verb** | `/students` is the **resource**; GET/POST/PUT/DELETE are the **methods**. Path + verb = full request. 🛣️ |
-| **GET reads, POST creates** | GET = "show me", POST = "make new". 200 OK vs 201 Created. 🆕 |
-| **Stage = environment** | `dev`, `prod`... each stage gets its **own URL**. Deploy to a stage to make changes live. 🚀 |
-| **Proxy integration = pass-through** | The full HTTP request goes **straight to Lambda**, which builds the whole response. Full control. 🎛️ |
-| **CORS = cross-site permission slip** | Lets a browser on site A call your API on site B. No slip = blocked by the browser. 📄 |
-
-> 🗣️ **Rithu:** *"If your API returns `Missing Authentication Token` for a route you 'know exists' — you probably forgot to DEPLOY to the stage. We've all been there."
-
----
-
-## 🎓 What You Learned
-
-In this lab, you learned:
-
-1. **Amazon API Gateway** — Creating and managing REST APIs in AWS.
-2. **REST API Concepts** — Resources, methods (GET, POST), stages, and deployments.
-3. **Lambda Proxy Integration** — Passing the full HTTP request to Lambda and returning HTTP responses.
-4. **API Stages** — Managing different environments (dev, staging, prod) with separate URLs.
-5. **CORS** — Understanding Cross-Origin Resource Sharing and how to enable it.
-6. **Request Routing** — How API Gateway routes requests to Lambda based on path and method.
-7. **HTTP Status Codes** — 200 (OK), 201 (Created), 403 (Missing Authentication Token).
+> 🗣️ **Rithu's Tip:** *"The most common mistake with API Gateway + Lambda is forgetting to **redeploy the API after making changes**. API Gateway doesn't automatically deploy updates — you have to manually deploy each time. I've been bitten by this so many times. 😅"*
 
 ---
 
@@ -578,104 +453,56 @@ In this lab, you learned:
 
 <details><summary>👀 Show answer</summary>
 
-**A:** **Deploy the API to the stage!** Editing resources alone isn't enough — you must **Deploy API** for changes to go live on the stage URL. 🚀
+**A:** **Deploy the API to the stage!** Editing resources alone isn't enough — you must **Deploy API** for changes to go live. 🚀
 
 </details>
 
 ### 🔥 Bonus Challenge
 
-Add a **`DELETE /students/{id}`** method wired to your Lambda, handle the `{id}` path parameter, and test it with curl/Postman. Then re-enable CORS on the new method and confirm a browser can call it. You've now built a full CRUD API — congratulations, you're a backend developer! 🏆
+Add a **`DELETE /students/{id}`** method wired to your Lambda, handle the `{id}` path parameter, and test it with curl/Postman. Then re-enable CORS on the new method and confirm a browser can call it. You've now built a full CRUD API! 🏆
 
-> 💪 **Rithu:** *"Path parameters (`{id}`) are the key to real APIs. Master them and every tutorial makes sense after this."
+> 💪 **Rithu:** *"Path parameters (`{id}`) are the key to real APIs. Master them and every tutorial makes sense after this."*
 
 ---
 
-### 🆚 Pro Tip vs Noob Tip
+## 📚 Official Documentation
+
+- 🌐 [Amazon API Gateway Developer Guide](https://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html)
+- ⚡ [Set up Lambda Proxy Integrations](https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html)
+- 🔧 [Enabling CORS](https://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-cors.html)
+
+---
+
+## 🎓 What You Learned
+
+> **Serverless REST APIs from scratch:**
+> - 🌐 **API Gateway** → create resources, methods, stages, deploy
+> - ⚡ **Lambda Proxy Integration** → full HTTP request passed to Lambda
+> - 📦 **Stages** → `dev`/`prod` environments with separate URLs
+> - 🔧 **CORS** → browser security for cross-origin requests
+> - 🧪 **HTTP Status Codes** → 200 OK, 201 Created, 403 Missing Auth Token
+
+**Golden Habit:** Edit → Deploy → Test → Redeploy after every change. API Gateway never auto-deploys! 🚀
 
 | | Approach |
 |---|---|
-| **Noob Tip** | Expose Lambda URLs directly with no auth, no stages, no CORS |
-| **Pro Tip** | API Gateway with stages, proxy integration, and proper CORS — the standard serverless stack |
+| 👶 **Noob Way** | Expose Lambda URLs directly with no auth, no stages, no CORS |
+| 🧙 **Pro Way** | API Gateway with stages, proxy integration, and proper CORS — the standard serverless stack |
 
 ---
 
-## 🔗 What's Next?
+## ➡️ What's Next?
 
-You've built APIs, processed files, secured access with IAM, and sent messages with SNS/SQS. Now let's put it all together with **containerized workloads on ECS Fargate** — the future of cloud computing!
+You've built APIs, processed files, and secured access. Now let's put it all together with **containerized workloads on ECS Fargate** — the future of cloud computing! 🐳
 
-👉 **[Lab 20 — ECS: Deploy NGINX on Fargate](../20%20-%20ECS%20-%20Deploy%20NGINX%20on%20Fargate/README.md)**
-
-In the next lab, you'll deploy a containerized NGINX web server on AWS ECS with Fargate — no servers to manage!
-
----
-
-## ❓ Troubleshooting
-
-<details>
-<summary><strong>🔍 502 Bad Gateway error</strong></summary>
-
-**Cause:** Lambda returned a malformed proxy response. The `body` must be a **string** (use `json.dumps(...)`), not an object, and `statusCode` must be present.
-**🔧 Fix:** Check Lambda → Code → the handler returns a dict with `statusCode` and `body` keys. Also check CloudWatch Logs for errors.
-
-</details>
-
-<details>
-<summary><strong>🔍 500 Internal Server Error</strong></summary>
-
-**Cause:** Lambda function crashed (runtime error, syntax error, import error).
-**💡 Fix:** Go to Lambda → Monitor → Logs → Check the most recent log stream for the error message.
-
-</details>
-
-<details>
-<summary><strong>🔍 CORS error in browser ("No 'Access-Control-Allow-Origin' header")</strong></summary>
-
-**Cause:** CORS headers missing on the response, or the API wasn't redeployed after enabling CORS.
-**🔧 Fix:** With Lambda proxy integration the Lambda must return the CORS headers itself (our code does). Make sure CORS is enabled on the resource (Step 7), then **redeploy** to `prod`.
-
-</details>
-
-<details>
-<summary><strong>🔍 "Missing Authentication Token" error</strong></summary>
-
-**Cause:** The method doesn't exist at that path, or the API isn't deployed.
-**💡 Fix:** Make sure the method exists in API Gateway (check the Resources tree). Deploy the API again after making changes.
-
-</details>
-
-<details>
-<summary><strong>🔍 POST request returns "Unsupported Media Type"</strong></summary>
-
-**Cause:** The `Content-Type` header is missing or wrong.
-**💡 Fix:** Make sure you're sending `Content-Type: application/json` in your request headers.
-
-</details>
-
-<details>
-<summary><strong>🔍 POST body is empty in Lambda</strong></summary>
-
-**Cause:** The body isn't being parsed correctly.
-**🔧 Fix:** Make sure Lambda Proxy Integration is enabled. The body comes as a string in `event['body']`, so you need to parse it with `json.loads(event['body'])`.
-
-</details>
-
-<details>
-<summary><strong>🔍 API returns "Endpoint request timed out"</strong></summary>
-
-**Cause:** The request exceeded the API Gateway integration timeout (29s default).
-**🔧 Fix:** Optimize your Lambda code (and raise its own timeout if needed). For Regional/private REST APIs the integration timeout can be raised up to 29 minutes.
-
-</details>
-
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> The most common mistake with API Gateway + Lambda is forgetting to **redeploy the API after making changes**. API Gateway doesn't automatically deploy updates — you have to manually deploy each time. I've been bitten by this so many times, Ravi. So many times. 😅
+🎯 **[Lab 20 - ECS: Deploy NGINX on Fargate](../20%20-%20ECS%20-%20Deploy%20NGINX%20on%20Fargate/README.md)**
 
 ---
 
 <div align="center">
 
-<img src="https://img.shields.io/badge/Lab%2019-Complete!-9B59B6?style=for-the-badge&labelColor=232F3E" />
+### ⭐ Enjoyed this lab? Star the repo & share your feedback!
 
-> 🎉 **Brilliant work, Ravi!** You've built a fully functional REST API using API Gateway and Lambda — the cornerstone of modern serverless architecture. You're now equipped to build real-world APIs! Keep going! 🚀
+**Happy Learning!** 🚀☁️
 
 </div>
