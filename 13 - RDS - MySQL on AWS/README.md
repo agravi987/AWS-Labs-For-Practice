@@ -1,21 +1,14 @@
-﻿<div align="center">
+﻿# 🗄️ Lab 13 - RDS: MySQL on AWS
 
-<img src="https://img.shields.io/badge/Lab%2013-RDS%20MySQL%20on%20AWS-8E44AD?style=for-the-badge&labelColor=232F3E" />
+> 📅 **Updated:** 21 August 2026 | ⏱️ **Duration:** ~35 minutes | 📊 **Level:** Beginner+
 
-</div>
+![RDS](https://img.shields.io/badge/RDS-MySQL%20on%20AWS-8E44AD?style=for-the-badge&logo=amazon-rds&logoColor=white)
+![Difficulty](https://img.shields.io/badge/Difficulty-Medium-F1C40F?style=flat-square)
+![Time](https://img.shields.io/badge/Time-~35%20minutes-2F80ED?style=flat-square)
+![Status](https://img.shields.io/badge/Status-Active%20Lab-2E7D32?style=flat-square)
 
-<div align="center">
-
-<img src="https://img.shields.io/badge/Difficulty-Medium-F4D03F?style=flat-square" />
-<img src="https://img.shields.io/badge/Time-~35min-3498DB?style=flat-square" />
-<img src="https://img.shields.io/badge/Cost-%3C%243-2ECC71?style=flat-square" />
-<img src="https://img.shields.io/badge/Service-RDS-8E44AD?style=flat-square" />
-
-</div>
-
-> "Ravi, installing MySQL on your laptop is like building a shelf from IKEA instructions — possible, but painful. Amazon RDS gives you a fully managed MySQL database in the cloud. No patching, no backing up at 3 AM, no drama. Just pure database joy!" — Rithu
-
----
+> ### 🗣️ *"Ravi, installing MySQL on your laptop is like building a shelf from IKEA instructions — possible, but painful. Amazon RDS gives you a fully managed MySQL database in the cloud. No patching, no backing up at 3 AM, no drama. Just pure database joy!"*
+> — **Rithu** 😴
 
 <details>
 <summary><b>🎭 Ravi & Rithu's Coffee Break Chat</b></summary>
@@ -30,334 +23,251 @@
 
 **Ravi:** "Sleep? In this economy?"
 
-**Rithu:** "With RDS? Yes. That's the whole point. 😴"
+**Rithu:** "With RDS? Yes. That's the whole point."
 
 </details>
 
 ---
 
-## 📋 Table of Contents
+## 🎯 What You'll Master
 
-- [🎯 Objective](#-objective)
-- [📊 Lab Progress](#-lab-progress)
-- [🤔 In Plain English](#-in-plain-english)
-- [🧠 Prerequisites](#-prerequisites)
-- [💰 Cost Warning](#-cost-warning)
-- [🏗️ Architecture](#️-architecture)
-- [🛠️ Step-by-Step Instructions](#️-step-by-step-instructions)
-- [✅ Validation Checklist](#-validation-checklist)
-- [🧹 Cleanup (IMPORTANT!)](#-cleanup-important)
-- [🧠 Memory Tips](#-memory-tips)
-- [🎓 What You Learned](#-what-you-learned)
-- [🎮 Test Yourself](#-test-yourself-no-peeking-)
-- [🆚 Pro Tip vs Noob Tip](#-pro-tip-vs-noob-tip)
-- [🔗 What's Next?](#-whats-next)
-- [❓ Troubleshooting](#-troubleshooting)
+| Skill | Description |
+|-------|-------------|
+| 🏘️ **DB Subnet Group** | Tells RDS which AZs it may live in |
+| 🛡️ **RDS Security Group** | Locks 3306 to your app servers only |
+| 🗄️ **Launch Managed MySQL** | Free Tier db.t3.micro, gp3 storage |
+| 🔌 **Connect & Query** | mysql client from EC2 → RDS endpoint |
+| 📊 **CloudWatch Metrics** | CPU, connections, storage, IOPS auto-tracked |
+
+> 💡 **Pro Tip:** Running your own database is a full-time job. RDS turns it into a 5-minute setup — that's why nearly every production app on AWS uses it.
 
 ---
 
-<div align="center">
+## 🚦 Before You Start
 
-## 📊 Lab Progress
+### ✅ Prerequisites Checklist
+- [ ] ✅ **[Lab 12](../12%20-%20Route%2053%20-%20DNS%20and%20Failover/README.md)** complete
+- [ ] 🖥️ EC2 instance ready for mysql client (or local machine)
+- [ ] 🔑 `first-key-pair` for SSH
+- [ ] 🔐 Strong password ready for master user
 
-`[██░░░░░░░░░░░░░░░░░░] 5% — Let's Begin!`
-
-</div>
-
----
-
-## 🤔 In Plain English
-
-> **What is this, really?** RDS is a **managed MySQL database in the cloud** — AWS installs it, patches it, backs it up, and (if you ask nicely) duplicates it across AZs. You get a normal database address (host, port 3306, user, password) and just connect with any MySQL client. It's like renting a fully-serviced apartment vs. building your own house. 🏠
->
-> 🌍 **Why you should care:** Running your own database is a full-time job. RDS turns it into a 5-minute setup — which is why nearly every production app on AWS uses it.
+### 📦 What You Need (and Don't)
+| Required | Optional |
+|----------|----------|
+| ~35 minutes | Coffee while RDS provisions ☕ |
+| Default VPC with 2+ AZs | |
 
 ---
 
-## 🎯 Objective
-
-In this lab, you will:
-
-- Create a **DB Subnet Group** to control where your database lives
-- Set up a **Security Group** for database access
-- Launch a **MySQL RDS instance** on the Free Tier
-- **Connect** to your database from an EC2 instance
-- Create tables, insert data, and run queries
-- Understand why managed databases are worth every penny
-
----
-
-## 🧠 Prerequisites
-
-Before you start, make sure you have:
-
-- ✅ Completed **Lab 12** (Route 53)
-- ✅ An AWS account with RDS access
-- ✅ At least one **running EC2 instance** with MySQL client (or be ready to install one)
-- ✅ Your key pair ready for SSH
-- ✅ A strong password ready (you'll need it for the database!)
-
----
-
-## 💰 Cost Warning
+## 💰 Cost & Safety First
 
 | Resource | Cost |
 |----------|------|
-| RDS db.t3.micro | ~$0.017/hour (~$12/month) |
-| Storage (20 GB gp3) | ~$2.30/month |
-| **Estimated total for this lab** | **< $3** (if cleaned up within an hour!) |
+| db.t3.micro | ~$0.017/hr (~$12/mo) |
+| 20 GB gp3 storage | ~$2.30/mo |
+| **Lab total** | **< $3** if cleaned within an hour |
 
-> ⚠️ **CRITICAL — Rithu says:** RDS keeps charging even after you close your browser — and unlike EC2, you pay for storage even while stopped. You MUST **delete** the RDS instance after this lab! 💸
+> ⚠️ **CRITICAL:** RDS charges even when **stopped** — storage persists! You MUST **DELETE** the instance after the lab.
 
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> The Free Tier covers a micro instance — 750 hrs/month for 12 months on legacy accounts, or up to $200 in credits on new accounts. Storage and backups beyond the free allowance still cost money, so delete the DB after the lab!
+> 💸 **Free Tier dual-track:** Legacy accounts (pre-Jul-2025) = 750 hrs/mo db.t3.micro free for 12 months. New accounts (Jul-2025+) = up to $200 credits, 6-month Free Plan window. Storage/backups beyond allowance still cost.
+
+### 🏷️ Naming Convention
+
+| Resource | Name |
+|----------|------|
+| 🏘️ DB Subnet Group | `ravi-db-subnet-group` |
+| 🛡️ Security Group | `rds-sg` |
+| 🗄️ RDS Instance | `ravi-mysql-db` |
+| 🗃️ Database | `ravilabs` |
+| 👤 Master User | `admin` |
 
 ---
 
-## 🏗️ Architecture
+## 🧠 How It All Fits Together
 
+```mermaid
+graph TD
+    EC2["🖥️ EC2 (or local)<br/>mysql -h endpoint -u admin -p"]
+    EC2 -->|"3306"| SG["🛡️ rds-sg<br/>MySQL 3306 ← 0.0.0.0/0 (lab)"]
+    SG --> RDS["🗄️ ravi-mysql-db<br/>MySQL 8.4 · db.t3.micro<br/>20 GB gp3 · Multi-AZ off"]
+    RDS --> SG2["🏘️ ravi-db-subnet-group<br/>us-east-1a + us-east-1b"]
+    RDS --> DB["🗃️ Database: ravilabs<br/>Table: students"]
+
+    style EC2 fill:#FF9800,color:#fff
+    style SG fill:#F44336,color:#fff
+    style RDS fill:#8E44AD,color:#fff
+    style SG2 fill:#3498DB,color:#fff
+    style DB fill:#2ECC71,color:#fff
 ```
-    ┌──────────────────┐        ┌──────────────────────┐
-    │   Your Computer   │        │   Amazon RDS MySQL    │
-    │   (or EC2 instance)│──────▶│   ravi-mysql-db       │
-    │                    │ :3306 │   db.t3.micro         │
-    │  mysql -h ravi...  │       │   20 GB gp3           │
-    └──────────────────┘        │   Database: ravilabs   │
-                                └──────────────────────┘
-                                            │
-                                  ┌─────────┴─────────┐
-                                  │  DB Subnet Group    │
-                                  │  us-east-1a + 1b    │
-                                  └───────────────────┘
-```
+
+### 🔑 Key Concepts
+| Component | Role |
+|-----------|------|
+| **DB Subnet Group** | Real estate choice: which AZs/subnets RDS may use |
+| **Publicly Accessible** | Lab = Yes (with SG); Production = **No** — private only |
+| **Free Tier Template** | db.t3.micro, Multi-AZ off, automated backups off |
+| **Managed = No SSH** | You speak SQL only — no OS access |
+| **gp3 Storage** | Current default — cheaper & faster than gp2 |
 
 ---
 
-## 🛠️ Step-by-Step Instructions
+## 🪜 Step-by-Step Guide
 
-### Step 1: Create a DB Subnet Group
+### 🟢 Step 1: Create DB Subnet Group 🏘️
 
-> <img src="https://img.shields.io/badge/Step%201-Create%20DB%20Subnet%20Group-3498DB?style=for-the-badge" />
+<details>
+<summary><b>🏘️ Expand for DB subnet group</b></summary>
 
-A DB Subnet Group tells RDS which subnets (and therefore which Availability Zones) it can place your database in.
-
-1. Go to the **RDS Console** → left sidebar → **Subnet groups**
-2. Click **Create DB subnet group**
-3. Fill in:
-
-| Field | Value |
-|-------|-------|
-| DB subnet group name | `ravi-db-subnet-group` |
-| Description | "Subnet group for Ravi's RDS lab" |
-| VPC | **Default VPC** |
-
-4. Under **Add subnets:**
-   - Select **us-east-1a** and **us-east-1b** (click both!)
-   - These should show the default subnets for your VPC
-
-5. Click **Create**
-
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> We span 2 AZs so RDS can place the database where it wants. Automatic failover only kicks in with **Multi-AZ** enabled (the Free Tier template leaves it off) — still good practice to plan for. 🏗️
-
-📸 **[Screenshot: DB Subnet Group creation page showing 2 AZs selected]**
-![DB Subnet Group creation page showing 2 AZs selected](screenshots/01-db-subnet-group-2azs.png)
-
----
-
-### Step 2: Create a Security Group for RDS
-
-> <img src="https://img.shields.io/badge/Step%202-Create%20RDS%20Security%20Group-2ECC71?style=for-the-badge" />
-
-Your database needs its own security group. We'll allow MySQL access from anywhere (for lab purposes only!).
-
-1. Go to **EC2 Console** → **Security Groups** → **Create security group**
+1. RDS Console → **Subnet groups** → ➕ **Create DB subnet group**
 2. Configure:
 
-| Field | Value |
-|-------|-------|
-| Security group name | `rds-sg` |
-| Description | "Security group for RDS MySQL lab" |
-| VPC | Default VPC |
+   | Field | Value |
+   |-------|-------|
+   | Name | `ravi-db-subnet-group` |
+   | Description | `Subnet group for Ravi's RDS lab` |
+   | VPC | Default VPC |
 
-3. **Inbound rules:**
+3. **Add subnets:** select **us-east-1a** AND **us-east-1b** (both!) → ✅ **Create**
 
-| Type | Port | Source |
-|------|------|--------|
-| MySQL/Aurora | 3306 | Anywhere (`0.0.0.0/0`) |
+</details>
 
-4. **Outbound rules:** Keep default (All traffic)
+![DB Subnet Group creation page showing 2 AZs selected](screenshots/01-db-subnet-group-2azs.png)
 
-5. Click **Create security group**
+> 🗣️ **Rithu's Tip:** *"Span 2 AZs so RDS can place the DB where it wants. Multi-AZ failover needs this (Free Tier leaves it off, but good practice!)"*
 
-> ⚠️ **Production Reality Check:** Never open MySQL to the whole internet in production — lock it to specific security groups or IPs. For this lab, `0.0.0.0/0` lets us connect from anywhere.
+---
 
-📸 **[Screenshot: Security group with MySQL port 3306 open]**
+### 🟢 Step 2: Create RDS Security Group 🛡️
+
+<details>
+<summary><b>🛡️ Expand for RDS SG</b></summary>
+
+1. EC2 Console → **Security Groups** → ➕ **Create security group**
+2. Configure:
+
+   | Field | Value |
+   |-------|-------|
+   | Name | `rds-sg` |
+   | Description | `Security group for RDS MySQL lab` |
+   | VPC | Default VPC |
+
+3. **Inbound:** MySQL/Aurora (3306) ← `0.0.0.0/0` (lab only!)
+4. Outbound: default → ✅ **Create**
+
+</details>
+
 ![Security group with MySQL port 3306 open](screenshots/02-rds-sg-mysql-3306-open.png)
 
----
-
-### Step 3: Create the RDS Instance
-
-> <img src="https://img.shields.io/badge/Step%203-Create%20RDS%20Instance-E74C3C?style=for-the-badge" />
-
-This is the main event — let's launch a MySQL database!
-
-1. Go to **RDS Console** → **Databases** (left sidebar)
-2. Click **Create database**
-
-**Choose a database creation method:**
-- Select **Standard create** (not Easy create — we want control!)
-
-**Engine options:**
-- Select **MySQL**
-- Version: **MySQL 8.4** (the current LTS — MySQL 8.0 and 5.7 are past standard support)
-- Template: **Free tier** ✅
-
-**Settings:**
-
-| Field | Value |
-|-------|-------|
-| DB instance identifier | `ravi-mysql-db` |
-| Master username | `admin` |
-| Master password | **Use a strong password! Write it down!** |
-
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> Pick a strong password you'll remember, like `Ravi#MySQLLab!` — mix uppercase, lowercase, numbers, and symbols. WRITE IT DOWN somewhere safe!
-
-**Instance configuration:**
-
-| Field | Value |
-|-------|-------|
-| DB instance class | **db.t3.micro** (Free Tier) |
-| Storage type | **General Purpose SSD (gp3)** |
-| Allocated storage | **20 GB** |
-| Storage autoscaling | ❌ Uncheck this (keep costs predictable) |
-
-> 💡 The Free Tier template leaves **Multi-AZ** off (no standby instance) — Multi-AZ isn't Free Tier eligible. Fine for a lab; in production you'd usually want it.
-
-**Connectivity:**
-
-| Field | Value |
-|-------|-------|
-| VPC | Default VPC |
-| DB subnet group | `ravi-db-subnet-group` |
-| Public access | **Yes** ⚠️ |
-| Security group | `rds-sg` |
-| Availability zone | Don't specify (let RDS choose) |
-
-> ⚠️ **Production Reality Check:** "Public access: Yes" means the DB is reachable from the internet (still protected by the security group). In production this should be **No** — connect via VPN or from inside the VPC. For this lab, we need it public.
->
-> 💡 `gp3` is the current default storage type — cheaper and faster than the older `gp2`.
-
-**Database options:**
-
-| Field | Value |
-|-------|-------|
-| Initial database name | `ravilabs` |
-| DB parameter group | default |
-| Backup | **Disable** (for lab — explain below) |
-| Enable automated backups | ❌ |
-
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> In production, automated backups are essential! They let you restore to any point in time. But for a lab, we don't need them, and they cost extra storage.
-
-**Monitoring & Maintenance:**
-- Leave all defaults
-- Click **Create database**
-
-4. Wait for the database to be created — this takes **5-10 minutes** ⏱️
-
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> Go grab a coffee while you wait! ☕ RDS is setting up MySQL, configuring networking, setting up the security group, and more. This is the "managed" part of a managed database — AWS does all the boring stuff for you.
-
-
+> ⚠️ **Production Reality Check:** Never `0.0.0.0/0` on 3306 in production — lock to app server's SG only!
 
 ---
 
-### Step 4: Wait for DB to Be Available
+### 🟢 Step 3: Launch the RDS Instance 🗄️
 
-> <img src="https://img.shields.io/badge/Step%204-Wait%20for%20DB-F39C12?style=for-the-badge" />
+<details>
+<summary><b>🗄️ Expand for RDS creation</b></summary>
 
-1. In the **RDS Console** → **Databases** → click `ravi-mysql-db`
-2. Watch the **Status** column go from 🔄 Creating → ✅ **Available** (with backups disabled, there's no "Backing up" stage)
-3. Once it says **Available**, you're ready to connect!
+1. RDS Console → **Databases** → ➕ **Create database**
+2. **Standard create** (not Easy create)
+3. **Engine:** MySQL · **Version:** 8.4 (LTS) · **Template:** **Free tier** ✅
+4. **Settings:**
 
-4. Copy the **Endpoint** from the database details:
-   - It looks like: `ravi-mysql-db.xxxxxxxxxxxx.us-east-1.rds.amazonaws.com`
-   - Note the **Port**: `3306`
+   | Field | Value |
+   |-------|-------|
+   | DB identifier | `ravi-mysql-db` |
+   | Master username | `admin` |
+   | Master password | **Strong! Write it down!** |
 
-📸 **[Screenshot: RDS database showing "Available" status and the endpoint]**
+5. **Instance config:**
+
+   | Field | Value |
+   |-------|-------|
+   | Class | **db.t3.micro** |
+   | Storage | **gp3** |
+   | Allocated | **20 GB** |
+   | Autoscaling | ❌ Uncheck |
+
+6. **Connectivity:**
+
+   | Field | Value |
+   |-------|-------|
+   | VPC | Default VPC |
+   | DB subnet group | `ravi-db-subnet-group` |
+   | Public access | **Yes** (lab only!) |
+   | Security group | `rds-sg` |
+   | AZ | Don't specify |
+
+7. **Database options:**
+
+   | Field | Value |
+   |-------|-------|
+   | Initial DB name | `ravilabs` |
+   | Backups | **Disable** (lab) |
+
+8. ✅ **Create database** → wait **5–10 min** ☕
+
+</details>
+
+> 🗣️ **Rithu's Tip:** *"Go grab coffee! RDS is setting up MySQL, networking, SG — the 'managed' part means AWS does the boring stuff."*
+
+---
+
+### 🟢 Step 4: Wait for Available & Grab Endpoint 🔗
+
+<details>
+<summary><b>🔗 Expand for endpoint</b></summary>
+
+1. RDS → Databases → click `ravi-mysql-db`
+2. Status: **Creating** → **Available** (no "Backing up" stage since disabled)
+3. Copy **Endpoint**: `ravi-mysql-db.xxxxxxxxxxxx.us-east-1.rds.amazonaws.com`
+4. **Port:** `3306`
+
+</details>
+
 ![RDS database showing "Available" status and the endpoint](screenshots/04-rds-available-endpoint.png)
 
 ---
 
-### Step 5: Connect to Your RDS Database
+### 🟢 Step 5: Connect from EC2 🔌
 
-> <img src="https://img.shields.io/badge/Step%205-Connect%20to%20RDS-1ABC9C?style=for-the-badge" />
+<details>
+<summary><b>🔌 Expand for connection</b></summary>
 
-You have two options for connecting:
+**Option A (local):** `mysql -h <endpoint> -u admin -p`
 
-**Option A: Connect from Your Local Computer (if you have MySQL installed)**
+**Option B (EC2 — recommended):**
 
-```bash
-mysql -h ravi-mysql-db.xxxxxxxxxxxx.us-east-1.rds.amazonaws.com -u admin -p
-```
+1. SSH into EC2 (t2.micro AL2023):
+   ```bash
+   ssh -i "first-key-pair.pem" ec2-user@<EC2_IP>
+   ```
+2. Install MariaDB client (provides `mysql` cmd, compatible with MySQL):
+   ```bash
+   sudo dnf install -y mariadb105
+   ```
+3. Connect:
+   ```bash
+   mysql -h <endpoint> -u admin -p
+   ```
+4. Enter password → `mysql>` prompt ✅
 
-Enter your password when prompted.
+</details>
 
-**Option B: Connect from an EC2 Instance (recommended)**
-
-1. SSH into an EC2 instance (or launch a new t2.micro Amazon Linux 2023):
-
-```bash
-ssh -i "first-key-pair.pem" ec2-user@<EC2_PUBLIC_IP>
-```
-
-2. Install the MySQL client:
-
-> 💡 On Amazon Linux 2023 the `mysql` package isn't available. AWS's recommended client package is **`mariadb105`** (MariaDB), which provides the `mysql` command and is fully compatible with RDS MySQL:
-
-```bash
-sudo dnf install -y mariadb105
-```
-
-3. Connect to RDS:
-
-```bash
-mysql -h ravi-mysql-db.xxxxxxxxxxxx.us-east-1.rds.amazonaws.com -u admin -p
-```
-
-4. Enter your password when prompted
-
-5. You should see the MySQL prompt:
-
-```
-mysql>
-```
-
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> If you get "Access denied", double-check your password. If you get "Can't connect", check that the security group allows port 3306 from your IP or the EC2 instance's private IP.
-
-📸 **[Screenshot: Terminal showing successful MySQL connection]**
 ![Terminal showing successful MySQL connection](screenshots/05-terminal-mysql-connection.png)
+
+> 🗣️ **Rithu's Tip:** *"Amazon Linux 2023: `mysql` pkg unavailable; `mariadb105` is AWS's recommended client. Access denied? Check password. Can't connect? Check SG allows 3306 from your IP/EC2 private IP."*
 
 ---
 
-### Step 6: Create Tables and Insert Data
+### 🟢 Step 6: Create Tables & Run Queries 📝
 
-> <img src="https://img.shields.io/badge/Step%206-Create%20Tables%20%26%20Insert%20Data-E67E22?style=for-the-badge" />
-
-Now let's do some real database work! Run these commands in your MySQL prompt:
+<details>
+<summary><b>📝 Expand for SQL</b></summary>
 
 ```sql
--- Create a database (if not created automatically)
 CREATE DATABASE IF NOT EXISTS ravilabs;
-
--- Switch to our database
 USE ravilabs;
 
--- Create a students table
 CREATE TABLE students (
   id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(100),
@@ -365,18 +275,15 @@ CREATE TABLE students (
   score INT
 );
 
--- Insert some data
 INSERT INTO students (name, topic, score) VALUES
   ('Ravi', 'EC2', 95),
   ('Ravi', 'S3', 90),
   ('Ravi', 'VPC', 88);
 
--- Verify the data was inserted
 SELECT * FROM students;
 ```
 
-You should see:
-
+Result:
 ```
 +----+------+-------+-------+
 | id | name | topic | score |
@@ -385,167 +292,89 @@ You should see:
 |  2 | Ravi | S3    |    90 |
 |  3 | Ravi | VPC   |    88 |
 +----+------+-------+-------+
-3 rows in set (0.01 sec)
 ```
 
-🎉 **Your first cloud database records!**
-
-📸 **[Screenshot: MySQL terminal showing the SELECT query results]**
-![MySQL terminal showing the SELECT query results](screenshots/06-mysql-select-results.png)
-
-Let's do a few more operations:
-
+**More practice:**
 ```sql
--- Count how many records we have
 SELECT COUNT(*) AS total_records FROM students;
-
--- Find Ravi's highest score
 SELECT name, topic, MAX(score) AS highest_score FROM students GROUP BY name;
-
--- Update a score
 UPDATE students SET score = 98 WHERE topic = 'EC2' AND name = 'Ravi';
-
--- Verify the update
 SELECT * FROM students WHERE name = 'Ravi';
-```
-
-Exit MySQL:
-
-```sql
 EXIT;
 ```
 
+</details>
+
+![MySQL terminal showing the SELECT query results](screenshots/06-mysql-select-results.png)
+
 ---
 
-### Step 7: View RDS Metrics in CloudWatch
+### 🟢 Step 7: View CloudWatch Metrics 📊
 
-> <img src="https://img.shields.io/badge/Step%207-View%20CloudWatch%20Metrics-9B59B6?style=for-the-badge" />
+<details>
+<summary><b>📊 Expand for metrics</b></summary>
 
-RDS automatically sends metrics to CloudWatch. Let's check them out!
+1. RDS → Databases → `ravi-mysql-db` → **Monitoring** tab
+2. See: CPU Utilization, Database connections, Free storage, Read/Write IOPS
+3. **View all CloudWatch metrics** for more detail
 
-1. Go to **RDS Console** → **Databases** → click `ravi-mysql-db`
-2. Scroll down to **Monitoring** tab
-3. You'll see graphs for:
-   - CPU Utilization
-   - Database connections
-   - Free storage space
-   - Read/write IOPS
-4. Click **View all CloudWatch metrics** for more detail
+</details>
 
-📸 **[Screenshot: RDS monitoring tab showing CPU and connection metrics]**
 ![RDS monitoring tab showing CPU and connection metrics](screenshots/07-rds-cloudwatch-metrics.png)
 
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> In production, you'd set up CloudWatch alarms on these metrics — like alerting when CPU goes above 80% or free storage drops below 1 GB. We'll cover that in Lab 15!
-
----
-
-### Step 8: Verify Your Work
-
-> <img src="https://img.shields.io/badge/Step%208-Verify%20Your%20Work-27AE60?style=for-the-badge" />
-
-Let's confirm everything worked:
-
-- [ ] DB Subnet Group `ravi-db-subnet-group` exists with 2 AZs
-- [ ] Security group `rds-sg` allows MySQL (3306)
-- [ ] RDS instance `ravi-mysql-db` shows **Available** status
-- [ ] Successfully connected to MySQL from EC2 or local machine
-- [ ] Created database `ravilabs`
-- [ ] Created table `students` with 3 rows of data
-- [ ] SELECT query returned the expected results
-- [ ] RDS metrics visible in CloudWatch
+> 🗣️ **Rithu's Tip:** *"Production = alarms on CPU > 80%, free storage < 1 GB. Lab 15 covers that!"*
 
 ---
 
 ## ✅ Validation Checklist
 
-- [ ] DB Subnet Group spans 2 Availability Zones ✅
-- [ ] Security group allows MySQL (3306) inbound ✅
-- [ ] RDS instance is running and shows "Available" ✅
-- [ ] Endpoint and port noted down ✅
-- [ ] Successfully connected using `mysql` client ✅
-- [ ] Database `ravilabs` created with `students` table ✅
-- [ ] Data inserted and queryable ✅
-- [ ] CloudWatch metrics visible for the RDS instance ✅
+| # | Check | Status |
+|---|-------|--------|
+| 1️⃣ | DB Subnet Group spans 2 AZs | ☐ ✅ |
+| 2️⃣ | `rds-sg` allows MySQL 3306 inbound | ☐ ✅ |
+| 3️⃣ | `ravi-mysql-db` status = **Available** | ☐ ✅ |
+| 4️⃣ | Endpoint + port noted | ☐ ✅ |
+| 5️⃣ | Connected via mysql client | ☐ ✅ |
+| 6️⃣ | `ravilabs` DB + `students` table created | ☐ ✅ |
+| 7️⃣ | Data inserted, SELECT works | ☐ ✅ |
+| 8️⃣ | CloudWatch metrics visible | ☐ ✅ |
 
 ---
 
-## 🧹 Cleanup (IMPORTANT!)
+## 🧹 Cleanup (Follow Order!)
 
-> ⚠️ **CRITICAL: RDS keeps charging even when stopped! DELETE the instance!**
+> ⚠️ **RDS KEEPS CHARGING EVEN WHEN STOPPED. DELETE IT!**
 
-| Step | Action | How |
-|:-----|:-------|:----|
-| 1 | Delete RDS instance | RDS → Databases → `ravi-mysql-db` → Actions → Delete (uncheck final snapshot) |
-| 2 | Delete DB Subnet Group | RDS → Subnet groups → `ravi-db-subnet-group` → Delete |
-| 3 | Delete Security Group | EC2 → Security Groups → `rds-sg` → Actions → Delete |
-| 4 | Terminate EC2 (if launched) | EC2 → Instances → select instance → Instance state → Terminate |
+| Step | Action | Console Location |
+|------|--------|------------------|
+| 1️⃣ 🗑️ | Delete `ravi-mysql-db` (UNCHECK final snapshot) | RDS → Databases |
+| 2️⃣ 🏘️ | Delete `ravi-db-subnet-group` | RDS → Subnet groups |
+| 3️⃣ 🛡️ | Delete `rds-sg` | EC2 → Security Groups |
+| 4️⃣ 🖥️ | Terminate EC2 (if launched for this lab) | EC2 → Instances |
 
-### Detailed Steps:
-
-1. 🗑️ **Delete the RDS Instance:**
-   - Go to **RDS Console** → **Databases**
-   - Select `ravi-mysql-db`
-   - Click **Actions** → **Delete**
-   - ⚠️ **UNCHECK** "Create final snapshot" (we don't need it for a lab)
-   - **CHECK** the "I acknowledge..." confirmation box
-   - If prompted, type `delete me` in the confirmation box (only required when deletion protection is on)
-   - Click **Delete**
-
-   > ⏱️ Deletion takes 5-10 minutes
-
-2. 🗑️ **Delete the DB Subnet Group:**
-   - Go to **RDS** → **Subnet groups**
-   - Select `ravi-db-subnet-group`
-   - Click **Delete**
-
-3. 🔐 **Delete the Security Group:**
-   - Go to **EC2** → **Security Groups**
-   - Find `rds-sg`
-   - Click **Actions** → **Delete security group**
-   - Confirm
-
-4. 💻 **Terminate any EC2 instance you launched for this lab:**
-   - Go to **EC2** → **Instances**
-   - Select any instance you launched for this lab (e.g., for MySQL client access)
-   - Click **Instance state** → **Terminate instance**
-   - Confirm termination
-   - ⚠️ If you used an existing instance from a previous lab, skip this step
-
-📸 **[Screenshot: RDS console with instance deleted and subnet group removed]**
-
-> <img src="https://img.shields.io/badge/Tip-Rithu's%20Tip-FFC300?style=flat-square" />
-> After deletion, RDS charges stop immediately. Double-check RDS → Databases no longer shows `ravi-mysql-db`, and terminate any EC2 instance you launched so you don't pay for idle compute!
+> 🗣️ **Rithu's Tip:** *"Deletion takes 5–10 min. Charges stop immediately after. Double-check RDS console shows no `ravi-mysql-db` and EC2 instances terminated."*
 
 ---
 
-## 🧠 Memory Tips
+## 🚀 Level Ups (Post-Core Lab)
 
-Stick these in your brain and they'll never leave. 🧲
-
-| 🧠 Memory Hook | Remember it like... |
-|---|---|
-| **RDS = "Really Don't Stress"** | Patching, backups, HA — all AWS's job. You just query. 😎 |
-| **DB Subnet Group = real estate choice** | Tells RDS **which AZs it may live in**. Pick at least two for high availability. 🏘️ |
-| **MySQL = port 3306** | The database's secret knock. Your security group must open **3306** — to your EC2 only! 🔑 |
-| **Publicly Accessible = lab only!** | In production, databases stay **private**. Public DBs are a hacker's dream. 🚫 |
-| **Managed = no SSH** | You can't SSH into an RDS instance. It's AWS's server — you only speak SQL to it. 🗣️ |
-
-> 🗣️ **Rithu:** *"The RDS security group should say: only my app servers may enter. Everything else? Get lost."
+| Challenge | What to Try | Notes |
+|-----------|-------------|-------|
+| 🔗 **JOINs** | Second table + foreign key + `SELECT ... JOIN` | Real DB engineering |
+| 🔄 **Multi-AZ** | Recreate with Multi-AZ = on | HA with standby |
+| 🔐 **Secrets Manager** | Store master password in Secrets Manager | No hardcoded creds |
 
 ---
 
-## 🎓 What You Learned
+## 🆘 Troubleshooting Quick Reference
 
-| Concept | What You Now Know |
-|---------|-------------------|
-| **DB Subnet Groups** | How to control which AZs your database lives in |
-| **RDS Security Groups** | How to control network access to your database |
-| **RDS Instance Creation** | How to launch a managed MySQL database with proper configuration |
-| **Publicly Accessible** | What it means and when to use it (lab only!) |
-| **MySQL Client** | How to connect to a remote database from EC2 or local machine |
-| **CRUD Operations** | Create, Read, Update, Delete in a cloud database |
-| **CloudWatch Integration** | How RDS metrics are automatically tracked |
+| 🔍 Issue | 💡 Likely Cause | 🔧 Fix |
+|-------|--------------|-----|
+| 🔌 "Can't connect" | Status not Available / SG blocks 3306 / public access off | Verify Available, SG allows 3306 from your IP, Public=Yes |
+| 🔐 "Access denied" | Wrong password / wrong user | Check password (case-sensitive!); user = `admin` |
+| ⏳ Stuck "Creating" >15 min | Events tab errors / VPC lacks 2 AZs / quota | Check Events; ensure default VPC has 2+ AZ subnets |
+| 🔒 "Public access" greyed out | Subnet group only has private subnets | Add public subnets to DB subnet group |
+| 💾 Storage filling | RDS doesn't auto-delete data | Manage manually; enable autoscaling with max in prod |
 
 ---
 
@@ -555,7 +384,7 @@ Stick these in your brain and they'll never leave. 🧲
 
 <details><summary>👀 Show answer</summary>
 
-**A:** **Which Availability Zones** your database may be placed in (and which subnets it uses). Multi-AZ DBs survive a single-AZ outage. 🏘️
+**A:** **Which Availability Zones** your database may be placed in (and which subnets it uses). Multi-AZ DBs survive single-AZ outages. 🏘️
 
 </details>
 
@@ -563,88 +392,60 @@ Stick these in your brain and they'll never leave. 🧲
 
 <details><summary>👀 Show answer</summary>
 
-**A:** **3306** — and you should open it **only to your EC2 instance's security group** (or My IP for the lab), never to the world. 🔑
+**A:** **3306** — open only to your app server's security group (or My IP for lab), never to the world. 🔑
 
 </details>
 
-**Q3:** Why would a company pay for RDS instead of running MySQL on their own EC2 instance?
+**Q3:** Why pay for RDS instead of self-managed MySQL on EC2?
 
 <details><summary>👀 Show answer</summary>
 
-**A:** Because AWS handles **patching, backups, monitoring, and failover** automatically. No 3 AM backup alarms, no manual upgrades. Worth every penny. 💰
+**A:** AWS handles **patching, backups, monitoring, failover** automatically. No 3 AM backup alarms, no manual upgrades. Worth every penny. 💰
 
 </details>
 
-### 🔥 Bonus Challenge
-
-Create a second table, insert a few rows with a `JOIN`-friendly foreign key, and run a `SELECT ... JOIN ...` query across both tables. You're not just clicking now — you're doing real database engineering in the cloud. 🗄️
-
-> 💪 **Rithu:** *"A database is only as good as the queries you can write. Go JOIN something."
+> 💪 **Rithu:** *"A database is only as good as the queries you can write. Go JOIN something."*
 
 ---
 
-### 🆚 Pro Tip vs Noob Tip
+## 📚 Official Documentation
+
+- 🗄️ [Amazon RDS User Guide](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Welcome.html)
+- 📋 [Creating a MySQL DB Instance](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_MySQL.html)
+- 🔌 [Connecting to a DB Instance](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_ConnectToInstance.html)
+
+---
+
+## 🎓 What You Learned
+
+> **The managed DB admin's checklist:**
+> - 🏘️ **DB Subnet Group** → AZs where DB may live
+> - 🛡️ **SG** → 3306 locked to app servers only
+> - 🗄️ **RDS** → managed MySQL, no SSH, just SQL
+> - 🔌 **Endpoint** → host:port for mysql client
+> - 💸 **Delete it** → charges persist even when stopped
+
+**Golden Habit:** Subnet group (2 AZs) → SG (least privilege) → Free Tier template → connect → query → **DELETE**. 🧹
 
 | | Approach |
 |---|---|
-| **Noob Tip** | Set the DB security group to 0.0.0.0/0 "so I can connect from anywhere" |
-| **Pro Tip** | Lock 3306 to your app server's security group only. Databases are the crown jewels |
+| 👶 **Noob Way** | SG 3306 open to world "so I can connect from anywhere" |
+| 🧙 **Pro Way** | Lock 3306 to app server's SG only. Databases are the crown jewels |
 
 ---
 
-## 🔗 What's Next?
+## ➡️ What's Next?
 
-You've mastered relational databases in the cloud. Now let's explore the NoSQL world:
+Relational DB mastered. Next: AWS's serverless NoSQL — DynamoDB with automatic scaling and generous Free Tier. ⚡
 
-➡️ **Lab 14 — DynamoDB: CRUD Operations** — Learn about AWS's serverless NoSQL database that scales automatically and has a generous Free Tier!
-
----
-
-## ❓ Troubleshooting
-
-<details>
-<summary><strong>Click to expand Troubleshooting Section</strong></summary>
-
-### 🔍 "Can't connect to MySQL server" error
-
-- 🔍 Verify the RDS instance status is **Available** (not "Backing up" or "Creating")
-- 🔧 Check that `rds-sg` security group allows inbound on port 3306
-- 🔍 If connecting from your local machine, your home IP must be in the security group (or use `0.0.0.0/0`)
-- 🔍 Make sure you're using the full endpoint (not just the identifier)
-- 🔧 Check that "Public access" is set to **Yes**
-
-### 🔍 "Access denied for user 'admin'" error
-
-- 🔍 Double-check your master password (it's case-sensitive!)
-- 🔧 If you forgot the password, you can modify the RDS instance and set a new master password
-- 🔍 Make sure you're connecting as `admin`, not `root` or `mysql`
-
-### 🔍 RDS instance is stuck in "Creating" for more than 15 minutes
-
-- 🔍 This is unusual — check the **Events** tab for error messages
-- 💡 You may have hit a limit (check Service Quotas → RDS)
-- 🔧 Try deleting and recreating with a different identifier
-- 🔍 Make sure your default VPC has subnets in at least 2 AZs
-
-### 🔍 "Public access" option is greyed out
-
-- 💡 This happens when the subnet group only has private subnets
-- 🔧 Make sure your DB Subnet Group includes subnets that are in the default VPC (which should have public subnets)
-
-### 🔍 Storage is filling up quickly
-
-- 💡 RDS doesn't auto-delete data — you need to manage storage manually
-- 💡 For this lab, 20 GB should be more than enough
-- 🔧 In production, enable storage autoscaling with a maximum limit
-
-</details>
-
-> 🎉 **Incredible work, Ravi!** You just set up a production-grade MySQL database in the cloud. RDS handles all the boring stuff — patching, backups, monitoring — so you can focus on building awesome applications. Next, we'll explore the wild world of NoSQL with DynamoDB! 🚀
+🎯 **[Lab 14 - DynamoDB: CRUD Operations](../14%20-%20DynamoDB%20-%20CRUD%20Operations/README.md)**
 
 ---
 
 <div align="center">
 
-<img src="https://img.shields.io/badge/Lab%2013-Complete!-27AE60?style=for-the-badge&labelColor=232F3E" />
+### ⭐ Enjoyed this lab? Star the repo & share your feedback!
+
+**Happy Learning!** 🚀☁️
 
 </div>
