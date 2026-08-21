@@ -137,6 +137,7 @@ graph TD
 </details>
 
 > 📸 **Screenshot Proof:** Capture the VPC visual topology showing all 4 subnets, IGW, and route tables.
+![VPC resource map showing four subnets, the internet gateway, and route tables](screenshots/01-vpc-resource-topology.png)
 
 > 💡 **The VPC is your virtual data center.** Everything you build from here lives inside it — just like Lab 08, but bigger!
 
@@ -164,7 +165,8 @@ Create all three in **EC2 Console** → **Security Groups**, in this exact order
 
 </details>
 
-> 📸 **Screenshot Proof:** Capture all three security groups showing their inbound rules chained together.
+> 📸 **Screenshot Proof:** All three security groups in the capstone VPC.
+![Security Groups page showing the ALB, EC2, and RDS security groups](screenshots/02-security-groups.png)
 
 > 🏰 **Defense in depth:** Each layer only accepts traffic from the layer above. Even if one falls, the next still holds! Creating them **first** means RDS (Step 7) can reference them immediately — no rework.
 
@@ -191,6 +193,7 @@ Create all three in **EC2 Console** → **Security Groups**, in this exact order
 </details>
 
 > 📸 **Screenshot Proof:** Capture the bucket showing `style.css` uploaded.
+![S3 assets bucket showing the uploaded style.css object](screenshots/03-s3-assets-bucket.png)
 
 > 💡 **Public access stays blocked!** In real apps, static assets are served privately via CloudFront or presigned URLs — never a wide-open bucket. (See Labs 05–07 for the hosting patterns.)
 
@@ -236,6 +239,7 @@ systemctl enable httpd
 </details>
 
 > 📸 **Screenshot Proof:** Capture the launch template summary page showing AMI, instance type, SG, and User Data.
+![Launch template summary showing the AMI, instance type, security group, and user data](screenshots/04-launch-template-summary.png)
 
 > 💡 **User Data = bootstrap script.** It runs on every instance the ASG launches — Apache + PHP + MariaDB client, plus a homepage. Bonus: `mariadb105` pre-installs the MySQL client we'll use in Step 7! 😉
 
@@ -255,6 +259,8 @@ systemctl enable httpd
    - **Health check path:** `/`
 3. ✅ **Create target group** (don't register targets — the ASG does that!)
 
+![Target group details for ravi-capstone-tg](screenshots/05-target-group-details.png)
+
 **Part B — Now the ALB:**
 
 4. 🌐 **Load Balancers** → **Create load balancer** → **Application Load Balancer**
@@ -269,6 +275,7 @@ systemctl enable httpd
 </details>
 
 > 📸 **Screenshot Proof:** Capture the ALB details showing State **Active** and its DNS name.
+![Application Load Balancer showing Active status and its DNS name](screenshots/05-alb-active-details.png)
 
 > 🚦 **The ALB is your front door.** Health checks fail targets out, traffic flows only to healthy instances. If one server dies, users never notice!
 
@@ -293,6 +300,8 @@ systemctl enable httpd
 </details>
 
 > 📸 **Screenshot Proof:** Capture the ASG showing 2 instances **InService** across both AZs, and the target group showing 2 **healthy** targets.
+![Auto Scaling Group showing two healthy instances at desired capacity](screenshots/06-auto-scaling-group-healthy.png)
+![EC2 Instances page showing two running instances across availability zones](screenshots/06-ec2-instances-running.png)
 
 > 🚗 **Cruise control for servers:** CPU above 50%? Add instances. Below? Remove them. Plus self-healing — kill an instance and watch the ASG replace it automatically!
 
@@ -344,6 +353,7 @@ systemctl enable httpd
 </details>
 
 > 📸 **Screenshot Proof:** Capture the RDS instance **Available** with endpoint, and the terminal showing `SELECT * FROM users` returning 3 rows.
+![Terminal showing the RDS users table with three returned rows](screenshots/07-rds-data-query.png)
 
 > 🏰 **Crown jewels stay hidden:** RDS lives in a private subnet with **no public IP**. Only your EC2 layer can reach port 3306 — the SG chain from Step 2 enforces it!
 
@@ -378,6 +388,8 @@ systemctl enable httpd
 </details>
 
 > 📸 **Screenshot Proof:** Capture the dashboard with all 4 widgets, and the alarm in **OK** state.
+![CloudWatch dashboard showing the four capstone widgets](screenshots/08-cloudwatch-dashboard.png)
+![CloudWatch CPU alarm showing OK status](screenshots/08-cloudwatch-alarm-ok.png)
 
 > 🚨 **Dashboards = bird's-eye view. Alarms = smoke detector.** Metrics take 5–15 min to appear — patience, young builder. ⏳
 
@@ -398,6 +410,7 @@ systemctl enable httpd
 </details>
 
 > 📸 **Screenshot Proof:** Capture the trail showing **Logging = Yes**.
+![CloudTrail trail showing Logging status](screenshots/09-cloudtrail-logging.png)
 
 > 📼 **Black-box recorder:** Every API call — who, what, when. Console-created trails cover **all Regions** automatically. If something breaks, CloudTrail tells you exactly what happened!
 
@@ -419,8 +432,6 @@ systemctl enable httpd
 **No domain? No problem!** The ALB DNS name works perfectly — the architecture is identical. 💪
 
 </details>
-
-> 📸 **Screenshot Proof:** Capture the alias record pointing to the ALB (or a note that you're using the ALB DNS directly).
 
 ---
 
@@ -448,6 +459,8 @@ Run through every layer of the stack:
 </details>
 
 > 📸 **Screenshot Proof:** Capture the browser showing the capstone page + the CloudWatch dashboard with live metrics.
+![Browser showing the deployed capstone application](screenshots/11-capstone-app-browser.png)
+![CloudWatch dashboard showing live verification metrics](screenshots/11-cloudwatch-verification-dashboard.png)
 
 > 🏆 **Every layer verified = a genuinely production-like deployment.** You built this from scratch!
 
@@ -482,8 +495,6 @@ AUDITING     ravi-capstone-trail → ravi-capstone-audit-12345 (S3)
 ```
 
 </details>
-
-> 📸 **Screenshot Proof:** Save this inventory (or draw the diagram yourself in any tool) — it's your portfolio artifact! 🎨
 
 ---
 
