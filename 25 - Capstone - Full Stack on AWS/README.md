@@ -33,6 +33,7 @@
 - [ ] 🌍 **Single Region** — Pick one and stick with it
 - [ ] 🔐 **Permissions** — Admin access (VPC, EC2, RDS, S3, IAM, CloudWatch, CloudTrail)
 - [ ] ⏰ **~90 uninterrupted minutes**
+- [ ] 💳 **Know your account type** — created before/after Jul 15 2025 changes your Free Tier (see Cost below)
 - [ ] 📝 **Notepad ready** — You'll create many named resources!
 
 ### 📦 What You Need (and Don't)
@@ -50,15 +51,17 @@
 
 ### 💵 Estimated Cost (~90-minute session)
 
-| Resource | Free Tier? | Est. Cost |
-|----------|-----------|-----------|
-| 🖥️ 2× t2.micro EC2 | ✅ 750 hrs/month free | ~$0 |
-| 🗄️ db.t3.micro RDS | ✅ 750 hrs/month free | ~$0 |
-| ⚖️ ALB | ❌ Not free tier | ~$0.05 |
-| 🪣 S3 (a few KB) | ✅ 5 GB free | ~$0 |
-| 📊 CloudWatch basic | ✅ Free tier | ~$0 |
-| 🕵️ CloudTrail (1st trail) | ✅ Management events free | ~$0 |
-| **Total** | | **< $1** ✨ |
+> ⚠️ **Free Tier changed on July 15, 2025!** Accounts created **before** that date keep the classic 12-month/750-hr free tier. Accounts created **after** get a credit-based model instead: **$100 signup credit + up to $100 more** (earned via activities like launching EC2, creating RDS, setting a budget), a 6-month Free Plan window, and some service restrictions. [Official details →](https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/free-tier.html)
+
+| Resource | 🕰️ Legacy account (pre-Jul 2025) | 💳 New account (Jul 2025+) |
+|----------|----------------------------------|----------------------------|
+| 🖥️ 2× t2.micro (~1.5 hr) | ✅ Within 750 hrs/mo free tier → ~$0 | Draws from credits (~$0.01) |
+| 🗄️ db.t3.micro RDS (~1.5 hr) | ✅ Within free tier → ~$0 | Draws from credits (~$0.01) |
+| ⚖️ ALB (~1.5 hr) | ❌ Not free tier → ~$0.05 | Draws from credits (~$0.05) |
+| 🪣 S3 · 📊 CloudWatch · 🕵️ CloudTrail | ✅ Always-free limits cover this lab | ✅ Always-free limits / credits |
+| **Total** | **< $1** ✨ | **Pennies of credit** ✨ |
+
+> 💡 On the new **Free Plan**, some services may prompt you to upgrade to the Paid Plan — you'll still use credits first, not your card. Either way: set a **Budgets alert** before starting (it's one of the $20 credit-earning activities too 😉).
 
 ### 🏷️ **Naming Convention** — Use these EXACT names:
 
@@ -304,7 +307,7 @@ systemctl enable httpd
 
 1. 🌐 **RDS Console** → **Create database**
 2. ⚙️ Configure:
-   - **Engine:** MySQL · **Templates:** Free tier
+   - **Engine:** MySQL · **Template:** `Free tier` — labeled `Sandbox` on paid-plan accounts (same db.t3.micro sizing either way) 👀
    - **DB identifier:** `ravi-capstone-db`
    - **Master username:** `admin` · **Password:** strong one (write it down! 📝)
    - **Storage:** gp3, `20` GiB, autoscaling ❌ unchecked
